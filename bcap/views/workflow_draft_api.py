@@ -15,7 +15,6 @@ from uuid import UUID
 
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -106,7 +105,6 @@ class DraftPayloadSerializer(DataclassSerializer):
 
 
 class WorkflowDraftBaseView(APIView):
-    authentication_classes = [SessionAuthentication]
     # Drafts are personal scratch data, so the route itself only asks for a login
     # -- scoping in WorkflowDraftService then limits an applicant to their own,
     # while branch staff reach the drafts on the permits they review.

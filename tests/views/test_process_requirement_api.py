@@ -143,6 +143,15 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.submitter)
         self.assertEqual(self.client.get(self.url).status_code, 200)
 
+    def test_the_list_shows_an_applicant_the_requirements_on_their_permit(self):
+        # The working copies on a permit are made for the applicant, not by them,
+        # so the list answers by permit reach rather than by who created the row.
+        self.idir_login_simulate(self.submitter)
+        resp = self.client.get(reverse("api_process_requirement_list"))
+        self.assertEqual(resp.status_code, 200)
+        ids = [row["resourceinstanceid"] for row in resp.json()["results"]]
+        self.assertEqual(ids, [self.resource_id])
+
     def test_applicant_cannot_view_a_requirement_off_their_permits(self):
         self.idir_login_simulate(self.submitter)
         url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})

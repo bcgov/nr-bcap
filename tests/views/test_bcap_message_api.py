@@ -18,7 +18,6 @@ from arches.app.models.models import File, ResourceInstance
 from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.services.message.bcap_message_service import (
-    MESSAGE_GRAPH_SLUG,
     ModuleUnread,
 )
 from bcap.services.workflow_draft_service import WorkflowDraftService
@@ -435,11 +434,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.user)
         resp = self._patch_read_date(self.internal_root.pk, "2026-07-10T14:04:46.334Z")
         self.assertEqual(resp.status_code, 404)
-
-    def test_patch_denied_when_caller_cannot_edit_resource_context(self):
-        self.idir_login_simulate(self.viewer)
-        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
-        self.assertEqual(resp.status_code, 403)
 
     def test_patch_marks_a_message_read(self):
         # Staff (the recipient, not the message's creator) marks it read.

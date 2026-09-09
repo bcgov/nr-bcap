@@ -19,15 +19,16 @@ from arches.app.models.models import TileModel
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.graph import node_info
+from bcap.util.graph import node_info, nodes_for
 from bcap.util.bcap_aliases import RESOURCE_ID
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.util.aliases.bcap_message import BcapMessageAliases
 from bcap.permissions.groups import is_internal_user
+from bcap.permissions.permit_access import PermitAccess
 from bcap.util.dates import parse_iso_or_set_value
 from bcap.util.tiles import group_data, resource_instance_id
 
@@ -52,10 +53,25 @@ class InternalMessageToExternal(Exception):
     """An internal-only message was addressed to an external recipient."""
 
 
-class BcapMessageService(BaseGraphService):
+class BcapMessageService(AliasedDataReader):
     """Resolve, filter, and thread messages by their parent resource."""
 
     A = BcapMessageAliases
+
+    @classmethod
+    def base_query(cls, user, resource_ids=None):
+        """Every message for branch staff; for everyone else the ones they are
+        party to on a permit they or their company filed. Being party to it is not
+        enough on its own."""
+        queryset = ResourceTileTree.get_tiles(
+            MESSAGE_GRAPH_SLUG, resource_ids=resource_ids, as_representation=True
+        ).select_related("graph", "resource_instance_lifecycle_state")
+        if is_internal_user(user):
+            return queryset
+        reachable = PermitAccess.own_or_company_resource_ids(user)
+        return cls.external_visible(queryset, user.username).filter(
+            resource_context__id__in=reachable
+        )
 
     @staticmethod
     def _contributor_id(username):
@@ -86,7 +102,7 @@ class BcapMessageService(BaseGraphService):
         context_id = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
-                nodes=cls.nodes(MESSAGE_GRAPH_SLUG, [cls.A.RESOURCE_CONTEXT]),
+                nodes=nodes_for(MESSAGE_GRAPH_SLUG, [cls.A.RESOURCE_CONTEXT]),
                 resource_ids=[str(message_id)],
             )
             .values_list("resource_context__id", flat=True)
@@ -100,9 +116,9 @@ class BcapMessageService(BaseGraphService):
         if not self._payload_has(data, self.A.MESSAGE_READ_DATE):
             return None
         read_date = self._payload_node_value(data, self.A.MESSAGE_READ_DATE)
-        message = ResourceTileTree.get_tiles(
-            MESSAGE_GRAPH_SLUG, resource_ids=[str(message_id)]
-        ).get()
+        # Through the base query, so a skipped gate raises rather than stamping
+        # someone else's message.
+        message = self.base_query(request.user, resource_ids=[str(message_id)]).get()
         content = message.aliased_data.message_content.aliased_data
         content.message_read_date = parse_iso_or_set_value(read_date)
         message.save(request=request, partial=True)
@@ -172,7 +188,7 @@ class BcapMessageService(BaseGraphService):
         root_id = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
-                nodes=self.nodes(MESSAGE_GRAPH_SLUG, [self.A.RELATED_SOURCE_MESSAGE]),
+                nodes=nodes_for(MESSAGE_GRAPH_SLUG, [self.A.RELATED_SOURCE_MESSAGE]),
                 resource_ids=[str(message_id)],
             )
             .values_list("related_source_message__id", flat=True)
@@ -285,9 +301,7 @@ class BcapMessageService(BaseGraphService):
         Archive is per-user: a thread is archived only for the contributors on its root's
         archived_by."""
         roots = (
-            ResourceTileTree.get_tiles(
-                MESSAGE_GRAPH_SLUG, as_representation=True
-            ).filter(
+            self.base_query(user).filter(
                 resource_context__id=str(resource_id),
                 related_source_message__isnull=True,
             )
@@ -295,9 +309,6 @@ class BcapMessageService(BaseGraphService):
             .order_by("-message_creation_date", "-createdtime")
         )
         roots = self._by_archived(roots, user.username, archived)
-        # Coarse role gate for now; a future groups ticket moves this to Guardian.
-        if not is_internal_user(user):
-            roots = self.external_visible(roots, user.username)
         unread, latest = self._thread_summaries(resource_id, user.username)
         # A subquery annotation can't reach these: the thread link is a JSON node,
         # not a column an OuterRef can compare against, so map them on by pk.
@@ -323,7 +334,7 @@ class BcapMessageService(BaseGraphService):
         rows = (
             ResourceTileTree.get_tiles(
                 MESSAGE_GRAPH_SLUG,
-                nodes=self.nodes(
+                nodes=nodes_for(
                     MESSAGE_GRAPH_SLUG,
                     [
                         self.A.RECIPIENT,
@@ -386,19 +397,13 @@ class BcapMessageService(BaseGraphService):
             )
         else:
             unread = Value(False, output_field=BooleanField())
-        messages = (
-            ResourceTileTree.get_tiles(
-                MESSAGE_GRAPH_SLUG,
-                as_representation=True,
-            )
+        return (
+            self.base_query(user)
             .filter(Q(pk=str(thread_id)) | Q(related_source_message__id=str(thread_id)))
             .annotate(is_unread=unread)
             # Oldest first; createdtime breaks ties on a null creation date.
             .order_by("message_creation_date", "createdtime")
         )
-        if not is_internal_user(user):
-            messages = self.external_visible(messages, user.username)
-        return messages
 
     def unread_by_module(self, submission_id, username) -> list[ModuleUnread]:
         """The viewer's unread count per process_module of a submission, one entry
@@ -439,7 +444,7 @@ class BcapMessageService(BaseGraphService):
                 MESSAGE_GRAPH_SLUG,
                 # Annotate only the nodes filtered on, not the whole message
                 # graph, so the count query stays cheap.
-                nodes=self.nodes(
+                nodes=nodes_for(
                     MESSAGE_GRAPH_SLUG,
                     [
                         self.A.RECIPIENT,
@@ -458,17 +463,19 @@ class BcapMessageService(BaseGraphService):
         )
         return {str(row["resource_context__id"]): row["unread"] for row in rows}
 
-    def external_visible(self, messages, username):
+    @classmethod
+    def external_visible(cls, messages, username):
         """What an external user may see: messages they're party to, never internal-only."""
-        return self.recipient_or_author(messages, username).exclude(is_internal=True)
+        return cls.recipient_or_author(messages, username).exclude(is_internal=True)
 
-    def recipient_or_author(self, messages, username):
+    @classmethod
+    def recipient_or_author(cls, messages, username):
         """Narrow to messages the user's Contributor is party to (recipient or author)."""
-        contributor_id = self._contributor_id(username)
+        contributor_id = cls._contributor_id(username)
         if not contributor_id:
             logger.warning(
                 "No Contributor for user %s; no messages visible.",
-                self._user_log_id(username),
+                cls._user_log_id(username),
             )
             return messages.none()
         return messages.filter(

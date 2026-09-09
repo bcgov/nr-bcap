@@ -1,8 +1,9 @@
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.graph import nodes_for
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.message.bcap_message_service import BcapMessageService
-from bcap.permissions.permit_resource_access import PermitResourceAccess
+from bcap.permissions.permit_access import PermitAccess
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
@@ -31,6 +32,27 @@ class ExternalDashboardService(BaseDashboardService):
         "Draft": "Under Review",
     }
 
+    @classmethod
+    def base_query(cls, user):
+        """The filings this user or their company made, card nodes loaded. No
+        staff widening, unlike the permit routes: this dashboard answers "my
+        work"."""
+        return (
+            ResourceTileTree.get_tiles(
+                GraphSlugs.PERMIT_APPLICATION,
+                nodes=nodes_for(
+                    GraphSlugs.PERMIT_APPLICATION,
+                    cls.CARD_NODES + [cls.PA.APPLICATION_SUBMISSION_DATE],
+                ),
+                as_representation=True,
+            )
+            .filter(PermitAccess.own_or_company_permits(user))
+            .select_related(
+                "graph", "principaluser", "resource_instance_lifecycle_state"
+            )
+            .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
+        )
+
     def get_cards(self, query: DashboardFilter, user) -> ExternalDashboardPage:
         """Cards for the requesting user, one scope per request: drafts, own
         applications, or associated companies'. Status defaults to own
@@ -48,9 +70,7 @@ class ExternalDashboardService(BaseDashboardService):
         )
 
     def _application_cards(self, query, user):
-        queryset = self._filter_by_status(
-            self._application_queryset(), query.status, user
-        )
+        queryset = self._filter_by_status(self.base_query(user), query.status, user)
         count, permits = self._page(queryset, query)
         hca_permits = self._hca_permits(permits)
         unread = self._unread_counts_by_permit(permits, user.username)
@@ -62,36 +82,20 @@ class ExternalDashboardService(BaseDashboardService):
             cards.append(card)
         return count, cards
 
-    def _application_queryset(self):
-        return (
-            ResourceTileTree.get_tiles(
-                GraphSlugs.PERMIT_APPLICATION,
-                nodes=self.nodes(
-                    GraphSlugs.PERMIT_APPLICATION,
-                    self.CARD_NODES + [self.PA.APPLICATION_SUBMISSION_DATE],
-                ),
-                as_representation=True,
-            )
-            .select_related(
-                "graph", "principaluser", "resource_instance_lifecycle_state"
-            )
-            .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
-        )
-
     def _filter_by_status(self, queryset, status, user):
-        """Created-by scoping. The seam for a future applicant-field match:
-        only this method knows how a user/company maps to applications."""
-        visible = PermitResourceAccess.visible_permits_for_organization_or_user(user)
+        """Narrow the base query to the tab asked for. The seam for a future
+        applicant-field match: only this method knows how a user/company maps to
+        applications."""
         match status:
             case ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS:
                 # Inclusive: the organizations' filings plus the user's own, so
                 # the client swaps one list for the other rather than merging.
-                return queryset.filter(visible)
+                return queryset
             case _:
                 # Created by me, and anything unrecognized. Narrows what they may
                 # see rather than replacing it, so a filing left behind at a
                 # former company doesn't come back on this tab.
-                return queryset.filter(visible, principaluser=user)
+                return queryset.filter(principaluser=user)
 
     def _application_card(self, permit, hca_permits, unread_messages=0):
         core = self._application_core(permit.aliased_data)
@@ -178,7 +182,7 @@ class ExternalDashboardService(BaseDashboardService):
 
         def identification(alias, from_parent):
             """The draft's own value, falling back to the permit it hangs off."""
-            return self._display_text(ident.get(alias)) or from_parent
+            return self.display_text(ident.get(alias)) or from_parent
 
         def field(alias):
             return self._raw_value(draft.aliased_data, alias) or ""

@@ -1,6 +1,6 @@
 from itertools import chain
 
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
@@ -16,7 +16,7 @@ from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.bcap_aliases import GraphSlugs
 
 
-class BaseDashboardService(BaseGraphService):
+class BaseDashboardService(AliasedDataReader):
     """Shared plumbing for the internal and external dashboards: the contributor
     service, paging, and the related-HCA-permit lookup."""
 
@@ -62,11 +62,11 @@ class BaseDashboardService(BaseGraphService):
         for permit in tiles:
             data = permit.aliased_data
             hca_permits[str(permit.pk)] = HcaPermit(
-                number=self._display_text(
-                    self._node_value(data, HCAPermitAliases.PERMIT_NUMBER)
+                number=self.display_text(
+                    self.node_value(data, HCAPermitAliases.PERMIT_NUMBER)
                 ),
                 holder_ids=self._resource_ids(
-                    self._node_value(data, HCAPermitAliases.PERMIT_HOLDER)
+                    self.node_value(data, HCAPermitAliases.PERMIT_HOLDER)
                 ),
             )
         return hca_permits
@@ -76,7 +76,7 @@ class BaseDashboardService(BaseGraphService):
         the loaded resource tree."""
 
         def display(alias):
-            return self._node_value(aliased, alias).get("display_value", "") or ""
+            return self.node_value(aliased, alias).get("display_value", "") or ""
 
         return ApplicationCore(
             project_name=display(self.PA.PROJECT_NAME),
@@ -86,7 +86,7 @@ class BaseDashboardService(BaseGraphService):
             priority_level=display(self.PA.APPLICATION_PRIORITY_LEVEL),
             organization=display(self.PA.OWNING_ORGANIZATION),
             related_permit_id=self._resource_id(
-                self._node_value(aliased, self.PA.RELATED_PERMIT)
+                self.node_value(aliased, self.PA.RELATED_PERMIT)
             ),
         )
 
@@ -129,9 +129,7 @@ class BaseDashboardService(BaseGraphService):
         ]
         return ModuleProgress(
             current_module=(
-                self._display_text(
-                    self._node_value(outstanding[0], self.PA.MODULE_NAME)
-                )
+                self.display_text(self.node_value(outstanding[0], self.PA.MODULE_NAME))
                 if outstanding
                 else ""
             ),

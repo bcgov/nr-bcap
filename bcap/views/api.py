@@ -1,6 +1,5 @@
 import json
 from traceback import print_exception
-from packaging.version import Version
 
 from django.http import Http404, HttpResponse
 from django.utils.decorators import method_decorator
@@ -14,16 +13,13 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
 from arches.app.models import models
-from arches.app.models.models import ResourceInstance, ResourceXResource
 from django.core.exceptions import FieldError
-
-from arches import __version__ as arches_version
 
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONSerializer
 
 from bcap.permissions.route_guards import Internal, internal_only_django_view
-from bcap.util.bcap_aliases import GraphSlugs
+from bcap.services.related_resource_service import RelatedResourceService
 from bcap.util.borden_number_api import (
     BordenGridServiceError,
     BordenNumberApi,
@@ -175,37 +171,10 @@ class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
     pagination_class = ArchesLimitOffsetPagination
 
     def get_queryset(self):
-        options = self.serializer_class.Meta
-        resource_ids_string = [str(uuid) for uuid in self.resource_ids]
-
+        """The service answers which rows; this turns an unsupported graph into a
+        400."""
         try:
-            if issubclass(options.model, ResourceInstance):
-                qs = options.model.get_tiles(
-                    self.graph_slug,
-                    as_representation=True,
-                ).select_related("graph")
-
-                if self.graph_slug == GraphSlugs.ARCHAEOLOGICAL_SITE:
-                    qs = qs.filter(parent_site__id__in=resource_ids_string)
-                elif self.graph_slug == GraphSlugs.PUBLICATION:
-                    publication_ids = (
-                        ResourceXResource.objects.filter(
-                            from_resource_id__in=resource_ids_string
-                        )
-                        .values("to_resource_id")
-                        .all()
-                    )
-                    qs = qs.filter(
-                        resourceinstanceid__in=publication_ids
-                    ).select_related("graph")
-                else:
-                    qs = qs.filter(archaeological_site__id__in=resource_ids_string)
-
-                if Version(arches_version) >= Version("8.0"):
-                    qs = qs.select_related("resource_instance_lifecycle_state")
-            else:  # pragma: no cover
-                raise NotImplementedError
-            return qs
+            return RelatedResourceService.base_query(self.graph_slug, self.resource_ids)
         except FieldError:
             msg = (
                 _("Field archaeological_site not found in graph: %s") % self.graph_slug

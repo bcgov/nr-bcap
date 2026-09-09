@@ -6,7 +6,7 @@ Two gates run first, knowing nothing about any one resource:
    routes, since most of them answer without asking anyone.
 2. route_guards: the role a BCAP endpoint requires before it runs at all.
 
-Past those the question is per resource and permit_resource_access answers it,
+Past those the question is per resource and permit_access answers it,
 reached two ways that have to agree: through bcap_arches_permission_framework,
 installed as PERMISSION_FRAMEWORK, for anything that asks arches; and directly,
 for a view gating one resource or a list filtering a queryset. The framework

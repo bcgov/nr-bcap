@@ -13,7 +13,7 @@ from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -28,13 +28,12 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as aliases,
     PermitApplicationGroupAliases as group_aliases,
 )
-from arches_controlled_lists.models import ListItem
 
 from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import get_node, node_id
+from bcap.util.graph import node_id
 from bcap.util.tiles import resource_instance_id, resource_instance_value
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
@@ -180,7 +179,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         the ones being read; no aliases means the whole tree (what the save path
         needs)."""
         nodes = (
-            BaseGraphService.nodes(GraphSlugs.PERMIT_APPLICATION, node_aliases)
+            AliasedDataReader.nodes(GraphSlugs.PERMIT_APPLICATION, node_aliases)
             if node_aliases
             else None
         )
@@ -278,7 +277,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         return (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                nodes=BaseGraphService.nodes(
+                nodes=AliasedDataReader.nodes(
                     GraphSlugs.PROCESS_REQUIREMENT, ["is_template_requirement"]
                 ),
             )
@@ -573,10 +572,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ]
         self.assertIn("Investigation", names)
 
-        service = ProcessRequirementService(
-            request_as(get_user_model().objects.get(username="admin"))
-        )
-        hosts = service.permit_module_tiles(pk, "investigation")
+        admin_user = get_user_model().objects.get(username="admin")
+        service = ProcessRequirementService(request_as(admin_user))
+        hosts = service.permit_module_tiles(pk, "investigation", admin_user)
         self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])
 
         resp = self.client.get(
@@ -591,16 +589,24 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         then: a permit carrying no permit module has no hosts, and a module with
         requirements but no host resources has none for another type."""
         service = ProcessRequirementService()
+        admin_user = get_user_model().objects.get(username="admin")
 
-        self.assertEqual(service.permit_module_tiles(self.draft_pk, "permit"), [])
+        self.assertEqual(
+            service.permit_module_tiles(self.draft_pk, "permit", admin_user), []
+        )
 
         # The own-submission requirement points back at the permit, linked after
         # the save because the id exists only then.
-        hosts = service.permit_module_tiles(self.submitted_pk, "permit")
+        hosts = service.permit_module_tiles(self.submitted_pk, "permit", admin_user)
         self.assertEqual([str(host.pk) for host in hosts], [str(self.submitted_pk)])
 
         self.assertEqual(
-            list(service.permit_module_tiles(self.submitted_pk, "investigation")), []
+            list(
+                service.permit_module_tiles(
+                    self.submitted_pk, "investigation", admin_user
+                )
+            ),
+            [],
         )
 
     def test_ids_that_dont_belong_to_the_permit_are_no_ops(self):

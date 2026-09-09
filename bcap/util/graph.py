@@ -20,6 +20,21 @@ def get_node(graph_slug: str, alias: str) -> models.Node:
     )
 
 
+def nodes_for(graph_slug, aliases):
+    """Node queryset for the given aliases, shaped to pass as the nodes argument
+    to get_tiles."""
+    return (
+        models.Node.objects.filter(
+            graph__slug=graph_slug,
+            source_identifier=None,
+            alias__in=aliases,
+        )
+        .exclude(datatype="semantic")
+        .exclude(nodegroup=None)
+        .select_related("nodegroup__parentnodegroup")
+    )
+
+
 def _graph_nodes(graph_slug):
     """Every node of a graph's published copy as {alias: (nodeid, nodegroup_id)},
     cached by publication so a republish or reload is picked up on the next

@@ -21,12 +21,13 @@ from bcap.util.aliases.permit_application import (
 )
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases as prq
 from bcap.util.bcap_aliases import GraphSlugs, RESOURCE_ID
-from bcap.util.graph import node_id
+from bcap.util.graph import node_id, nodes_for
 from bcap.util.indexing import bulk_index
 from bcap.util.tiles import referenced_resource_ids, references_by_source
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from bcap.permissions.groups import is_internal_user
+from bcap.permissions.permit_access import PermitAccess
 from bcap.util.save import acting_request
-from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.process_requirement.template_specs import (
     host_graph,
     load,
@@ -52,6 +53,20 @@ class ClonedModule:
 class ProcessRequirementService:
     """Clone the seeded templates into independent working copies and attach them
     to a permit; the frontend fills in their values afterward."""
+
+    @staticmethod
+    def base_query(user, resource_ids=None):
+        """Every requirement for branch staff; for everyone else the ones on a
+        permit they or their company filed, which is not the same as the ones they
+        created."""
+        queryset = ResourceTileTree.get_tiles(
+            GraphSlugs.PROCESS_REQUIREMENT,
+            resource_ids=resource_ids,
+            as_representation=True,
+        ).select_related("graph", "resource_instance_lifecycle_state")
+        if is_internal_user(user):
+            return queryset
+        return queryset.filter(pk__in=PermitAccess.own_or_company_resource_ids(user))
 
     # The default module every permit application gets (the grouping parent plus
     # Recommend Referral, Recommend Decision, Decision Summary).
@@ -283,9 +298,11 @@ class ProcessRequirementService:
         for resource in Resource.objects.filter(pk__in=list(resource_ids)):
             resource.delete()
 
-    def permit_module_tiles(self, permit_id, permit_type):
-        """The host resources of the permit type's module attached to the permit,
-        read straight from tile data (faster and null-descriptor safe)."""
+    def permit_module_tiles(self, permit_id, permit_type, user):
+        """The host resources of the permit type's module attached to a permit the
+        caller may open, read straight from tile data (faster and null-descriptor
+        safe)."""
+        PermitAccess.require_view(user, str(permit_id))
         host_slug = host_graph(permit_type)
         if not host_slug:
             return []
@@ -424,9 +441,7 @@ class ProcessRequirementService:
         (a tile-scoped save would re-fetch the whole nodegroup afterward)."""
         permit = ResourceTileTree.get_tiles(
             GraphSlugs.PERMIT_APPLICATION,
-            nodes=BaseGraphService.nodes(
-                GraphSlugs.PERMIT_APPLICATION, nodes or self._ADMIN_NODES
-            ),
+            nodes=nodes_for(GraphSlugs.PERMIT_APPLICATION, nodes or self._ADMIN_NODES),
         ).get(pk=permit_id)
         if permit.aliased_data.application_admin is None:
             permit.append_tile(pa_groups.APPLICATION_ADMIN)

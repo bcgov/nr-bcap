@@ -8,7 +8,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from arches.app.models.models import ResourceInstance
 
-from bcap.permissions.permit_resource_access import PermitResourceAccess
+from bcap.permissions.permit_access import PermitAccess
 from bcap.util.bcap_aliases import GraphSlugs
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
@@ -62,65 +62,51 @@ class ResourceAccessTests(TestCase):
             ResourceInstance.objects.filter(pk=permit.pk).update(principaluser=owner)
 
     def test_applicant_reaches_their_organizations_permit(self):
-        self.assertTrue(PermitResourceAccess.can_view(self.applicant, self.permit.pk))
+        self.assertTrue(PermitAccess.can_view(self.applicant, self.permit.pk))
 
     def test_applicant_reaches_a_requirement_on_that_permit(self):
-        self.assertTrue(
-            PermitResourceAccess.can_view(self.applicant, self.requirement.pk)
-        )
+        self.assertTrue(PermitAccess.can_view(self.applicant, self.requirement.pk))
 
     def test_applicant_reaches_the_requirements_submission_host(self):
-        self.assertTrue(PermitResourceAccess.can_view(self.applicant, self.host.pk))
+        self.assertTrue(PermitAccess.can_view(self.applicant, self.host.pk))
 
     def test_a_colleague_in_the_owning_organization_reaches_it_too(self):
-        self.assertTrue(
-            PermitResourceAccess.can_view(self.colleague, self.requirement.pk)
-        )
+        self.assertTrue(PermitAccess.can_view(self.colleague, self.requirement.pk))
 
     def test_applicant_reaches_a_permit_they_created_under_no_organization(self):
-        self.assertTrue(
-            PermitResourceAccess.can_view(self.applicant, self.own_permit.pk)
-        )
+        self.assertTrue(PermitAccess.can_view(self.applicant, self.own_permit.pk))
 
     def test_an_outsider_reaches_neither_the_permit_nor_what_hangs_off_it(self):
         for resource in (self.permit, self.requirement, self.host):
-            self.assertFalse(PermitResourceAccess.can_view(self.outsider, resource.pk))
+            self.assertFalse(PermitAccess.can_view(self.outsider, resource.pk))
 
     def test_a_colleagues_organization_does_not_reach_an_unstamped_permit(self):
         # Created by the applicant under no organization: theirs alone.
-        self.assertFalse(
-            PermitResourceAccess.can_view(self.colleague, self.own_permit.pk)
-        )
+        self.assertFalse(PermitAccess.can_view(self.colleague, self.own_permit.pk))
 
     def test_creating_a_filing_does_not_survive_leaving_the_company(self):
-        self.assertFalse(
-            PermitResourceAccess.can_view(self.applicant, self.former_permit.pk)
-        )
+        self.assertFalse(PermitAccess.can_view(self.applicant, self.former_permit.pk))
 
     def test_applicant_reaches_a_contributor_on_a_permit_they_can_see(self):
-        self.assertTrue(PermitResourceAccess.can_view(self.applicant, self.acme.pk))
+        self.assertTrue(PermitAccess.can_view(self.applicant, self.acme.pk))
 
     def test_applicant_does_not_reach_an_unrelated_contributor(self):
         # The graph grant is applicant-wide, so without narrowing this is every
         # other company's people and organizations.
-        self.assertFalse(
-            PermitResourceAccess.can_view(self.applicant, self.stranger.pk)
-        )
+        self.assertFalse(PermitAccess.can_view(self.applicant, self.stranger.pk))
 
     def test_applicant_does_not_reach_what_they_created_off_any_permit(self):
         # Arches permits a resource's creator ahead of any grant, so on a graph
         # applicants are never granted, the narrowing is all that denies this.
-        self.assertFalse(
-            PermitResourceAccess.can_view(self.applicant, self.own_site.pk)
-        )
+        self.assertFalse(PermitAccess.can_view(self.applicant, self.own_site.pk))
 
     def test_internal_staff_reach_anything(self):
-        self.assertTrue(PermitResourceAccess.can_view(self.staff, self.other_permit.pk))
+        self.assertTrue(PermitAccess.can_view(self.staff, self.other_permit.pk))
 
     def test_no_resource_is_denied(self):
-        self.assertFalse(PermitResourceAccess.can_view(self.applicant, None))
+        self.assertFalse(PermitAccess.can_view(self.applicant, None))
 
     def test_require_raises_for_an_outsider(self):
         with self.assertRaises(PermissionDenied):
-            PermitResourceAccess.require_view(self.outsider, self.requirement.pk)
-        PermitResourceAccess.require_view(self.applicant, self.requirement.pk)
+            PermitAccess.require_view(self.outsider, self.requirement.pk)
+        PermitAccess.require_view(self.applicant, self.requirement.pk)

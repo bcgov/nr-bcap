@@ -9,10 +9,8 @@ first, so they shadow them.
 
 from drf_spectacular.utils import extend_schema
 
-from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
-
 from bcap.permissions.route_guards import SubmitterOrInternal
-from bcap.permissions.permit_resource_access import PermitResourceAccess
+from bcap.permissions.permit_access import PermitAccess
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -39,14 +37,10 @@ class PermitApplicationView(GeneratedPermitApplicationView):
     permission_classes = [SubmitterOrInternal]
 
     def get_queryset(self):
-        """What the caller may open. Replaces UserOwnedResourceMixin's
-        creator-only filter rather than adding to it, which would 404 both a
-        colleague opening what their company tab shows and staff opening any
-        filing at all."""
-        return ArchesModelAPIMixin.get_queryset(self).filter(
-            PermitResourceAccess.visible_permits_for_organization_or_user_or_staff(
-                self.request.user
-            )
+        """Replaces UserOwnedResourceMixin's creator-only filter rather than
+        adding to it, which would 404 a colleague and staff alike."""
+        return PermitApplicationService.base_query(
+            self.request.user, resource_ids=self.resource_ids
         )
 
     def get_object(self, permission_callable=None, **kwargs):
@@ -54,11 +48,11 @@ class PermitApplicationView(GeneratedPermitApplicationView):
         applicant holds no grant on the graph, so it would refuse a colleague
         the filing their company tab just listed."""
         permit = super().get_object(**kwargs)
-        PermitResourceAccess.require_view(self.request.user, permit.pk)
+        PermitAccess.require_view(self.request.user, permit.pk)
         return permit
 
     def update(self, request, *args, **kwargs):
-        PermitResourceAccess.require_change(request.user, self.kwargs["pk"])
+        PermitAccess.require_change(request.user, self.kwargs["pk"])
         block_organization(
             request,
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,

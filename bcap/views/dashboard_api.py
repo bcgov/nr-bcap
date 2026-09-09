@@ -7,7 +7,6 @@ OpenAPI spec that feeds the frontend's generated TypeScript types.
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
 from drf_spectacular.utils import extend_schema
 
 from bcap.permissions.route_guards import Internal, SubmitterOrInternal
@@ -28,7 +27,6 @@ from bcap.services.dashboard.external_dashboard_service import (
 class InternalDashboardView(APIView):
     """Returns dashboard cards for the current user based on their role."""
 
-    authentication_classes = [SessionAuthentication]
     permission_classes = [Internal]
 
     @extend_schema(
@@ -57,7 +55,6 @@ class ExternalDashboardView(APIView):
     the filter treats them as an applicant, so they see only what they filed
     themselves. Temporary, pending the decision on what staff should see here."""
 
-    authentication_classes = [SessionAuthentication]
     permission_classes = [SubmitterOrInternal]
 
     @extend_schema(

@@ -16,6 +16,7 @@ from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import build_permit
 from tests.services.contributor_fixtures import (
     make_contributor,
     make_party,
@@ -83,19 +84,24 @@ class BcapMessageVisibilityTests(TestCase):
         # A ministry staffer and two external applicants, each backed by a
         # Contributor the messages address (party membership is looked up by the
         # Contributor's bcap_username).
+        acme = make_contributor(builder, "Acme Corp")
         cls.staff, staff_contrib = make_party(
             builder, "staff", "Sam", "Staff", internal=True
         )
         cls.applicant, applicant_contrib = make_party(
-            builder, "applicant", "Amy", "Applicant"
+            builder, "applicant", "Amy", "Applicant", associated_organization=acme
         )
-        cls.outsider = make_user("outsider")
+        # In the company, so the permit is readable and the party filter is what
+        # decides which of its messages they see.
+        cls.outsider = make_party(
+            builder, "outsider", "Otto", "Outsider", associated_organization=acme
+        )[0]
         cls.staff_contrib = staff_contrib
         cls.applicant_contrib = applicant_contrib
 
         # The parent resource the thread hangs off, plus an unrelated one to
         # prove the resource filter.
-        cls.permit = builder.make_resource("permit_application")
+        cls.permit = build_permit(builder, "Threaded App", organization=acme)
         cls.other_permit = builder.make_resource("permit_application")
         cls.permit_id = str(cls.permit.pk)
 
@@ -150,6 +156,13 @@ class BcapMessageVisibilityTests(TestCase):
     def _thread_ids(self, root, user):
         messages = self.service.thread_queryset(str(root.pk), user)
         return [str(m.pk) for m in messages]
+
+    def test_being_party_is_not_enough_off_their_own_permits(self):
+        # The applicant authored this one, but it files against a permit neither
+        # they nor their company filed, so the base query drops it.
+        visible = {str(m.pk) for m in self.service.base_query(self.applicant)}
+        self.assertNotIn(str(self.elsewhere.pk), visible)
+        self.assertIn(str(self.public_root.pk), visible)
 
     def test_roots_exclude_replies_and_other_resources(self):
         # Roots are thread-starters (no related_source_message) on this resource
@@ -233,12 +246,13 @@ class BcapMessageUnreadCountTests(TestCase):
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
 
+        acme = make_contributor(builder, "Acme Corp")
         cls.applicant, applicant_contrib = make_party(
-            builder, "reader", "Amy", "Applicant"
+            builder, "reader", "Amy", "Applicant", associated_organization=acme
         )
         _, staff_contrib = make_party(builder, "staff2", "Sam", "Staff")
-        cls.permit = builder.make_resource("permit_application")
-        cls.other_permit = builder.make_resource("permit_application")
+        cls.permit = build_permit(builder, "Counted App", organization=acme)
+        cls.other_permit = build_permit(builder, "Other App", organization=acme)
 
         # Two unread messages to the applicant, one already read, one addressed
         # to staff, and one on a different resource.
@@ -288,13 +302,14 @@ class BcapMessageThreadUnreadCountTests(TestCase):
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
 
+        acme = make_contributor(builder, "Acme Corp")
         cls.staff, staff_contrib = make_party(
             builder, "threadstaff", "Sam", "Staff", internal=True
         )
         cls.applicant, applicant_contrib = make_party(
-            builder, "threadapp", "Amy", "App"
+            builder, "threadapp", "Amy", "App", associated_organization=acme
         )
-        cls.permit = builder.make_resource("permit_application")
+        cls.permit = build_permit(builder, "Unread App", organization=acme)
         cls.permit_id = str(cls.permit.pk)
 
         # Thread A: root and reply both unread to the applicant -> the root
@@ -357,11 +372,14 @@ class BcapMessageArchiveTests(TestCase):
 
         # A staffer and an applicant, both party to the thread (author of one
         # message, recipient of another) so each can see it and archive it.
+        acme = make_contributor(builder, "Acme Corp")
         cls.staff, staff_contrib = make_party(
             builder, "archstaff", "Sam", "Staff", internal=True
         )
-        cls.applicant, applicant_contrib = make_party(builder, "archapp", "Amy", "App")
-        cls.permit = builder.make_resource("permit_application")
+        cls.applicant, applicant_contrib = make_party(
+            builder, "archapp", "Amy", "App", associated_organization=acme
+        )
+        cls.permit = build_permit(builder, "Archived App", organization=acme)
         cls.permit_id = str(cls.permit.pk)
 
         # One thread (root + reply) and a second standalone thread on the same

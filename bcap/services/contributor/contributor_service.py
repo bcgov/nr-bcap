@@ -12,7 +12,7 @@ from arches.app.models.models import ResourceXResource, TileModel
 from arches.app.models.resource import Resource
 
 from bcap.util.graph import node_id, nodegroup_id
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.util.controlled_list import reference_value
 from bcap.util.aliases.contributor import (
     ContributorAliases,
@@ -56,8 +56,8 @@ class ContributorSummary:
         data = resource.aliased_data
 
         def text(alias):
-            return BaseGraphService._display_text(
-                BaseGraphService._node_value(data, alias)
+            return AliasedDataReader.display_text(
+                AliasedDataReader.node_value(data, alias)
             )
 
         return cls(
@@ -71,7 +71,7 @@ class ContributorSummary:
         )
 
 
-class ContributorService(BaseGraphService):
+class ContributorService(AliasedDataReader):
     """Reads Contributor resources for the dashboard's assignment filters
     (user-to-Contributor, company membership, display names), and the writes the
     admin invite flow needs: creating Contributors and binding a user to one."""

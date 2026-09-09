@@ -13,8 +13,8 @@ from arches.app.models.models import ResourceInstance, TileModel
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
-from bcap.permissions.permit_resource_access import PermitResourceAccess
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.permissions.permit_access import PermitAccess
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.util.aliases.workflow_drafts import (
     WorkflowDraftsAliases,
     WorkflowDraftsGroupAliases,
@@ -42,23 +42,25 @@ class DraftRecord:
     updated: str = ""
 
 
-class WorkflowDraftService(BaseGraphService):
+class WorkflowDraftService(AliasedDataReader):
     """CRUD over draft resources, scoped to the caller's company. Reads and the
     lookups behind the writes both go through queryset(), so a colleague can
     resume and delete a draft as well as see it."""
 
-    def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
-        """A user's drafts and their associated companies', oldest first; branch
-        staff get no widening. own_only narrows to the ones the user created,
-        within what they may see rather than instead of it, so a draft left at a
-        former company stays hidden. Graph and parent filter in SQL, so no caller
-        loads them all."""
-        qs = ResourceTileTree.get_tiles(
+    @staticmethod
+    def base_query(user):
+        """The drafts this user started and their company's. Branch staff get no
+        widening: a draft is personal scratch data."""
+        return ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
-        )
-        qs = qs.filter(
-            PermitResourceAccess.visible_drafts_for_organization_or_user(user)
-        )
+        ).filter(PermitAccess.own_or_company_drafts(user))
+
+    def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
+        """The base query narrowed to one graph, one parent, or the user's own
+        drafts: own_only narrows to the ones they created, within what they may see
+        rather than instead of it, so a draft left at a former company stays hidden.
+        Graph and parent filter in SQL, so no caller loads them all."""
+        qs = self.base_query(user)
         if own_only:
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:

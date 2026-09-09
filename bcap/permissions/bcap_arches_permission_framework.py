@@ -6,7 +6,7 @@ separately again, by the user-owned queryset filter.
 An instance check arrives here from a route: a view asks the arches permission
 backend, which dispatches to this class. The stock policy answers first, then
 an applicant's answer is narrowed by the permit reach check in
-permit_resource_access. That module also holds the helpers views call directly,
+permit_access. That module also holds the helpers views call directly,
 and those do ask the policy, so the narrowing here must use the reach check
 rather than a helper or it would arrive back at this method and recurse.
 """
@@ -16,7 +16,7 @@ from arches.app.permissions.arches_default_deny import (
 )
 
 from bcap.permissions.groups import Groups, group_id, is_internal_user
-from bcap.permissions.permit_resource_access import PermitResourceAccess
+from bcap.permissions.permit_access import PermitAccess
 
 ANONYMOUS_USERNAME = "anonymous"
 
@@ -33,7 +33,7 @@ class BcapArchesPermissionFramework(ArchesDefaultDenyPermissionFramework):
             user, resourceid, permission, resource=resource
         )
         if result.get("permitted") and not is_internal_user(user):
-            result["permitted"] = PermitResourceAccess.on_visible_permit_or_draft(
+            result["permitted"] = PermitAccess.on_visible_permit_or_draft(
                 user, result["resource"].pk
             )
         return result

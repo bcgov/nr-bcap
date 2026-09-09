@@ -1,25 +1,12 @@
-from arches.app.models.models import Node
-
 from arches_querysets.models import ResourceTileTree, TileTree
 
+from bcap.util.graph import nodes_for
 
-class BaseGraphService:
-    """Stateless helpers for reading representation-form node values."""
 
-    @staticmethod
-    def nodes(graph_slug, aliases):
-        """Node queryset for the given aliases, shaped to pass as the nodes
-        argument to get_tiles."""
-        return (
-            Node.objects.filter(
-                graph__slug=graph_slug,
-                source_identifier=None,
-                alias__in=aliases,
-            )
-            .exclude(datatype="semantic")
-            .exclude(nodegroup=None)
-            .select_related("nodegroup__parentnodegroup")
-        )
+class AliasedDataReader:
+    """Stateless helpers for reading values out of a representation-form
+    aliased_data tree. A base class for the services that read one, and callable
+    directly by anything else that has a tree in hand."""
 
     @classmethod
     def _tiles(cls, slug, ids, aliases):
@@ -28,7 +15,7 @@ class BaseGraphService:
         return ResourceTileTree.get_tiles(
             slug,
             resource_ids=ids,
-            nodes=cls.nodes(slug, aliases),
+            nodes=nodes_for(slug, aliases),
             as_representation=True,
         )
 
@@ -55,7 +42,7 @@ class BaseGraphService:
                 yield from cls._leaf_values(tile.aliased_data)
 
     @classmethod
-    def _node_value(cls, aliased_data, alias):
+    def node_value(cls, aliased_data, alias):
         """First value under the given alias as a representation dict,
         descending into nested nodegroup tiles, or an empty dict if absent.
         Callers read keys defensively, so the empty case needs no fixed shape."""
@@ -68,7 +55,7 @@ class BaseGraphService:
     def _raw_value(cls, aliased_data, alias):
         """The stored node_value under the given alias (the raw value, not the
         formatted display_value), or None if unset."""
-        return cls._node_value(aliased_data, alias).get("node_value")
+        return cls.node_value(aliased_data, alias).get("node_value")
 
     @staticmethod
     def _resource_ids(value):
@@ -109,7 +96,7 @@ class BaseGraphService:
         return ", ".join(name for nid in ids if (name := names.get(nid, "")))
 
     @staticmethod
-    def _display_text(value):
+    def display_text(value):
         """Best-effort plain text from a node value in any of the forms the API
         emits or accepts: a plain string, an i18n string {"en": {"value": ...}},
         or a representation envelope {"display_value": ...}. "" when empty."""
