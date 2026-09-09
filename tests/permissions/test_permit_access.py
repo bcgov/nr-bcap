@@ -61,32 +61,36 @@ class ResourceAccessTests(TestCase):
         ):
             ResourceInstance.objects.filter(pk=permit.pk).update(principaluser=owner)
 
-    def test_can_view(self):
-        for expected, user, resource, why in (
-            (True, self.applicant, self.permit, "their organization's permit"),
-            (True, self.applicant, self.requirement, "a requirement on that permit"),
-            (True, self.applicant, self.host, "the requirement's submission host"),
-            (True, self.colleague, self.requirement, "a colleague in the same org"),
-            (True, self.applicant, self.own_permit, "a permit they filed unstamped"),
-            (True, self.applicant, self.acme, "a contributor on a permit they see"),
-            (True, self.staff, self.other_permit, "internal staff reach anything"),
-            (False, self.outsider, self.permit, "an outsider's permit"),
-            (False, self.outsider, self.requirement, "an outsider's requirement"),
-            (False, self.outsider, self.host, "an outsider's submission host"),
-            (False, self.colleague, self.own_permit, "unstamped is the filer's alone"),
-            (False, self.applicant, self.former_permit, "filed at a former company"),
+    def test_reaches(self):
+        for name, user, resource in (
+            ("their organizations permit", self.applicant, self.permit),
+            ("a requirement on that permit", self.applicant, self.requirement),
+            ("the requirements submission host", self.applicant, self.host),
+            ("a colleague in the owning org", self.colleague, self.requirement),
+            ("a permit filed under no org", self.applicant, self.own_permit),
+            ("a contributor on a permit they see", self.applicant, self.acme),
+            ("internal staff reach anything", self.staff, self.other_permit),
+        ):
+            with self.subTest(name):
+                self.assertTrue(PermitAccess.can_view(user, resource.pk))
+
+    def test_does_not_reach(self):
+        for name, user, resource in (
+            ("an outsider on the permit", self.outsider, self.permit),
+            ("an outsider on its requirement", self.outsider, self.requirement),
+            ("an outsider on the submission host", self.outsider, self.host),
+            ("a colleague on an unstamped permit", self.colleague, self.own_permit),
+            ("a filing left at a former company", self.applicant, self.former_permit),
             # The graph grant is applicant-wide, so without narrowing this is
             # every other company's people and organizations.
-            (False, self.applicant, self.stranger, "an unrelated contributor"),
+            ("an unrelated contributor", self.applicant, self.stranger),
             # Arches permits a resource's creator ahead of any grant, so on a
             # graph applicants are never granted, narrowing is all that denies.
-            (False, self.applicant, self.own_site, "what they created off a permit"),
-            (False, self.applicant, None, "no resource at all"),
+            ("a site they created off any permit", self.applicant, self.own_site),
+            ("no resource at all", self.applicant, None),
         ):
-            with self.subTest(why):
-                self.assertIs(
-                    PermitAccess.can_view(user, resource and resource.pk), expected
-                )
+            with self.subTest(name):
+                self.assertFalse(PermitAccess.can_view(user, resource and resource.pk))
 
     def test_require_raises_for_an_outsider(self):
         with self.assertRaises(PermissionDenied):
