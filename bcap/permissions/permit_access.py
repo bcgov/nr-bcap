@@ -42,16 +42,12 @@ class PermitAccess:
     def own_or_company_permits(cls, user):
         """Their own filed under no company, plus anything filed under a company
         they belong to."""
-        return OrganizationService().visible_with_organization_or_user(
-            user, cls.PERMIT_ORG
-        )
+        return OrganizationService().own_or_company_filter(user, cls.PERMIT_ORG)
 
     @classmethod
     def own_or_company_drafts(cls, user):
         """By the same rule as their permits."""
-        return OrganizationService().visible_with_organization_or_user(
-            user, cls.DRAFT_ORG
-        )
+        return OrganizationService().own_or_company_filter(user, cls.DRAFT_ORG)
 
     @classmethod
     def own_or_company_resource_ids(cls, user):

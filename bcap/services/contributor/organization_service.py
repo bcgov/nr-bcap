@@ -80,7 +80,7 @@ class OrganizationService(ContributorService):
             raise ValueError("Choose which organization to file this under.")
         return next(iter(mine)) if mine else ""
 
-    def visible_with_organization_or_user(self, user, alias):
+    def own_or_company_filter(self, user, alias):
         """Rows this user may reach: their companies', plus their own when no
         company was named. A stamped row belongs to the organization that paid
         for it, so leaving takes its creator's access with them."""
