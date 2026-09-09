@@ -140,145 +140,40 @@ class TestGetAllFlatTables(SimpleTestCase):
 
 
 class TestGetFlatColumns(SimpleTestCase):
-    def _string_spec(self):
-        return {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("title", "node-uuid-1", "string"),
-                    ],
-                )
-            ],
-        }
+    def _columns(self, *fields, alias="branch"):
+        gen = _make_gen({"ng": [_ng(alias, "ng-uuid-1", fields=list(fields))]})
+        return dict(gen.get_flat_columns(None))
 
-    def test_string_field_produces_text_column(self):
-        gen = _make_gen(self._string_spec())
-        cols = gen.get_flat_columns(None)
-        names = [c for c, _ in cols]
-        self.assertIn("title", names)
+    def test_scalar_field_types(self):
+        for alias, datatype, datefmt, flat_type in (
+            ("title", "string", None, "text"),
+            ("start_date", "date", "YYYY-MM-DD", "date"),
+            ("count", "number", None, "numeric"),
+            ("is_active", "boolean", None, "boolean"),
+        ):
+            with self.subTest(datatype):
+                cols = self._columns(_field(alias, "node-uuid-1", datatype, datefmt))
+                self.assertEqual(cols.get(alias), flat_type)
 
-    def test_date_field_produces_date_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("start_date", "node-uuid-2", "date", "YYYY-MM-DD"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("start_date", cols)
-        self.assertEqual(cols["start_date"], "date")
-
-    def test_number_field_produces_numeric_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("count", "node-uuid-3", "number"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("count", cols)
-        self.assertEqual(cols["count"], "numeric")
-
-    def test_boolean_field_produces_boolean_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("is_active", "node-uuid-4", "boolean"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("is_active", cols)
-        self.assertEqual(cols["is_active"], "boolean")
-
-    def test_reference_field_produces_label_and_ids_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("status", "node-uuid-5", "reference"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("status", col_names)
-        self.assertIn("status_ids", col_names)
-
-    def test_resource_instance_produces_name_and_id_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("permit", "node-uuid-6", "resource-instance"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("permit", col_names)
-        self.assertIn("permit_id", col_names)
-
-    def test_resource_instance_list_produces_names_and_ids_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("permits", "node-uuid-7", "resource-instance-list"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("permits", col_names)
-        self.assertIn("permits_ids", col_names)
+    def test_related_fields_produce_a_label_and_id_pair(self):
+        for alias, datatype, id_column in (
+            ("status", "reference", "status_ids"),
+            ("permit", "resource-instance", "permit_id"),
+            ("permits", "resource-instance-list", "permits_ids"),
+        ):
+            with self.subTest(datatype):
+                cols = self._columns(_field(alias, "node-uuid-1", datatype))
+                self.assertLessEqual({alias, id_column}, set(cols))
 
     def test_geojson_field_excluded_from_scalar_columns(self):
         """Geometry fields are excluded from the _flat column list (handled separately)."""
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "boundary",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("geom", "node-uuid-8", "geojson-feature-collection"),
-                        _field("title", "node-uuid-9", "string"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertNotIn("geom", col_names)
-        self.assertIn("title", col_names)
+        cols = self._columns(
+            _field("geom", "node-uuid-8", "geojson-feature-collection"),
+            _field("title", "node-uuid-9", "string"),
+            alias="boundary",
+        )
+        self.assertNotIn("geom", cols)
+        self.assertIn("title", cols)
 
 
 # ---------------------------------------------------------------------------

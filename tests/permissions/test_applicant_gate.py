@@ -114,43 +114,32 @@ class TestRelatableResourcePicker(AuthTestHelper, TestCase):
             params,
         )
 
-    def test_applicant_may_pick_a_contributor(self):
+    def test_what_an_applicant_may_pick(self):
+        # An initialValue is answered with that resource's descriptor ahead of
+        # the candidates the picker was asked for, so it is gated too.
+        proponent = ("permit_application", "application_proponent")
         self.idir_login_simulate()
-        response = self.picker("permit_application", "application_proponent")
-        self.assertNotEqual(response.status_code, 403)
-
-    def test_applicant_may_carry_a_contributor_as_the_current_value(self):
-        self.idir_login_simulate()
-        response = self.picker(
-            "permit_application",
-            "application_proponent",
-            initialValue=str(self.contributor.pk),
-        )
-        self.assertNotEqual(response.status_code, 403)
-
-    def test_applicant_may_not_name_an_off_graph_current_value(self):
-        # The picker answers with the descriptor of whatever initialValue names,
-        # ahead of the candidates it was asked for.
-        self.idir_login_simulate()
-        response = self.picker(
-            "permit_application",
-            "application_proponent",
-            initialValue=str(self.off_graph.pk),
-        )
-        self.assertEqual(response.status_code, 403)
-
-    def test_applicant_may_not_pick_a_permit(self):
-        self.idir_login_simulate()
-        self.assertEqual(
-            self.picker("permit_application", "concurrent_permits_list").status_code,
-            403,
-        )
-
-    def test_applicant_may_not_pick_a_site(self):
-        self.idir_login_simulate()
-        self.assertEqual(
-            self.picker("archaeological_site", "parent_site").status_code, 403
-        )
+        for name, allowed, args, params in (
+            ("a contributor", True, proponent, {}),
+            (
+                "a contributor as the current value",
+                True,
+                proponent,
+                {"initialValue": str(self.contributor.pk)},
+            ),
+            (
+                "an off-graph current value",
+                False,
+                proponent,
+                {"initialValue": str(self.off_graph.pk)},
+            ),
+            ("a permit", False, ("permit_application", "concurrent_permits_list"), {}),
+            ("a site", False, ("archaeological_site", "parent_site"), {}),
+        ):
+            with self.subTest(name):
+                status = self.picker(*args, **params).status_code
+                assertion = self.assertNotEqual if allowed else self.assertEqual
+                assertion(status, 403)
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")

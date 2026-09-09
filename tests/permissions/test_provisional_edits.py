@@ -32,17 +32,16 @@ class ResourceReviewerOverrideTests(TestCase):
             username=ANONYMOUS_USERNAME
         )
 
-    def test_submitter_is_a_reviewer(self):
-        self.assertTrue(self.framework.user_is_resource_reviewer(self.submitter))
-
-    def test_a_signed_in_user_without_groups_still_authors_for_real(self):
-        """Group membership does not decide this: a non-reviewer's tile save
-        lands in provisionaledits with the tile written empty, so narrowing it
-        by role would lose that role's edits silently."""
-        self.assertTrue(self.framework.user_is_resource_reviewer(self.stranger))
-
-    def test_public_user_is_not_a_reviewer(self):
-        self.assertFalse(self.framework.user_is_resource_reviewer(self.public))
-
-    def test_unauthenticated_user_is_not_a_reviewer(self):
-        self.assertFalse(self.framework.user_is_resource_reviewer(AnonymousUser()))
+    def test_who_reviews(self):
+        # Group membership does not decide this: a non-reviewer's tile save lands
+        # in provisionaledits with the tile written empty, so narrowing it by
+        # role would lose that role's edits silently.
+        for name, expected, user in (
+            ("a submitter", True, self.submitter),
+            ("a signed-in user in no group", True, self.stranger),
+            ("the public user", False, self.public),
+            ("an unauthenticated user", False, AnonymousUser()),
+        ):
+            with self.subTest(name):
+                reviewer = self.framework.user_is_resource_reviewer(user)
+                self.assertIs(bool(reviewer), expected)

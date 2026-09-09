@@ -46,12 +46,12 @@ class InstanceDefaultsTests(TestCase):
         resource = ResourceInstance.objects.create(graph=self.graphs[slug])
         return user_can_read_resource(user, str(resource.pk))
 
-    def test_a_granted_graph_is_readable_without_owning_the_resource(self):
-        self.assertTrue(self.read(self.staff, GRANTED))
-
-    def test_a_graph_the_setting_omits_stays_denied(self):
-        self.assertFalse(self.read(self.applicant, OMITTED))
-
-    def test_an_applicant_does_not_reach_someone_elses_permit(self):
-        """The graph grant is wide; the framework narrows it per instance."""
-        self.assertFalse(self.read(self.applicant, APPLICANT))
+    def test_reads(self):
+        for name, expected, user, slug in (
+            ("a granted graph, resource not owned", True, self.staff, GRANTED),
+            ("a graph the setting omits", False, self.applicant, OMITTED),
+            # The graph grant is wide; the framework narrows it per instance.
+            ("someone else's permit", False, self.applicant, APPLICANT),
+        ):
+            with self.subTest(name):
+                self.assertIs(bool(self.read(user, slug)), expected)
