@@ -13,7 +13,6 @@ from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.aliased_data import AliasedDataReader
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -33,7 +32,7 @@ from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import node_id
+from bcap.util.graph import node_id, nodes_for
 from bcap.util.tiles import resource_instance_id, resource_instance_value
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
@@ -179,7 +178,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         the ones being read; no aliases means the whole tree (what the save path
         needs)."""
         nodes = (
-            AliasedDataReader.nodes(GraphSlugs.PERMIT_APPLICATION, node_aliases)
+            nodes_for(GraphSlugs.PERMIT_APPLICATION, node_aliases)
             if node_aliases
             else None
         )
@@ -277,7 +276,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         return (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                nodes=AliasedDataReader.nodes(
+                nodes=nodes_for(
                     GraphSlugs.PROCESS_REQUIREMENT, ["is_template_requirement"]
                 ),
             )
