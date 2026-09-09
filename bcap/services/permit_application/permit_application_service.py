@@ -38,6 +38,13 @@ class PermitApplicationService:
             return queryset
         return queryset.filter(PermitAccess.own_or_company_permits(user))
 
+    @classmethod
+    def detail_query(cls, permit_id, user):
+        """The source of a single-filing read, gated before the fetch so one the
+        caller may not open answers 403 rather than the narrowed query's 404."""
+        PermitAccess.require_view(user, str(permit_id))
+        return cls.base_query(user, resource_ids=[str(permit_id)])
+
     def __init__(self, request=None, requirement_service=None):
         # The request rides along so requirement saves name the acting user in
         # the edit log; the read-only callers build one without it.
@@ -81,9 +88,11 @@ class PermitApplicationService:
             return save()
         return self._attach_requirements_and_save(data, save)
 
-    def submit(self, instance, data, save):
+    def submit(self, instance, data, user, save):
         """Attach the requirement working copies on the first update that sets
-        the submission date."""
+        the submission date. Edit access to the filing gates the whole update, so
+        it is checked here rather than left to each caller."""
+        PermitAccess.require_change(user, str(instance.pk))
         if not self._first_submission(instance, data):
             return save()
         return self._attach_requirements_and_save(data, save, permit_id=instance.pk)

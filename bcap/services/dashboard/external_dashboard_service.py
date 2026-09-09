@@ -132,7 +132,7 @@ class ExternalDashboardService(BaseDashboardService):
     def _draft_cards(self, user, query):
         store = WorkflowDraftService()
         own_only = query.status == ExternalDashboardStatus.DRAFTS_CREATED_BY_ME
-        count, drafts = self._page(store.queryset(user, own_only=own_only), query)
+        count, drafts = self._page(store.base_query(user, own_only=own_only), query)
         unread = BcapMessageService().unread_counts_by_context(
             {str(draft.pk) for draft in drafts}, user.username
         )

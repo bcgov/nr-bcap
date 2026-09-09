@@ -15,7 +15,8 @@ class RelatedResourceService:
     def base_query(graph_slug, resource_ids):
         """The rows hanging off these parents: a site by its parent_site, a
         publication through the reference table, every other graph by its
-        archaeological_site link. Staff-only route, so no narrowing by caller."""
+        archaeological_site link. Takes no caller, unlike the other services':
+        this is a staff-only route, so there is nothing to narrow to."""
         ids = [str(resource_id) for resource_id in resource_ids]
         queryset = ResourceTileTree.get_tiles(
             graph_slug, as_representation=True

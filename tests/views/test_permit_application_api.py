@@ -385,7 +385,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         # Already submitted, so a further submit clones nothing; it just saves.
         saved = []
         PermitApplicationService().submit(
-            self._permit(pk), submission_payload(), lambda: saved.append(True)
+            self._permit(pk),
+            submission_payload(),
+            get_user_model().objects.get(username="admin"),
+            lambda: saved.append(True),
         )
         self.assertTrue(saved)
         self.assertEqual(self._requirement_count(), before)
@@ -679,7 +682,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ):
             with self.assertRaises(RuntimeError):
                 PermitApplicationService().submit(
-                    self._permit(pk), submission_payload(), lambda: None
+                    self._permit(pk),
+                    submission_payload(),
+                    get_user_model().objects.get(username="admin"),
+                    lambda: None,
                 )
 
         self.assertEqual(self._requirement_count(), before)

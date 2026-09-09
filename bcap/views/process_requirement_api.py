@@ -15,14 +15,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from arches.app.models.resource import Resource
-
 from arches_querysets.models import ResourceTileTree
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from bcap.permissions.permit_access import PermitAccess
 from bcap.permissions.route_guards import (
     Internal,
     SubmitterOrInternal,
@@ -42,7 +39,6 @@ from bcap.services.process_requirement.process_requirement_service import (
 )
 from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
-from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
 
@@ -90,18 +86,15 @@ class ProcessRequirementView(
     on one they cannot. Writing is staff-only.
 
     No owner mixin: the creator filter would hide the working copies made for an
-    applicant by someone else, and get_object answers the access question anyway.
+    applicant by someone else, and the queryset answers the access question anyway.
     """
 
     permission_classes = [SubmitterReadsInternalReadWrites]
 
-    def get_object(self, permission_callable=None, **kwargs):
-        """Access is one question, so one check answers it: staff anything, an
-        applicant what their permit reaches. Dropping the callable takes the
-        graph policy out of it, which would never grant an applicant that."""
-        requirement = super().get_object(**kwargs)
-        PermitAccess.require_view(self.request.user, requirement.pk)
-        return requirement
+    def get_queryset(self):
+        return ProcessRequirementService.detail_query(
+            self.kwargs["pk"], self.request.user
+        )
 
 
 @extend_schema(tags=["External: process_requirement"])
@@ -154,20 +147,12 @@ class ProcessRequirementSeedView(APIView):
     )
     def post(self, request, pk, permit_type):
         serializer_class = self._host_serializer_class(permit_type, pk)
-        PermitAccess.require_change(request.user, str(pk))
         host_serializer = serializer_class(data=request.data, request=request)
         host_serializer.is_valid(raise_exception=True)
-        host = host_serializer.save()
-        host_resource = Resource.objects.get(pk=host.pk)
-        host_resource.save_descriptors()
-        ProcessRequirementService(request).attach_requirements(pk, permit_type, host)
-        bulk_index([host_resource])
-        # Re-read the saved host as representation so the response carries
-        # display_value (what the review screen renders).
-        fresh = ResourceTileTree.get_tiles(
-            host_graph(permit_type), resource_ids=[host.pk], as_representation=True
-        ).get()
-        return Response(serializer_class(fresh, request=request).data, status=201)
+        host = ProcessRequirementService(request).submit_module(
+            pk, permit_type, request.user, host_serializer.save
+        )
+        return Response(serializer_class(host, request=request).data, status=201)
 
 
 @extend_schema(tags=["External: process_requirement"])

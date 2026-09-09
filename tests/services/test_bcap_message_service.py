@@ -5,6 +5,9 @@ Contributor is party to, as author or recipient."""
 from unittest.mock import patch
 
 from django.test import TestCase
+from rest_framework.exceptions import PermissionDenied
+
+from arches.app.models.models import ResourceInstance
 
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
@@ -73,7 +76,8 @@ def make_message(
 
 
 class BcapMessageVisibilityTests(TestCase):
-    """fetch_roots / fetch_thread gate message visibility by the viewer's role."""
+    """Message visibility by the viewer's role, for both the thread listing and
+    one thread's messages."""
 
     @classmethod
     def setUpTestData(cls):
@@ -150,11 +154,11 @@ class BcapMessageVisibilityTests(TestCase):
         )
 
     def _root_ids(self, user):
-        roots = self.service.root_queryset(self.permit_id, user)
+        roots = self.service.thread_roots_query(self.permit_id, user)
         return {str(m.pk) for m in roots}
 
     def _thread_ids(self, root, user):
-        messages = self.service.thread_queryset(str(root.pk), user)
+        messages = self.service.thread_messages_query(str(root.pk), user)
         return [str(m.pk) for m in messages]
 
     def test_being_party_is_not_enough_off_their_own_permits(self):
@@ -201,7 +205,7 @@ class BcapMessageVisibilityTests(TestCase):
         # read; a message they authored is never unread to them.
         applicant_view = {
             str(m.pk): m.is_unread
-            for m in self.service.thread_queryset(
+            for m in self.service.thread_messages_query(
                 str(self.public_root.pk), self.applicant
             )
         }
@@ -211,7 +215,9 @@ class BcapMessageVisibilityTests(TestCase):
 
         staff_view = {
             str(m.pk): m.is_unread
-            for m in self.service.thread_queryset(str(self.public_root.pk), self.staff)
+            for m in self.service.thread_messages_query(
+                str(self.public_root.pk), self.staff
+            )
         }
         # Mirror image: staff is the root's recipient, and authored the reply.
         self.assertTrue(staff_view[str(self.public_root.pk)])
@@ -292,7 +298,7 @@ class BcapMessageUnreadCountTests(TestCase):
 
 
 class BcapMessageThreadUnreadCountTests(TestCase):
-    """root_queryset annotates each thread root with the viewer's unread count
+    """thread_roots_query annotates each thread root with the viewer's unread count
     for the whole thread: a reply's unread rolls up to its root, while read
     messages and messages addressed to another viewer do not count."""
 
@@ -342,7 +348,7 @@ class BcapMessageThreadUnreadCountTests(TestCase):
         )
 
     def _unread_by_root(self, user):
-        roots = self.service.root_queryset(self.permit_id, user)
+        roots = self.service.thread_roots_query(self.permit_id, user)
         return {str(root.pk): root.unread_count for root in roots}
 
     def test_reply_unread_rolls_up_to_root(self):
@@ -362,7 +368,7 @@ class BcapMessageArchiveTests(TestCase):
     """Archiving is personal: an archived_by tile on the thread root marks the
     thread archived for one viewer only, so one party archiving never hides it
     from another; it is root-scoped, so archiving from a reply archives the
-    thread; and root_queryset splits each viewer's active vs archived threads."""
+    thread; and thread_roots_query splits each viewer's active vs archived threads."""
 
     @classmethod
     def setUpTestData(cls):
@@ -408,7 +414,7 @@ class BcapMessageArchiveTests(TestCase):
         )
 
     def _root_ids(self, user, archived):
-        roots = self.service.root_queryset(self.permit_id, user, archived=archived)
+        roots = self.service.thread_roots_query(self.permit_id, user, archived=archived)
         return {str(m.pk) for m in roots}
 
     def test_archive_is_per_viewer(self):
@@ -541,7 +547,12 @@ class BcapMessagePrepareTests(TestCase):
         cls.third, cls.third_contrib = make_party(
             builder, "prepthird", "Tia", "Third", internal=True
         )
+        # Filed by the applicant under no company, so posting to it clears the
+        # edit gate prepare_message ends on.
         cls.permit = builder.make_resource("permit_application")
+        ResourceInstance.objects.filter(pk=cls.permit.pk).update(
+            principaluser=cls.applicant
+        )
         cls.root = make_message(
             builder,
             context=cls.permit,
@@ -562,7 +573,11 @@ class BcapMessagePrepareTests(TestCase):
         subject=None,
         message_type=None,
     ):
-        content = {}
+        # Every real create carries the resource the message files against; the
+        # edit gate reads it off the payload.
+        content = {
+            A.RESOURCE_CONTEXT: {"node_value": [{"resourceId": str(self.permit.pk)}]}
+        }
         if is_internal is not None:
             content[A.IS_INTERNAL] = {"node_value": is_internal}
         if recipient is not None:
@@ -682,7 +697,7 @@ class BcapMessagePrepareTests(TestCase):
 
 
 class BcapMessageThreadDateTests(TestCase):
-    """root_queryset annotates each root with its thread's latest message date,
+    """thread_roots_query annotates each root with its thread's latest message date,
     rolled up from the root and its replies, independent of the viewer."""
 
     @classmethod
@@ -725,7 +740,7 @@ class BcapMessageThreadDateTests(TestCase):
     def test_last_message_date_is_the_threads_latest(self):
         dates = {
             str(root.pk): root.last_message_date
-            for root in self.service.root_queryset(self.permit_id, self.staff)
+            for root in self.service.thread_roots_query(self.permit_id, self.staff)
         }
         # A datetime, formatted client-side. The reply is newer than its root, so
         # the reply's date is the one that rolls up.
@@ -743,11 +758,16 @@ class BcapMessageModuleUnreadTests(TestCase):
         cls.service = BcapMessageService()
         builder = FixtureBuilder()
 
-        cls.reader, recipient = make_party(builder, "modreader", "Amy", "App")
+        # Internal, so the submission gate lets the reader through to a permit
+        # they did not file.
+        cls.reader, recipient = make_party(
+            builder, "modreader", "Amy", "App", internal=True
+        )
         # Two resources a module's messages could file against: one with two
         # unread messages to the reader, one with none.
         cls.hosted = builder.make_resource("permit_application")
         cls.empty = builder.make_resource("permit_application")
+        cls.submission = builder.make_resource("permit_application")
         make_message(builder, context=cls.hosted, recipient=recipient, subject="1")
         make_message(builder, context=cls.hosted, recipient=recipient, subject="2")
 
@@ -763,9 +783,15 @@ class BcapMessageModuleUnreadTests(TestCase):
             "bcap.services.message.bcap_message_service.ProcessRequirementService"
         ) as service:
             service.return_value.module_message_contexts.return_value = contexts
-            rows = self.service.unread_by_module("permit-x", "modreader")
+            rows = self.service.unread_by_module(str(self.submission.pk), self.reader)
 
         self.assertEqual(
             {row.module_id: row.unread_count for row in rows},
             {"module-hosted": 2, "module-empty": 0},
         )
+
+    def test_unread_by_module_denies_a_submission_the_caller_cannot_reach(self):
+        with self.assertRaises(PermissionDenied):
+            self.service.unread_by_module(
+                str(self.submission.pk), make_user("modoutsider")
+            )

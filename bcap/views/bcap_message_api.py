@@ -5,7 +5,6 @@ resource_context. The list views extend the generated arches_querysets view
 BcapMessageService."""
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import JSONParser
@@ -16,7 +15,6 @@ from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONP
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from bcap.permissions.permit_access import PermitAccess
 from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
@@ -26,7 +24,6 @@ from bcap.serializers.bcap_message_serializers import (
     ThreadsQuerySerializer,
 )
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
-from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     InternalMessageToExternal,
@@ -50,8 +47,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
     def get_queryset(self):
         params = ThreadsQuerySerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
-        PermitAccess.require_view(self.request.user, str(self.kwargs["resource_id"]))
-        return BcapMessageService().root_queryset(
+        return BcapMessageService().thread_roots_query(
             self.kwargs["resource_id"],
             self.request.user,
             archived=params.validated_data.archived,
@@ -68,12 +64,9 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
     serializer_class = ThreadMessageSerializer
 
     def get_queryset(self):
-        service = BcapMessageService()
-        thread_id = self.kwargs["thread_id"]
-        PermitAccess.require_view(
-            self.request.user, service.message_resource_context_id(thread_id)
+        return BcapMessageService().thread_messages_query(
+            self.kwargs["thread_id"], self.request.user
         )
-        return service.thread_queryset(thread_id, self.request.user)
 
 
 @extend_schema(tags=["External: bcap_message"])
@@ -85,12 +78,13 @@ class BcapMessageCreateView(BcapMessageListView):
     parser_classes = [JSONParser, MultiPartJSONParser]
 
     def create(self, request, *args, **kwargs):
-        service = BcapMessageService()
-        attachments = request.FILES.getlist("attachments")
-        if attachments:
-            request.FILES.setlist(service.attachments_file_key(), attachments)
+        """Ready the body before the standard create validates it: the author and
+        the reply fields are stamped onto it, so validating any earlier would save
+        a message without them."""
         try:
-            service.prepare_message(request.data, request.user)
+            BcapMessageService().prepare_message(
+                request.data, request.user, request.FILES
+            )
         except NoAuthorContributor:
             raise ValidationError(
                 "No Contributor is linked to your account to author this message."
@@ -99,17 +93,12 @@ class BcapMessageCreateView(BcapMessageListView):
             raise ValidationError(
                 "An internal message cannot be addressed to an external recipient."
             )
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        resource_id = service.resource_context_id(request.data)
-        PermitAccess.require_change(request.user, resource_id)
-        self.perform_create(serializer)
-        # A reply resurfaces the thread
-        service.unarchive_thread_for_all(serializer.instance.pk)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        """A reply resurfaces the thread for everyone party to it."""
+        super().perform_create(serializer)
+        BcapMessageService().unarchive_thread_for_all(serializer.instance.pk)
 
 
 @extend_schema(
@@ -117,16 +106,12 @@ class BcapMessageCreateView(BcapMessageListView):
 )
 class BcapMessageModuleUnreadView(APIView):
     """GET the viewer's unread count per process_module of a submission, so the
-    module list badges unread without loading each module's threads. The counts
-    are the caller's own; the gate is on the submission they ask about."""
+    module list badges unread without loading each module's threads."""
 
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
-        PermitAccess.require_view(request.user, str(submission_id))
-        rows = BcapMessageService().unread_by_module(
-            str(submission_id), request.user.username
-        )
+        rows = BcapMessageService().unread_by_module(str(submission_id), request.user)
         return Response(ModuleUnreadSerializer(rows, many=True).data)
 
 
@@ -136,14 +121,14 @@ class BcapMessageModuleUnreadView(APIView):
 )
 class BcapMessageContributorsView(APIView):
     """GET the contributors you can address a message to for a resource: the
-    login-linked contributors referenced on it plus its ministry assignees.
-    Gated on read access to the resource, like the threads on it."""
+    login-linked contributors referenced on it plus its ministry assignees."""
 
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, resource_id):
-        PermitAccess.require_view(request.user, str(resource_id))
-        options = ContributorService().contributors_for_resource(str(resource_id))
+        options = BcapMessageService().addressable_contributors(
+            resource_id, request.user
+        )
         return Response(ContributorSummarySerializer(options, many=True).data)
 
 
@@ -162,27 +147,12 @@ class BcapMessageDetailView(
     http_method_names = ["get", "patch", "options"]
 
     def get_queryset(self):
-        """Narrowed like the thread listing: the resource_context gate says whose
-        correspondence this is, not which of it the caller is party to."""
-        return BcapMessageService.base_query(
-            self.request.user, resource_ids=self.resource_ids
-        )
-
-    def _context_id(self):
-        return BcapMessageService().message_resource_context_id(self.kwargs["pk"])
-
-    def retrieve(self, request, *args, **kwargs):
-        PermitAccess.require_view(request.user, self._context_id())
-        return Response(self.get_serializer(self.get_object()).data)
+        """Narrowed like the thread listing, and gated in the same call: the
+        resource_context says whose correspondence this is, not which of it the
+        caller is party to."""
+        return BcapMessageService.detail_query(self.kwargs["pk"], self.request.user)
 
     def update(self, request, *args, **kwargs):
         self.get_object()
-        PermitAccess.require_change(request.user, self._context_id())
-        service = BcapMessageService()
-        # A PATCH can carry the read date, the archive flag, either, or both; each
-        # setter no-ops when its own field is absent from the body.
-        service.set_read_state(request, self.kwargs["pk"], request.data)
-        service.set_archived_state(
-            self.kwargs["pk"], request.data, request.user.username
-        )
+        BcapMessageService().apply_patch(request, self.kwargs["pk"], request.data)
         return Response(self.get_serializer(self.get_object()).data)

@@ -68,6 +68,15 @@ class ProcessRequirementService:
             return queryset
         return queryset.filter(pk__in=PermitAccess.own_or_company_resource_ids(user))
 
+    @classmethod
+    def detail_query(cls, requirement_id, user):
+        """The source of a single-requirement read. Access is one question, so one
+        check answers it: staff anything, an applicant what their permit reaches.
+        Gated before the fetch, so an unreachable one is a 403, and the graph
+        policy never sees the read, which would never grant an applicant that."""
+        PermitAccess.require_view(user, str(requirement_id))
+        return cls.base_query(user, resource_ids=[str(requirement_id)])
+
     # The default module every permit application gets (the grouping parent plus
     # Recommend Referral, Recommend Decision, Decision Summary).
     _DEFAULT_MODULE = "permit"
@@ -102,6 +111,25 @@ class ProcessRequirementService:
         """The default module, cloned for the caller to wrap in a process_module
         tile."""
         return self._clone_module(self._DEFAULT_MODULE)
+
+    def submit_module(self, permit_id, permit_type, user, create_host):
+        """File a module against a permit: create its host from the caller's body,
+        attach the cloned requirements to the permit, and hand back the host
+        re-read as representation so the response carries the display values the
+        review screen renders.
+
+        Edit access to the permit gates the whole thing, checked before the host
+        is created so a refused caller leaves nothing behind. The host arrives as
+        a callable because building it is the serializer's job, not this one's."""
+        PermitAccess.require_change(user, str(permit_id))
+        host = create_host()
+        host_resource = Resource.objects.get(pk=host.pk)
+        host_resource.save_descriptors()
+        self.attach_requirements(permit_id, permit_type, host)
+        bulk_index([host_resource])
+        return ResourceTileTree.get_tiles(
+            host_graph(permit_type), resource_ids=[host.pk], as_representation=True
+        ).get()
 
     def attach_requirements(self, permit_id, permit_type, host=None):
         """Clone the permit type's module and attach its requirements to the permit

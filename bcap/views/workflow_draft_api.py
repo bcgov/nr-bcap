@@ -160,7 +160,7 @@ class WorkflowDraftAllListView(WorkflowDraftBaseView):
     def get(self, request):
         params = DraftsQuerySerializer(data=request.query_params)
         params.is_valid(raise_exception=True)
-        drafts = self.store.queryset(
+        drafts = self.store.base_query(
             request.user, parent_resource_id=params.validated_data.parent
         )
         return Response([self.serialize(draft) for draft in drafts])
@@ -172,7 +172,7 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
 
     @extend_schema(responses=WorkflowDraftSerializer(many=True))
     def get(self, request, graph_slug):
-        drafts = self.store.queryset(request.user, graph_slug)
+        drafts = self.store.base_query(request.user, graph_slug)
         return Response([self.serialize(draft) for draft in drafts])
 
     @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)

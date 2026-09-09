@@ -58,18 +58,32 @@ class BcapMessageService(AliasedDataReader):
 
     A = BcapMessageAliases
 
+    # What the external gate filters on, so a narrowed query still annotates them.
+    GATE_ALIASES = (
+        BcapMessageAliases.RECIPIENT,
+        BcapMessageAliases.MESSAGE_AUTHOR,
+        BcapMessageAliases.IS_INTERNAL,
+        BcapMessageAliases.RESOURCE_CONTEXT,
+    )
+
     @classmethod
-    def base_query(cls, user, resource_ids=None, as_representation=True):
+    def base_query(cls, user, resource_ids=None, as_representation=True, aliases=None):
         """Every message for branch staff; for everyone else the ones they are
         party to on a permit they or their company filed. Being party to it is not
         enough on its own.
 
         Fetch with as_representation off to save the result back: representation
-        turns reference values into dicts the datatype refuses on the way in."""
+        turns reference values into dicts the datatype refuses on the way in.
+        Naming aliases annotates only those nodes, for queries that just count."""
         queryset = ResourceTileTree.get_tiles(
             MESSAGE_GRAPH_SLUG,
             resource_ids=resource_ids,
             as_representation=as_representation,
+            nodes=(
+                nodes_for(MESSAGE_GRAPH_SLUG, [*aliases, *cls.GATE_ALIASES])
+                if aliases
+                else None
+            ),
         ).select_related("graph", "resource_instance_lifecycle_state")
         if is_internal_user(user):
             return queryset
@@ -114,6 +128,25 @@ class BcapMessageService(AliasedDataReader):
             .first()
         )
         return str(context_id) if context_id else None
+
+    @classmethod
+    def detail_query(cls, message_id, user):
+        """The source of a single-message read. A message is gated on the resource
+        it hangs off, not on its own id, and gated before the fetch so one on
+        someone else's permit answers 403 rather than the narrowed query's 404."""
+        PermitAccess.require_view(user, cls.message_resource_context_id(message_id))
+        return cls.base_query(user, resource_ids=[str(message_id)])
+
+    def apply_patch(self, request, message_id, data):
+        """Apply a PATCH body: the read date, the caller's archive of the thread,
+        or both, whichever it carries. Gated once here rather than inside each
+        setter, since a setter no-ops when its own field is absent and a body
+        carrying neither must still answer 403 to someone who may not edit."""
+        PermitAccess.require_change(
+            request.user, self.message_resource_context_id(message_id)
+        )
+        self.set_read_state(request, message_id, data)
+        self.set_archived_state(message_id, data, request.user.username)
 
     def set_read_state(self, request, message_id, data):
         """Set (a datetime) or clear (None) a message's read date from a PATCH
@@ -227,13 +260,19 @@ class BcapMessageService(AliasedDataReader):
         """The is_internal flag on the create payload (default False)."""
         return bool(cls._payload_node_value(data, cls.A.IS_INTERNAL))
 
-    def prepare_message(self, data, user):
-        """Fill in the author and enforce internal-message rules on a create payload."""
+    def prepare_message(self, data, user, files=None):
+        """Fill in the author, move any uploads onto the field the tile save
+        expects, and enforce internal-message rules on a create payload. Ends on
+        the access check, so nothing is created against a resource the poster may
+        not edit."""
+        if files is not None:
+            self._rekey_attachments(files)
         author_id = self.set_author(data, user.username)
         if not is_internal_user(user):
             self._set_node(data, self.A.IS_INTERNAL, False)
         self.set_reply_fields(data, author_id)
         self.validate_internal_recipient(data)
+        PermitAccess.require_change(user, self.resource_context_id(data))
 
     @classmethod
     def set_author(cls, data, username):
@@ -303,10 +342,12 @@ class BcapMessageService(AliasedDataReader):
         ):
             raise InternalMessageToExternal(recipient_id)
 
-    def root_queryset(self, resource_id, user, archived=False):
-        """The thread-starting messages on a parent resource, gated for externals.
-        Archive is per-user: a thread is archived only for the contributors on its root's
-        archived_by."""
+    def thread_roots_query(self, resource_id, user, archived=False):
+        """The thread-starting messages on a parent resource. Read access to that
+        resource is the gate, so an unreachable one is a 403 rather than an empty
+        list. Archive is per-user: a thread is archived only for the contributors
+        on its root's archived_by."""
+        PermitAccess.require_view(user, str(resource_id))
         roots = (
             self.base_query(user).filter(
                 resource_context__id=str(resource_id),
@@ -316,7 +357,7 @@ class BcapMessageService(AliasedDataReader):
             .order_by("-message_creation_date", "-createdtime")
         )
         roots = self._by_archived(roots, user.username, archived)
-        unread, latest = self._thread_summaries(resource_id, user.username)
+        unread, latest = self._thread_summaries(resource_id, user)
         # A subquery annotation can't reach these: the thread link is a JSON node,
         # not a column an OuterRef can compare against, so map them on by pk.
         return roots.annotate(
@@ -332,25 +373,22 @@ class BcapMessageService(AliasedDataReader):
             ),
         )
 
-    def _thread_summaries(self, resource_id, username):
+    def _thread_summaries(self, resource_id, user):
         """Per thread on a resource, in one query: the viewer's unread count and
         the latest message date. A message's thread is the message it replies to,
         or itself if it is a root; replies share the resource_context, so one
-        filter covers the whole thread."""
-        contributor_id = self._contributor_id(username)
+        filter covers the whole thread. Gated, so an internal-only reply doesn't
+        move an external viewer's thread date."""
+        contributor_id = self._contributor_id(user.username)
         rows = (
-            ResourceTileTree.get_tiles(
-                MESSAGE_GRAPH_SLUG,
-                nodes=nodes_for(
-                    MESSAGE_GRAPH_SLUG,
-                    [
-                        self.A.RECIPIENT,
-                        self.A.MESSAGE_READ_DATE,
-                        self.A.MESSAGE_CREATION_DATE,
-                        self.A.RESOURCE_CONTEXT,
-                        self.A.RELATED_SOURCE_MESSAGE,
-                    ],
-                ),
+            self.base_query(
+                user,
+                as_representation=False,
+                aliases=[
+                    self.A.MESSAGE_READ_DATE,
+                    self.A.MESSAGE_CREATION_DATE,
+                    self.A.RELATED_SOURCE_MESSAGE,
+                ],
             )
             .filter(resource_context__id=str(resource_id))
             .values(
@@ -387,10 +425,12 @@ class BcapMessageService(AliasedDataReader):
             return roots.filter(pk__in=archived_ids)
         return roots.exclude(pk__in=archived_ids)
 
-    def thread_queryset(self, thread_id, user):
-        """One thread's messages, oldest first, gated for external users. Each row
-        is annotated is_unread for this viewer: addressed to them and not yet read,
-        so a message they authored is never unread to them."""
+    def thread_messages_query(self, thread_id, user):
+        """One thread's messages, oldest first, gated on read access to the
+        resource the thread hangs off. Each row is annotated is_unread for this
+        viewer: addressed to them and not yet read, so a message they authored is
+        never unread to them."""
+        PermitAccess.require_view(user, self.message_resource_context_id(thread_id))
         contributor_id = self._contributor_id(user.username)
         if contributor_id:
             unread = Case(
@@ -412,31 +452,47 @@ class BcapMessageService(AliasedDataReader):
             .order_by("message_creation_date", "createdtime")
         )
 
-    def unread_by_module(self, submission_id, username) -> list[ModuleUnread]:
+    def unread_by_module(self, submission_id, user) -> list[ModuleUnread]:
         """The viewer's unread count per process_module of a submission, one entry
-        per module tile."""
+        per module tile. The counts are the caller's own; the gate is on the
+        submission they ask about."""
+        PermitAccess.require_view(user, str(submission_id))
         contexts = ProcessRequirementService().module_message_contexts(
             str(submission_id)
         )
-        counts = self.unread_counts_by_context(contexts.values(), username)
+        counts = self.unread_counts_by_context(contexts.values(), user.username)
         return [
             ModuleUnread(module_id=tile, unread_count=counts.get(ctx, 0))
             for tile, ctx in contexts.items()
         ]
 
-    def attachments_file_key(self):
-        """The multipart field key the create endpoint expects for attachment
-        files: file-list_<attachments node id>, resolved from the graph so no
-        node id is hard-coded on the client."""
+    def addressable_contributors(self, resource_id, user):
+        """Who a message on this resource may be addressed to. The gate lives
+        here rather than on the contributor lookup, which is generic and cannot
+        import the permission module without a cycle."""
+        PermitAccess.require_view(user, str(resource_id))
+        return ContributorService().contributors_for_resource(str(resource_id))
+
+    def _rekey_attachments(self, files):
+        """Move uploads off the plain "attachments" field onto the one the tile
+        save reads, file-list_<attachments node id>, so the client sends a stable
+        name and no node id is hard-coded on it."""
+        attachments = files.getlist("attachments")
+        if not attachments:
+            return
         node_id, _ = node_info(MESSAGE_GRAPH_SLUG, self.A.ATTACHMENTS)
-        return f"file-list_{node_id}"
+        files.setlist(f"file-list_{node_id}", attachments)
 
     def unread_count_across(self, context_ids, username):
         """Unread messages for the user across the given contexts, as one count."""
         return sum(self.unread_counts_by_context(context_ids, username).values())
 
     def unread_counts_by_context(self, context_ids, username):
-        """Unread messages for the user per resource context, in one grouped query."""
+        """Unread messages for the user per resource context, in one grouped query.
+
+        Keyed on username rather than the base query because the caller supplies
+        the contexts it already gated, and only messages addressed to the viewer
+        are counted."""
         contributor_id = self._contributor_id(username)
         if not contributor_id:
             logger.warning(

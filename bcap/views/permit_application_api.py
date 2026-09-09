@@ -44,15 +44,16 @@ class PermitApplicationView(GeneratedPermitApplicationView):
         )
 
     def get_object(self, permission_callable=None, **kwargs):
-        """Dropping the callable takes the graph policy out of the read: an
-        applicant holds no grant on the graph, so it would refuse a colleague
-        the filing their company tab just listed."""
+        """The gate runs after the narrowed fetch, not folded into the queryset:
+        another organization's filing has to stay hidden behind a 404, and gating
+        first would confirm it exists with a 403. Dropping the callable takes the
+        graph policy out of the read: an applicant holds no grant on the graph, so
+        it would refuse a colleague the filing their company tab just listed."""
         permit = super().get_object(**kwargs)
         PermitAccess.require_view(self.request.user, permit.pk)
         return permit
 
     def update(self, request, *args, **kwargs):
-        PermitAccess.require_change(request.user, self.kwargs["pk"])
         block_organization(
             request,
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
@@ -61,6 +62,7 @@ class PermitApplicationView(GeneratedPermitApplicationView):
         return PermitApplicationService(request).submit(
             self.get_object(),
             request.data,
+            request.user,
             save=lambda: super(PermitApplicationView, self).update(
                 request, *args, **kwargs
             ),
