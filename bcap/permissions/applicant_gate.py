@@ -17,12 +17,10 @@ logger = logging.getLogger(__name__)
 
 class ArchesDefaultDenyApplicantGate:
     """The arches ecosystem is staff-only for applicants, bar the views the
-    permit app needs. An applicant's grant is graph-wide until an instance
-    narrows it, so a view answering from nodegroup permissions alone hands out
-    everyone's, and some routes take an id and check nothing. Listing what is
-    allowed means a view added upstream is refused until someone decides
-    otherwise, and matching on the module rather than the URL survives a route
-    being renamed or moved.
+    permit app needs: their grant is graph-wide until an instance narrows it,
+    and these routes either answer from nodegroup permissions or check nothing.
+    An allow-list refuses whatever arrives upstream until someone decides
+    otherwise; naming the module rather than the URL survives a rename.
 
     Every package is governed, not just arches core, since they carry the same
     permissive reads. BCAP's own routes answer for themselves.
