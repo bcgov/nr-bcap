@@ -38,13 +38,6 @@ class PermitApplicationService:
             return queryset
         return queryset.filter(PermitAccess.own_or_company_permits(user))
 
-    @classmethod
-    def detail_query(cls, permit_id, user):
-        """The source of a single-filing read, gated before the fetch so one the
-        caller may not open answers 403 rather than the narrowed query's 404."""
-        PermitAccess.require_view(user, str(permit_id))
-        return cls.base_query(user, resource_ids=[str(permit_id)])
-
     def __init__(self, request=None, requirement_service=None):
         # The request rides along so requirement saves name the acting user in
         # the edit log; the read-only callers build one without it.

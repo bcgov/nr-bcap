@@ -10,7 +10,6 @@ first, so they shadow them.
 from drf_spectacular.utils import extend_schema
 
 from bcap.permissions.route_guards import SubmitterOrInternal
-from bcap.permissions.permit_access import PermitAccess
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -37,21 +36,13 @@ class PermitApplicationView(GeneratedPermitApplicationView):
     permission_classes = [SubmitterOrInternal]
 
     def get_queryset(self):
-        """Replaces UserOwnedResourceMixin's creator-only filter rather than
-        adding to it, which would 404 a colleague and staff alike."""
+        """The whole access answer for a read: replaces UserOwnedResourceMixin's
+        creator-only filter rather than adding to it, which would 404 a colleague
+        and staff alike, and leaves a filing outside the caller's reach as a 404
+        rather than a 403 confirming it exists."""
         return PermitApplicationService.base_query(
             self.request.user, resource_ids=self.resource_ids
         )
-
-    def get_object(self, permission_callable=None, **kwargs):
-        """The gate runs after the narrowed fetch, not folded into the queryset:
-        another organization's filing has to stay hidden behind a 404, and gating
-        first would confirm it exists with a 403. Dropping the callable takes the
-        graph policy out of the read: an applicant holds no grant on the graph, so
-        it would refuse a colleague the filing their company tab just listed."""
-        permit = super().get_object(**kwargs)
-        PermitAccess.require_view(self.request.user, permit.pk)
-        return permit
 
     def update(self, request, *args, **kwargs):
         block_organization(
