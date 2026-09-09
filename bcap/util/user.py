@@ -19,4 +19,4 @@ def display_name(user):
     other applicants."""
     if not user:
         return ""
-    return full_name(user.first_name, user.last_name)
+    return full_name(user.first_name, user.last_name) or 'Unknown'
