@@ -67,7 +67,7 @@ class ArchesDefaultDenyApplicantGate:
     # arches-vue-components should check the page of candidates it is about to
     # return, one user_can_read_resource each. Belongs upstream.
     PICKER_VIEW = "arches_vue_components.views.api.relatable_resources"
-    PICKER_GRAPHS = frozenset({GraphSlugs.CONTRIBUTOR})
+    PICKER_GRAPHS = frozenset({GraphSlugs.CONTRIBUTOR, GraphSlugs.REPOSITORY})
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -88,15 +88,17 @@ class ArchesDefaultDenyApplicantGate:
             # An initialValue is echoed back with its descriptor whatever graph
             # it names, so it clears the same bar the candidates do.
             named = offered | graph_slugs_of(request.GET.getlist("initialValue"))
-            if offered and named <= self.PICKER_GRAPHS:
-                logger.info(
-                    "Applicant allowed %s, a picker of %s",
-                    request.path,
-                    sorted(named),
-                )
-                return None
-        if module.startswith(self.APPLICANT_ALLOWED):
-            logger.info("Applicant allowed %s, served by %s", request.path, module)
+            # A picker of the wrong graphs is refused here rather than falling
+            # through to the module list, which allows whole modules at a time.
+            allowed = bool(offered) and named <= self.PICKER_GRAPHS
+            reason = (
+                f"a picker of {view_kwargs['node_alias']}, offering {sorted(named)}"
+            )
+        else:
+            allowed = module.startswith(self.APPLICANT_ALLOWED)
+            reason = f"served by {module}"
+        if allowed:
+            logger.info("Applicant allowed %s, %s", request.path, reason)
             return None
-        logger.warning("Applicant denied %s, served by %s", request.path, module)
+        logger.warning("Applicant denied %s, %s", request.path, reason)
         raise PermissionDenied
