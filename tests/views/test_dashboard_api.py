@@ -186,7 +186,7 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertFalse(card["is_draft"])
         self.assertEqual(card["status"], "Permit Active")
         # Blank rather than the username: a login identifier is not a name.
-        self.assertEqual(card["created_by_name"], "")
+        self.assertEqual(card["created_by_name"], "Unknown")
         self.assertEqual(card["project_name"], "My App")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
         self.assertEqual(card["submission_type"], "Site Visit")

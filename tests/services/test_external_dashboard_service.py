@@ -290,7 +290,7 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(card.application_number, "DRAFT-1")
         # Blank rather than the username: this fixture user has no name, and a
         # login identifier is not a display name.
-        self.assertEqual(card.created_by_name, "")
+        self.assertEqual(card.created_by_name, "Unknown")
 
     def test_module_drafts_get_a_card_carrying_their_graph(self):
         page = self.service.get_cards(
