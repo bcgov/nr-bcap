@@ -12,14 +12,30 @@ class TestHasClause:
     @pytest.mark.parametrize(
         "clauses,expected",
         [
-            ({}, False),
-            ({"must": [], "should": [], "must_not": []}, False),
-            ({"must": [_TERM]}, True),
-            ({"should": [_TERM]}, True),
-            ({"must_not": [_TERM]}, True),
-            ({"must": [], "should": [_TERM]}, True),
-            ({"must": [], "should": [], "must_not": [_TERM]}, True),
-            ({"must": [_TERM], "should": [_TERM], "must_not": [_TERM]}, True),
+            pytest.param({}, False, id="empty_bool"),
+            pytest.param(
+                {"must": [], "should": [], "must_not": []},
+                False,
+                id="all_empty_lists",
+            ),
+            pytest.param({"must": [_TERM]}, True, id="with_must"),
+            pytest.param({"should": [_TERM]}, True, id="with_should"),
+            pytest.param({"must_not": [_TERM]}, True, id="with_must_not"),
+            pytest.param(
+                {"must": [], "should": [_TERM]},
+                True,
+                id="must_empty_should_populated",
+            ),
+            pytest.param(
+                {"must": [], "should": [], "must_not": [_TERM]},
+                True,
+                id="only_must_not",
+            ),
+            pytest.param(
+                {"must": [_TERM], "should": [_TERM], "must_not": [_TERM]},
+                True,
+                id="all_three_populated",
+            ),
         ],
     )
     def test_has_clause(self, clauses: dict[str, list], expected: bool) -> None:

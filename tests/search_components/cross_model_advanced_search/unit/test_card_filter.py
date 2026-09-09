@@ -20,27 +20,41 @@ class TestCardFilterIsValid:
     @pytest.mark.parametrize(
         "value,expected",
         [
-            (None, False),
-            ("", False),
-            ({}, False),
-            ({"op": "null"}, True),
-            ({"op": "not_null"}, True),
-            ({"op": "null", "extra": "ignored"}, True),
-            ({"op": "eq"}, False),
-            ({"op": "eq", "val": "null"}, True),
-            ({"op": "eq", "val": "not_null"}, True),
-            ({"op": "eq", "val": 0}, True),
-            ({"op": "eq", "val": False}, True),
-            ({"op": "eq", "val": ""}, False),
-            ({"op": "eq", "val": None}, False),
-            ({"op": "eq", "val": " "}, True),
-            ({"op": "eq", "val": []}, False),
-            ({"op": "eq", "val": [{"resourceId": "abc"}]}, True),
-            ({"op": "eq", "val": {"nested": "thing"}}, True),
-            ("some-value", True),
-            (42, True),
-            (0, False),
-            (False, False),
+            pytest.param(None, False, id="none"),
+            pytest.param("", False, id="empty_string"),
+            pytest.param({}, False, id="empty_dict"),
+            pytest.param({"op": "null"}, True, id="null_op"),
+            pytest.param({"op": "not_null"}, True, id="not_null_op"),
+            pytest.param(
+                {"op": "null", "extra": "ignored"},
+                True,
+                id="dict_with_op_null_and_extra_keys",
+            ),
+            pytest.param({"op": "eq"}, False, id="dict_with_op_only_no_val_key"),
+            pytest.param({"op": "eq", "val": "null"}, True, id="val_null_string"),
+            pytest.param(
+                {"op": "eq", "val": "not_null"}, True, id="val_not_null_string"
+            ),
+            pytest.param({"op": "eq", "val": 0}, True, id="val_zero_integer"),
+            pytest.param({"op": "eq", "val": False}, True, id="val_false_boolean"),
+            pytest.param({"op": "eq", "val": ""}, False, id="val_empty_string"),
+            pytest.param({"op": "eq", "val": None}, False, id="val_none"),
+            pytest.param({"op": "eq", "val": " "}, True, id="val_whitespace_string"),
+            pytest.param({"op": "eq", "val": []}, False, id="val_empty_list"),
+            pytest.param(
+                {"op": "eq", "val": [{"resourceId": "abc"}]},
+                True,
+                id="val_nonempty_list",
+            ),
+            pytest.param(
+                {"op": "eq", "val": {"nested": "thing"}},
+                True,
+                id="nested_dict_val_is_dict",
+            ),
+            pytest.param("some-value", True, id="plain_string_truthy"),
+            pytest.param(42, True, id="plain_integer"),
+            pytest.param(0, False, id="plain_zero"),
+            pytest.param(False, False, id="plain_false"),
         ],
     )
     def test_is_valid(self, value: Any, expected: bool) -> None:
@@ -51,14 +65,26 @@ class TestCardFilterBuildResourceInstanceQuery:
     @pytest.mark.parametrize(
         "val,builds",
         [
-            (None, False),
-            ([], False),
-            ([{"resourceId": "abc-123"}], True),
-            ([{"resourceId": "abc-123"}, {"resourceId": "def-456"}], True),
-            ([{"resourceId": "abc"}, {"other": "val"}], True),
-            ([{"notResourceId": "abc"}], False),
-            ({"resourceId": "abc-123"}, True),
-            ({"notResourceId": "abc"}, False),
+            pytest.param(None, False, id="val_is_none"),
+            pytest.param([], False, id="empty_list_val"),
+            pytest.param([{"resourceId": "abc-123"}], True, id="single_resource_id"),
+            pytest.param(
+                [{"resourceId": "abc-123"}, {"resourceId": "def-456"}],
+                True,
+                id="multiple_resource_ids",
+            ),
+            pytest.param(
+                [{"resourceId": "abc"}, {"other": "val"}],
+                True,
+                id="mixed_dicts_some_without_resource_id",
+            ),
+            pytest.param(
+                [{"notResourceId": "abc"}], False, id="no_resource_ids_in_dicts"
+            ),
+            pytest.param({"resourceId": "abc-123"}, True, id="single_dict_not_list"),
+            pytest.param(
+                {"notResourceId": "abc"}, False, id="dict_val_without_resource_id"
+            ),
         ],
     )
     def test_builds_only_when_a_resource_id_is_present(
@@ -86,8 +112,8 @@ class TestCardFilterBuild:
     @pytest.mark.parametrize(
         "known",
         [
-            pytest.param(False, id="unknown-node"),
-            pytest.param(True, id="known-node-invalid-value"),
+            pytest.param(False, id="skips_unknown_node"),
+            pytest.param(True, id="skips_invalid_filter"),
         ],
     )
     def test_skips_filters_that_produce_nothing(self, known: bool) -> None:
@@ -107,11 +133,23 @@ class TestCardFilterCreate:
     @pytest.mark.parametrize(
         "data,filters,nodegroup",
         [
-            ({}, {}, None),
-            ({"nodegroup_id": "ng-1"}, {}, "ng-1"),
-            ({"filters": {"n": {"op": "eq"}}}, {"n": {"op": "eq"}}, None),
-            ({"filters": None, "nodegroup_id": None}, None, None),
-            (
+            pytest.param({}, {}, None, id="empty"),
+            pytest.param(
+                {"nodegroup_id": "ng-1"}, {}, "ng-1", id="missing_filters_key"
+            ),
+            pytest.param(
+                {"filters": {"n": {"op": "eq"}}},
+                {"n": {"op": "eq"}},
+                None,
+                id="missing_nodegroup_key",
+            ),
+            pytest.param(
+                {"filters": None, "nodegroup_id": None},
+                None,
+                None,
+                id="none_filters_and_nodegroup",
+            ),
+            pytest.param(
                 {
                     "filters": {},
                     "nodegroup_id": "ng-1",
@@ -120,6 +158,7 @@ class TestCardFilterCreate:
                 },
                 {},
                 "ng-1",
+                id="extra_keys_ignored",
             ),
         ],
     )

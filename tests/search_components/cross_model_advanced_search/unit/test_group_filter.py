@@ -17,11 +17,28 @@ class TestGroupFilterCreate:
     @pytest.mark.parametrize(
         "data,match_type,operator",
         [
-            ({}, MatchType.ALL, Logic.AND),
-            ({"cards": []}, MatchType.ALL, Logic.AND),
-            ({"match": None, "operator_after": None}, MatchType.ALL, Logic.AND),
-            ({"match": "all", "operator_after": "and"}, MatchType.ALL, Logic.AND),
-            ({"match": "any", "operator_after": "or"}, MatchType.ANY, Logic.OR),
+            pytest.param({}, MatchType.ALL, Logic.AND, id="defaults"),
+            pytest.param(
+                {"cards": []}, MatchType.ALL, Logic.AND, id="empty_cards_list"
+            ),
+            pytest.param(
+                {"match": None, "operator_after": None},
+                MatchType.ALL,
+                Logic.AND,
+                id="none_match_and_none_operator",
+            ),
+            pytest.param(
+                {"match": "all", "operator_after": "and"},
+                MatchType.ALL,
+                Logic.AND,
+                id="match_all_and_operator_and_explicit",
+            ),
+            pytest.param(
+                {"match": "any", "operator_after": "or"},
+                MatchType.ANY,
+                Logic.OR,
+                id="match_any_and_operator_or",
+            ),
         ],
     )
     def test_defaults_and_explicit_values(
