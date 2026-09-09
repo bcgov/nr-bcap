@@ -96,6 +96,7 @@ const publicationColumns: ColumnDefinition[] = [
     {
         label: 'Remarks',
         field: 'publication_remarks',
+        isHtml: true,
     },
 ];
 
