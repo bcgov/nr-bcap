@@ -51,38 +51,10 @@ from tests.services.contributor_fixtures import (
     make_party,
     make_user,
 )
-from tests.views.helpers import AuthTestHelper, login_as
+from tests.views.helpers import AuthTestHelper, api_reference_value, login_as
 
 # The permit module's child requirements, seeded by migration from the spec.
 PERMIT_REQUIREMENTS = len(load("permit")["requirements"])
-
-
-def _api_reference_value(slug, alias, label=None):
-    """Build a reference value in the format the REST serializer expects.
-
-    The builder's ``reference_value()`` returns bare UUID strings, which are
-    correct for tile saves but are rejected by the DRF serializer's
-    ``ReferenceDataType.to_python``, which requires dicts with ``uri``,
-    ``labels``, and ``list_id`` keys."""
-    node = get_node(slug, alias)
-    list_id = node.config["controlledList"]
-    qs = ListItem.objects.filter(list_id=list_id)
-    item = (
-        qs.filter(list_item_values__value=label).first()
-        if label
-        else qs.order_by("sortorder").first()
-    )
-    labels = [
-        {
-            "id": str(lv.pk),
-            "value": lv.value,
-            "language_id": lv.language_id,
-            "valuetype_id": lv.valuetype_id,
-            "list_item_id": str(item.pk),
-        }
-        for lv in item.list_item_values.all()
-    ]
-    return [{"uri": item.uri, "labels": labels, "list_id": str(list_id)}]
 
 
 def create_payload():
@@ -93,7 +65,7 @@ def create_payload():
             group_aliases.APPLICATION_IDENTIFICATION: {
                 ALIASED_DATA: {
                     aliases.PROJECT_NAME: "Test Project",
-                    "filing_type": _api_reference_value(
+                    "filing_type": api_reference_value(
                         "permit_application", "filing_type"
                     ),
                 }

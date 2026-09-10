@@ -12,6 +12,7 @@ import MessageHistory from '@/bcap/apps/Permit/components/common/messages/Messag
 import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messages/MessageAttachmentsField.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
 // the permit view, or a module's own resource for that module's view. context is a
@@ -41,6 +42,7 @@ const state = reactive({
     isLoadingRecipients: false,
     isLoadingMessages: false,
     selectedTopic: '',
+    selectedTopicValue: [] as ReferenceAliasedNodeDataWritable['node_value'],
     selectedThreadId: 'new',
     files: [] as File[],
 });
@@ -52,6 +54,8 @@ const threadContainer = ref<HTMLElement | null>(null);
 // reference objects, not strings.
 const onTopicSelected = (node: AliasedNodeData) => {
     state.selectedTopic = node.display_value ?? '';
+    state.selectedTopicValue = (node.node_value ??
+        []) as ReferenceAliasedNodeDataWritable['node_value'];
 };
 
 const visibleThreads = computed(() =>
@@ -71,10 +75,13 @@ const isReplyMode = computed(() => {
     return state.selectedThreadId !== 'new' && activeThread.value !== null;
 });
 
-// A message needs text; a new thread also needs a message type. Replies inherit
-// their thread's type, so they only need text.
 const canSend = computed(
-    () => !!state.messageText && (isReplyMode.value || !!state.selectedTopic),
+    () =>
+        !!state.messageText &&
+        (isReplyMode.value ||
+            (!!state.selectedTopic &&
+                !!state.selectedRecipient &&
+                !!state.subjectText.trim())),
 );
 
 const showTab = async (archived: boolean) => {
@@ -112,6 +119,7 @@ const closeDialog = () => {
     state.messageText = '';
     state.subjectText = '';
     state.selectedTopic = '';
+    state.selectedTopicValue = [];
     state.files = [];
     messageStore.openMessages = [];
 };
@@ -154,20 +162,17 @@ const submitMessage = async () => {
             ? activeThread.value?.id
             : undefined;
 
-        // "General Question - setback dimensions": the message type, with the
-        // optional free-text subject appended when one was entered.
-        const detail = state.subjectText.trim();
-        const subject = detail
-            ? `${state.selectedTopic} - ${detail}`
-            : state.selectedTopic;
+        const subject = state.subjectText.trim();
 
         await messageStore.send({
             messageText: state.messageText,
             recipientId: state.selectedRecipient as string,
-            applicationId: props.applicationId,
             resourceId: props.resourceId,
             threadId: targetThreadId,
             topic: isReplyMode.value ? undefined : subject || undefined,
+            messageType: isReplyMode.value
+                ? undefined
+                : state.selectedTopicValue,
             files: state.files,
         });
 
@@ -266,7 +271,15 @@ onMounted(() => {
                 >
                     <div class="field-row">
                         <div class="field-col">
-                            <label class="field-label">Recipient</label>
+                            <label class="field-label">
+                                Recipient
+                                <span
+                                    class="field-required"
+                                    aria-hidden="true"
+                                >
+                                    *
+                                </span>
+                            </label>
                             <Dropdown
                                 v-model="state.selectedRecipient"
                                 :options="state.recipients"
@@ -351,7 +364,12 @@ onMounted(() => {
                     <div class="field-block">
                         <label class="field-label">
                             Subject
-                            <span class="field-optional">(optional)</span>
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
                         </label>
                         <input
                             v-model="state.subjectText"
@@ -362,7 +380,15 @@ onMounted(() => {
                     </div>
 
                     <div class="field-block textarea-wrapper">
-                        <label class="field-label">Message</label>
+                        <label class="field-label">
+                            Message
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
+                        </label>
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"
@@ -400,7 +426,15 @@ onMounted(() => {
                     />
 
                     <div class="field-container textarea-wrapper">
-                        <label class="field-label">Write a Reply:</label>
+                        <label class="field-label">
+                            Write a Reply:
+                            <span
+                                class="field-required"
+                                aria-hidden="true"
+                            >
+                                *
+                            </span>
+                        </label>
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"
@@ -603,11 +637,6 @@ onMounted(() => {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-}
-
-.field-optional {
-    font-weight: 400;
-    color: #6c757d;
 }
 
 .field-required {

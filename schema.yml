@@ -5389,7 +5389,7 @@ components:
           description: Enter text
         message_type:
           allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           description: Select an option
         recipient:
@@ -5411,6 +5411,9 @@ components:
           nullable: true
       required:
       - message_content
+      - message_subject
+      - message_type
+      - recipient
       - resource_context
     Bcap_Message_Message_Content_Tile:
       type: object

@@ -6,7 +6,7 @@ import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import 'primeicons/primeicons.css';
 import type { AliasedGeojsonFeatureCollectionNode } from '@/bcgov_arches_common/datatypes/geojson-feature-collection/types.ts';
 
-import Map from '@/bcgov_arches_common/components/SimpleMap/SimpleMap.vue';
+import Map from '@/bcgov_arches_common/widgets/SimpleMapWidget/SimpleMapWidget.vue';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -49,15 +49,17 @@ const siteBoundaryNode = computed<
 </script>
 
 <template>
-    <Map
-        graph-slug="archaeological_site"
-        node-alias="site_boundary"
-        :mode="VIEW"
-        :aliased-node-data="
-            siteBoundaryNode as AliasedGeojsonFeatureCollectionNode
-        "
-        :use-utm-coords="true"
-    ></Map>
+    <div style="--map-max-width: 100%">
+        <Map
+            graph-slug="archaeological_site"
+            node-alias="site_boundary"
+            :mode="VIEW"
+            :aliased-node-data="
+                siteBoundaryNode as AliasedGeojsonFeatureCollectionNode
+            "
+            :use-utm-coords="true"
+        ></Map>
+    </div>
     <DetailsSection
         section-title="1. Spatial View"
         :visible="true"

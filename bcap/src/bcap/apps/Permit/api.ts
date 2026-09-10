@@ -503,37 +503,37 @@ export const saveChecklist = async (
 export const createBcapMessage = async ({
     messageText,
     recipientId,
-    applicationId,
     resourceId,
     threadId,
     topic,
+    messageType,
     files,
 }: NewBcapMessage) => {
+    // A reply carries no subject, type or recipient: the service copies the
+    // thread's onto it. The nodes are required by the generated writable type,
+    // so they travel as null rather than being left out.
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
                 message_content: {
                     node_value: localized(messageText),
                 },
-                message_subject: {
-                    node_value: localized(
-                        topic ||
-                            `Comment regarding Application ${applicationId}`,
-                    ),
-                },
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
                     node_value: [{ resourceId }],
                 },
+                message_subject: topic
+                    ? { node_value: localized(topic) }
+                    : null,
+                message_type: messageType?.length
+                    ? { node_value: messageType }
+                    : null,
+                recipient: recipientId
+                    ? { node_value: [{ resourceId: recipientId }] }
+                    : null,
             },
         },
     };
-
-    if (recipientId) {
-        aliasedData.message_content!.aliased_data!.recipient = {
-            node_value: [{ resourceId: recipientId }],
-        };
-    }
 
     if (threadId) {
         aliasedData.related_source_message = {
@@ -592,13 +592,17 @@ export const getThreadsForResource = async (
     return results.map((root) => {
         const content = root.aliased_data?.message_content?.aliased_data;
         const subject = content?.message_subject;
+        // Older threads carry the type inside the subject text and have no
+        // message_type of their own, so an absent type just drops the prefix.
+        const subjectText =
+            subject?.display_value || subject?.node_value?.en?.value || '';
+        const typeLabel = content?.message_type?.display_value || '';
         const unreadCount =
             (root as { unread_count?: number }).unread_count ?? 0;
         return {
             id: root.resourceinstanceid ?? '',
             topic:
-                subject?.display_value ||
-                subject?.node_value?.en?.value ||
+                [typeLabel, subjectText].filter(Boolean).join(' - ') ||
                 'General Question',
             startedBy: content?.message_author?.display_value || 'Unknown',
             // The threads endpoint annotates the whole thread's latest date;
@@ -685,6 +689,9 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
                 aliased_data: {
                     message_content: null,
                     resource_context: null,
+                    message_subject: null,
+                    message_type: null,
+                    recipient: null,
                     message_read_date: {
                         node_value: new Date().toISOString(),
                     },

@@ -192,8 +192,8 @@ const currentSpatialAccuracyColumns = computed(() => [
 ]);
 
 const historicalSpatialAccuracyColumns = [
-    { field: 'source_notes', label: 'Source Notes' },
-    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
+    { field: 'source_notes', label: 'Source Notes', isHtml: true },
+    { field: 'accuracy_remarks', label: 'Accuracy Remarks', isHtml: true },
     { field: 'entered_on', label: 'Edited On', visible: props.showAuditFields },
     { field: 'entered_by', label: 'Edited By', visible: props.showAuditFields },
 ];

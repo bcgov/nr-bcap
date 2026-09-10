@@ -5,6 +5,10 @@ from django.utils import timezone
 
 from oauth2_provider.models import AccessToken, get_application_model
 
+from arches_controlled_lists.models import ListItem
+
+from bcap.util.graph import get_node
+
 
 def login_as(client, user, login_source="IDIR"):
     """Log the client in the way an IDIR session looks. Takes the client so
@@ -52,3 +56,31 @@ class AuthTestHelper:
 
     def idir_login_simulate(self, user=None, login_source="IDIR"):
         login_as(self.client, user or self.user, login_source)
+
+
+def api_reference_value(slug, alias, label=None):
+    """Build a reference value in the format the REST serializer expects.
+
+    The builder's ``reference_value()`` returns bare UUID strings, which are
+    correct for tile saves but are rejected by the DRF serializer's
+    ``ReferenceDataType.to_python``, which requires dicts with ``uri``,
+    ``labels``, and ``list_id`` keys."""
+    node = get_node(slug, alias)
+    list_id = node.config["controlledList"]
+    qs = ListItem.objects.filter(list_id=list_id)
+    item = (
+        qs.filter(list_item_values__value=label).first()
+        if label
+        else qs.order_by("sortorder").first()
+    )
+    labels = [
+        {
+            "id": str(lv.pk),
+            "value": lv.value,
+            "language_id": lv.language_id,
+            "valuetype_id": lv.valuetype_id,
+            "list_item_id": str(item.pk),
+        }
+        for lv in item.list_item_values.all()
+    ]
+    return [{"uri": item.uri, "labels": labels, "list_id": str(list_id)}]

@@ -209,7 +209,7 @@ class BcapMessageService(BaseGraphService):
         author_id = self.set_author(data, user.username)
         if not is_internal_user(user):
             self._set_node(data, self.A.IS_INTERNAL, False)
-        self.set_reply_recipient(data, author_id)
+        self.set_reply_fields(data, author_id)
         self.validate_internal_recipient(data)
 
     @classmethod
@@ -222,10 +222,11 @@ class BcapMessageService(BaseGraphService):
         return contributor_id
 
     @classmethod
-    def set_reply_recipient(cls, data, author_id):
+    def set_reply_fields(cls, data, author_id):
         """Address a reply from its thread rather than the payload, so a third party
         joining a thread writes to the root's other party instead of whichever
-        contributor the client happened to have selected."""
+        contributor the client happened to have selected, and stamp the thread's
+        subject and type onto it so a reply cannot drift from its thread."""
         thread_id = cls._payload_relation_id(
             data, cls.A.RELATED_SOURCE_MESSAGE, cls.A.RELATED_SOURCE_MESSAGE
         )
@@ -233,6 +234,8 @@ class BcapMessageService(BaseGraphService):
             return
         author_node, nodegroup_id = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_AUTHOR)
         recipient_node, _ = node_info(MESSAGE_GRAPH_SLUG, cls.A.RECIPIENT)
+        type_node, _ = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_TYPE)
+        subject_node, _ = node_info(MESSAGE_GRAPH_SLUG, cls.A.MESSAGE_SUBJECT)
         root = (
             TileModel.objects.filter(
                 nodegroup_id=nodegroup_id, resourceinstance_id=thread_id
@@ -242,6 +245,7 @@ class BcapMessageService(BaseGraphService):
         )
         if not root:
             return
+
         root_author = resource_instance_id(root.get(author_node))
         recipient = (
             resource_instance_id(root.get(recipient_node))
@@ -250,6 +254,16 @@ class BcapMessageService(BaseGraphService):
         )
         if recipient:
             cls._set_node(data, cls.A.RECIPIENT, [{RESOURCE_ID: recipient}])
+
+        # Both belong to the thread, so a reply takes the root's over whatever
+        # the client sent.
+        for alias, node in (
+            (cls.A.MESSAGE_TYPE, type_node),
+            (cls.A.MESSAGE_SUBJECT, subject_node),
+        ):
+            inherited = root.get(node)
+            if inherited:
+                cls._set_node(data, alias, inherited)
 
     @classmethod
     def _set_node(cls, data, alias, node_value):
