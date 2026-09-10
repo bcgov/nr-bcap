@@ -77,10 +77,6 @@ const addDocDisabled = computed(() => {
 });
 
 const customIsValid = () => {
-    // if (docList.value.length === 0 && !hasUnsavedFile.value) {
-    //     return true;
-    // }
-
     const reportData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;
     if (!reportData) return false;
