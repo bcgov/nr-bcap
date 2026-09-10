@@ -6,6 +6,10 @@ import FieldSet from 'primevue/fieldset';
 import { VIEW } from '@/arches_vue_components/widgets/constants.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import type {
+    DocumentSubmissionDocumentSubmissionProcessAliasedData,
+    DocumentSubmissionReportSubmissionAliasedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = defineProps<{
     isSubmittedView?: boolean;
@@ -22,6 +26,22 @@ export interface ReviewField {
 
 const isValid = () => true;
 defineExpose({ isValid });
+
+type ReviewKeys =
+    | keyof DocumentSubmissionDocumentSubmissionProcessAliasedData
+    | keyof DocumentSubmissionReportSubmissionAliasedData;
+
+const DRAFT_EXCLUDED_FIELDS: ReviewKeys[] = [
+    'submission_photographs',
+    'report_submission',
+];
+
+const SUBMITTED_EXCLUDED_FIELDS: ReviewKeys[] = [
+    'submission_photographs',
+    'report_file',
+];
+
+const HTML_FIELDS: ReviewKeys[] = ['report_recommendations'];
 
 type NodeData = Record<string, unknown>;
 
@@ -61,14 +81,11 @@ const getFilteredFields = (fields: unknown, data: unknown) => {
     if (!props.isSubmittedView || !data) {
         return (Array.isArray(fields) ? fields : []).filter((f) => {
             const obj = f as Record<string, unknown>;
-            const alias =
-                obj.alias ||
-                obj.nodeAlias ||
-                (obj.node as Record<string, unknown>)?.alias ||
-                obj.node_alias;
-            return !['submission_photographs', 'report_submission'].includes(
-                alias as string,
-            );
+            const alias = (obj.node_alias ??
+                obj.nodeAlias ??
+                obj.alias) as ReviewKeys;
+
+            return !DRAFT_EXCLUDED_FIELDS.includes(alias);
         });
     }
 
@@ -82,10 +99,9 @@ const getFilteredFields = (fields: unknown, data: unknown) => {
         for (const [alias, raw] of Object.entries(
             nodes as Record<string, unknown>,
         )) {
-            if (
-                !raw ||
-                ['submission_photographs', 'report_file'].includes(alias)
-            )
+            const typedAlias = alias as ReviewKeys;
+
+            if (!raw || SUBMITTED_EXCLUDED_FIELDS.includes(typedAlias))
                 continue;
 
             const node = raw as Record<string, unknown>;
@@ -103,10 +119,9 @@ const getFilteredFields = (fields: unknown, data: unknown) => {
                         label: alias,
                         value: val,
                         nodeAlias: alias,
-                        type:
-                            alias === 'report_recommendations'
-                                ? 'html'
-                                : 'text',
+                        type: HTML_FIELDS.includes(typedAlias)
+                            ? 'html'
+                            : 'text',
                     });
                 }
             }

@@ -22,14 +22,11 @@ const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
 
 const ActiveReviewComponent = computed(() => {
-    if (!nav?.graph) return GenericReview;
-
     const componentMap: Record<string, Component> = {
         [GraphSlug.DocumentSubmission]: DocumentSubmissionReview,
         [GraphSlug.Investigation]: InvestigationReview,
     };
-
-    return componentMap[nav.graph] || GenericReview;
+    return componentMap[nav?.graph ?? ''] ?? GenericReview;
 });
 
 const crumbs = computed(() =>

@@ -15,7 +15,10 @@ import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    PermitApplicationResourceAliasedData,
+    StringAliasedNodeData,
+} from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
     fetchDrafts,
@@ -61,13 +64,10 @@ const draftTitle = (draft: PermitDraft) => {
 
     if (draft.graph_slug === GraphSlug.Investigation) {
         const ident = draft.data?.investigation_identification?.aliased_data
-            ?.investigation_identification as
-            | {
-                  node_value?: { en?: { value?: string } };
-                  en?: { value?: string };
-              }
-            | undefined;
-        const name = ident?.node_value?.en?.value ?? ident?.en?.value;
+            ?.investigation_identification as StringAliasedNodeData | undefined;
+
+        const name = ident?.node_value?.en?.value || ident?.display_value;
+
         return name ? `Investigation - ${name}` : 'Untitled Investigation';
     }
 
