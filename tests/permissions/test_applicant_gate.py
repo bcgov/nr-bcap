@@ -10,6 +10,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import NoReverseMatch, URLResolver, get_resolver, resolve, reverse
 
+from arches.app.models.models import ResourceXResource
+
 from bcap.permissions.applicant_gate import ArchesDefaultDenyApplicantGate as gate
 from bcap.permissions.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
@@ -87,6 +89,34 @@ class TestArchesDefaultDenyApplicantGate(AuthTestHelper, TestCase):
             with self.subTest(route):
                 status = self.client.get(reverse(route)).status_code
                 self.assertNotEqual(status, 403)
+
+    def test_applicant_is_denied_deleting_a_relation(self):
+        """Without an id the arches read check only asks whether some graph is
+        readable, which every applicant passes, and the delete then removes any
+        relation id it is handed."""
+        builder = FixtureBuilder()
+        permit = builder.make_resource(GraphSlugs.PERMIT_APPLICATION)
+        relation = ResourceXResource.objects.create(
+            from_resource=permit,
+            to_resource=builder.make_resource(GraphSlugs.INVESTIGATION),
+        )
+        self.idir_login_simulate()
+        url = reverse("related_resources", kwargs={"resourceid": ""})
+        response = self.client.delete(
+            f"{url}?resourcexids[]={relation.pk}&root_resourceinstanceid={permit.pk}"
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(ResourceXResource.objects.filter(pk=relation.pk).exists())
+
+    def test_applicant_is_denied_deleting_a_manifest(self):
+        """The image service manager checks nothing of its own."""
+        self.idir_login_simulate()
+        response = self.client.delete(
+            reverse("manifest_manager"),
+            '{"manifest": "x"}',
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_internal_user_reaches_search(self):
         self.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
