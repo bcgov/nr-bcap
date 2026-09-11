@@ -22,7 +22,12 @@ export const notifyError = (summary: string, error?: unknown): void => {
     // Autosave retries would otherwise stack identical toasts; removing one the
     // user already closed is a no-op.
     if (lastShown?.key === key) toast.remove(lastShown.message);
-    const message = { severity: ERROR, life: ERROR_TOAST_LIFE, summary, detail };
+    const message = {
+        severity: ERROR,
+        life: ERROR_TOAST_LIFE,
+        summary,
+        detail,
+    };
     toast.add(message);
     lastShown = { key, message };
 };

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { reactive, onMounted, computed } from 'vue';
+import { reactive, onMounted, computed, type Component } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import PermitApplicationReview from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
+import DocumentSubmissionReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -20,10 +21,12 @@ const route = useRoute();
 const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
-const review =
-    nav?.graph === GraphSlug.PermitApplication
-        ? PermitApplicationReview
-        : Step99_Review;
+// The same review each module's stepper shows; the rest use the generic one.
+const REVIEWS: Partial<Record<string, Component>> = {
+    [GraphSlug.PermitApplication]: PermitApplicationReview,
+    [GraphSlug.DocumentSubmission]: DocumentSubmissionReview,
+};
+const review = REVIEWS[nav?.graph ?? ''] ?? Step99_Review;
 
 const crumbs = computed(() =>
     permitCrumbs(nav?.permitId, route.query.staff, title),

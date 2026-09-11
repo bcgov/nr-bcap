@@ -6,14 +6,20 @@ import type {
     AliasedNodeData,
     CardXNodeXWidgetData,
 } from '@/arches_vue_components/types.ts';
+import type { GeojsonFeatureCollectionAliasedNodeData } from '@/bcap/client/types.gen.ts';
 
-export interface ReviewField {
+type FieldBase = {
     label: string;
-    value?: unknown;
-    type?: 'text' | 'html' | 'map';
     nodeAlias?: string;
     graphSlug?: string;
-}
+};
+
+export type ReviewField =
+    | (FieldBase & {
+          type: 'map';
+          value?: GeojsonFeatureCollectionAliasedNodeData | null;
+      })
+    | (FieldBase & { type?: 'text' | 'html'; value?: unknown });
 
 defineProps<{
     fields: ReviewField[];
@@ -50,18 +56,43 @@ const hasValue = (val: unknown): boolean => {
 
     return true;
 };
+const hasGeometry = (
+    val: GeojsonFeatureCollectionAliasedNodeData | null | undefined,
+): boolean => !!val?.node_value?.features?.length;
+
+const isRow = (field: ReviewField): boolean =>
+    field.type === 'map' || hasValue(field.value);
 </script>
 
 <template>
     <div class="div-grid-cols">
         <template
             v-for="(field, index) in fields"
-            :key="'text-' + index"
+            :key="index"
         >
-            <template v-if="hasValue(field.value) && field.type !== 'map'">
+            <template v-if="isRow(field)">
                 <dt>{{ field.label }}</dt>
 
-                <dd v-if="field.type === 'html'">
+                <dd v-if="field.type === 'map'">
+                    <div
+                        v-if="hasGeometry(field.value)"
+                        ref="mapBoxes"
+                        class="centered-map"
+                    >
+                        <GenericWidget
+                            :mode="VIEW"
+                            :should-show-label="false"
+                            :aliased-node-data="field.value as AliasedNodeData"
+                            :card-x-node-x-widget-data-overrides="mapOverrides"
+                            :graph-slug="
+                                field.graphSlug || 'permit_application'
+                            "
+                            :node-alias="field.nodeAlias || 'project_boundary'"
+                        />
+                    </div>
+                    <template v-else>No geometry has been uploaded</template>
+                </dd>
+                <dd v-else-if="field.type === 'html'">
                     {{ stripHtml(field.value) }}
                 </dd>
                 <dd v-else>
@@ -70,32 +101,6 @@ const hasValue = (val: unknown): boolean => {
             </template>
         </template>
     </div>
-
-    <template
-        v-for="(field, index) in fields"
-        :key="'map-' + index"
-    >
-        <div
-            v-if="hasValue(field.value) && field.type === 'map'"
-            class="map-section"
-        >
-            <dt class="mb-2 font-bold">{{ field.label }}</dt>
-
-            <dd
-                ref="mapBoxes"
-                class="centered-map"
-            >
-                <GenericWidget
-                    :mode="VIEW"
-                    :should-show-label="false"
-                    :aliased-node-data="field.value as AliasedNodeData"
-                    :card-x-node-x-widget-data-overrides="mapOverrides"
-                    :graph-slug="field.graphSlug || 'permit_application'"
-                    :node-alias="field.nodeAlias || 'project_boundary'"
-                />
-            </dd>
-        </div>
-    </template>
 </template>
 
 <style scoped>
@@ -103,7 +108,9 @@ const hasValue = (val: unknown): boolean => {
     display: grid;
     grid-template-columns: 210px 1fr;
     gap: 1.3rem 1rem;
-    align-items: start;
+    /* Label and value share the row's height, so the dividers the pages draw
+       under each cell line up even beside a tall map. */
+    align-items: stretch;
     font-size: 13px;
     line-height: 1.5;
 }
@@ -118,20 +125,13 @@ const hasValue = (val: unknown): boolean => {
     margin: 0;
 }
 
-.map-section {
-    padding-top: 2rem;
-    width: 100%;
-    display: block;
-}
-
 /* Drag the corner to resize; the widget sizes off these vars, so they follow
    the box instead of its 750x500 defaults. */
 .centered-map {
     resize: both;
     overflow: hidden;
-    width: calc(100% - 4rem);
-    max-width: calc(100% - 4rem);
-    margin: 0 2rem;
+    width: 100%;
+    max-width: 100%;
     height: 20rem;
     min-height: 10rem;
     --map-width: 100%;
