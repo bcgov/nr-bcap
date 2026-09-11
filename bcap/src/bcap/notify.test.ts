@@ -1,8 +1,11 @@
 import type { App } from 'vue';
 
-const fakeApp = (add: ReturnType<typeof vi.fn>) =>
+const fakeApp = (
+    add: ReturnType<typeof vi.fn>,
+    remove: ReturnType<typeof vi.fn> = vi.fn(),
+) =>
     ({
-        config: { globalProperties: { $toast: { add } } },
+        config: { globalProperties: { $toast: { add, remove } } },
     }) as unknown as App;
 
 describe('notifyError', () => {
@@ -58,13 +61,15 @@ describe('notifyError', () => {
         expect(add.mock.calls[0][0].detail).toBeUndefined();
     });
 
-    it('does not stack the same toast', () => {
+    it('replaces the same toast rather than stacking it', () => {
         const add = vi.fn();
-        notify.installErrorHandling(fakeApp(add));
+        const remove = vi.fn();
+        notify.installErrorHandling(fakeApp(add, remove));
         const error = new ApiError('Offline.', 503);
         notify.notifyError('Autosave failed', error);
         notify.notifyError('Autosave failed', error);
-        expect(add).toHaveBeenCalledTimes(1);
+        expect(remove).toHaveBeenCalledWith(add.mock.calls[0][0]);
+        expect(add).toHaveBeenCalledTimes(2);
     });
 
     it('reports errors Vue catches', () => {

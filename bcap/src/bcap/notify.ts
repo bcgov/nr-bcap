@@ -2,13 +2,14 @@ import { UserFacingError } from '@/bcap/api.ts';
 import { ERROR } from '@/bcgov_arches_common/constants.ts';
 
 import type { App } from 'vue';
+import type { ToastMessageOptions } from 'primevue/toast';
 import type { ToastServiceMethods } from 'primevue/toastservice';
 
 const ERROR_TOAST_LIFE = 20000;
 
 // Module level so stores and api helpers can report errors, not just components.
 let toast: ToastServiceMethods | undefined;
-let lastShown = { key: '', at: 0 };
+let lastShown: { key: string; message: ToastMessageOptions } | undefined;
 
 export const userMessage = (error: unknown): string | undefined =>
     error instanceof UserFacingError ? error.message : undefined;
@@ -18,16 +19,12 @@ export const notifyError = (summary: string, error?: unknown): void => {
     if (!toast) return;
     const detail = userMessage(error);
     const key = `${summary}|${detail}`;
-    const now = Date.now();
-    // Autosave retries would otherwise stack identical toasts.
-    if (key === lastShown.key && now - lastShown.at < ERROR_TOAST_LIFE) return;
-    lastShown = { key, at: now };
-    toast.add({
-        severity: ERROR,
-        life: ERROR_TOAST_LIFE,
-        summary,
-        detail,
-    });
+    // Autosave retries would otherwise stack identical toasts; removing one the
+    // user already closed is a no-op.
+    if (lastShown?.key === key) toast.remove(lastShown.message);
+    const message = { severity: ERROR, life: ERROR_TOAST_LIFE, summary, detail };
+    toast.add(message);
+    lastShown = { key, message };
 };
 
 export const installErrorHandling = (app: App): void => {
