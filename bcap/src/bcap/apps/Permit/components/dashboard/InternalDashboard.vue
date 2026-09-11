@@ -14,6 +14,7 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import type { InternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
+import { notifyError } from '@/bcap/notify.ts';
 
 const currentRoute = useRoute();
 const router = useRouter();
@@ -153,7 +154,7 @@ const loadData = async () => {
         state.rawProjects = response.map(mapToDashboardCard);
         state.lastUpdateDate = new Date();
     } catch (error) {
-        console.error('Error fetching projects:', error);
+        notifyError('Failed to load dashboard', error);
     } finally {
         state.isLoading = false;
     }

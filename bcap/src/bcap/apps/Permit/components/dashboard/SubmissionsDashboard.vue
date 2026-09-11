@@ -23,6 +23,7 @@ import type { ExternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
+import { notifyError } from '@/bcap/notify.ts';
 
 const { $gettext } = useGettext();
 const router = useRouter();
@@ -87,7 +88,7 @@ const loadDashboardData = async () => {
         cards.companyProjects = companyData;
         ui.lastUpdated = new Date();
     } catch (error) {
-        console.error('Failed to load dashboard data:', error);
+        notifyError('Failed to load dashboard', error);
     } finally {
         isLoading.value = false;
     }
