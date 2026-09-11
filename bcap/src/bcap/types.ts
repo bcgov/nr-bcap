@@ -11,6 +11,7 @@ import type {
     InvestigationResourceAliasedDataWritable,
     PermitApplicationResourceAliasedDataWritable,
     ReferenceAliasedNodeDataWritable,
+    DocumentSubmissionResourceAliasedDataWritable,
 } from '@/bcap/client/types.gen.ts';
 
 export type DraftNode = AliasedNodeData & {
@@ -46,7 +47,11 @@ export type WorkflowDraft =
       >
     | Draft<GraphSlug.Investigation, InvestigationResourceAliasedDataWritable>
     | Draft<GraphSlug.Inspection, InspectionResourceAliasedDataWritable>
-    | Draft<GraphSlug.Alteration, AlterationResourceAliasedDataWritable>;
+    | Draft<GraphSlug.Alteration, AlterationResourceAliasedDataWritable>
+    | Draft<
+          GraphSlug.DocumentSubmission,
+          DocumentSubmissionResourceAliasedDataWritable
+      >;
 
 export type DraftOf<S extends WorkflowDraft['graph_slug']> = Extract<
     WorkflowDraft,

@@ -77,15 +77,12 @@ const addDocDisabled = computed(() => {
 });
 
 const customIsValid = () => {
-    if (docList.value.length === 0) return false;
-
     const reportData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;
     if (!reportData) return false;
 
     const titleNode = reportData.report_title;
     const tVal = titleNode?.node_value;
-
     const hasTitle = !!(titleNode?.display_value || tVal?.en?.value?.trim());
 
     const consultantNode = reportData.archaeological_consultant;

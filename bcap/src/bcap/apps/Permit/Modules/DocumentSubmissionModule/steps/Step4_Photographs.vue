@@ -104,12 +104,14 @@ const clearPendingImage = () => {
 const customIsValid = () => {
     const fileNode = currentPhoto.value.aliased_data?.submission_photographs as
         FileListAliasedNodeData | null | undefined;
-    const isUnsaved =
+    const hasPendingFile =
         !!fileNode &&
         Array.isArray(fileNode.node_value) &&
         fileNode.node_value.length > 0;
 
-    if (photoList.value.length === 0 && !isUnsaved) return false;
+    if (photoList.value.length === 0 && !hasPendingFile) {
+        return true;
+    }
 
     for (const photo of photoList.value) {
         const viewNode = photo.aliased_data?.photograph_view as
@@ -125,8 +127,9 @@ const customIsValid = () => {
         if (!hasView || !hasDesc) return false;
     }
 
-    if (addingNewImage.value && isUnsaved && addImageDisabled.value)
+    if (hasPendingFile && addImageDisabled.value) {
         return false;
+    }
 
     return true;
 };

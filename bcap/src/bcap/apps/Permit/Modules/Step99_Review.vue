@@ -23,6 +23,9 @@ const activeData = computed<ArchesDraftData>(() =>
 const humanize = (alias: string) =>
     alias.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
+const containsHtml = (val: unknown) => {
+    return typeof val === 'string' && /<\/?[a-z][\s\S]*>/i.test(val);
+};
 // Walk every section's nodes (and nested node groups) into review fields.
 // GenericReviewSummary hides the empty ones, so no per-node curation needed.
 const walk = (
@@ -39,6 +42,7 @@ const walk = (
                 label: humanize(alias),
                 value: node.display_value,
                 nodeAlias: alias,
+                type: containsHtml(node.display_value) ? 'html' : 'text',
             });
         }
     }
