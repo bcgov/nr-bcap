@@ -5,6 +5,7 @@ import {
     createDraft,
     saveDraftFieldToBackend,
 } from '@/bcap/apps/Permit/api.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 
@@ -15,8 +16,13 @@ const debouncedSave = debounce(
         ensureDraftId: () => Promise<string>,
         currentStep: string,
     ) => {
-        const id = await ensureDraftId();
-        if (id) saveDraftFieldToBackend(id, graphSlug, draftData, currentStep);
+        try {
+            const id = await ensureDraftId();
+            if (id)
+                saveDraftFieldToBackend(id, graphSlug, draftData, currentStep);
+        } catch (error) {
+            notifyError('Your draft could not be saved', error);
+        }
     },
     1000,
 );

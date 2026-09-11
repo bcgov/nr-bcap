@@ -5,6 +5,7 @@ import {
     getProcessRequirementData,
     getInternalDashboardData,
 } from '@/bcap/apps/Permit/api.ts';
+import { UNEXPECTED_ERROR } from '@/bcap/api.ts';
 
 function mockFetchOk(body: unknown) {
     return vi.fn().mockResolvedValue({
@@ -56,10 +57,10 @@ describe('getProcessRequirementData', () => {
         expect(result).toEqual(data);
     });
 
-    it('throws with response text on error', async () => {
+    it("throws the server's message on error", async () => {
         vi.stubGlobal(
             'fetch',
-            mockFetchError(404, 'Not Found', 'Permit not found'),
+            mockFetchError(404, 'Not Found', '{"detail": "Permit not found"}'),
         );
 
         await expect(getProcessRequirementData('p99')).rejects.toThrow(
@@ -67,14 +68,14 @@ describe('getProcessRequirementData', () => {
         );
     });
 
-    it('throws with statusText when response body is empty', async () => {
+    it('throws a generic message when the body is empty', async () => {
         vi.stubGlobal(
             'fetch',
             mockFetchError(500, 'Internal Server Error', ''),
         );
 
         await expect(getProcessRequirementData('p1')).rejects.toThrow(
-            'Internal Server Error',
+            UNEXPECTED_ERROR,
         );
     });
 });
