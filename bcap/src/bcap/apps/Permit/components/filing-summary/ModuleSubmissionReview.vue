@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
+import PermitApplicationReview from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
@@ -11,12 +13,17 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { notifyError } from '@/bcap/notify.ts';
 
 const router = useRouter();
 const route = useRoute();
 const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
+const review =
+    nav?.graph === GraphSlug.PermitApplication
+        ? PermitApplicationReview
+        : Step99_Review;
 
 const crumbs = computed(() =>
     permitCrumbs(nav?.permitId, route.query.staff, title),
@@ -40,7 +47,7 @@ onMounted(async () => {
         headerStore.load(nav.permitId);
         state.data = await fetchResourceData(nav.graph, nav.resourceId);
     } catch (error) {
-        console.error('Failed to load submission:', error);
+        notifyError('Failed to load submission', error);
     } finally {
         state.loading = false;
     }
@@ -68,7 +75,8 @@ onMounted(async () => {
                 >
                     <ProgressSpinner />
                 </div>
-                <Step99_Review
+                <component
+                    :is="review"
                     v-else
                     :is-submitted-view="true"
                     :resource-data="state.data"
