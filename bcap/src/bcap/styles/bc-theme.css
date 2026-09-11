@@ -436,10 +436,9 @@
 .p-toast {
     width: min(56rem, calc(100vw - 2rem));
 }
-/* Clears the arches navbar and the navy page band; important because PrimeVue
-   sets top inline. */
+/* Just under the arches title bar; important because PrimeVue sets top inline. */
 .p-toast.p-toast-top-center {
-    top: 140px !important;
+    top: 60px !important;
 }
 .p-toast .p-toast-message {
     background: #ffffff;
