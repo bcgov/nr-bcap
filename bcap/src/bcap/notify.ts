@@ -1,11 +1,10 @@
 import { UserFacingError } from '@/bcap/api.ts';
-import {
-    DEFAULT_ERROR_TOAST_LIFE,
-    ERROR,
-} from '@/bcgov_arches_common/constants.ts';
+import { ERROR } from '@/bcgov_arches_common/constants.ts';
 
 import type { App } from 'vue';
 import type { ToastServiceMethods } from 'primevue/toastservice';
+
+const ERROR_TOAST_LIFE = 20000;
 
 // Module level so stores and api helpers can report errors, not just components.
 let toast: ToastServiceMethods | undefined;
@@ -21,12 +20,11 @@ export const notifyError = (summary: string, error?: unknown): void => {
     const key = `${summary}|${detail}`;
     const now = Date.now();
     // Autosave retries would otherwise stack identical toasts.
-    if (key === lastShown.key && now - lastShown.at < DEFAULT_ERROR_TOAST_LIFE)
-        return;
+    if (key === lastShown.key && now - lastShown.at < ERROR_TOAST_LIFE) return;
     lastShown = { key, at: now };
     toast.add({
         severity: ERROR,
-        life: DEFAULT_ERROR_TOAST_LIFE,
+        life: ERROR_TOAST_LIFE,
         summary,
         detail,
     });

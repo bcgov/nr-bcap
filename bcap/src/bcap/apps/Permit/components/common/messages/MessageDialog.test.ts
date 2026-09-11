@@ -7,6 +7,7 @@ import {
     getThreadsForResource,
     getMessagesForThread,
 } from '@/bcap/apps/Permit/api.ts';
+import { ApiError } from '@/bcap/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -292,6 +293,33 @@ describe('MessageDialog.vue', () => {
         ]);
 
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+    });
+
+    it('shows the server message and stays open when a send fails', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(createBcapMessage).mockRejectedValue(
+            new ApiError('These files are not permitted:\nsetup.exe', 400),
+        );
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Setback dimensions');
+        await wrapper.find('textarea').setValue('This is my question.');
+
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        const error = wrapper.find('.inline-error');
+        expect(error.text()).toContain('Your message could not be sent.');
+        expect(error.text()).toContain('setup.exe');
+        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
     });
 
     it('marks unread messages as read when an unread thread is selected', async () => {

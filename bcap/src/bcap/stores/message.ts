@@ -8,6 +8,7 @@ import {
     markMessageAsRead,
     setThreadArchived,
 } from '@/bcap/apps/Permit/api.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import type {
     MessageThread,
     FormattedMessage,
@@ -47,7 +48,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
                 moduleUnread.set(module_id, unread_count);
             }
         } catch (error) {
-            console.error('Error loading module unread counts:', error);
+            notifyError('Failed to load unread message counts', error);
         }
     }
 
@@ -65,7 +66,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         try {
             cacheFor(isArchived).set(resourceId, await pending);
         } catch (error) {
-            console.error('Error loading threads:', error);
+            notifyError('Failed to load messages', error);
             cacheFor(isArchived).set(resourceId, []);
         } finally {
             inFlight.delete(key);
@@ -85,7 +86,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         try {
             await setThreadArchived(threadId, archived);
         } catch (error) {
-            console.error('Failed to archive thread:', error);
+            notifyError('Failed to archive thread', error);
         }
         await Promise.all([load(resourceId), load(resourceId, true)]);
     }
@@ -97,7 +98,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         try {
             openMessages.value = await getMessagesForThread(threadId);
         } catch (error) {
-            console.error('Error loading thread messages:', error);
+            notifyError('Failed to load thread messages', error);
         }
     }
 
@@ -113,7 +114,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
                 message.isUnread = false;
                 if (thread.unreadCount) thread.unreadCount--;
             } catch (error) {
-                console.error('Failed to mark message as read:', error);
+                notifyError('Failed to mark message as read', error);
             }
         }
 
