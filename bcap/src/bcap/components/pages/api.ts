@@ -7,18 +7,12 @@ import type {
 } from '@/bcap/schema/SiteVisitSchema.ts';
 import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
 
-const rawError = async (response: Response): Promise<string> =>
-    (await response.text()) || response.statusText;
-
 export const getResourceData = async (
     graph_slug: string,
     resource_id: string,
 ): Promise<
     ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
-> =>
-    apiFetchJson(arches.urls.api_resource(graph_slug, resource_id), {
-        formatError: rawError,
-    });
+> => apiFetchJson(arches.urls.api_resource(graph_slug, resource_id));
 
 export const getResourceList = async (
     graph_slug: string,
@@ -31,7 +25,7 @@ export const getResourceList = async (
         window.location.origin,
     );
     url.searchParams.append('resource_ids', resource_ids.join(','));
-    return apiFetchJson(url.toString(), { formatError: rawError });
+    return apiFetchJson(url.toString());
 };
 
 export const getRelatedResourceData = async (
@@ -40,7 +34,6 @@ export const getRelatedResourceData = async (
 ): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
     const parsed = await apiFetchJson<SiteVisitResponse>(
         arches.urls.api_site_related_resources(graph_slug, resource_id),
-        { formatError: rawError },
     );
     return parsed.results;
 };
