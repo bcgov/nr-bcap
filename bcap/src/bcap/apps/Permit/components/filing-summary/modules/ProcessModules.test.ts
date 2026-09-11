@@ -2,12 +2,8 @@ import { defineComponent } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
 
-// The app mounts <Toast /> at its root; the composable only needs somewhere to
-// hand a failure to.
-const toastAdd = vi.hoisted(() => vi.fn());
-vi.mock('primevue/usetoast', () => ({
-    useToast: () => ({ add: toastAdd }),
-}));
+const notifyError = vi.hoisted(() => vi.fn());
+vi.mock('@/bcap/notify.ts', () => ({ notifyError }));
 
 const routerMock = vi.hoisted(() => ({
     query: {} as Record<string, string>,
@@ -418,7 +414,8 @@ describe('ProcessModules staff controls', () => {
     });
 
     it('tells the user when a write fails, leaving the row alone', async () => {
-        api.setRequirementSatisfied.mockRejectedValue(new Error('nope'));
+        const failure = new Error('nope');
+        api.setRequirementSatisfied.mockRejectedValue(failure);
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
@@ -433,11 +430,9 @@ describe('ProcessModules staff controls', () => {
         await vm.onToggleRequirement(requirement);
 
         expect(requirement.satisfied).toBe(false);
-        expect(toastAdd).toHaveBeenCalledWith(
-            expect.objectContaining({
-                severity: 'error',
-                summary: 'Failed to change requirement status',
-            }),
+        expect(notifyError).toHaveBeenCalledWith(
+            'Failed to change requirement status',
+            failure,
         );
     });
 

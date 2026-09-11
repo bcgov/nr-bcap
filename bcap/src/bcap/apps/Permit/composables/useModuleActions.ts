@@ -1,9 +1,5 @@
 import { computed, onScopeDispose, reactive, watch } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import {
-    DEFAULT_ERROR_TOAST_LIFE,
-    ERROR,
-} from '@/bcgov_arches_common/constants.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import {
     patchModuleOrder,
     removeModuleAndRequirements,
@@ -43,18 +39,8 @@ export const useModuleActions = (options: {
 }) => {
     const { permitId, adminTileId, tiles, onChanged, focusRequirementId } =
         options;
-    const toast = useToast();
     clearRequirementCache();
     onScopeDispose(clearRequirementCache);
-    const failed = (summary: string, error: unknown) => {
-        console.error(`${summary}:`, error);
-        toast.add({
-            severity: ERROR,
-            life: DEFAULT_ERROR_TOAST_LIFE,
-            summary,
-            detail: error instanceof Error ? error.message : undefined,
-        });
-    };
 
     const state = reactive({
         rows: [] as ModuleRow[],
@@ -135,7 +121,7 @@ export const useModuleActions = (options: {
             await setModuleCompleted(permitId, row.tileid, !row.isCompleted);
             onChanged();
         } catch (error) {
-            failed('Failed to change module completion', error);
+            notifyError('Failed to change module completion', error);
         } finally {
             ui.togglingModule = null;
         }
@@ -152,7 +138,7 @@ export const useModuleActions = (options: {
             requirement.satisfied = next;
             cacheSatisfied(requirement.resourceId, next);
         } catch (error) {
-            failed('Failed to change requirement status', error);
+            notifyError('Failed to change requirement status', error);
         } finally {
             ui.togglingRequirement = null;
         }
@@ -165,7 +151,7 @@ export const useModuleActions = (options: {
         try {
             state.assignees = await fetchAssignableContributors();
         } catch (error) {
-            failed('Failed to load assignable contributors', error);
+            notifyError('Failed to load assignable contributors', error);
         }
     };
 
@@ -188,7 +174,7 @@ export const useModuleActions = (options: {
                 contributorId,
             );
         } catch (error) {
-            failed('Failed to set requirement assignee', error);
+            notifyError('Failed to set requirement assignee', error);
             Object.assign(requirement, previous);
         }
     };
@@ -200,7 +186,7 @@ export const useModuleActions = (options: {
             await addBlankRequirement(permitId, row.tileid);
             onChanged();
         } catch (error) {
-            failed('Failed to add requirement', error);
+            notifyError('Failed to add requirement', error);
         } finally {
             ui.addingRequirement = null;
         }
@@ -246,7 +232,7 @@ export const useModuleActions = (options: {
                 })),
             );
         } catch (error) {
-            failed('Failed to save module order', error);
+            notifyError('Failed to save module order', error);
         } finally {
             state.saving = false;
         }

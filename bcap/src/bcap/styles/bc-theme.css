@@ -431,3 +431,85 @@
     background: var(--bc-navy-dark);
     border-color: var(--bc-navy-dark);
 }
+
+/* Toasts render at the page root, so they are themed here. */
+.p-toast {
+    width: min(56rem, calc(100vw - 2rem));
+}
+/* Clears the arches navbar and the navy page band; important because PrimeVue
+   sets top inline. */
+.p-toast.p-toast-top-center {
+    top: 140px !important;
+}
+.p-toast .p-toast-message {
+    background: #ffffff;
+    color: var(--bc-text);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(16, 24, 40, 0.12);
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+/* The error-icon class set on each Toast host. */
+.p-toast .p-toast-message-icon.bc-toast-error-icon {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.225rem;
+    border-radius: 50%;
+    background: #d8292f;
+}
+.p-toast .bc-toast-error-icon::before {
+    content: '!';
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+}
+.p-toast .p-toast-message-content {
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.6rem 1.25rem 1.75rem 1.5rem;
+}
+.p-toast .p-toast-message-text {
+    gap: 0.5rem;
+}
+/* Icon and close button are as tall as the summary's line box, so all three
+   share a centre. */
+.p-toast .p-toast-message-icon {
+    width: 1.5rem;
+    height: 1.95rem;
+    margin: 0;
+}
+.p-toast .p-toast-summary {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.95rem;
+    color: var(--bc-text);
+}
+.p-toast .p-toast-detail {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #555555;
+    white-space: pre-line;
+}
+.p-toast .p-toast-close-button {
+    width: 1.95rem;
+    height: 1.95rem;
+    margin: 0;
+    right: 0;
+    color: var(--bc-muted);
+}
+.p-toast .p-toast-close-button:hover {
+    background: #f3f4f6;
+    color: var(--bc-text);
+}
+.p-toast .p-toast-message-error .p-toast-close-button {
+    color: #e0797c;
+}
+.p-toast .p-toast-message-error .p-toast-close-button:hover {
+    background: #fdecec;
+    color: #d8292f;
+}
