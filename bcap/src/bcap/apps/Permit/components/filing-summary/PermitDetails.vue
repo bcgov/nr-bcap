@@ -32,7 +32,7 @@ import {
 import MessageDialog from '../common/messages/MessageDialog.vue';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
-
+import { notifyError } from '@/bcap/notify.ts';
 const messageStore = useMessageStore();
 const headerStore = usePermitHeaderStore();
 
@@ -177,7 +177,7 @@ const loadPermitDetails = async () => {
             },
         };
     } catch (error) {
-        console.error('Failed to load permit details:', error);
+        notifyError('Failed to load permit details', error);
         state.permitData.projectName = 'Failed to load project data';
     } finally {
         state.isLoading = false;

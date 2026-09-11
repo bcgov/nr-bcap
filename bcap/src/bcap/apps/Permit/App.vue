@@ -76,7 +76,10 @@ router.beforeEach(async (to) => {
             </div>
         </div>
     </main>
-    <Toast position="top-center" />
+    <Toast
+        position="top-center"
+        error-icon="bc-toast-error-icon"
+    />
 </template>
 
 <style scoped>
