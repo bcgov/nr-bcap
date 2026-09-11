@@ -224,8 +224,8 @@ class DocumentSubmissionUploadTests(AuthTestHelper, TestCase):
             },
         )
 
-        # Asserting the refusal names the file, since this payload would also
-        # fail for its missing required nodes.
+        # Asserting the refusal names the file, since this bare payload is a 400
+        # on its own.
         self.assertEqual(resp.status_code, 400)
         self.assertIn("notepad.exe", resp.json().get("files", []))
         self.assertEqual(File.objects.count(), before)

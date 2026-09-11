@@ -15,7 +15,8 @@ import StepperNavigation from '@/bcgov_arches_common/components/Stepper/componen
 import Panel from 'primevue/panel';
 import type { StepperProps, StepperState } from 'primevue/stepper';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
-import type { ErrorMessage } from '@/bcgov_arches_common/types.ts';
+import { notifyError, userMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type {
     DraftPayloadWritable,
@@ -24,6 +25,7 @@ import type {
 import { submitModule, fetchDraft } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { UserFacingError } from '@/bcap/api.ts';
 
 // One content step: a nav-rail label, the component to render, and an optional
 // panel heading (defaults to the label; pass '' to render no heading).
@@ -60,9 +62,9 @@ const props = withDefaults(
 );
 
 const defaultSubmit = async (): Promise<PermitApplication | null> => {
-    if (!draft.draftId) throw new Error('No active draft found.');
+    if (!draft.draftId) throw new UserFacingError('No active draft found.');
     if (!draft.parentPermitId)
-        throw new Error('No permit associated with this filing.');
+        throw new UserFacingError('No permit associated with this filing.');
     return submitModule(
         draft.parentPermitId,
         draft.draftId,
@@ -81,13 +83,14 @@ const draft = useDraftStore();
 draft.initDraft(props.graphSlug, (route.query.permitId as string) ?? null);
 
 const state = reactive({
-    submissionErrors: [] as ErrorMessage[],
     submitted: false,
     submitting: false,
     savingDraft: false,
     confirmingExit: false,
     isDataLoaded: false,
     finalizedResourceData: null as PermitApplication | null,
+    // Shown under the header, beside the button that failed, until the next try.
+    submissionError: '',
 });
 
 // The rail's steps: the caller's, then the two this shell always appends.
@@ -145,22 +148,16 @@ const stepIsValid = (step: number): boolean => {
 
 const submitFiling = async (): Promise<boolean> => {
     state.submitting = true;
-    state.submissionErrors = [];
+    state.submissionError = '';
     try {
         const response = await (props.submit ?? defaultSubmit)();
         if (response) state.finalizedResourceData = response;
         return true;
     } catch (error) {
         console.error('Submission failed:', error);
-        const message =
-            error instanceof Error
-                ? error.message
-                : 'An unknown error occurred.';
-        state.submissionErrors.push({
-            type: 'Submission Error',
-            error: 'Submission Failed',
-            message,
-        });
+        state.submissionError =
+            userMessage(error) ??
+            'Please try again, or contact support if it keeps happening.';
         return false;
     } finally {
         state.submitting = false;
@@ -177,7 +174,7 @@ const saveAndExit = async () => {
     try {
         await draft.saveNow();
     } catch (error) {
-        console.error('Failed to save draft before exit:', error);
+        notifyError('Failed to save draft before exit', error);
     } finally {
         state.savingDraft = false;
         state.confirmingExit = false;
@@ -267,7 +264,7 @@ onMounted(async () => {
         }
         state.isDataLoaded = true;
     } catch (error) {
-        console.error('Failed to initialize draft:', error);
+        notifyError('Failed to load draft', error);
         state.isDataLoaded = true;
     }
 });
@@ -358,19 +355,12 @@ onMounted(async () => {
                             ></StepperNavigation>
                         </div>
                     </header>
-                    <div
-                        v-if="state.submissionErrors.length > 0"
-                        class="red"
-                    >
-                        <div
-                            v-for="(err, index) in state.submissionErrors"
-                            :key="index"
-                            class="red"
-                        >
-                            <strong>{{ err.error }}:</strong>
-                            {{ err.message }}
-                        </div>
-                    </div>
+                    <InlineError
+                        v-if="state.submissionError"
+                        title="Your filing could not be submitted."
+                        :detail="state.submissionError"
+                        class="submission-error"
+                    />
                     <StepPanels class="bc-step-card">
                         <StepPanel
                             v-for="(step, i) in steps"
@@ -502,8 +492,12 @@ onMounted(async () => {
         display: none !important;
     }
 }
-.red {
-    color: red;
+/* Spaced off the gold rule like the step card, which then closes up under it. */
+.submission-error {
+    margin-top: 2rem;
+}
+.submission-error + .bc-step-card {
+    margin-top: 1rem;
 }
 .back-to-permit {
     display: inline-flex;
