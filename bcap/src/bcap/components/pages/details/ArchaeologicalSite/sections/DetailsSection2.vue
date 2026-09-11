@@ -112,7 +112,7 @@ const authorityColumns = computed(() => [
 const siteNamesColumns = computed(() => [
     { field: 'name', label: 'Site Name' },
     { field: 'name_type', label: 'Site Name Type' },
-    { field: 'name_remarks', label: 'Site Name Remarks' },
+    { field: 'name_remarks', label: 'Site Name Remarks', isHtml: true },
     { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
     { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
     {

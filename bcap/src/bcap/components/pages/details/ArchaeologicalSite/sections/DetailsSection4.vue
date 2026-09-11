@@ -43,17 +43,23 @@ const props = withDefaults(
 const locationAndAccess = computed(() => {
     if (!props.siteVisitData?.length) return [];
 
-    return props.siteVisitData
-        .map((visit) => ({
-            location:
-                visit.aliased_data?.site_visit_location?.aliased_data
-                    ?.location_and_access,
-            visitName: visit.descriptors?.en?.name,
-        }))
-        .filter(
-            (item) =>
-                item.location && !isEmpty(item.location as AliasedNodeData),
-        );
+    return props.siteVisitData.flatMap((visit) => {
+        const locations = visit.aliased_data?.site_visit_location;
+        if (!Array.isArray(locations)) return [];
+        return locations
+            .map((loc) => ({
+                location: loc.aliased_data?.location_and_access,
+                accuracyRemarks: loc.aliased_data?.accuracy_remarks,
+                visitName: visit.descriptors?.en?.name,
+            }))
+            .filter(
+                (item) =>
+                    (item.location &&
+                        !isEmpty(item.location as AliasedNodeData)) ||
+                    (item.accuracyRemarks &&
+                        !isEmpty(item.accuracyRemarks as AliasedNodeData)),
+            );
+    });
 });
 
 const biogeographyColumns = [
@@ -617,17 +623,32 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             v-for="(item, index) in locationAndAccess"
                             :key="index"
                         >
-                            <dt>
-                                {{ item.visitName || `Visit ${index + 1}` }} -
-                                Location and Access
-                            </dt>
-                            <dd>
-                                {{
-                                    getDisplayValue(
-                                        item.location as AliasedNodeData,
-                                    )
-                                }}
-                            </dd>
+                            <template v-if="item.location && !isEmpty(item.location as AliasedNodeData)">
+                                <dt>
+                                    {{ item.visitName || `Visit ${index + 1}` }} -
+                                    Location and Access
+                                </dt>
+                                <dd
+                                    v-html="
+                                        getDisplayValue(
+                                            item.location as AliasedNodeData,
+                                        )
+                                    "
+                                />
+                            </template>
+                            <template v-if="item.accuracyRemarks && !isEmpty(item.accuracyRemarks as AliasedNodeData)">
+                                <dt>
+                                    {{ item.visitName || `Visit ${index + 1}` }} -
+                                    Accuracy Remarks
+                                </dt>
+                                <dd
+                                    v-html="
+                                        getDisplayValue(
+                                            item.accuracyRemarks as AliasedNodeData,
+                                        )
+                                    "
+                                />
+                            </template>
                         </template>
                     </dl>
                     <EmptyState
