@@ -35,7 +35,9 @@ export const notifyError = (summary: string, error?: unknown): void => {
 export const installErrorHandling = (app: App): void => {
     const { $toast, $gettext } = app.config.globalProperties;
     toast = $toast;
-    const summary = $gettext ? $gettext('Something went wrong.') : 'Something went wrong.';
+    const summary = $gettext
+        ? $gettext('Something went wrong.')
+        : 'Something went wrong.';
     app.config.errorHandler = (error) => notifyError(summary, error);
     // Only our own errors: arches' knockout code leaves rejections too.
     window.addEventListener('unhandledrejection', (event) => {
