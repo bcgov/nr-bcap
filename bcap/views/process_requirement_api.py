@@ -20,7 +20,6 @@ from rest_framework.views import APIView
 from arches.app.models.resource import Resource
 
 from arches_querysets.models import ResourceTileTree
-from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.permissions import ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
@@ -44,6 +43,7 @@ from bcap.services.process_requirement.template_specs import host_graph
 from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
+from bcap.views.parsers import ValidatedMultiPartJSONParser
 
 RESOURCE_EDITOR_GROUP = "Resource Editor"
 
@@ -115,7 +115,7 @@ class ProcessRequirementSeedView(APIView):
     # permits they may file against is settled by the permit lookup.
     permission_classes = [IsAuthenticated]
     # A module carrying file uploads (a document submission and its photographs)
-    parser_classes = [JSONParser, MultiPartJSONParser]
+    parser_classes = [JSONParser, ValidatedMultiPartJSONParser]
     # Key each host's aliased_data component name off its graph, so the three
     # host types get distinct typed schemas instead of one shared, generic one.
     schema = ArchesTileAutoSchema()
