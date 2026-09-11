@@ -12,6 +12,7 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
+import { notifyError } from '@/bcap/notify.ts';
 
 const route = useRoute();
 const idFromUrl = route.query.id;
@@ -168,7 +169,7 @@ const saveChanges = async () => {
         );
         markPristine();
     } catch (error) {
-        console.error('Save error:', error);
+        notifyError('Failed to save checklist', error);
     } finally {
         isSaving.value = false;
     }
