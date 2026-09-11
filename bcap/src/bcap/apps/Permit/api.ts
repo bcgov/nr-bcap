@@ -40,6 +40,7 @@ import {
     zProcessRequirement,
 } from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { notifyError } from '@/bcap/notify.ts';
 
 export const fetchDraft = async (
     graphSlug: string,
@@ -83,7 +84,7 @@ export const fetchDrafts = async (
     try {
         return await apiFetchJson<WorkflowDraft[]>(url);
     } catch (error) {
-        console.error('Failed to load drafts:', error);
+        notifyError('Failed to load drafts', error);
         return [];
     }
 };
@@ -113,7 +114,7 @@ export const saveDraftFieldToBackend = async (
             { method: HttpMethod.Patch, body: payload },
         );
     } catch (error) {
-        console.error('Failed to auto-save draft data:', error);
+        notifyError('Your draft could not be saved', error);
     }
 };
 
@@ -146,7 +147,7 @@ const fetchExternalDashboardCards = async (
         const page = await apiFetchJson<ExternalDashboardPage>(url);
         return page.results || [];
     } catch (error) {
-        console.error(`Failed to load ${status} dashboard cards:`, error);
+        notifyError('Failed to load dashboard', error);
         return [];
     }
 };
@@ -172,7 +173,7 @@ export const getInternalDashboardData = async (
         }
         return result.data.results ?? [];
     } catch (error) {
-        console.error('Error fetching projects from backend:', error);
+        notifyError('Failed to load dashboard', error);
         return [];
     }
 };
@@ -182,10 +183,6 @@ export const getProcessRequirementData = async (
 ): Promise<ProcessRequirement> => {
     const json = await apiFetchJson<ProcessRequirement>(
         arches.urls.api_process_requirements(resource_id),
-        {
-            formatError: async (response) =>
-                (await response.text()) || response.statusText,
-        },
     );
     const result = zProcessRequirement.safeParse(json);
     if (!result.success) {
@@ -287,7 +284,7 @@ export const fetchRequirementDetails = async (
                 const json = await apiFetchJson<ProcessRequirement>(url);
                 return [id, json];
             } catch (error) {
-                console.error('Failed to load requirement detail:', error);
+                notifyError('Failed to load requirement', error);
                 return null;
             }
         }),
