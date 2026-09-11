@@ -15,6 +15,8 @@ import {
     getUnlinkedContributors,
     issueRegistrationLink,
 } from '@/bcap/apps/Admin/api.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
+import { userMessage } from '@/bcap/notify.ts';
 
 import type {
     ContributorSummary,
@@ -45,8 +47,10 @@ const state = reactive({
     externalApplicant: false,
     submitting: false,
     result: null as RegistrationLinkResponse | null,
-    error: null as string | null,
+    error: null as { title: string; detail: string } | null,
 });
+
+const TRY_AGAIN = 'Please try again, or contact support if it keeps happening.';
 
 const EXTERNAL_APPLICANT_GROUP = 'Submitter';
 
@@ -82,7 +86,7 @@ onMounted(async () => {
             getAssignableGroups(),
         ]);
     } catch (error) {
-        showError(error);
+        showError('The invite form could not be loaded.', error);
     }
 });
 
@@ -124,7 +128,7 @@ const submit = async () => {
         };
         state.result = await issueRegistrationLink(body);
     } catch (error) {
-        showError(error);
+        showError('The signup link could not be generated.', error);
     } finally {
         state.submitting = false;
     }
@@ -151,12 +155,13 @@ const searchContributors = debounce(async (event: { value: string }) => {
     try {
         state.contributors = await getUnlinkedContributors(event.value);
     } catch (error) {
-        showError(error);
+        showError('Contributors could not be searched.', error);
     }
 }, 250);
 
-function showError(error: unknown) {
-    state.error = error instanceof Error ? error.message : String(error);
+function showError(title: string, error: unknown) {
+    console.error(title, error);
+    state.error = { title, detail: userMessage(error) ?? TRY_AGAIN };
 }
 </script>
 
@@ -316,12 +321,11 @@ function showError(error: unknown) {
             />
         </div>
 
-        <small
+        <InlineError
             v-if="state.error"
-            class="error-msg"
-        >
-            {{ state.error }}
-        </small>
+            :title="state.error.title"
+            :detail="state.error.detail"
+        />
 
         <div
             v-if="state.result"
@@ -413,12 +417,6 @@ function showError(error: unknown) {
 .req {
     color: #d8292f;
     margin-left: 0.2rem;
-}
-.error-msg {
-    color: #d8292f;
-    text-align: right;
-    font-size: 1.2rem;
-    font-weight: 600;
 }
 .hint {
     color: var(--bc-muted);

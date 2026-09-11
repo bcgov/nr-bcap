@@ -11,8 +11,8 @@ defineProps<{
         role="alert"
     >
         <p class="inline-error-title">
-            <i
-                class="pi pi-times-circle inline-error-icon"
+            <span
+                class="inline-error-icon"
                 aria-hidden="true"
             />
             {{ title }}
@@ -49,17 +49,27 @@ defineProps<{
     line-height: 1.4;
 }
 
+/* Matches the error toast's icon. */
 .inline-error-icon {
     flex: none;
-    color: #d8292f;
-    font-size: 1.3rem;
-    line-height: 1;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: #d8292f;
+}
+.inline-error-icon::before {
+    content: '!';
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
 }
 
 /* Indented to the title text (icon plus gap); the server sends one message
    per line. */
 .inline-error-detail {
-    margin: 0.35rem 0 0 1.9rem;
+    margin: 0.35rem 0 0 2.1rem;
     font-size: 1.15rem;
     line-height: 1.5;
     white-space: pre-line;
