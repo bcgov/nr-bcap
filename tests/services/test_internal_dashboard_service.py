@@ -419,7 +419,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         )
 
     def test_node_value_tolerates_a_none_aliased_data(self):
-        self.assertEqual(self.service._node_value(None, "requirement_name"), {})
+        self.assertEqual(self.service.node_value(None, "requirement_name"), {})
 
     def test_order_value_treats_a_null_order_as_last(self):
         # A present-but-unset order node has node_value None. It must sort last

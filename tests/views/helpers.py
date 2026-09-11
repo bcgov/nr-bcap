@@ -1,12 +1,14 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from oauth2_provider.models import AccessToken, get_application_model
 
 from arches_controlled_lists.models import ListItem
 
+from bcap.permissions.groups import Groups
 from bcap.util.graph import get_node
 
 
@@ -25,6 +27,9 @@ def login_as(client, user, login_source="IDIR"):
 class AuthTestHelper:
     """Sets up cls.user, cls.application, cls.access_token for auth tests.
 
+    cls.user is an external applicant, in the Submitter group registration puts
+    them in; a test needing ministry staff adds an internal group itself.
+
     Subclasses that define setUpTestData must call super().setUpTestData().
     """
 
@@ -37,6 +42,7 @@ class AuthTestHelper:
             password="pass",
             email="testuser@example.com",
         )
+        cls.user.groups.add(Group.objects.get(name=Groups.SUBMITTER))
 
         Application = get_application_model()
         cls.application = Application.objects.create(

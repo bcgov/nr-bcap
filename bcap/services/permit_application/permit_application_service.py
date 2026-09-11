@@ -6,6 +6,10 @@ from itertools import chain
 
 from django.db import connection
 
+from arches_querysets.models import ResourceTileTree
+
+from bcap.permissions.groups import is_internal_user
+from bcap.permissions.permit_access import PermitAccess
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
@@ -13,13 +17,26 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as aliases,
     PermitApplicationGroupAliases as group_aliases,
 )
-from bcap.util.bcap_aliases import ALIASED_DATA
+from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.tiles import group_data
 from bcap.util.indexing import bulk_index
 
 
 class PermitApplicationService:
     """Assigns the id and attaches requirements on first submission."""
+
+    @staticmethod
+    def base_query(user, resource_ids=None):
+        """Every filing for branch staff; for everyone else the ones they filed
+        themselves or their company filed."""
+        queryset = ResourceTileTree.get_tiles(
+            GraphSlugs.PERMIT_APPLICATION,
+            resource_ids=resource_ids,
+            as_representation=True,
+        ).select_related("graph", "resource_instance_lifecycle_state")
+        if is_internal_user(user):
+            return queryset
+        return queryset.filter(PermitAccess.own_or_company_permits(user))
 
     def __init__(self, request=None, requirement_service=None):
         # The request rides along so requirement saves name the acting user in
@@ -64,9 +81,11 @@ class PermitApplicationService:
             return save()
         return self._attach_requirements_and_save(data, save)
 
-    def submit(self, instance, data, save):
+    def submit(self, instance, data, user, save):
         """Attach the requirement working copies on the first update that sets
-        the submission date."""
+        the submission date. Edit access to the filing gates the whole update, so
+        it is checked here rather than left to each caller."""
+        PermitAccess.require_change(user, str(instance.pk))
         if not self._first_submission(instance, data):
             return save()
         return self._attach_requirements_and_save(data, save, permit_id=instance.pk)

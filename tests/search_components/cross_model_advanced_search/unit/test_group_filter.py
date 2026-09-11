@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
 from typing import Any
 
 from bcap.search_components.cross_model_advanced_search import (
@@ -13,19 +14,40 @@ from helper import _make_bool
 
 
 class TestGroupFilterCreate:
-    def test_defaults(self) -> None:
-        gf = GroupFilter.create({})
-        assert gf.match_type == MatchType.ALL
-        assert gf.operator == Logic.AND
+    @pytest.mark.parametrize(
+        "data,match_type,operator",
+        [
+            pytest.param({}, MatchType.ALL, Logic.AND, id="defaults"),
+            pytest.param(
+                {"cards": []}, MatchType.ALL, Logic.AND, id="empty_cards_list"
+            ),
+            pytest.param(
+                {"match": None, "operator_after": None},
+                MatchType.ALL,
+                Logic.AND,
+                id="none_match_and_none_operator",
+            ),
+            pytest.param(
+                {"match": "all", "operator_after": "and"},
+                MatchType.ALL,
+                Logic.AND,
+                id="match_all_and_operator_and_explicit",
+            ),
+            pytest.param(
+                {"match": "any", "operator_after": "or"},
+                MatchType.ANY,
+                Logic.OR,
+                id="match_any_and_operator_or",
+            ),
+        ],
+    )
+    def test_defaults_and_explicit_values(
+        self, data: dict[str, Any], match_type: MatchType, operator: Logic
+    ) -> None:
+        gf = GroupFilter.create(data)
+        assert gf.match_type == match_type
+        assert gf.operator == operator
         assert gf.cards == []
-
-    def test_with_match_any(self) -> None:
-        gf = GroupFilter.create({"match": "any"})
-        assert gf.match_type == MatchType.ANY
-
-    def test_with_operator_or(self) -> None:
-        gf = GroupFilter.create({"operator_after": "or"})
-        assert gf.operator == Logic.OR
 
     def test_with_cards(self) -> None:
         gf = GroupFilter.create(
@@ -39,26 +61,6 @@ class TestGroupFilterCreate:
         assert len(gf.cards) == 2
         assert gf.cards[0].nodegroup == "ng-1"
         assert gf.cards[1].nodegroup == "ng-2"
-
-    def test_none_match(self) -> None:
-        gf = GroupFilter.create({"match": None})
-        assert gf.match_type == MatchType.ALL
-
-    def test_none_operator(self) -> None:
-        gf = GroupFilter.create({"operator_after": None})
-        assert gf.operator == Logic.AND
-
-    def test_empty_cards_list(self) -> None:
-        gf = GroupFilter.create({"cards": []})
-        assert gf.cards == []
-
-    def test_match_all_explicit(self) -> None:
-        gf = GroupFilter.create({"match": "all"})
-        assert gf.match_type == MatchType.ALL
-
-    def test_operator_and_explicit(self) -> None:
-        gf = GroupFilter.create({"operator_after": "and"})
-        assert gf.operator == Logic.AND
 
 
 class TestGroupFilterBuild:

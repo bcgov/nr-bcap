@@ -140,145 +140,40 @@ class TestGetAllFlatTables(SimpleTestCase):
 
 
 class TestGetFlatColumns(SimpleTestCase):
-    def _string_spec(self):
-        return {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("title", "node-uuid-1", "string"),
-                    ],
-                )
-            ],
-        }
+    def _columns(self, *fields, alias="branch"):
+        gen = _make_gen({"ng": [_ng(alias, "ng-uuid-1", fields=list(fields))]})
+        return dict(gen.get_flat_columns(None))
 
-    def test_string_field_produces_text_column(self):
-        gen = _make_gen(self._string_spec())
-        cols = gen.get_flat_columns(None)
-        names = [c for c, _ in cols]
-        self.assertIn("title", names)
+    def test_scalar_field_types(self):
+        for alias, datatype, datefmt, flat_type in (
+            ("title", "string", None, "text"),
+            ("start_date", "date", "YYYY-MM-DD", "date"),
+            ("count", "number", None, "numeric"),
+            ("is_active", "boolean", None, "boolean"),
+        ):
+            with self.subTest(datatype):
+                cols = self._columns(_field(alias, "node-uuid-1", datatype, datefmt))
+                self.assertEqual(cols.get(alias), flat_type)
 
-    def test_date_field_produces_date_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("start_date", "node-uuid-2", "date", "YYYY-MM-DD"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("start_date", cols)
-        self.assertEqual(cols["start_date"], "date")
-
-    def test_number_field_produces_numeric_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("count", "node-uuid-3", "number"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("count", cols)
-        self.assertEqual(cols["count"], "numeric")
-
-    def test_boolean_field_produces_boolean_type(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("is_active", "node-uuid-4", "boolean"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        cols = {c: t for c, t in gen.get_flat_columns(None)}
-        self.assertIn("is_active", cols)
-        self.assertEqual(cols["is_active"], "boolean")
-
-    def test_reference_field_produces_label_and_ids_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("status", "node-uuid-5", "reference"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("status", col_names)
-        self.assertIn("status_ids", col_names)
-
-    def test_resource_instance_produces_name_and_id_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("permit", "node-uuid-6", "resource-instance"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("permit", col_names)
-        self.assertIn("permit_id", col_names)
-
-    def test_resource_instance_list_produces_names_and_ids_pair(self):
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "branch",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("permits", "node-uuid-7", "resource-instance-list"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertIn("permits", col_names)
-        self.assertIn("permits_ids", col_names)
+    def test_related_fields_produce_a_label_and_id_pair(self):
+        for alias, datatype, id_column in (
+            ("status", "reference", "status_ids"),
+            ("permit", "resource-instance", "permit_id"),
+            ("permits", "resource-instance-list", "permits_ids"),
+        ):
+            with self.subTest(datatype):
+                cols = self._columns(_field(alias, "node-uuid-1", datatype))
+                self.assertLessEqual({alias, id_column}, set(cols))
 
     def test_geojson_field_excluded_from_scalar_columns(self):
         """Geometry fields are excluded from the _flat column list (handled separately)."""
-        spec_kw = {
-            "ng": [
-                _ng(
-                    "boundary",
-                    "ng-uuid-1",
-                    fields=[
-                        _field("geom", "node-uuid-8", "geojson-feature-collection"),
-                        _field("title", "node-uuid-9", "string"),
-                    ],
-                )
-            ],
-        }
-        gen = _make_gen(spec_kw)
-        col_names = [c for c, _ in gen.get_flat_columns(None)]
-        self.assertNotIn("geom", col_names)
-        self.assertIn("title", col_names)
+        cols = self._columns(
+            _field("geom", "node-uuid-8", "geojson-feature-collection"),
+            _field("title", "node-uuid-9", "string"),
+            alias="boundary",
+        )
+        self.assertNotIn("geom", cols)
+        self.assertIn("title", cols)
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +182,13 @@ class TestGetFlatColumns(SimpleTestCase):
 
 
 class TestGenerate(SimpleTestCase):
-    def _run_generate(self, spec_kwargs=None):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.result, cls.files = cls._run_generate(cls._minimal_spec_kwargs())
+
+    @staticmethod
+    def _run_generate(spec_kwargs=None):
         with tempfile.TemporaryDirectory() as out_dir:
             spec = _spec(**(spec_kwargs or {}))
             gen = SpecGenerator(spec, out_dir)
@@ -296,7 +197,8 @@ class TestGenerate(SimpleTestCase):
             files = set(os.listdir(schema_dir))
         return result, files
 
-    def _minimal_spec_kwargs(self):
+    @staticmethod
+    def _minimal_spec_kwargs():
         return {
             "schema": "my_schema",
             "ng": [
@@ -311,7 +213,6 @@ class TestGenerate(SimpleTestCase):
         }
 
     def test_returns_dict_with_expected_keys(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
         for key in (
             "slug",
             "schema",
@@ -321,39 +222,23 @@ class TestGenerate(SimpleTestCase):
             "grains",
             "grain_view_names",
         ):
-            self.assertIn(key, result)
+            self.assertIn(key, self.result)
 
-    def test_branch_mv_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_branch.sql", files)
-
-    def test_mv_resource_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_resource.sql", files)
-
-    def test_mv_resource_flat_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("mv_resource_flat.sql", files)
-
-    def test_resource_view_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("resource_view.sql", files)
-
-    def test_flat_views_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("flat_views.sql", files)
-
-    def test_refresh_resource_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("refresh_resource.sql", files)
-
-    def test_refresh_flat_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("refresh_flat.sql", files)
-
-    def test_alignment_test_file_written(self):
-        _, files = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("alignment_test.sql", files)
+    def test_writes_the_expected_files(self):
+        expected = {
+            "mv_branch.sql",
+            "mv_resource.sql",
+            "mv_resource_flat.sql",
+            "resource_view.sql",
+            "flat_views.sql",
+            "refresh_resource.sql",
+            "refresh_flat.sql",
+            "alignment_test.sql",
+        }
+        for name in sorted(expected):
+            with self.subTest(name):
+                self.assertIn(name, self.files)
+        self.assertEqual(self.files - expected, set(), "unexpected files written")
 
     def test_grain_flat_file_written_for_configured_grain(self):
         spec_kw = {
@@ -413,12 +298,10 @@ class TestGenerate(SimpleTestCase):
         self.assertIn("mv_geom_site_boundary.sql", files)
 
     def test_result_tops_matches_top_level_nodegroups(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
-        self.assertIn("branch", result["tops"])
+        self.assertIn("branch", self.result["tops"])
 
     def test_result_schema_matches_spec(self):
-        result, _ = self._run_generate(self._minimal_spec_kwargs())
-        self.assertEqual(result["schema"], "my_schema")
+        self.assertEqual(self.result["schema"], "my_schema")
 
 
 # ---------------------------------------------------------------------------

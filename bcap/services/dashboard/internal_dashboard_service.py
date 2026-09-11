@@ -19,7 +19,7 @@ from arches.app.models.models import EditLog, TileModel
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.graph import node_id, node_info
+from bcap.util.graph import node_id, node_info, nodes_for
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.dashboard.dashboard_types import (
     InternalDashboardData,
@@ -37,6 +37,38 @@ from bcap.util.queryset import filter_or_empty
 
 class InternalDashboardService(BaseDashboardService):
     PR = ProcessRequirementAliases
+
+    @classmethod
+    def base_query(cls):
+        """Submitted filings still carrying an unsatisfied requirement, with the
+        card's nodes (requirement tiles included, so the per-permit read needs no
+        extra query) and the active assignee annotated. Staff-only route, so no
+        narrowing by caller."""
+        queryset = (
+            ResourceTileTree.get_tiles(
+                GraphSlugs.PERMIT_APPLICATION,
+                nodes=nodes_for(
+                    GraphSlugs.PERMIT_APPLICATION,
+                    cls.CARD_NODES
+                    + [
+                        cls.PA.PROCESS_REQUIREMENT,
+                        cls.PA.PROCESS_REQUIREMENT_ORDER,
+                        cls.PA.MINISTRY_ASSIGNEE,
+                        cls.PA.PROJECT_OFFICER,
+                    ],
+                ),
+                as_representation=True,
+            )
+            .select_related("graph")
+            .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
+        )
+        queryset = queryset.annotate(
+            active_assignee=cls._active_assignee_subquery(),
+        )
+        return queryset.filter(
+            Exists(cls._submitted_tiles()),
+            Exists(cls._active_requirement_tiles()),
+        )
 
     def get_cards(
         self, query: DashboardFilter, username: str = ""
@@ -78,43 +110,13 @@ class InternalDashboardService(BaseDashboardService):
             results=self._cards_to_json(permits, data),
         )
 
-    def _base_permit_queryset(self):
-        """Permit applications with the card's nodes loaded (including the
-        process_requirement tiles, so _requirement_tiles_by_permit needs no extra
-        query) and the active assignee annotated, narrowed to those with an
-        unsatisfied requirement."""
-        queryset = (
-            ResourceTileTree.get_tiles(
-                GraphSlugs.PERMIT_APPLICATION,
-                nodes=self.nodes(
-                    GraphSlugs.PERMIT_APPLICATION,
-                    self.CARD_NODES
-                    + [
-                        self.PA.PROCESS_REQUIREMENT,
-                        self.PA.PROCESS_REQUIREMENT_ORDER,
-                        self.PA.MINISTRY_ASSIGNEE,
-                        self.PA.PROJECT_OFFICER,
-                    ],
-                ),
-                as_representation=True,
-            )
-            .select_related("graph")
-            .order_by("pk")  # stable, so LIMIT/OFFSET pages don't overlap
-        )
-        queryset = queryset.annotate(
-            active_assignee=self._active_assignee_subquery(),
-        )
-        return queryset.filter(
-            Exists(self._submitted_tiles()),
-            Exists(self._active_requirement_tiles()),
-        )
-
-    def _submitted_tiles(self):
+    @classmethod
+    def _submitted_tiles(cls):
         """Per-permit subquery of its application_admin tile once the submission
         date is filled in. The text read (->>) excludes a key present with JSON
         null, which a data__id__isnull check would keep."""
         date_id, admin_ng = node_info(
-            GraphSlugs.PERMIT_APPLICATION, self.PA.APPLICATION_SUBMISSION_DATE
+            GraphSlugs.PERMIT_APPLICATION, cls.PA.APPLICATION_SUBMISSION_DATE
         )
         return (
             TileModel.objects.filter(
@@ -128,9 +130,7 @@ class InternalDashboardService(BaseDashboardService):
     def _permits(self, query, username=""):
         """The query's page of permits and the total count; counting, paging,
         and the status filter all run in the DB."""
-        queryset = self._filter_by_status(
-            self._base_permit_queryset(), query.status, username
-        )
+        queryset = self._filter_by_status(self.base_query(), query.status, username)
         return self._page(queryset, query)
 
     def _filter_by_status(self, queryset, status, username):
@@ -147,20 +147,22 @@ class InternalDashboardService(BaseDashboardService):
             case _:
                 return queryset
 
-    def _active_assignee_subquery(self):
+    @classmethod
+    def _active_assignee_subquery(cls):
         """Per permit, the ministry_assignee id of its active requirement."""
-        return Subquery(self._active_requirement_tiles().values("assignee")[:1])
+        return Subquery(cls._active_requirement_tiles().values("assignee")[:1])
 
-    def _active_requirement_tiles(self):
+    @classmethod
+    def _active_requirement_tiles(cls):
         """Per-permit subquery of its unsatisfied process_requirement tiles,
         ordered by module then requirement order (the first unsatisfied wins).
         The non-null guard stays in lockstep with _choose_requirements."""
         app, req = GraphSlugs.PERMIT_APPLICATION, GraphSlugs.PROCESS_REQUIREMENT
-        order_id, child_ng = node_info(app, self.PA.PROCESS_REQUIREMENT_ORDER)
-        assignee_id = node_id(app, self.PA.MINISTRY_ASSIGNEE)
-        requirement_id = node_id(app, self.PA.PROCESS_REQUIREMENT)
-        module_order_id = node_id(app, self.PA.MODULE_ORDER)
-        status_id, status_ng = node_info(req, self.PR.REQUIREMENT_STATUS)
+        order_id, child_ng = node_info(app, cls.PA.PROCESS_REQUIREMENT_ORDER)
+        assignee_id = node_id(app, cls.PA.MINISTRY_ASSIGNEE)
+        requirement_id = node_id(app, cls.PA.PROCESS_REQUIREMENT)
+        module_order_id = node_id(app, cls.PA.MODULE_ORDER)
+        status_id, status_ng = node_info(req, cls.PR.REQUIREMENT_STATUS)
 
         def get_json_resource_id(node_id):
             return KeyTextTransform(
@@ -195,7 +197,7 @@ class InternalDashboardService(BaseDashboardService):
     def _requirement_tiles_by_permit(self, permits):
         """Map permit id -> its process_requirement tiles, sorted by the parent
         module's order then the requirement's own order. Read from the
-        already-loaded tree (see _base_permit_queryset), so no query."""
+        already-loaded tree (see the base query), so no query."""
         requirements_by_permit = {}
         for permit in permits:
             ordered = []
@@ -281,7 +283,7 @@ class InternalDashboardService(BaseDashboardService):
             data_by_requirement[str(resource_id)].update(data)
 
         def text(data, alias):
-            return self._display_text(data.get(node_ids[alias]))
+            return self.display_text(data.get(node_ids[alias]))
 
         return {
             requirement_id: Requirement(
@@ -363,7 +365,7 @@ class InternalDashboardService(BaseDashboardService):
         ministry_assignee_name = data.contributor_names.get(assignee_id, "")
         ministry_assignee_change_date = data.assignee_dates.get(str(tile.pk), "")
 
-        officer_id = self._resource_id(self._node_value(aliased, PA.PROJECT_OFFICER))
+        officer_id = self._resource_id(self.node_value(aliased, PA.PROJECT_OFFICER))
         officer_name = data.contributor_names.get(officer_id, "")
         unread_messages = data.unread_counts.get(str(permit.pk), 0)
 

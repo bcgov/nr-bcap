@@ -1,9 +1,9 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from bcap.models import RegistrationLink
+from bcap.permissions.groups import SELF_MANAGE_ROLE_GROUPS
 from bcap.services.contributor.contributor_service import ContributorService
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
@@ -147,7 +147,7 @@ class RegistrationLinkApiTest(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.admin)
         resp = self.client.get(reverse("assignable_groups"))
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json(), settings.SELF_MANAGE_ROLE_GROUPS)
+        self.assertEqual(resp.json(), SELF_MANAGE_ROLE_GROUPS)
 
     def test_assignable_groups_requires_admin(self):
         self.idir_login_simulate(self.user)

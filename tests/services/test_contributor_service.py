@@ -10,7 +10,7 @@ from bcap.services.contributor.contributor_service import (
 )
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.util.aliases.contributor import ContributorAliases
-from bcap.util.auth.groups import Groups
+from bcap.permissions.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,

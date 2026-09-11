@@ -13,8 +13,8 @@ from arches.app.models.models import ResourceInstance, TileModel
 
 from arches_querysets.models import ResourceTileTree, TileTree
 
-from bcap.services.contributor.organization_service import OrganizationService
-from bcap.services.dashboard.base_graph_service import BaseGraphService
+from bcap.permissions.permit_access import PermitAccess
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.util.aliases.workflow_drafts import (
     WorkflowDraftsAliases,
     WorkflowDraftsGroupAliases,
@@ -42,25 +42,22 @@ class DraftRecord:
     updated: str = ""
 
 
-class WorkflowDraftService(BaseGraphService):
+class WorkflowDraftService(AliasedDataReader):
     """CRUD over draft resources, scoped to the caller's company. Reads and the
-    lookups behind the writes both go through queryset(), so a colleague can
+    lookups behind the writes draw on the same scoped query, so a colleague can
     resume and delete a draft as well as see it."""
 
-    def queryset(self, user, graph_slug=None, parent_resource_id=None, own_only=False):
-        """A user's drafts and their associated companies', oldest first; branch
-        staff get no widening. own_only narrows to the ones the user created,
-        within what they may see rather than instead of it, so a draft left at a
-        former company stays hidden. Graph and parent filter in SQL, so no caller
-        loads them all."""
+    @staticmethod
+    def base_query(user, graph_slug=None, parent_resource_id=None, own_only=False):
+        """The drafts this user started and their company's, optionally narrowed
+        to one graph, one parent, or the ones they created. Branch staff get no
+        widening: a draft is personal scratch data. own_only narrows within what
+        they may see rather than instead of it, so a draft left at a former
+        company stays hidden. Graph and parent filter in SQL, so no caller loads
+        them all."""
         qs = ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
-        )
-        qs = qs.filter(
-            OrganizationService().visible_to(
-                user, WorkflowDraftsAliases.OWNING_ORGANIZATION
-            )
-        )
+        ).filter(PermitAccess.own_or_company_drafts(user))
         if own_only:
             qs = qs.filter(principaluser=user)
         if graph_slug is not None:
@@ -77,7 +74,7 @@ class WorkflowDraftService(BaseGraphService):
 
     def get(self, user, pk):
         """The draft with this id as far as the user can see it, or None."""
-        return self.queryset(user).filter(pk=pk).first()
+        return self.base_query(user).filter(pk=pk).first()
 
     def create(
         self,
@@ -125,7 +122,7 @@ class WorkflowDraftService(BaseGraphService):
         draft.save(request=request, partial=False, index=True)
         ResourceInstance.objects.filter(pk=draft.pk).update(principaluser=user)
         self._write_blob_no_audit(draft.pk, data or {})
-        return self.queryset(user, own_only=True).filter(pk=draft.pk).first()
+        return self.base_query(user, own_only=True).filter(pk=draft.pk).first()
 
     def set_data(self, request, pk, data, current_step=None):
         """Replace a draft's blob with the caller's fully-merged data and

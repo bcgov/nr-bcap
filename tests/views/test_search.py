@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from bcap.permissions.groups import Groups
 from bcap.search.search_export import BCAPSearchResultsExporter
 from tests.views.helpers import AuthTestHelper
 
@@ -19,7 +20,7 @@ _BOM = codecs.BOM_UTF8.decode("utf-8")
 class TestExportResultsView(AuthTestHelper, TestCase):
     def setUp(self):
         super().setUp()
-        group, _ = Group.objects.get_or_create(name="Resource Exporter")
+        group, _ = Group.objects.get_or_create(name=Groups.RESOURCE_EXPORTER)
         self.user.groups.add(group)
         self.idir_login_simulate()
         self.url = reverse("export_results")

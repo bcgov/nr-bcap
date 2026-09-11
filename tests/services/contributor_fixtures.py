@@ -5,6 +5,7 @@ from datetime import date, timedelta
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.util.controlled_list import reference_value
 
@@ -24,18 +25,27 @@ def make_contributor(builder, name, first_name=None, **kwargs):
 
 
 def make_user(username, internal=False):
-    """A user, in the Resource Editor group when internal."""
+    """A user, in the Archaeology Branch group when internal and the Submitter
+    group otherwise, matching the group registration puts an applicant in."""
     user = get_user_model().objects.create_user(username=username, password="pass")
-    if internal:
-        user.groups.add(Group.objects.get(name="Resource Editor"))
+    user.groups.add(
+        Group.objects.get(
+            name=Groups.ARCHAEOLOGY_BRANCH if internal else Groups.SUBMITTER
+        )
+    )
     return user
 
 
 def make_party(builder, username, first_name, name, internal=False, **kwargs):
     """A user and the Contributor that links to them by bcap_username -- the
     pairing every message/dashboard fixture needs, since party membership and
-    assignment are both looked up through the Contributor."""
-    return make_user(username, internal), make_contributor(
+    assignment are both looked up through the Contributor. The name goes on the
+    auth user too, the way the identity provider supplies it, since that is what
+    display_name reads."""
+    user = make_user(username, internal)
+    user.first_name, user.last_name = first_name, name
+    user.save(update_fields=["first_name", "last_name"])
+    return user, make_contributor(
         builder, name, first_name, bcap_username=username, **kwargs
     )
 

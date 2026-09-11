@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 {% load static %}
+{% load template_tags %}
 {% load webpack_loader %}
 {% load webpack_static from webpack_loader %}
 {% load render_bundle from webpack_loader %}
@@ -67,6 +68,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
     <link rel="stylesheet" href="{% webpack_static 'node_modules/font-awesome/css/font-awesome.min.css' %}" />
     <link rel="stylesheet" href="{% webpack_static 'node_modules/primeicons/primeicons.css' %}" />
     {% endblock css %}
+
+    {% if not user|has_group:"Archaeology Branch" %}
+    <style>li:has(> a[href="{% url 'search_home' %}"]) { display: none; }</style>
+    {% endif %}
 </head>
 {% endblock head %}
 

@@ -13,7 +13,6 @@ from django.urls import reverse
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.dashboard.dashboard_types import DashboardFilter
 from bcap.services.dashboard.internal_dashboard_service import (
     InternalDashboardService,
@@ -28,13 +27,12 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as aliases,
     PermitApplicationGroupAliases as group_aliases,
 )
-from arches_controlled_lists.models import ListItem
 
 from arches.app.models.models import ResourceInstance, TileModel
 
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.util.controlled_list import reference_value
-from bcap.util.graph import get_node, node_id
+from bcap.util.graph import node_id, nodes_for
 from bcap.util.tiles import resource_instance_id, resource_instance_value
 from bcap.builders.contributor_builder import ContributorSpec
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
@@ -180,7 +178,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         the ones being read; no aliases means the whole tree (what the save path
         needs)."""
         nodes = (
-            BaseGraphService.nodes(GraphSlugs.PERMIT_APPLICATION, node_aliases)
+            nodes_for(GraphSlugs.PERMIT_APPLICATION, node_aliases)
             if node_aliases
             else None
         )
@@ -278,7 +276,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         return (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                nodes=BaseGraphService.nodes(
+                nodes=nodes_for(
                     GraphSlugs.PROCESS_REQUIREMENT, ["is_template_requirement"]
                 ),
             )
@@ -387,7 +385,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         # Already submitted, so a further submit clones nothing; it just saves.
         saved = []
         PermitApplicationService().submit(
-            self._permit(pk), submission_payload(), lambda: saved.append(True)
+            self._permit(pk),
+            submission_payload(),
+            get_user_model().objects.get(username="admin"),
+            lambda: saved.append(True),
         )
         self.assertTrue(saved)
         self.assertEqual(self._requirement_count(), before)
@@ -404,9 +405,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertEqual(self._patch(pk, payload).status_code, 400)
         self.assertEqual(self._requirement_count(), before)
 
-    def test_create_allowed_for_any_signed_in_user(self):
-        """Applicants file their own applications, so creating needs a login and
-        nothing more; the owning organization stamped on create is what scopes
+    def test_create_allowed_for_any_submitter(self):
+        """Applicants file their own applications, so creating asks only for the
+        Submitter group; the owning organization stamped on create is what scopes
         who reads it back."""
         self.idir_login_simulate(self.user)
         self.assertEqual(self._post(create_payload()).status_code, 201)
@@ -573,10 +574,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ]
         self.assertIn("Investigation", names)
 
-        service = ProcessRequirementService(
-            request_as(get_user_model().objects.get(username="admin"))
-        )
-        hosts = service.permit_module_tiles(pk, "investigation")
+        admin_user = get_user_model().objects.get(username="admin")
+        service = ProcessRequirementService(request_as(admin_user))
+        hosts = service.permit_module_tiles(pk, "investigation", admin_user)
         self.assertIn(str(self.investigation_host.pk), [str(h.pk) for h in hosts])
 
         resp = self.client.get(
@@ -591,16 +591,24 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         then: a permit carrying no permit module has no hosts, and a module with
         requirements but no host resources has none for another type."""
         service = ProcessRequirementService()
+        admin_user = get_user_model().objects.get(username="admin")
 
-        self.assertEqual(service.permit_module_tiles(self.draft_pk, "permit"), [])
+        self.assertEqual(
+            service.permit_module_tiles(self.draft_pk, "permit", admin_user), []
+        )
 
         # The own-submission requirement points back at the permit, linked after
         # the save because the id exists only then.
-        hosts = service.permit_module_tiles(self.submitted_pk, "permit")
+        hosts = service.permit_module_tiles(self.submitted_pk, "permit", admin_user)
         self.assertEqual([str(host.pk) for host in hosts], [str(self.submitted_pk)])
 
         self.assertEqual(
-            list(service.permit_module_tiles(self.submitted_pk, "investigation")), []
+            list(
+                service.permit_module_tiles(
+                    self.submitted_pk, "investigation", admin_user
+                )
+            ),
+            [],
         )
 
     def test_ids_that_dont_belong_to_the_permit_are_no_ops(self):
@@ -674,7 +682,10 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ):
             with self.assertRaises(RuntimeError):
                 PermitApplicationService().submit(
-                    self._permit(pk), submission_payload(), lambda: None
+                    self._permit(pk),
+                    submission_payload(),
+                    get_user_model().objects.get(username="admin"),
+                    lambda: None,
                 )
 
         self.assertEqual(self._requirement_count(), before)

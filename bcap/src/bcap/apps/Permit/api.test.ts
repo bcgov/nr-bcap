@@ -7,6 +7,7 @@ import {
     fetchDraftCards,
     fetchMyProjects,
     fetchAssignableContributors,
+    fetchRequirementDetails,
     patchProcessRequirement,
     setRequirementAssignee,
     submitApplication,
@@ -222,6 +223,29 @@ describe('Permit API', () => {
                 '/bcap/api/process_requirement/req-1',
                 { method: 'PATCH', body: { aliased_data: aliasedData } },
             );
+        });
+    });
+
+    describe('fetchRequirementDetails', () => {
+        it('reads each requirement from the graph route, not the generic one', async () => {
+            // The generic resource route answers to the graph policy, which has
+            // nothing for an applicant; this one lets their permit decide.
+            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'req-1' });
+
+            const result = await fetchRequirementDetails(['req-1']);
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/process_requirement/req-1',
+            );
+            expect(result).toEqual({
+                'req-1': { resourceinstanceid: 'req-1' },
+            });
+        });
+
+        it('drops a requirement that fails to load', async () => {
+            apiFetchJson.mockRejectedValue(new Error('403'));
+
+            expect(await fetchRequirementDetails(['req-1'])).toEqual({});
         });
     });
 

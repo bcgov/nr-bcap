@@ -10,7 +10,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from bcap.services.contributor.organization_service import OrganizationService
-from bcap.util.auth.groups import is_internal_user
+from bcap.permissions.groups import is_internal_user
 from bcap.util.bcap_aliases import ALIASED_DATA
 from bcap.util.tiles import group_data, resource_instance_value
 

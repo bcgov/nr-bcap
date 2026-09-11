@@ -11,7 +11,7 @@ from arches.app.models.models import TileModel
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.util.graph import node_info
+from bcap.util.graph import node_info, nodes_for
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
@@ -56,7 +56,7 @@ class ModuleProgressTests(AuthTestHelper, TestCase):
         return ResourceTileTree.get_tiles(
             GraphSlugs.PERMIT_APPLICATION,
             resource_ids=[str(pk)],
-            nodes=self.service.nodes(
+            nodes=nodes_for(
                 GraphSlugs.PERMIT_APPLICATION,
                 [
                     pa.MODULE_ID,
@@ -100,7 +100,7 @@ class ModuleProgressTests(AuthTestHelper, TestCase):
     def test_no_modules_reports_zero(self):
         plain = ResourceTileTree.get_tiles(
             GraphSlugs.PERMIT_APPLICATION,
-            nodes=self.service.nodes(GraphSlugs.PERMIT_APPLICATION, [pa.MODULE_NAME]),
+            nodes=nodes_for(GraphSlugs.PERMIT_APPLICATION, [pa.MODULE_NAME]),
             as_representation=True,
         ).none()
         self.assertEqual(

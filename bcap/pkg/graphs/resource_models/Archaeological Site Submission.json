@@ -813,16 +813,6 @@
                     "function_id": "60000000-0000-0000-0000-000000001005",
                     "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
                     "id": "5ebd12bf-1f4f-43a2-9ed1-be9b5adb0ab8"
-                },
-                {
-                    "config": {
-                        "class_name": "AdminOnlyAccess",
-                        "module": "bcap.functions.admin_only_access",
-                        "triggering_nodegroups": []
-                    },
-                    "function_id": "60000000-0000-0000-0000-000000002002",
-                    "graph_id": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
-                    "id": "645c9a4d-49ff-4c73-804a-3efff3a55385"
                 }
             ],
             "graphid": "4e69d0a9-7af2-473f-929f-71d462ea32d1",
