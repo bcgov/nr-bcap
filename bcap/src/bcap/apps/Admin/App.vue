@@ -32,7 +32,7 @@ provide(systemLanguageKey, ENGLISH);
             <RouterView />
         </div>
     </main>
-    <Toast />
+    <Toast position="top-center" />
 </template>
 
 <style scoped>
