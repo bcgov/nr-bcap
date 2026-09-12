@@ -276,7 +276,7 @@ export interface SiteVisitRelatedDocumentsTile extends AliasedTileData {
 // Root objects
 // ====================================================================
 export interface SiteVisitAliasedDataRoot {
-    site_visit_location: SiteVisitLocationTile;
+    site_visit_location: Array<SiteVisitLocationTile>;
     ancestral_remains: AncestralRemainsTile[];
     identification: IdentificationTile;
     site_visit_details: SiteVisitDetailsTile;

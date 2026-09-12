@@ -16,12 +16,13 @@ const props = withDefaults(
 const current = computed(() => props.data);
 
 const hasLocationData = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.aliased_data;
+    return current.value?.aliased_data?.site_visit_location?.length ?? 0 > 0;
 });
 
 const hasLocationAndAccess = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.aliased_data
-        ?.location_and_access?.node_value;
+    return current.value?.aliased_data?.site_visit_location?.map(
+        (loc) => loc?.aliased_data?.location_and_access?.node_value,
+    );
 });
 
 const hasGeoJsonData = computed(() => {
@@ -67,13 +68,15 @@ const biogeographyColumns = [
                     <div v-if="hasLocationData">
                         <dl>
                             <dt>Location and Access</dt>
-                            <dd>
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.location_and_access
+                            <dd
+                                v-for="loc in current?.aliased_data
+                                    ?.site_visit_location"
+                                :key="loc.tileid ?? 0"
+                                v-html="
+                                    loc?.aliased_data?.location_and_access
                                         ?.display_value
-                                }}
-                            </dd>
+                                "
+                            />
 
                             <dt
                                 v-if="
@@ -99,13 +102,15 @@ const biogeographyColumns = [
                             </dd>
 
                             <dt>Accuracy Remarks</dt>
-                            <dd>
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.accuracy_remarks
+                            <dd
+                                v-for="loc in current?.aliased_data
+                                    ?.site_visit_location"
+                                :key="loc.tileid ?? 0"
+                                v-html="
+                                    loc?.aliased_data?.accuracy_remarks
                                         ?.display_value
-                                }}
-                            </dd>
+                                "
+                            />
                         </dl>
                     </div>
                     <EmptyState v-else />
