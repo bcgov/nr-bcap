@@ -14,6 +14,17 @@ let lastShown: { key: string; message: ToastMessageOptions } | undefined;
 export const userMessage = (error: unknown): string | undefined =>
     error instanceof UserFacingError ? error.message : undefined;
 
+export const TRY_AGAIN =
+    'Please try again, or contact support if it keeps happening.';
+
+// The text for an error a page shows itself. Api failures are already logged by
+// the fetch wrapper, so only anything else (a bug) is logged here.
+export const inlineMessage = (error: unknown, fallback = TRY_AGAIN): string => {
+    const message = userMessage(error);
+    if (message === undefined) console.error(error);
+    return message ?? fallback;
+};
+
 export const notifyError = (summary: string, error?: unknown): void => {
     console.error(`${summary}:`, error);
     if (!toast) return;

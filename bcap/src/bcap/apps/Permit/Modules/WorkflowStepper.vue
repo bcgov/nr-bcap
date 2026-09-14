@@ -15,7 +15,7 @@ import StepperNavigation from '@/bcgov_arches_common/components/Stepper/componen
 import Panel from 'primevue/panel';
 import type { StepperProps, StepperState } from 'primevue/stepper';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
-import { notifyError, userMessage } from '@/bcap/notify.ts';
+import { inlineMessage, notifyError } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type {
@@ -154,10 +154,7 @@ const submitFiling = async (): Promise<boolean> => {
         if (response) state.finalizedResourceData = response;
         return true;
     } catch (error) {
-        console.error('Submission failed:', error);
-        state.submissionError =
-            userMessage(error) ??
-            'Please try again, or contact support if it keeps happening.';
+        state.submissionError = inlineMessage(error);
         return false;
     } finally {
         state.submitting = false;
