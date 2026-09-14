@@ -169,9 +169,9 @@ describe('PermitDetails.vue', () => {
         expect(fetchDrafts).toHaveBeenCalledWith('mock-permit-123');
 
         const vm = wrapper.vm as unknown as {
-            state: { investigationDrafts: unknown[] };
+            state: { permitDrafts: unknown[] };
         };
-        expect(vm.state.investigationDrafts).toHaveLength(1);
+        expect(vm.state.permitDrafts).toHaveLength(1);
     });
 
     it('switches the content when a different module is selected', async () => {
