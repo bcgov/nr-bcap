@@ -103,11 +103,15 @@ export const formatDateTime = (isoString: string | null): string | null => {
     return `${dateStr}, ${timeStr}`;
 };
 
-export const getDisplayValue = (value: AliasedNodeData | null | undefined) => {
-    return value?.node_value ? value.display_value : '';
+export const getDisplayValue = (
+    value: { node_value?: unknown; display_value?: string } | null | undefined,
+) => {
+    return value?.node_value ? (value.display_value ?? '') : '';
 };
 
-export const isEmpty = (value: AliasedNodeData | null | undefined): boolean => {
+export const isEmpty = (
+    value: { node_value?: unknown } | null | undefined,
+): boolean => {
     return !value?.node_value;
 };
 

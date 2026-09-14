@@ -5,12 +5,13 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         loading?: boolean;
         editLogData?: EditLogData;
         showAuditFields?: boolean;
@@ -28,11 +29,7 @@ const recRows = computed(
             ?.recommendation || [],
 );
 
-const archaeologyBranchRecRows = computed(
-    () =>
-        props.data?.aliased_data?.remarks_and_recommendations?.aliased_data
-            ?.archaeology_branch_recommendation || [],
-);
+const archaeologyBranchRecRows = computed(() => [] as AliasedTileData[]);
 
 const generalRemarkRows = computed(
     () =>
@@ -93,17 +90,21 @@ const generalRemarkColumns = computed(() => [
 ]);
 
 const { processedData: recommendationsTableData } = useTileEditLog(
-    recRows,
+    recRows as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: archaeologyBranchRecTableData } = useTileEditLog(
-    archaeologyBranchRecRows,
+    archaeologyBranchRecRows as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
-    generalRemarkRows,
+    generalRemarkRows as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 

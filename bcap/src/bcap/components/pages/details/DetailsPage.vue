@@ -5,7 +5,7 @@ import { formatDateTime } from '@/bcap/util.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { getEditLogForTile } from '@/bcgov_arches_common/components/EditLog/api.ts';
 import EditLog from '@/bcgov_arches_common/components/EditLog/EditLog.vue';
-import ArchaeologicalSite from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
+import ArchaeologicalSiteDetails from '@/bcap/components/pages/details/ArchaeologicalSite/ArchaeologicalSiteDetails.vue';
 import SiteVisit from '@/bcap/components/pages/details/SiteVisit/SiteVisitDetails.vue';
 import HcaPermit from '@/bcap/components/pages/details/HcaPermit/HcaPermitDetails.vue';
 import Contributor from '@/bcap/components/pages/details/Contributor/ContributorDetails.vue';
@@ -19,8 +19,10 @@ import {
     useResourceData,
     useRelatedResourceData,
 } from '@/bcap/composables/useResourceData.ts';
-import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type {
+    ArchaeologicalSite as ArchaeologicalSiteType,
+    SiteVisit as SiteVisitType,
+} from '@/bcap/client/types.gen.ts';
 import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 
 const props = withDefaults(
@@ -42,7 +44,7 @@ const siteVisitAuditDataLoad = ref(false);
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
 const { data: resourceData } = useResourceData<
-    ArchaeologySiteSchema | SiteVisitSchema
+    ArchaeologicalSiteType | SiteVisitType
 >(props.data.graph_slug, resourceId);
 
 const siteVisitResourceIdComputed: Ref<string | undefined> = computed(() => {
@@ -51,7 +53,7 @@ const siteVisitResourceIdComputed: Ref<string | undefined> = computed(() => {
         : undefined;
 });
 
-const { data: relatedSiteVisits } = useRelatedResourceData<SiteVisitSchema>(
+const { data: relatedSiteVisits } = useRelatedResourceData<SiteVisitType>(
     'site_visit',
     siteVisitResourceIdComputed,
 );
@@ -66,7 +68,7 @@ const archSiteTileIds = computed(() => {
     if (!resourceData.value || props.data.graph_slug !== 'archaeological_site')
         return tileIds;
 
-    const data = resourceData.value as ArchaeologySiteSchema;
+    const data = resourceData.value as ArchaeologicalSiteType;
 
     const editLogTiles = [
         [
@@ -154,7 +156,7 @@ const siteVisitTileMap = computed(() => {
     const tileMap = new Map<string, string[]>();
     if (props.data.graph_slug !== 'archaeological_site') return tileMap;
 
-    const siteVisits = (relatedSiteVisits.value || []) as SiteVisitSchema[];
+    const siteVisits = (relatedSiteVisits.value || []) as SiteVisitType[];
     siteVisits.forEach((visit) => {
         const visitTileIds: string[] = [];
 
@@ -167,16 +169,14 @@ const siteVisitTileMap = computed(() => {
             visit.aliased_data?.remarks_and_recommendations?.aliased_data;
         if (remarksRecs) {
             if (remarksRecs.recommendation) {
-                remarksRecs.recommendation.forEach((rec: AliasedTileData) => {
+                remarksRecs.recommendation.forEach((rec) => {
                     if (rec.tileid) visitTileIds.push(rec.tileid);
                 });
             }
             if (remarksRecs.general_remark) {
-                remarksRecs.general_remark.forEach(
-                    (remark: AliasedTileData) => {
-                        if (remark.tileid) visitTileIds.push(remark.tileid);
-                    },
-                );
+                remarksRecs.general_remark.forEach((remark) => {
+                    if (remark.tileid) visitTileIds.push(remark.tileid);
+                });
             }
         }
 
@@ -186,11 +186,9 @@ const siteVisitTileMap = computed(() => {
                 visitTileIds.push(identification.temporary_number.tileid);
             }
             if (identification.new_site_names) {
-                identification.new_site_names.forEach(
-                    (name: AliasedTileData) => {
-                        if (name.tileid) visitTileIds.push(name.tileid);
-                    },
-                );
+                identification.new_site_names.forEach((name) => {
+                    if (name.tileid) visitTileIds.push(name.tileid);
+                });
             }
         }
 
@@ -199,15 +197,13 @@ const siteVisitTileMap = computed(() => {
                 ?.site_visit_team;
 
         if (teamTile?.aliased_data?.team_member) {
-            teamTile.aliased_data.team_member.forEach(
-                (member: AliasedTileData) => {
-                    if (member.tileid) visitTileIds.push(member.tileid);
-                },
-            );
+            teamTile.aliased_data.team_member.forEach((member) => {
+                if (member.tileid) visitTileIds.push(member.tileid);
+            });
         }
 
         if (visitTileIds.length > 0) {
-            tileMap.set(visit.resourceinstanceid, visitTileIds);
+            tileMap.set(visit.resourceinstanceid ?? '', visitTileIds);
         }
     });
 
@@ -275,7 +271,7 @@ const allTileIds = computed(() => {
     if (props.data.graph_slug === 'archaeological_site') {
         return archSiteTileIds.value;
     } else if (props.data.graph_slug === 'site_visit') {
-        const data = resourceData.value as SiteVisitSchema;
+        const data = resourceData.value as SiteVisitType;
 
         const siteVisitDetailsTile = data.aliased_data?.site_visit_details;
         if (siteVisitDetailsTile?.tileid) {
@@ -286,16 +282,14 @@ const allTileIds = computed(() => {
             data.aliased_data?.remarks_and_recommendations?.aliased_data;
         if (remarksRecs) {
             if (remarksRecs.recommendation) {
-                remarksRecs.recommendation.forEach((rec: AliasedTileData) => {
+                remarksRecs.recommendation.forEach((rec) => {
                     if (rec.tileid) tileIds.push(rec.tileid);
                 });
             }
             if (remarksRecs.general_remark) {
-                remarksRecs.general_remark.forEach(
-                    (remark: AliasedTileData) => {
-                        if (remark.tileid) tileIds.push(remark.tileid);
-                    },
-                );
+                remarksRecs.general_remark.forEach((remark) => {
+                    if (remark.tileid) tileIds.push(remark.tileid);
+                });
             }
         }
 
@@ -305,11 +299,9 @@ const allTileIds = computed(() => {
                 tileIds.push(identification.temporary_number.tileid);
             }
             if (identification.new_site_names) {
-                identification.new_site_names.forEach(
-                    (name: AliasedTileData) => {
-                        if (name.tileid) tileIds.push(name.tileid);
-                    },
-                );
+                identification.new_site_names.forEach((name) => {
+                    if (name.tileid) tileIds.push(name.tileid);
+                });
             }
         }
 
@@ -317,11 +309,9 @@ const allTileIds = computed(() => {
             data.aliased_data?.site_visit_details?.aliased_data
                 ?.site_visit_team;
         if (teamTile?.aliased_data?.team_member) {
-            teamTile.aliased_data.team_member.forEach(
-                (member: AliasedTileData) => {
-                    if (member.tileid) tileIds.push(member.tileid);
-                },
-            );
+            teamTile.aliased_data.team_member.forEach((member) => {
+                if (member.tileid) tileIds.push(member.tileid);
+            });
         }
     }
 
@@ -386,7 +376,7 @@ const showAuditFields = async (results: EditLogData) => {
             </SectionControls>
         </div>
 
-        <ArchaeologicalSite
+        <ArchaeologicalSiteDetails
             v-if="props.data.graph_slug === 'archaeological_site'"
             :data="props.data"
             :language-code="props.languageCode"

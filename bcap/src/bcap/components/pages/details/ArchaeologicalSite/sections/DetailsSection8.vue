@@ -8,17 +8,17 @@ import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
-import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
-    RemarksAndRestrictedInformationTile,
-    ContraventionDocumentTile,
-    RestrictedDocumentTile,
-    GeneralRemarkTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
 import type {
-    SiteVisitSchema,
-    GeneralRemarkTile as SiteVisitGeneralRemarkTile,
-} from '@/bcap/schema/SiteVisitSchema.ts';
+    ArchaeologicalSiteRemarksAndRestrictedInformationTile,
+    ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData,
+    ArchaeologicalSiteGeneralRemarkInformationTile,
+    SiteVisit,
+    SiteVisitGeneralRemarkTile,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 import {
@@ -28,8 +28,8 @@ import {
 
 const props = withDefaults(
     defineProps<{
-        data: RemarksAndRestrictedInformationTile | undefined;
-        siteVisitData?: SiteVisitSchema[];
+        data: ArchaeologicalSiteRemarksAndRestrictedInformationTile | undefined;
+        siteVisitData?: SiteVisit[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -46,10 +46,13 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
-    (): RemarksAndRestrictedInformationTile | undefined => {
-        return props.data?.aliased_data as
-            RemarksAndRestrictedInformationTile | undefined;
+const currentData = computed<
+    ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData | undefined
+>(
+    ():
+        | ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData
+        | undefined => {
+        return props.data?.aliased_data;
     },
 );
 
@@ -175,21 +178,25 @@ const convictionColumns = computed<ColumnDefinition[]>(() => {
 
 const toArchSiteRemark = (
     tile: SiteVisitGeneralRemarkTile,
-): GeneralRemarkTile => ({
+): ArchaeologicalSiteGeneralRemarkInformationTile => ({
     ...tile,
     aliased_data: {
-        general_remark_source: tile.aliased_data.remark_source,
-        general_remark_date: tile.aliased_data.remark_date,
-        general_remark: tile.aliased_data.remark,
+        general_remark_source: tile.aliased_data?.remark_source ?? null,
+        general_remark_date: tile.aliased_data?.remark_date ?? null,
+        general_remark: tile.aliased_data?.remark ?? null,
     },
 });
 
-const remarksFromSiteVisit = (sv: SiteVisitSchema): GeneralRemarkTile[] =>
+const remarksFromSiteVisit = (
+    sv: SiteVisit,
+): ArchaeologicalSiteGeneralRemarkInformationTile[] =>
     sv.aliased_data?.remarks_and_recommendations?.aliased_data?.general_remark?.map(
         toArchSiteRemark,
     ) ?? [];
 
-const generalRemarksData = computed<GeneralRemarkTile[]>(() => [
+const generalRemarksData = computed<
+    ArchaeologicalSiteGeneralRemarkInformationTile[]
+>(() => [
     ...(currentData.value?.general_remark_information ?? []),
     ...props.siteVisitData.flatMap(remarksFromSiteVisit),
 ]);
@@ -206,7 +213,9 @@ const keywordsData = computed(() => {
     const keywordsArray = Array.isArray(keywords) ? keywords : [keywords];
     return keywordsArray
         .map((tile) => tile.aliased_data?.remark_keyword)
-        .filter((keyword): keyword is AliasedNodeData => !!keyword);
+        .filter(
+            (keyword): keyword is NonNullable<typeof keyword> => !!keyword,
+        ) as unknown as AliasedNodeData[];
 });
 
 const contraventionDocumentsExpanded = computed(() => {
@@ -214,7 +223,7 @@ const contraventionDocumentsExpanded = computed(() => {
     if (!docs) return [];
     const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as ContraventionDocumentTile[],
+        docsArray as unknown as AliasedTileData[],
         'contravention_document',
     );
 });
@@ -224,38 +233,50 @@ const restrictedDocumentsExpanded = computed(() => {
     if (!docs) return [];
     const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as RestrictedDocumentTile[],
+        docsArray as unknown as AliasedTileData[],
         'restricted_document',
     );
 });
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
-    generalRemarksData,
+    generalRemarksData as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: hcaContraventionsTableData } = useTileEditLog(
-    hcaContraventionsData,
+    hcaContraventionsData as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: convictionsTableData } = useTileEditLog(
-    convictionsData,
+    convictionsData as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedInfoData } = useTileEditLog(
-    restrictedInfoDataRaw,
+    restrictedInfoDataRaw as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: contraventionDocumentsProcessed } = useTileEditLog(
-    contraventionDocumentsExpanded,
+    contraventionDocumentsExpanded as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedDocumentsProcessed } = useTileEditLog(
-    restrictedDocumentsExpanded,
+    restrictedDocumentsExpanded as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 

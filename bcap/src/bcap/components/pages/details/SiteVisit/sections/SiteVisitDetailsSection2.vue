@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { isAliasedNodeData } from '@/bcap/util.ts';
@@ -9,12 +9,13 @@ import {
     useSingleTileEditLog,
 } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         loading?: boolean;
         editLogData?: EditLogData;
         showAuditFields?: boolean;
@@ -27,18 +28,20 @@ const props = withDefaults(
 );
 
 const idTile = computed(() => props.data?.aliased_data?.identification);
-const tempNumber = computed(() => idTile.value?.aliased_data?.temporary_number);
+const tempNumber = computed(
+    () => idTile.value?.aliased_data?.temporary_number ?? undefined,
+);
 const newNames = computed(
     () => idTile.value?.aliased_data?.new_site_names || [],
 );
 
 const { processedData: newNamesTableData } = useTileEditLog(
-    newNames,
+    newNames as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: tempNumberData } = useSingleTileEditLog(
-    tempNumber,
+    tempNumber as unknown as Ref<AliasedTileData | undefined>,
     toRef(props, 'editLogData'),
 );
 

@@ -26,6 +26,8 @@ from bcap.views.generated import (
     DocumentSubmissionView,
     HcaPermitListView,
     HcaPermitView,
+    HriaDiscontinuedDataListView,
+    HriaDiscontinuedDataView,
     InformationRequestListView,
     InformationRequestView,
     LegislativeActListView,
@@ -42,6 +44,8 @@ from bcap.views.generated import (
     ProcessRequirementView,
     PublicationListView,
     PublicationView,
+    RepositoryListView,
+    RepositoryView,
     SiteSubmissionListView,
     SiteSubmissionView,
     SiteVisitListView,
@@ -98,6 +102,16 @@ urlpatterns = [
         "api/hca_permit/<uuid:pk>/",
         HcaPermitView.as_view(),
         name="api_hca_permit",
+    ),
+    path(
+        "api/hria_discontinued_data",
+        HriaDiscontinuedDataListView.as_view(),
+        name="api_hria_discontinued_data_list",
+    ),
+    path(
+        "api/hria_discontinued_data/<uuid:pk>/",
+        HriaDiscontinuedDataView.as_view(),
+        name="api_hria_discontinued_data",
     ),
     path(
         "api/information_request",
@@ -178,6 +192,16 @@ urlpatterns = [
         "api/publication/<uuid:pk>/",
         PublicationView.as_view(),
         name="api_publication",
+    ),
+    path(
+        "api/repository",
+        RepositoryListView.as_view(),
+        name="api_repository_list",
+    ),
+    path(
+        "api/repository/<uuid:pk>/",
+        RepositoryView.as_view(),
+        name="api_repository",
     ),
     path(
         "api/site_submission",

@@ -39,6 +39,13 @@ from .hca_permit import (
     HcaPermitView,
 )
 
+from .hria_discontinued_data import (
+    HriaDiscontinuedDataSerializer,
+    HriaDiscontinuedDataViewMixin,
+    HriaDiscontinuedDataListView,
+    HriaDiscontinuedDataView,
+)
+
 from .information_request import (
     InformationRequestSerializer,
     InformationRequestViewMixin,
@@ -95,6 +102,13 @@ from .publication import (
     PublicationView,
 )
 
+from .repository import (
+    RepositorySerializer,
+    RepositoryViewMixin,
+    RepositoryListView,
+    RepositoryView,
+)
+
 from .site_submission import (
     SiteSubmissionSerializer,
     SiteSubmissionViewMixin,
@@ -130,6 +144,10 @@ __all__ = [
     "HcaPermitSerializer",
     "HcaPermitView",
     "HcaPermitViewMixin",
+    "HriaDiscontinuedDataListView",
+    "HriaDiscontinuedDataSerializer",
+    "HriaDiscontinuedDataView",
+    "HriaDiscontinuedDataViewMixin",
     "InformationRequestListView",
     "InformationRequestSerializer",
     "InformationRequestView",
@@ -162,6 +180,10 @@ __all__ = [
     "PublicationSerializer",
     "PublicationView",
     "PublicationViewMixin",
+    "RepositoryListView",
+    "RepositorySerializer",
+    "RepositoryView",
+    "RepositoryViewMixin",
     "SiteSubmissionListView",
     "SiteSubmissionSerializer",
     "SiteSubmissionView",

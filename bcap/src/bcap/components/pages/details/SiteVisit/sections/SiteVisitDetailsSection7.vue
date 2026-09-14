@@ -4,18 +4,22 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
-import type { EditLogData } from '@/bcgov_arches_common/types.ts';
+import type {
+    EditLogData,
+    AliasedTileDataWithAudit,
+} from '@/bcgov_arches_common/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 import type {
-    SiteVisitSchema,
-    SiteVisitRelatedDocumentsTile,
-} from '@/bcap/schema/SiteVisitSchema.ts';
+    SiteVisit,
+    SiteVisitRelatedDocumentsAliasedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -31,16 +35,20 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<SiteVisitRelatedDocumentsTile | undefined>(() => {
-    return props.data?.aliased_data?.related_documents?.aliased_data as
-        SiteVisitRelatedDocumentsTile | undefined;
-});
+const currentData = computed<SiteVisitRelatedDocumentsAliasedData | undefined>(
+    () => {
+        return props.data?.aliased_data?.related_documents?.aliased_data as
+            SiteVisitRelatedDocumentsAliasedData | undefined;
+    },
+);
 
 const relatedDocumentsData = computed(() => {
     const documents = currentData.value?.related_site_documents;
-    if (!documents) return [];
-    const documentsArray = Array.isArray(documents) ? documents : [documents];
-    return expandDocumentRows(documentsArray, 'related_site_documents');
+    if (!documents || documents.length === 0) return [];
+    return expandDocumentRows(
+        documents as unknown as AliasedTileData[],
+        'related_site_documents',
+    );
 });
 
 const referencesColumns: ColumnDefinition[] = [
@@ -110,8 +118,14 @@ const hasRelatedDocuments = computed(() => {
 const siteImagesData = computed(() => currentData.value?.site_images || []);
 
 const { processedData: siteImagesTableData } = useTileEditLog(
-    siteImagesData,
+    siteImagesData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
+);
+
+const publicationReferenceData = computed(
+    () =>
+        (currentData.value?.publication_reference ??
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const hasImages = computed(() => siteImagesTableData.value.length > 0);
@@ -134,7 +148,7 @@ const hasImages = computed(() => siteImagesTableData.value.length > 0);
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasReferences"
-                        :table-data="currentData?.publication_reference ?? []"
+                        :table-data="publicationReferenceData"
                         :column-definitions="referencesColumns"
                         :initial-sort-field-index="2"
                     />

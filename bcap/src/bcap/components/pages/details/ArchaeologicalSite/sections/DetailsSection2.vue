@@ -14,20 +14,24 @@ import type {
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type {
-    ArchaeologySiteSchema,
-    IdentificationAndRegistrationTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { TemporaryNumberTile } from '@/bcap/schema/SiteVisitSchema.ts';
+    ArchaeologicalSite,
+    ArchaeologicalSiteIdentificationAndRegistrationTile,
+    ArchaeologicalSiteIdentificationAndRegistrationAliasedData,
+    SiteVisit,
+    SiteVisitTemporaryNumberTile,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: IdentificationAndRegistrationTile | undefined;
-        hriaData: HriaDiscontinuedDataSchema | undefined;
-        childSiteData: ArchaeologySiteSchema[] | undefined;
-        siteVisitData?: SiteVisitSchema[];
+        data:
+            | ArchaeologicalSiteIdentificationAndRegistrationTile
+            | null
+            | undefined;
+        hriaData: HriaDiscontinuedData | undefined;
+        childSiteData: ArchaeologicalSite[] | undefined;
+        siteVisitData?: SiteVisit[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -43,22 +47,25 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<IdentificationAndRegistrationTile | undefined>(
-    (): AliasedTileData | undefined => {
-        return props.data?.aliased_data as
-            IdentificationAndRegistrationTile | undefined;
+const currentData = computed<
+    ArchaeologicalSiteIdentificationAndRegistrationAliasedData | undefined
+>(
+    ():
+        | ArchaeologicalSiteIdentificationAndRegistrationAliasedData
+        | undefined => {
+        return props.data?.aliased_data;
     },
 );
 
-const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
-    (): HriaDiscontinuedDataSchema | undefined => {
-        return props.hriaData as HriaDiscontinuedDataSchema | undefined;
+const currentHriaData = computed<HriaDiscontinuedData | undefined>(
+    (): HriaDiscontinuedData | undefined => {
+        return props.hriaData as HriaDiscontinuedData | undefined;
     },
 );
 
-const currentChildSiteData = computed<ArchaeologySiteSchema[] | undefined>(
-    (): ArchaeologySiteSchema[] | undefined => {
-        return props.childSiteData as ArchaeologySiteSchema[] | undefined;
+const currentChildSiteData = computed<ArchaeologicalSite[] | undefined>(
+    (): ArchaeologicalSite[] | undefined => {
+        return props.childSiteData as ArchaeologicalSite[] | undefined;
     },
 );
 
@@ -167,28 +174,33 @@ type IdFieldKey = (typeof id_fields)[number];
 const labelize = (key: string) =>
     key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
-const decisionData = computed(() => currentData.value?.site_decision);
+const decisionData = computed(
+    () => currentData.value?.site_decision ?? undefined,
+);
 
 const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
-} = useHierarchicalData(decisionData, {
-    sourceField: 'site_decision',
-    hierarchicalFields: ['site_decision', 'decision_criteria'],
-    flatFields: [
-        'decision_date',
-        'decision_made_by',
-        'decision_description',
-        'decision_registration_status',
-        'recommendation_date',
-        'recommended_by',
-    ],
-});
+} = useHierarchicalData(
+    decisionData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
+    {
+        sourceField: 'site_decision',
+        hierarchicalFields: ['site_decision', 'decision_criteria'],
+        flatFields: [
+            'decision_date',
+            'decision_made_by',
+            'decision_description',
+            'decision_registration_status',
+            'recommendation_date',
+            'recommended_by',
+        ],
+    },
+);
 
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
 
-const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
+const temporaryNumbersData = computed((): SiteVisitTemporaryNumberTile[] => {
     const all = (props.siteVisitData ?? [])
         .map(
             (visit) =>
@@ -196,7 +208,7 @@ const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
                     ?.temporary_number,
         )
         .filter(
-            (tile): tile is TemporaryNumberTile =>
+            (tile): tile is SiteVisitTemporaryNumberTile =>
                 !!tile?.aliased_data?.temporary_number?.node_value,
         );
 
@@ -224,22 +236,26 @@ const siteAlertDataRaw = computed(() => {
 });
 
 const { processedData: authorityTableData } = useTileEditLog(
-    authorityData,
+    authorityData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: siteNamesTableData } = useTileEditLog(
-    siteNamesData,
+    siteNamesData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: temporaryNumbersTableData } = useTileEditLog(
-    temporaryNumbersData,
+    temporaryNumbersData as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: alertTableData } = useTileEditLog(
-    siteAlertDataRaw,
+    siteAlertDataRaw as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
@@ -254,7 +270,7 @@ const hasBasicInfo = computed(() => {
 
 const hasAdifRecord = computed(() => {
     return currentHriaData.value?.aliased_data?.unreviewed_adif_record
-        ?.aliased_data?.unreviewed_adif_record.node_value;
+        ?.aliased_data?.unreviewed_adif_record?.node_value;
 });
 
 const hasAuthority = computed(() => {
