@@ -23,7 +23,6 @@ import type {
     ArchaeologicalSite as ArchaeologicalSiteType,
     SiteVisit as SiteVisitType,
 } from '@/bcap/client/types.gen.ts';
-import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 
 const props = withDefaults(
     defineProps<{

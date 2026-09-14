@@ -20,7 +20,6 @@ import type {
     ArchaeologicalSite,
     SiteVisit,
     Publication,
-    ArchaeologicalSiteHeritageSiteLocationAliasedData,
     HriaDiscontinuedData,
 } from '@/bcap/client/types.gen.ts';
 import DataTable from 'primevue/datatable';

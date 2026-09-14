@@ -7,7 +7,6 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import type {
     HriaDiscontinuedData,
     HriaDiscontinuedDataBiogeographyTile,
-    HriaDiscontinuedDataOtherMapsTile,
 } from '@/bcap/client/types.gen.ts';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
