@@ -146,9 +146,8 @@ class LegislativeAct(APIBase):
         return JSONResponse(JSONSerializer().serializeToPython(act))
 
 
+@internal_only_django_view
 class MVT(MVTBase):
-    # Ungated on purpose: the tile query is scoped to the caller's readable
-    # nodegroups, so an unauthenticated request gets an empty tile.
     def get(self, request, nodeid, zoom, x, y):
         if hasattr(request.user, "userprofile") is not True:
             models.UserProfile.objects.create(user=request.user)
