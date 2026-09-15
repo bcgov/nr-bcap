@@ -17,16 +17,20 @@ from django.contrib.auth import get_user_model
 
 class Groups:
     ARCHAEOLOGY_BRANCH = "Archaeology Branch"
+
     RESOURCE_EDITOR = "Resource Editor"
     RESOURCE_REVIEWER = "Resource Reviewer"
     RESOURCE_EXPORTER = "Resource Exporter"
+
     PERMIT_REVIEWER = "Permit Reviewer"
     PERMIT_DECIDER = "Permit Decider"
     PERMIT_SDM = "Permit SDM"  # Statutory Decision Maker
     PERMIT_MANAGER = "Permit Manager"
     MPP_SUBMITTER = "MPP Submitter"  # Allows special group to add multi permit
+
     INVENTORY_REVIEWER = "Inventory Reviewer"
     INVENTORY_MANAGER = "Inventory Manager"
+
     SUBMITTER = "Submitter"  # External
     GUEST = "Guest"  # mapped to anonymous
 
