@@ -209,9 +209,11 @@ class BCAPResourceDetailView(ArchesResourceDetailView):
     the geojson FeatureCollection node's per-feature properties so the
     map can drive styling from them without a second fetch.
 
-    No gate of its own: the base view checks each instance through the
-    permission framework (read to GET, edit to PATCH), which applies the graph
-    policy per resource.
+    The gate comes from the base view rather than from here, and it is the one
+    route that replaces the project-wide staff default: a read is open to any
+    session, a write needs the Resource Editor group. Each instance is then
+    checked through the permission framework, which applies the graph policy
+    and narrows an applicant to the permits they reach.
     """
 
     def retrieve(self, request, *args, **kwargs):
