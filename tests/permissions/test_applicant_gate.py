@@ -82,6 +82,19 @@ class TestArchesDefaultDenyApplicantGate(AuthTestHelper, TestCase):
                 response = self.client.get(reverse(name, kwargs=kwargs))
                 self.assertEqual(response.status_code, 403)
 
+    def test_applicant_is_denied_the_search_component_data(self):
+        """The walk above skips routes taking an argument, and this is one. It
+        hands back a component's own view data, which for the cross-model
+        component is every card the caller may read, answered from the
+        nodegroup permission staff and applicants both now hold."""
+        self.idir_login_simulate()
+        url = reverse(
+            "api_search_component_data",
+            kwargs={"componentname": "cross-model-advanced-search"},
+        )
+
+        self.assertEqual(self.client.get(url).status_code, 403)
+
     def test_applicant_keeps_the_views_the_permit_app_needs(self):
         self.idir_login_simulate()
         # Reference widgets read their dropdown options from the controlled list.

@@ -1,5 +1,6 @@
 """Seed the role groups added since 1415, drop the resource-access functions
-they replace, and open both dashboards to the branch."""
+they replace, open both dashboards to the branch, and let staff and applicants
+read nodegroups."""
 
 from django.db import migrations
 from guardian.ctypes import get_content_type
@@ -18,6 +19,13 @@ PLUGIN_GRANTS = [
     (Groups.ARCHAEOLOGY_BRANCH, "internal-permit-dashboard"),
     (Groups.ARCHAEOLOGY_BRANCH, "submissions"),
 ]
+
+# Arches asks for this model-level permission before serving an upload, and
+# neither group held it, so the file route had to do the whole check itself.
+# The instance policy is unaffected: it answers on resources, not nodegroups.
+# Guest has held it since arches' own 0003_40b4, which grants it to the stock
+# groups, so anonymous already passes that check and is refused on the instance.
+NODEGROUP_READERS = [Groups.ARCHAEOLOGY_BRANCH, Groups.SUBMITTER]
 
 # Their per-instance no_access grants are superseded by the default-deny
 # framework, and the modules are gone, so any lingering attachment would raise
@@ -46,6 +54,26 @@ def remove_functions(apps, schema_editor):
     apps.get_model("models", "Function").objects.filter(
         functionid__in=FUNCTION_IDS
     ).delete()
+
+
+def _nodegroup_readers(apps):
+    Group = apps.get_model("auth", "Group")
+    permission = apps.get_model("auth", "Permission").objects.get(
+        codename="read_nodegroup"
+    )
+    return permission, Group.objects.filter(name__in=NODEGROUP_READERS)
+
+
+def grant_read_nodegroup(apps, schema_editor):
+    permission, groups = _nodegroup_readers(apps)
+    for group in groups:
+        group.permissions.add(permission)
+
+
+def revoke_read_nodegroup(apps, schema_editor):
+    permission, groups = _nodegroup_readers(apps)
+    for group in groups:
+        group.permissions.remove(permission)
 
 
 def _grant(apps, group_name, componentname):
@@ -88,4 +116,5 @@ class Migration(migrations.Migration):
         migrations.RunPython(create_role_groups, delete_role_groups),
         migrations.RunPython(remove_functions, migrations.RunPython.noop),
         migrations.RunPython(assign_view_plugin, remove_view_plugin),
+        migrations.RunPython(grant_read_nodegroup, revoke_read_nodegroup),
     ]

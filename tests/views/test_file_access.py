@@ -6,12 +6,13 @@ uploads away from another.
 """
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.urls import reverse
 
 from arches.app.models.models import File, GraphModel, Group, NodeGroup
 from arches.app.models.models import ResourceInstance, TileModel
 
-from bcap.permissions.groups import Groups, is_internal_user
+from bcap.permissions.groups import ANONYMOUS_USERNAME, Groups
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.file import BCAPFileView
 from tests.builders import FixtureBuilder
@@ -19,6 +20,7 @@ from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import build_permit
 from tests.services.contributor_fixtures import make_contributor, make_party
 from tests.services.test_bcap_message_service import make_message
+from tests.views.helpers import login_as
 
 
 class FileAccessTests(TestCase):
@@ -65,13 +67,6 @@ class FileAccessTests(TestCase):
                 self.owner, "00000000-0000-0000-0000-000000000001"
             )
         )
-
-    def test_staff_skip_the_check(self):
-        """The view exempts internal users before asking, so a file on a
-        resource no permit reaches is still theirs to read."""
-        staff = User.objects.create_user("file-staff")
-        staff.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
-        self.assertTrue(is_internal_user(staff))
 
 
 class MessageAttachmentAccessTests(TestCase):
@@ -126,3 +121,29 @@ class MessageAttachmentAccessTests(TestCase):
                 fileid = self.attachment(message)
                 readable = BCAPFileView.applicant_may_read(user, fileid)
                 self.assertIs(bool(readable), expected)
+
+    @override_settings(ROOT_URLCONF="tests.test_urls")
+    def test_the_route_serves_a_reachable_attachment(self):
+        """Arches checks the nodegroup after the view has checked the resource,
+        so an applicant needs the seeded model-level grant to get this far. A
+        redirect is the signed download."""
+        login_as(self.client, self.applicant, "BCEID")
+        url = reverse("files", kwargs={"fileid": self.attachment(self.public)})
+
+        self.assertEqual(self.client.get(url).status_code, 302)
+
+    @override_settings(ROOT_URLCONF="tests.test_urls")
+    def test_the_route_refuses_the_public_user(self):
+        """Arches' own check passes for it, since the stock groups carry the
+        nodegroup grant, so the refusal has to come from the view."""
+        login_as(self.client, User.objects.get(username=ANONYMOUS_USERNAME))
+        url = reverse("files", kwargs={"fileid": self.attachment(self.public)})
+
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+    @override_settings(ROOT_URLCONF="tests.test_urls")
+    def test_the_route_serves_staff(self):
+        login_as(self.client, self.staff)
+        url = reverse("files", kwargs={"fileid": self.attachment(self.internal)})
+
+        self.assertEqual(self.client.get(url).status_code, 302)

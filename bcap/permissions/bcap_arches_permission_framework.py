@@ -15,10 +15,13 @@ from arches.app.permissions.arches_default_deny import (
     ArchesDefaultDenyPermissionFramework,
 )
 
-from bcap.permissions.groups import Groups, group_id, is_internal_user
+from bcap.permissions.groups import (
+    Groups,
+    group_id,
+    is_anonymous_user,
+    is_internal_user,
+)
 from bcap.permissions.permit_access import PermitAccess
-
-ANONYMOUS_USERNAME = "anonymous"
 
 
 class BcapArchesPermissionFramework(ArchesDefaultDenyPermissionFramework):
@@ -63,6 +66,6 @@ class BcapArchesPermissionFramework(ArchesDefaultDenyPermissionFramework):
         In the future we want to make this resource based,
         but I'm not sure if it's possible to do this way.
         """
-        if user.is_authenticated and user.username != ANONYMOUS_USERNAME:
+        if not is_anonymous_user(user):
             return True
         return super().user_is_resource_reviewer(user)

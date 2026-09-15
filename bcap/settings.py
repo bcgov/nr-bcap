@@ -635,8 +635,7 @@ RENDERERS = [
     },
 ]
 
-# Off: BCAPFileView serves the files route and does the checking. See it for why.
-RESTRICT_MEDIA_ACCESS = False
+RESTRICT_MEDIA_ACCESS = True
 
 # By setting RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER to True, if the user is attempting
 # to export search results above the SEARCH_EXPORT_IMMEDIATE_DOWNLOAD_THRESHOLD

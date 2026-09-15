@@ -14,6 +14,8 @@ from functools import lru_cache
 from django.apps import apps
 from django.contrib.auth import get_user_model
 
+ANONYMOUS_USERNAME = "anonymous"
+
 
 class Groups:
     ARCHAEOLOGY_BRANCH = "Archaeology Branch"
@@ -54,6 +56,13 @@ def group_id(name):
     before the group's seeding migration retries rather than sticking for the
     process."""
     return apps.get_model("auth", "Group").objects.get(name=name).id
+
+
+def is_anonymous_user(user):
+    """True for a caller who has not signed in. Arches substitutes a real
+    account for an unauthenticated request, so it clears the authentication
+    check and has to be named to be refused."""
+    return not user.is_authenticated or user.username == ANONYMOUS_USERNAME
 
 
 def is_internal_user(user):

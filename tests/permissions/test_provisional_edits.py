@@ -11,10 +11,9 @@ from django.contrib.auth.models import AnonymousUser, Group
 from django.test import TestCase
 
 from bcap.permissions.bcap_arches_permission_framework import (
-    ANONYMOUS_USERNAME,
     BcapArchesPermissionFramework,
 )
-from bcap.permissions.groups import Groups
+from bcap.permissions.groups import ANONYMOUS_USERNAME, Groups
 
 
 class ResourceReviewerOverrideTests(TestCase):
