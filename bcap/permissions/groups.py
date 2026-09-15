@@ -28,7 +28,7 @@ class Groups:
     PERMIT_DECIDER = "Permit Decider"
     PERMIT_SDM = "Permit SDM"  # Statutory Decision Maker
     PERMIT_MANAGER = "Permit Manager"
-    MPP_SUBMITTER = "MPP Submitter"  # Allows special group to add multi permit
+    PERMIT_MPP_SUBMITTER = "MPP Submitter"  # Allows special group to add multi permit
 
     INVENTORY_REVIEWER = "Inventory Reviewer"
     INVENTORY_MANAGER = "Inventory Manager"

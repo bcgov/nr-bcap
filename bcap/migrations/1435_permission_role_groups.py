@@ -10,7 +10,7 @@ from bcap.permissions.groups import Groups
 ROLE_GROUPS = [
     Groups.PERMIT_SDM,
     Groups.PERMIT_MANAGER,
-    Groups.MPP_SUBMITTER,
+    Groups.PERMIT_MPP_SUBMITTER,
 ]
 
 # The branch reads the applicants' dashboard too, which its API already allows.
