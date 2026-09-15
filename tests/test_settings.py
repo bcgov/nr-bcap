@@ -69,6 +69,11 @@ LOGGING["loggers"]["bcap.util.storage_filename_generator"] = {
     "propagate": True,
 }
 
+LOGGING["loggers"]["django.request"] = {
+    "level": "ERROR",
+    "propagate": True,
+}
+
 ELASTICSEARCH_PREFIX = "test"
 
 TEST_RUNNER = "tests.runner.BcapTestRunner"
