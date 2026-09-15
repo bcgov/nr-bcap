@@ -74,6 +74,11 @@ LOGGING["loggers"]["django.request"] = {
     "propagate": True,
 }
 
+LOGGING["loggers"]["bcap.services.message.bcap_message_service"] = {
+    "level": "ERROR",
+    "propagate": True,
+}
+
 ELASTICSEARCH_PREFIX = "test"
 
 TEST_RUNNER = "tests.runner.BcapTestRunner"
