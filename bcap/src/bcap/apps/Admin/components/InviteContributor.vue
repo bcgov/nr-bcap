@@ -16,7 +16,8 @@ import {
     issueRegistrationLink,
 } from '@/bcap/apps/Admin/api.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
-import { TRY_AGAIN, userMessage } from '@/bcap/notify.ts';
+import { TRY_AGAIN } from '@/bcap/api.ts';
+import { userMessage } from '@/bcap/notify.ts';
 
 import type { InlineErrorData } from '@/bcap/notify.ts';
 import type {

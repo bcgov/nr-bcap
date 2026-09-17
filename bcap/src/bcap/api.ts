@@ -13,8 +13,10 @@ interface ApiFetchOptions {
     body?: unknown;
 }
 
-export const UNEXPECTED_ERROR =
-    'Something went wrong on our end. Please try again, or contact support if it keeps happening.';
+export const TRY_AGAIN =
+    'Please try again, or contact support if it keeps happening.';
+
+export const UNEXPECTED_ERROR = `Something went wrong on our end. ${TRY_AGAIN}`;
 
 // An error whose message is written for the user, so it may be shown as is.
 export class UserFacingError extends Error {

@@ -1,4 +1,4 @@
-import { UserFacingError } from '@/bcap/api.ts';
+import { TRY_AGAIN, UserFacingError } from '@/bcap/api.ts';
 import { ERROR } from '@/bcgov_arches_common/constants.ts';
 
 import type { App } from 'vue';
@@ -13,9 +13,6 @@ let lastShown: { key: string; message: ToastMessageOptions } | undefined;
 
 export const userMessage = (error: unknown): string | undefined =>
     error instanceof UserFacingError ? error.message : undefined;
-
-export const TRY_AGAIN =
-    'Please try again, or contact support if it keeps happening.';
 
 export type InlineErrorData = { title: string; detail: string };
 
