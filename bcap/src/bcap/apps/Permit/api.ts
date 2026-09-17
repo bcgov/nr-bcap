@@ -280,10 +280,8 @@ export const fetchRequirementDetails = async (
     const entries = await Promise.all(
         ids.map(async (id): Promise<[string, ProcessRequirement] | null> => {
             try {
-                const url = arches.urls.api_resource(
-                    GraphSlug.ProcessRequirement,
-                    id,
-                );
+                // The graph-scoped route: the one an applicant may read through.
+                const url = arches.urls.api_process_requirements(id);
                 const json = await apiFetchJson<ProcessRequirement>(url);
                 return [id, json];
             } catch (error) {

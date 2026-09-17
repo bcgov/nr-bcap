@@ -176,9 +176,11 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                                 <a href="#info-block-1">{% trans "about" %}</a>
                             </li>
                             {% if user.username and user.username != 'anonymous' %}
-                                <li>
-                                    <a href="{% url 'search_home' %}">{% trans "search sites" %}</a>
-                                </li>
+                                {% if user|has_group:"Archaeology Branch" %}
+                                    <li>
+                                        <a href="{% url 'search_home' %}">{% trans "search sites" %}</a>
+                                    </li>
+                                {% endif %}
                                 {% if user|can_create_resource_instance %}
                                     <li>
                                         <a

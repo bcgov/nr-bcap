@@ -9,24 +9,22 @@ generated serializer so the response shape stays in lockstep with the graph.
 from django.http import Http404
 
 from drf_spectacular.utils import extend_schema
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.parsers import JSONParser
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from arches.app.models.resource import Resource
 
 from arches_querysets.models import ResourceTileTree
 from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
-from arches_querysets.rest_framework.permissions import ResourceEditor
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
-from arches_zod_validation.views.mixins import UserOwnedResourceMixin
-
+from bcap.permissions.route_guards import (
+    Internal,
+    SubmitterOrInternal,
+    SubmitterReadsInternalReadWrites,
+)
 from bcap.serializers.graph_serializers import MODULE_SERIALIZERS, module_host_schema
 from bcap.serializers.process_requirement_serializers import (
     AddRequirementSerializer,
@@ -41,62 +39,62 @@ from bcap.services.process_requirement.process_requirement_service import (
 )
 from bcap.schema import ArchesTileAutoSchema
 from bcap.services.process_requirement.template_specs import host_graph
-from bcap.util.indexing import bulk_index
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
 
-RESOURCE_EDITOR_GROUP = "Resource Editor"
 
-
-def _require_exists(pk, slug, msg):
+def _require_exists(pk, slug, label):
     """404 unless a resource of the given graph exists with this pk."""
     if not ResourceTileTree.objects.filter(pk=pk, graph__slug=slug).exists():
-        raise Http404(msg)
+        raise Http404(f"No {label} matches the given id.")
 
 
-# TODO(roles): ResourceEditor is a placeholder; gate these staff module-editing
-# routes on the proper role/group once roles + permissions land.
-STAFF_MODULE_PERMISSIONS = [ResourceEditor]
+def _require_permit(pk):
+    return _require_exists(pk, GraphSlugs.PERMIT_APPLICATION, "permit application")
 
 
-class SuperuserOrEditorReadsAnyMixin(UserOwnedResourceMixin):
-    """Owner-scope the queryset like the base mixin, but let superusers and
-    Resource Editors read any instance -- they review every requirement, not
-    only the ones they created."""
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_superuser or user.groups.filter(name=RESOURCE_EDITOR_GROUP).exists():
-            # Skip the owner filter; fall through to the full graph queryset.
-            return super(UserOwnedResourceMixin, self).get_queryset()
-        return super().get_queryset()
+def _require_requirement(pk):
+    return _require_exists(pk, GraphSlugs.PROCESS_REQUIREMENT, "process requirement")
 
 
 @extend_schema(tags=["External: process_requirement"])
 class ProcessRequirementListView(
     ProcessRequirementViewMixin,
-    SuperuserOrEditorReadsAnyMixin,
     ArchesModelAPIMixin,
     ListAPIView,
 ):
-    """Collection endpoint: superusers and Resource Editors see every Process
-    Requirement; other users see only the ones they created."""
+    """Collection endpoint: branch staff see every Process Requirement; an
+    applicant sees the ones on the permits they or their company filed."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [SubmitterOrInternal]
     pagination_class = ArchesLimitOffsetPagination
+
+    def get_queryset(self):
+        return ProcessRequirementService.base_query(
+            self.request.user, resource_ids=self.resource_ids
+        )
 
 
 @extend_schema(tags=["External: process_requirement"])
 class ProcessRequirementView(
     ProcessRequirementViewMixin,
-    SuperuserOrEditorReadsAnyMixin,
     ArchesModelAPIMixin,
     RetrieveUpdateDestroyAPIView,
 ):
-    """Detail endpoint: superusers and Resource Editors may read any instance;
-    other users requesting one they don't own get a 404."""
+    """Detail endpoint: ministry staff read and write any instance; an applicant
+    may read a requirement on a permit application they can reach, and gets a 403
+    on one they cannot. Writing is staff-only.
 
-    permission_classes = [IsAuthenticated]
+    No owner mixin: the creator filter would hide the working copies made for an
+    applicant by someone else, and the queryset answers the access question anyway.
+    """
+
+    permission_classes = [SubmitterReadsInternalReadWrites]
+
+    def get_queryset(self):
+        return ProcessRequirementService.detail_query(
+            self.kwargs["pk"], self.request.user
+        )
 
 
 @extend_schema(tags=["External: process_requirement"])
@@ -110,10 +108,11 @@ class ProcessRequirementSeedView(APIView):
 
     The permit type is a path segment; a type with no host resource is a 400."""
 
-    authentication_classes = [SessionAuthentication]
-    # Applicants file their own modules, so this only asks for a login; which
-    # permits they may file against is settled by the permit lookup.
-    permission_classes = [IsAuthenticated]
+    # Applicants file their own modules, so the route only asks for a login;
+    # which permit they may file against is settled per request against the id
+    # in the path, since that id is the only thing naming whose modules these
+    # are.
+    permission_classes = [SubmitterOrInternal]
     # A module carrying file uploads (a document submission and its photographs)
     parser_classes = [JSONParser, MultiPartJSONParser]
     # Key each host's aliased_data component name off its graph, so the three
@@ -128,18 +127,16 @@ class ProcessRequirementSeedView(APIView):
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")
-        _require_exists(
-            pk,
-            GraphSlugs.PERMIT_APPLICATION,
-            "No permit application matches the given id.",
-        )
+        _require_permit(pk)
         return serializer_class
 
     @extend_schema(responses=module_host_schema(many=True))
     def get(self, request, pk, permit_type):
         """The module's host resources attached to the permit application."""
         serializer_class = self._host_serializer_class(permit_type, pk)
-        hosts = ProcessRequirementService(request).permit_module_tiles(pk, permit_type)
+        hosts = ProcessRequirementService(request).permit_module_tiles(
+            pk, permit_type, request.user
+        )
         return Response(
             [serializer_class(host, request=request).data for host in hosts]
         )
@@ -152,17 +149,10 @@ class ProcessRequirementSeedView(APIView):
         serializer_class = self._host_serializer_class(permit_type, pk)
         host_serializer = serializer_class(data=request.data, request=request)
         host_serializer.is_valid(raise_exception=True)
-        host = host_serializer.save()
-        host_resource = Resource.objects.get(pk=host.pk)
-        host_resource.save_descriptors()
-        ProcessRequirementService(request).attach_requirements(pk, permit_type, host)
-        bulk_index([host_resource])
-        # Re-read the saved host as representation so the response carries
-        # display_value (what the review screen renders).
-        fresh = ResourceTileTree.get_tiles(
-            host_graph(permit_type), resource_ids=[host.pk], as_representation=True
-        ).get()
-        return Response(serializer_class(fresh, request=request).data, status=201)
+        host = ProcessRequirementService(request).submit_module(
+            pk, permit_type, request.user, host_serializer.save
+        )
+        return Response(serializer_class(host, request=request).data, status=201)
 
 
 @extend_schema(tags=["External: process_requirement"])
@@ -173,26 +163,17 @@ class PermitModuleView(APIView):
     flag, stamping or clearing the completed date without disturbing the module's
     other card nodes."""
 
-    authentication_classes = [SessionAuthentication]
-    permission_classes = STAFF_MODULE_PERMISSIONS
+    permission_classes = [Internal]
 
     @extend_schema(responses={204: None})
     def delete(self, request, pk, module_tileid):
-        _require_exists(
-            pk,
-            GraphSlugs.PERMIT_APPLICATION,
-            "No permit application matches the given id.",
-        )
+        _require_permit(pk)
         ProcessRequirementService(request).remove_module(pk, module_tileid)
         return Response(status=204)
 
     @extend_schema(request=ModuleCompletionSerializer, responses={204: None})
     def patch(self, request, pk, module_tileid):
-        _require_exists(
-            pk,
-            GraphSlugs.PERMIT_APPLICATION,
-            "No permit application matches the given id.",
-        )
+        _require_permit(pk)
         body = ModuleCompletionSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         found = ProcessRequirementService(request).set_module_completed(
@@ -203,7 +184,7 @@ class PermitModuleView(APIView):
         return Response(status=204)
 
 
-@extend_schema(tags=["External: process_requirement"])
+@extend_schema(tags=["Internal: process_requirement"])
 class ModuleRequirementsView(APIView):
     """A module's process requirements: PATCH reorders them (an order list of
     resource ids), POST adds a blank one.
@@ -212,8 +193,7 @@ class ModuleRequirementsView(APIView):
     just the id order rather than rebuilding and resending the whole module tree to
     keep a partial write from deleting the omitted tiles."""
 
-    authentication_classes = [SessionAuthentication]
-    permission_classes = STAFF_MODULE_PERMISSIONS
+    permission_classes = [Internal]
 
     @extend_schema(request=ReorderRequirementsSerializer, responses={204: None})
     def patch(self, request, pk, module_tileid):
@@ -235,14 +215,13 @@ class ModuleRequirementsView(APIView):
         return Response(status=201)
 
 
-@extend_schema(tags=["External: process_requirement"], responses={204: None})
+@extend_schema(tags=["Internal: process_requirement"], responses={204: None})
 class ModuleRequirementView(APIView):
     """DELETE: remove one process requirement from a module by its resource id
     (the child tile, the requirement resource, and its submission host).
     PATCH: set or clear its ministry assignee."""
 
-    authentication_classes = [SessionAuthentication]
-    permission_classes = STAFF_MODULE_PERMISSIONS
+    permission_classes = [Internal]
 
     def delete(self, request, pk, module_tileid, requirement_id):
         ProcessRequirementService(request).remove_requirement(
@@ -263,7 +242,7 @@ class ModuleRequirementView(APIView):
 
 
 @extend_schema(
-    tags=["External: process_requirement"],
+    tags=["Internal: process_requirement"],
     request=RequirementStatusSerializer,
     responses={204: None},
 )
@@ -272,15 +251,10 @@ class RequirementStatusView(APIView):
     tile. For non-checklist requirements, whose status is set directly rather
     than derived from subrequirements."""
 
-    authentication_classes = [SessionAuthentication]
-    permission_classes = STAFF_MODULE_PERMISSIONS
+    permission_classes = [Internal]
 
     def patch(self, request, requirement_id):
-        _require_exists(
-            requirement_id,
-            GraphSlugs.PROCESS_REQUIREMENT,
-            "No process requirement matches the given id.",
-        )
+        _require_requirement(requirement_id)
         body = RequirementStatusSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(request).set_requirement_status(
@@ -290,7 +264,7 @@ class RequirementStatusView(APIView):
 
 
 @extend_schema(
-    tags=["External: process_requirement"],
+    tags=["Internal: process_requirement"],
     request=ChecklistPatchSerializer,
     responses={204: None},
 )
@@ -300,15 +274,10 @@ class RequirementChecklistView(APIView):
     {tileid?, name, description}; omit tileid to create one, and a persisted step
     left out of the list is deleted."""
 
-    authentication_classes = [SessionAuthentication]
-    permission_classes = STAFF_MODULE_PERMISSIONS
+    permission_classes = [Internal]
 
     def patch(self, request, requirement_id):
-        _require_exists(
-            requirement_id,
-            GraphSlugs.PROCESS_REQUIREMENT,
-            "No process requirement matches the given id.",
-        )
+        _require_requirement(requirement_id)
         body = ChecklistPatchSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(request).save_checklist(

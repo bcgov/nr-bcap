@@ -25,8 +25,7 @@ from bcap.util.aliases.process_requirement import (
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.controlled_list import reference_value
-from bcap.services.dashboard.base_graph_service import BaseGraphService
-from bcap.util.graph import node_id, nodegroup_id
+from bcap.util.graph import node_id, nodegroup_id, nodes_for
 from bcap.util.i18n import localized_string
 from bcap.util.links import app_url
 
@@ -200,12 +199,13 @@ class ProcessRequirementBuilder(ResourceBuilder):
     @staticmethod
     def _resource_reference(resource_id):
         """Tile data for a resource-instance node pointing at one resource, in the
-        shape arches stores it. post_tile_save fills in the relationship id."""
+        shape arches stores it."""
         return [
             {
                 "resourceId": str(resource_id),
                 "ontologyProperty": "",
                 "inverseOntologyProperty": "",
+                "resourceXresourceId": "",
             }
         ]
 
@@ -319,7 +319,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
         requirement's tree."""
         nodes = None
         if id_only:
-            nodes = BaseGraphService.nodes(
+            nodes = nodes_for(
                 GraphSlugs.PROCESS_REQUIREMENT,
                 [aliases.REQUIREMENT_IDENTIFICATION, aliases.IS_TEMPLATE_REQUIREMENT],
             )

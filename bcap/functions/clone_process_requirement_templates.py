@@ -9,14 +9,13 @@ from arches.app.models.resource import Resource
 
 from arches_querysets.models import ResourceTileTree
 
-from bcap.services.dashboard.base_graph_service import BaseGraphService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.graph import get_node
+from bcap.util.graph import get_node, nodes_for
 from bcap.util.indexing import bulk_index
 
 details = {
@@ -66,7 +65,7 @@ class CloneProcessRequirementTemplates(BaseFunction):
         return (
             ResourceTileTree.get_tiles(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                nodes=BaseGraphService.nodes(
+                nodes=nodes_for(
                     GraphSlugs.PROCESS_REQUIREMENT,
                     [ProcessRequirementAliases.IS_TEMPLATE_REQUIREMENT],
                 ),

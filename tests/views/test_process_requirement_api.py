@@ -9,14 +9,20 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from arches.app.models.models import ResourceInstance
+
 from arches_querysets.models import ResourceTileTree
 
+from bcap.permissions.groups import Groups
 from bcap.util.aliases.process_requirement import (
     ProcessRequirementAliases as aliases,
     ProcessRequirementGroupAliases as groups,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
+from tests.builders import FixtureBuilder
+from tests.controlled_list_fixtures import ControlledListFixtures
+from tests.permit_fixtures import RequirementRow, build_permit
 from tests.views.helpers import AuthTestHelper
 
 
@@ -59,7 +65,21 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         cls.editor = get_user_model().objects.create_user(
             username="pr-editor", password="pass"
         )
-        cls.editor.groups.add(Group.objects.get(name="Resource Editor"))
+        cls.editor.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
+
+        # An applicant reaches a requirement through the permit application it
+        # hangs off, never by owning it: the working copies are made for them.
+        ControlledListFixtures.seed()
+        cls.submitter = get_user_model().objects.create_user(
+            username="pr-submitter", password="pass"
+        )
+        cls.submitter.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        permit = build_permit(FixtureBuilder(), "Mine", [RequirementRow(requirement)])
+        ResourceInstance.objects.filter(pk=permit.pk).update(
+            principaluser=cls.submitter
+        )
+        cls.permit_id = str(permit.pk)
+        cls.unattached_id = str(make_requirement(ProcessRequirementBuilder()).pk)
 
         resource = ResourceTileTree.get_tiles(
             GraphSlugs.PROCESS_REQUIREMENT,
@@ -115,9 +135,44 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.editor)
         self.assertEqual(self.client.get(self.url).status_code, 200)
 
-    def test_non_owner_without_editor_role_cannot_view(self):
+    def test_a_user_with_no_role_cannot_view(self):
         self.idir_login_simulate(self.user)
-        self.assertEqual(self.client.get(self.url).status_code, 404)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+
+    def test_applicant_can_view_a_requirement_on_their_own_permit(self):
+        self.idir_login_simulate(self.submitter)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_the_list_shows_an_applicant_the_requirements_on_their_permit(self):
+        # The working copies on a permit are made for the applicant, not by them,
+        # so the list answers by permit reach rather than by who created the row.
+        self.idir_login_simulate(self.submitter)
+        resp = self.client.get(reverse("api_process_requirement_list"))
+        self.assertEqual(resp.status_code, 200)
+        ids = [row["resourceinstanceid"] for row in resp.json()["results"]]
+        self.assertEqual(ids, [self.resource_id])
+
+    def test_applicant_cannot_view_a_requirement_off_their_permits(self):
+        self.idir_login_simulate(self.submitter)
+        url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+    def test_applicant_cannot_write_a_requirement_they_can_read(self):
+        # Reading their own permit's requirement is allowed; changing one is
+        # ministry work.
+        self.idir_login_simulate(self.submitter)
+        resp = self._patch(
+            {
+                ALIASED_DATA: {
+                    aliases.REQUIREMENT_IDENTIFICATION: {
+                        "tileid": self.ident_tileid,
+                        ALIASED_DATA: {aliases.REQUIREMENT_NAME: "Nope"},
+                    }
+                }
+            }
+        )
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(self.client.delete(self.url).status_code, 403)
 
     def test_patch_updates_fields(self):
         # Cardinality-1 tiles carry their tileid so the serializer updates the
@@ -170,7 +225,44 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         resp = self.client.patch(url, data="{}", content_type="application/json")
         self.assertEqual(resp.status_code, 404)
 
-    def test_patch_by_non_owner_returns_404(self):
+    def test_staff_can_delete_a_requirement(self):
+        self.idir_login_simulate(self.editor)
+        url = reverse("api_process_requirement", kwargs={"pk": self.unattached_id})
+        self.assertEqual(self.client.delete(url).status_code, 204)
+
+    def test_applicant_cannot_read_modules_off_another_permit(self):
+        """The permit id is the only thing naming whose modules these are, so it
+        is checked per request rather than trusted for existing."""
+        other = get_user_model().objects.create_user(
+            username="pr-other-applicant", password="pass"
+        )
+        other.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        self.idir_login_simulate(other)
+        response = self.client.get(
+            reverse(
+                "seed_process_requirements",
+                kwargs={"pk": self.permit_id, "permit_type": "inspection"},
+            )
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_applicant_cannot_file_a_module_against_another_permit(self):
+        other = get_user_model().objects.create_user(
+            username="pr-other-filer", password="pass"
+        )
+        other.groups.add(Group.objects.get(name=Groups.SUBMITTER))
+        self.idir_login_simulate(other)
+        response = self.client.post(
+            reverse(
+                "seed_process_requirements",
+                kwargs={"pk": self.permit_id, "permit_type": "inspection"},
+            ),
+            data=json.dumps({ALIASED_DATA: {}}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_patch_by_a_user_with_no_role_is_refused(self):
         self.idir_login_simulate(self.user)
         resp = self._patch({ALIASED_DATA: {}})
-        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 403)

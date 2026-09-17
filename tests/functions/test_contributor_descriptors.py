@@ -26,31 +26,21 @@ class ContributorDescriptorsTests(SimpleTestCase):
                 MagicMock(), {}, descriptor=descriptor
             )
 
-    def _name(self, values):
-        return self._descriptor(DescriptorTypes.NAME, values)
-
-    def _description(self, values):
-        return self._descriptor(DescriptorTypes.DESCRIPTION, values)
-
-    def test_full_name(self):
-        self.assertEqual(self._name(["Smith", "Jane"]), "Smith, Jane")
-
-    def test_organization_only(self):
-        self.assertEqual(self._name(["Acme Consulting", None]), "Acme Consulting")
-
-    def test_blank_first_name(self):
-        self.assertEqual(self._name(["Smith", ""]), "Smith")
-
-    def test_type_and_role(self):
-        self.assertEqual(
-            self._description(["Individual", "Author"]), "Individual, Author"
-        )
-
-    def test_type_without_role(self):
-        self.assertEqual(self._description(["Organization", None]), "Organization")
-
-    def test_map_popup_is_empty(self):
-        self.assertEqual(self._descriptor(DescriptorTypes.MAP_POPUP, []), "")
+    def test_descriptors(self):
+        for descriptor, values, expected in (
+            (DescriptorTypes.NAME, ["Smith", "Jane"], "Smith, Jane"),
+            (DescriptorTypes.NAME, ["Acme Consulting", None], "Acme Consulting"),
+            (DescriptorTypes.NAME, ["Smith", ""], "Smith"),
+            (
+                DescriptorTypes.DESCRIPTION,
+                ["Individual", "Author"],
+                "Individual, Author",
+            ),
+            (DescriptorTypes.DESCRIPTION, ["Organization", None], "Organization"),
+            (DescriptorTypes.MAP_POPUP, [], ""),
+        ):
+            with self.subTest(f"{descriptor} {values}"):
+                self.assertEqual(self._descriptor(descriptor, values), expected)
 
     def test_aliases_used(self):
         self.assertEqual(nodes.NAME, [A.CONTRIBUTOR_NAME, A.FIRST_NAME])

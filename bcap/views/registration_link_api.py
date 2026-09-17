@@ -11,11 +11,11 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from drf_spectacular.utils import extend_schema
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bcap.permissions.groups import SELF_MANAGE_ROLE_GROUPS
 from bcap.serializers.registration_serializers import (
     RegistrationLinkRequestSerializer,
     RegistrationLinkResponseSerializer,
@@ -28,7 +28,6 @@ from bcap.services.registration.invitation_registration_service import (
 
 @extend_schema(tags=["Admin: registration"])
 class RegistrationLinkView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAdminUser]
 
     @extend_schema(
@@ -54,7 +53,6 @@ class RegistrationLinkView(APIView):
 
 @extend_schema(tags=["Admin: registration"])
 class AssignableGroupsView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAdminUser]
 
     @extend_schema(
@@ -62,12 +60,11 @@ class AssignableGroupsView(APIView):
         responses={200: {"type": "array", "items": {"type": "string"}}},
     )
     def get(self, request):
-        return Response(settings.SELF_MANAGE_ROLE_GROUPS)
+        return Response(SELF_MANAGE_ROLE_GROUPS)
 
 
 @extend_schema(tags=["Admin: registration"])
 class RegistrationClaimView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
 
     def get(self, request):

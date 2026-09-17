@@ -6,12 +6,21 @@ from arches.app.models.models import Plugin
 from django.conf import settings
 from django.db import migrations, models
 
+from bcap.permissions.groups import Groups
+
 ROLE_GROUPS = [
-    "Permit Reviewer",
-    "Permit Decider",
-    "Inventory Reviewer",
-    "Inventory Manager",
-    "Submitter",
+    Groups.PERMIT_REVIEWER,
+    Groups.PERMIT_DECIDER,
+    Groups.INVENTORY_REVIEWER,
+    Groups.INVENTORY_MANAGER,
+    Groups.SUBMITTER,
+]
+
+# Named by the permission defaults and read by later migrations, but created
+# nowhere else. Kept on reverse: it carries real memberships, and dropping it
+# would take their access with it.
+PERMANENT_GROUPS = [
+    Groups.ARCHAEOLOGY_BRANCH,
 ]
 
 CONTRIBUTOR_INVITATIONS_PLUGIN_SLUG = "contributor-invitations"
@@ -19,7 +28,7 @@ CONTRIBUTOR_INVITATIONS_PLUGIN_SLUG = "contributor-invitations"
 
 def create_role_groups(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
-    for name in ROLE_GROUPS:
+    for name in ROLE_GROUPS + PERMANENT_GROUPS:
         Group.objects.get_or_create(name=name)
 
 
