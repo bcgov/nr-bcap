@@ -266,10 +266,10 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    def test_patch_by_a_user_with_no_role_is_refused(self):
+    def test_patch_by_an_applicant_is_refused(self):
         self.idir_login_simulate(self.user)
         resp = self._patch({ALIASED_DATA: {}})
-        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 403)
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")

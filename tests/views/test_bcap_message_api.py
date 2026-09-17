@@ -395,13 +395,10 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         upload = SimpleUploadedFile("setup.exe", b"MZ\x90\x00binary")
         before = File.objects.count()
         self.idir_login_simulate(self.user)
-        with patch(
-            "bcap.views.bcap_message_api.user_can_edit_resource", return_value=True
-        ):
-            resp = self.client.post(
-                reverse("bcap_message_list_create"),
-                data={"json": json.dumps(payload), "attachments": upload},
-            )
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data={"json": json.dumps(payload), "attachments": upload},
+        )
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(
             resp.json()["files"][:2], ["These files are not permitted:", "setup.exe"]
