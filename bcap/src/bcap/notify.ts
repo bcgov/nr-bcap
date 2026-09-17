@@ -17,6 +17,8 @@ export const userMessage = (error: unknown): string | undefined =>
 export const TRY_AGAIN =
     'Please try again, or contact support if it keeps happening.';
 
+export type InlineErrorData = { title: string; detail: string };
+
 // The text for an error a page shows itself. Api failures are already logged by
 // the fetch wrapper, so only anything else (a bug) is logged here.
 export const inlineMessage = (error: unknown, fallback = TRY_AGAIN): string => {

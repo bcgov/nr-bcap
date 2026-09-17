@@ -16,8 +16,9 @@ import {
     issueRegistrationLink,
 } from '@/bcap/apps/Admin/api.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
-import { userMessage } from '@/bcap/notify.ts';
+import { TRY_AGAIN, userMessage } from '@/bcap/notify.ts';
 
+import type { InlineErrorData } from '@/bcap/notify.ts';
 import type {
     ContributorSummary,
     RegistrationLinkResponse,
@@ -47,10 +48,8 @@ const state = reactive({
     externalApplicant: false,
     submitting: false,
     result: null as RegistrationLinkResponse | null,
-    error: null as { title: string; detail: string } | null,
+    error: null as InlineErrorData | null,
 });
-
-const TRY_AGAIN = 'Please try again, or contact support if it keeps happening.';
 
 const EXTERNAL_APPLICANT_GROUP = 'Submitter';
 

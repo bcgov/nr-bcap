@@ -13,7 +13,7 @@ import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messag
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
-import { notifyError, userMessage } from '@/bcap/notify.ts';
+import { TRY_AGAIN, notifyError, userMessage } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
@@ -51,8 +51,6 @@ const state = reactive({
     // change the attachments, switch threads or try again.
     sendError: '',
 });
-
-const TRY_AGAIN = 'Please try again, or contact support if it keeps happening.';
 
 watch(
     () => [state.files, state.selectedThreadId, state.visible],
