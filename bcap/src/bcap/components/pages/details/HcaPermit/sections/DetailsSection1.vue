@@ -4,14 +4,14 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import type {
-    HcaPermitSchema,
-    PermitIdentificationTile,
-} from '@/bcap/schema/HcaPermitSchema.ts';
+    HcaPermit,
+    HcaPermitPermitIdentificationTile,
+} from '@/bcap/client/types.gen.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: HcaPermitSchema | undefined;
+        data: HcaPermit | undefined;
         loading?: boolean;
         languageCode?: string;
     }>(),
@@ -20,9 +20,11 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<PermitIdentificationTile | undefined>(() => {
-    return props.data?.aliased_data?.permit_identification;
-});
+const currentData = computed<HcaPermitPermitIdentificationTile | undefined>(
+    () => {
+        return props.data?.aliased_data?.permit_identification ?? undefined;
+    },
+);
 
 const hasPermitInfo = computed(() => {
     const data = currentData.value?.aliased_data;

@@ -11,13 +11,13 @@ import Map from '@/bcgov_arches_common/widgets/SimpleMapWidget/SimpleMapWidget.v
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import type {
-    ArchaeologySiteSchema,
-    SiteBoundaryTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
+    ArchaeologicalSite,
+    ArchaeologicalSiteSiteBoundaryTile,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: ArchaeologySiteSchema | undefined;
+        data: ArchaeologicalSite | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -29,10 +29,10 @@ const props = withDefaults(
     },
 );
 
-const siteBoundary = computed<SiteBoundaryTile | undefined>(
-    (): SiteBoundaryTile | undefined => {
+const siteBoundary = computed<ArchaeologicalSiteSiteBoundaryTile | undefined>(
+    (): ArchaeologicalSiteSiteBoundaryTile | undefined => {
         return props.data?.aliased_data?.site_boundary as
-            SiteBoundaryTile | undefined;
+            ArchaeologicalSiteSiteBoundaryTile | undefined;
     },
 );
 
@@ -43,8 +43,9 @@ const hasGeoJsonData = computed(() => {
 const siteBoundaryNode = computed<
     AliasedGeojsonFeatureCollectionNode | undefined
 >((): AliasedGeojsonFeatureCollectionNode | undefined => {
-    return (siteBoundary as Ref<SiteBoundaryTile>)?.value?.aliased_data
-        ?.site_boundary as AliasedGeojsonFeatureCollectionNode | undefined;
+    return (siteBoundary as Ref<ArchaeologicalSiteSiteBoundaryTile>)?.value
+        ?.aliased_data?.site_boundary as
+        AliasedGeojsonFeatureCollectionNode | undefined;
 });
 </script>
 

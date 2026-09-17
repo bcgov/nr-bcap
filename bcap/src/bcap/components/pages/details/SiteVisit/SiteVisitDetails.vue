@@ -15,8 +15,10 @@ import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVis
 import Section7 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -39,12 +41,12 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: current, loading } = useResourceData<SiteVisitSchema>(
+const { data: current, loading } = useResourceData<SiteVisit>(
     'site_visit',
     resourceId,
 );
 
-const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
+const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedData>(
     'hria_discontinued_data',
     resourceId,
     true,
@@ -82,7 +84,9 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
         />
         <Section4
             :data="current || undefined"
-            :hria-data="(hriaData as HriaDiscontinuedDataSchema) || undefined"
+            :hria-data="
+                (hriaData as HriaDiscontinuedData | undefined) || undefined
+            "
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
         />

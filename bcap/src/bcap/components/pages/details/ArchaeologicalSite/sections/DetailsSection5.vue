@@ -4,19 +4,24 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
-import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
 import { isEmpty } from '@/bcap/util.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import 'primeicons/primeicons.css';
-import type { SiteBoundaryTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    ArchaeologicalSiteSiteBoundaryTile,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteBoundaryTile | undefined;
-        hriaData: HriaDiscontinuedDataSchema | undefined;
+        data: ArchaeologicalSiteSiteBoundaryTile | undefined;
+        hriaData: HriaDiscontinuedData | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -37,7 +42,9 @@ const currentSiteBoundaryData = computed(() => {
 });
 
 const { processedData: siteBoundaryWithAudit } = useTileEditLog(
-    currentSiteBoundaryData,
+    currentSiteBoundaryData as unknown as ReturnType<
+        typeof computed<AliasedTileData[]>
+    >,
     toRef(props, 'editLogData'),
 );
 
@@ -129,7 +136,7 @@ const gisDimensionsTableData = computed(() => {
             width_direction: tile.aliased_data.width_direction,
             site_area: tile.aliased_data.site_area,
         },
-    ];
+    ] as unknown as AliasedTileDataWithAudit[];
 });
 
 const discontinuedDimensionsTableData = computed(() => {
