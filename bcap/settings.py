@@ -583,7 +583,7 @@ else:
 # EMAIL_HOST_PASSWORD = 'xxxxxxx'
 # EMAIL_PORT = 587
 
-# Read by Django 6 / Arches 8.2 On upgrade, drop EMAIL_HOST and EMAIL_HOST_USER below.
+# Read by Django 6 / Arches 8.2 On upgrade, drop EMAIL_* below and above.
 MAILERS = {
     "default": {
         "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
