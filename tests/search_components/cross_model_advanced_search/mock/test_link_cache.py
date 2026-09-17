@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from typing_extensions import Any
 
 from bcap.search_components.cross_model_advanced_search import LinkCache
@@ -9,102 +11,45 @@ from helper import _uuid
 
 
 class TestLinkCacheExtractTarget:
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_string(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({"graphid": "abc-123"})
-        assert result == ["abc-123"]
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_list(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({"graphid": ["abc", "def"]})
-        assert result == ["abc", "def"]
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphs_array(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target(
-            {
-                "graphs": [
-                    {"graphid": "abc"},
-                    {"graphid": "def"},
-                ],
-            }
-        )
-        assert result == ["abc", "def"]
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_empty_config(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({})
-        assert result == []
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_null_graphid(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({"graphid": None})
-        assert result == []
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_both_formats(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target(
-            {
-                "graphid": "abc",
-                "graphs": [{"graphid": "def"}],
-            }
-        )
-        assert result == ["abc", "def"]
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_empty_graphs_list(self, mock_ng: MagicMock, mock_node: MagicMock) -> None:
-        result: list[str] = LinkCache._extract_target({"graphs": []})
-        assert result == []
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphs_missing_graphid(
-        self, mock_ng: MagicMock, mock_node: MagicMock
-    ) -> None:
-        result: list[str] = LinkCache._extract_target(
-            {
-                "graphs": [{"other_key": "val"}],
-            }
-        )
-        assert result == []
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_empty_string(
-        self, mock_ng: MagicMock, mock_node: MagicMock
-    ) -> None:
-        result: list[str] = LinkCache._extract_target({"graphid": ""})
-        assert result == []
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphid_list_with_empty_strings(
-        self, mock_ng: MagicMock, mock_node: MagicMock
-    ) -> None:
-        result: list[str] = LinkCache._extract_target({"graphid": ["", "abc", ""]})
-        assert "abc" in result
-
-    @patch("bcap.search_components.cross_model_advanced_search.Node")
-    @patch("bcap.search_components.cross_model_advanced_search.NodeGroup")
-    def test_graphs_array_with_none_graphid(
-        self, mock_ng: MagicMock, mock_node: MagicMock
-    ) -> None:
-        result: list[str] = LinkCache._extract_target(
-            {
-                "graphs": [
-                    {"graphid": None},
-                    {"graphid": "abc"},
-                ],
-            }
-        )
-        assert "abc" in result
+    @pytest.mark.parametrize(
+        "config,expected",
+        [
+            pytest.param({}, [], id="empty_config"),
+            pytest.param({"graphid": "abc-123"}, ["abc-123"], id="graphid_string"),
+            pytest.param({"graphid": None}, [], id="null_graphid"),
+            pytest.param({"graphid": ""}, [], id="graphid_empty_string"),
+            pytest.param(
+                {"graphid": ["abc", "def"]}, ["abc", "def"], id="graphid_list"
+            ),
+            # a list graphid is taken as-is; only the scalar and graphs paths drop falsy
+            pytest.param(
+                {"graphid": ["", "abc", ""]},
+                ["", "abc", ""],
+                id="graphid_list_with_empty_strings",
+            ),
+            pytest.param({"graphs": []}, [], id="empty_graphs_list"),
+            pytest.param(
+                {"graphs": [{"graphid": "abc"}, {"graphid": "def"}]},
+                ["abc", "def"],
+                id="graphs_array",
+            ),
+            pytest.param(
+                {"graphs": [{"other_key": "val"}]}, [], id="graphs_missing_graphid"
+            ),
+            pytest.param(
+                {"graphs": [{"graphid": None}, {"graphid": "abc"}]},
+                ["abc"],
+                id="graphs_array_with_none_graphid",
+            ),
+            pytest.param(
+                {"graphid": "abc", "graphs": [{"graphid": "def"}]},
+                ["abc", "def"],
+                id="both_formats",
+            ),
+        ],
+    )
+    def test_extract_target(self, config: dict[str, Any], expected: list[str]) -> None:
+        assert LinkCache._extract_target(config) == expected
 
 
 class TestLinkCacheGetAndCache:

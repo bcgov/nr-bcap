@@ -198,120 +198,113 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
         schema, _ = self.map_field(self.wrapped(serializers.IntegerField))
         self.assertEqual(schema["properties"]["node_value"]["type"], "integer")
 
-    def test_component_name_defaults_without_a_datatype(self):
-        extension = AliasedNodeDataExtension(self.wrapped())
-        self.assertEqual(extension.get_name(), "AliasedNodeData")
-
-    def test_component_name_specialized_per_datatype(self):
-        extension = AliasedNodeDataExtension(self.wrapped(datatype="concept-list"))
-        self.assertEqual(extension.get_name(), "ConceptListAliasedNodeData")
-
-    def test_concept_details_typed_as_value_objects(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.UUIDField, datatype="concept")
-        )
-        ref = schema["properties"]["details"]["items"]["$ref"]
-        self.assertTrue(ref.endswith("/ConceptValueDetail"), ref)
-
-    def test_resource_instance_details_typed(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.JSONField, datatype="resource-instance")
-        )
-        ref = schema["properties"]["details"]["items"]["$ref"]
-        self.assertTrue(ref.endswith("/ResourceInstanceDetail"), ref)
-
-    def test_scalar_details_stay_generic(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.CharField, datatype="string")
-        )
-        items = schema["properties"]["details"]["items"]
-        self.assertEqual(items, {"type": "object", "additionalProperties": {}})
-
-    def test_localized_string_node_value_modeled_as_i18n_object(self):
-        # node_value is the {lang: {value, direction}} object the API emits, so a
-        # value-length limit has a real string to bind to.
-        schema, _ = self.map_field(
-            self.wrapped(serializers.CharField, datatype="string")
-        )
-        value = schema["properties"]["node_value"]["properties"]["en"]
-        self.assertEqual(value["properties"]["value"]["type"], "string")
-        self.assertNotIn("maxLength", value["properties"]["value"])
-
-    def test_localized_string_max_length_binds_to_inner_value(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.CharField, datatype="string", max_length=125)
-        )
-        node_value = schema["properties"]["node_value"]
-        self.assertEqual(
-            node_value["properties"]["en"]["properties"]["value"]["maxLength"], 125
-        )
-
-    def test_non_localized_string_max_length_binds_to_scalar(self):
-        schema, _ = self.map_field(
-            self.wrapped(
-                serializers.CharField, datatype="non-localized-string", max_length=50
-            )
-        )
-        node_value = schema["properties"]["node_value"]
-        self.assertEqual(node_value["type"], "string")
-        self.assertEqual(node_value["maxLength"], 50)
-
-    def test_concept_list_max_length_becomes_max_items(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.JSONField, datatype="concept-list", max_length=3)
-        )
-        node_value = schema["properties"]["node_value"]
-        self.assertEqual(node_value["type"], "array")
-        self.assertEqual(node_value["maxItems"], 3)
-
-    def test_number_min_max_bind_to_the_value(self):
-        schema, _ = self.map_field(
-            self.wrapped(
-                serializers.FloatField,
-                datatype="number",
-                config={"min": "0", "max": "10"},
-            )
-        )
-        node_value = schema["properties"]["node_value"]
-        self.assertEqual(node_value["minimum"], 0)
-        self.assertEqual(node_value["maximum"], 10)
-
-    def test_number_bounds_get_their_own_component_name(self):
-        extension = AliasedNodeDataExtension(
-            self.wrapped(
-                serializers.FloatField,
-                datatype="number",
-                config={"min": "0", "max": "10"},
-            )
-        )
-        self.assertEqual(extension.get_name(), "NumberAliasedNodeDataMin0Max10")
-
-    def test_required_list_node_requires_at_least_one_item(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.JSONField, datatype="reference", required=True)
-        )
-        self.assertEqual(schema["properties"]["node_value"]["minItems"], 1)
-
-    def test_optional_list_node_has_no_min_items(self):
-        schema, _ = self.map_field(
-            self.wrapped(serializers.JSONField, datatype="reference", required=False)
-        )
-        self.assertNotIn("minItems", schema["properties"]["node_value"])
-
-    def test_required_list_node_gets_its_own_component_name(self):
-        extension = AliasedNodeDataExtension(
-            self.wrapped(serializers.JSONField, datatype="reference", required=True)
-        )
-        self.assertEqual(extension.get_name(), "ReferenceAliasedNodeDataRequired")
-
-    def test_constrained_node_gets_its_own_component_name(self):
+    def test_component_names(self):
         # Distinct limits can't share a datatype's component; equal limits do.
-        base = AliasedNodeDataExtension(self.wrapped(datatype="string"))
-        constrained = AliasedNodeDataExtension(
-            self.wrapped(datatype="string", max_length=125)
-        )
-        self.assertEqual(base.get_name(), "StringAliasedNodeData")
-        self.assertEqual(constrained.get_name(), "StringAliasedNodeDataMax125")
+        for expected, kwargs in (
+            ("AliasedNodeData", {}),
+            ("ConceptListAliasedNodeData", {"datatype": "concept-list"}),
+            ("StringAliasedNodeData", {"datatype": "string"}),
+            ("StringAliasedNodeDataMax125", {"datatype": "string", "max_length": 125}),
+            (
+                "NumberAliasedNodeDataMin0Max10",
+                {
+                    "drf_field": serializers.FloatField,
+                    "datatype": "number",
+                    "config": {"min": "0", "max": "10"},
+                },
+            ),
+            (
+                "ReferenceAliasedNodeDataRequired",
+                {
+                    "drf_field": serializers.JSONField,
+                    "datatype": "reference",
+                    "required": True,
+                },
+            ),
+        ):
+            with self.subTest(expected):
+                extension = AliasedNodeDataExtension(self.wrapped(**kwargs))
+                self.assertEqual(extension.get_name(), expected)
+
+    def test_details_typed_per_datatype(self):
+        generic = {"type": "object", "additionalProperties": {}}
+        for datatype, drf_field, expected in (
+            ("concept", serializers.UUIDField, "ConceptValueDetail"),
+            ("resource-instance", serializers.JSONField, "ResourceInstanceDetail"),
+            ("string", serializers.CharField, generic),
+        ):
+            with self.subTest(datatype):
+                schema, _ = self.map_field(self.wrapped(drf_field, datatype=datatype))
+                items = schema["properties"]["details"]["items"]
+                if isinstance(expected, str):
+                    self.assertTrue(items["$ref"].endswith(f"/{expected}"), items)
+                else:
+                    self.assertEqual(items, expected)
+
+    def assert_node_value(self, path, expected, **kwargs):
+        """Navigate node_value down path and pin the keys expected names; a None
+        expects the key to be absent."""
+        schema, _ = self.map_field(self.wrapped(**kwargs))
+        leaf = schema["properties"]["node_value"]
+        for key in filter(None, path.split(".")):
+            leaf = leaf[key]
+        for key, value in expected.items():
+            self.assertEqual(leaf.get(key), value, leaf)
+
+    def test_node_value_constraints(self):
+        # A localized node_value is the {lang: {value, direction}} object the API
+        # emits, so a value-length limit has a real string to bind to.
+        inner = "properties.en.properties.value"
+        json_list = {"drf_field": serializers.JSONField, "datatype": "reference"}
+        for name, path, expected, kwargs in (
+            (
+                "localized string is an i18n object",
+                inner,
+                {"type": "string", "maxLength": None},
+                {"datatype": "string"},
+            ),
+            (
+                "localized max binds to the inner value",
+                inner,
+                {"maxLength": 125},
+                {"datatype": "string", "max_length": 125},
+            ),
+            (
+                "non-localized max binds to the scalar",
+                "",
+                {"type": "string", "maxLength": 50},
+                {"datatype": "non-localized-string", "max_length": 50},
+            ),
+            (
+                "a list max becomes maxItems",
+                "",
+                {"type": "array", "maxItems": 3},
+                {
+                    "drf_field": serializers.JSONField,
+                    "datatype": "concept-list",
+                    "max_length": 3,
+                },
+            ),
+            (
+                "number bounds bind to the value",
+                "",
+                {"minimum": 0, "maximum": 10},
+                {
+                    "drf_field": serializers.FloatField,
+                    "datatype": "number",
+                    "config": {"min": "0", "max": "10"},
+                },
+            ),
+            (
+                "a required list wants at least one item",
+                "",
+                {"minItems": 1},
+                {**json_list, "required": True},
+            ),
+            ("an optional list does not", "", {"minItems": None}, json_list),
+        ):
+            with self.subTest(name):
+                self.assert_node_value(path, expected, **kwargs)
 
     def test_node_value_shaped_for_every_resource_model_datatype(self):
         # One row per datatype used across the resource models: navigate from
@@ -345,12 +338,7 @@ class NodeValueFieldExtensionTests(SimpleTestCase):
         }
         for datatype, (path, expected) in cases.items():
             with self.subTest(datatype=datatype):
-                schema, _ = self.map_field(self.wrapped(datatype=datatype))
-                leaf = schema["properties"]["node_value"]
-                for key in filter(None, path.split(".")):
-                    leaf = leaf[key]
-                for key, value in expected.items():
-                    self.assertEqual(leaf.get(key), value, leaf)
+                self.assert_node_value(path, expected, datatype=datatype)
 
 
 class NodeValueEnvelopeContractTests(TestCase):

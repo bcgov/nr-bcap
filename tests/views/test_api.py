@@ -1,10 +1,12 @@
 import json
 from unittest.mock import MagicMock, patch
 
+from django.contrib.auth.models import Group
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
+from bcap.permissions.groups import Groups
 from bcap.util.borden_number_api import BordenGridServiceError, MissingGeometryError
 from bcap.views.api import BordenNumber
 from tests.views.helpers import AuthTestHelper
@@ -90,3 +92,34 @@ class BordenNumberExternalViewTests(AuthTestHelper, TestCase):
 
         self.assertEqual(resp.status_code, 200)
         post_impl_patch.assert_called_once()
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class MVTAccessTests(AuthTestHelper, TestCase):
+    """The tile route is staff only. Without the gate an applicant's tile is
+    narrowed by the search index alone, so a stale index leaks site geometry."""
+
+    def setUp(self):
+        super().setUp()
+        self.url = reverse(
+            "mvt",
+            kwargs={
+                "nodeid": "22222222-2222-2222-2222-222222222222",
+                "zoom": "10",
+                "x": "512",
+                "y": "256",
+            },
+        )
+
+    def test_applicant_is_refused(self):
+        self.idir_login_simulate(login_source="BCEID")
+
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+
+    @patch("bcap.views.api.MVTTiler")
+    def test_internal_user_reaches_the_tiler(self, tiler):
+        tiler.return_value.createTile.return_value = b"tile"
+        self.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
+        self.idir_login_simulate()
+
+        self.assertEqual(self.client.get(self.url).status_code, 200)

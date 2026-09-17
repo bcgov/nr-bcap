@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from django.test import SimpleTestCase, TestCase
 
-from arches.app.models.models import TileModel
+from arches.app.models.models import ResourceXResource, TileModel
 
 from arches_querysets.models import ResourceTileTree
 
@@ -173,6 +173,20 @@ class ProcessRequirementServiceTests(TestCase):
         self.assertEqual(len(children), len(expected))
         for tree in self._trees(*children):
             self.assertFalse(self._is_template(tree))
+
+    def test_clone_module_writes_the_submission_relationship(self):
+        """The link has to reach resource_x_resource, not just the tile: that
+        table is what the permit reach check walks, so a tile-only link leaves
+        the host unreachable by the applicant who filed it."""
+        host = ProcessRequirementBuilder().make_resource(GraphSlugs.INVESTIGATION)
+        children = self.service._clone_module("investigation", host).requirements
+
+        self.assertTrue(
+            ResourceXResource.objects.filter(
+                from_resource_id__in=[child.pk for child in children],
+                to_resource_id=host.pk,
+            ).exists()
+        )
 
     def test_create_working_copies_copies_every_template_in_flow_order(self):
         copies = self.service.create_working_copies().requirements

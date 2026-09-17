@@ -259,6 +259,12 @@ INSTALLED_APPS += (
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "bcap.views.exception_handler.bcap_exception_handler",
+    "DEFAULT_PERMISSION_CLASSES": ["bcap.permissions.route_guards.Internal"],
+    # Session cookies only. DRF's own default adds BasicAuthentication, which
+    # would accept a password on every API route.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication"
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -336,6 +342,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
+    "bcap.permissions.applicant_gate.ArchesDefaultDenyApplicantGate",
     # "silk.middleware.SilkyMiddleware",
 ]
 
@@ -537,21 +544,10 @@ AUTHLIB_OAUTH_CLIENTS = {
 
 REGISTRATION_LINK_TTL_DAYS = 7
 
-# Role groups an admin can grant an invited user. External applicants always
-# get just the Submitter group.
-SELF_MANAGE_ROLE_GROUPS = [
-    "Permit Reviewer",
-    "Permit Decider",
-    "Inventory Reviewer",
-    "Inventory Manager",
-    "Submitter",
-]
-EXTERNAL_APPLICANT_GROUP = "Submitter"
+PERMISSION_FRAMEWORK = "bcap_arches_permission_framework.BcapArchesPermissionFramework"
 
-# Default-allow, minus the provisional-edit path: a signed-in user's tile saves
-# are authoritative without putting them in Resource Reviewer.
-# We will make this default-deny in the future.
-PERMISSION_FRAMEWORK = "bcap_permission_framework.BcapPermissionFramework"
+
+from bcap.permissions.permission_settings import PERMISSION_DEFAULTS  # noqa: E402
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
@@ -660,7 +656,6 @@ RENDERERS = [
     },
 ]
 
-# By setting RESTRICT_MEDIA_ACCESS to True, media file requests outside of Arches will checked against nodegroup permissions.
 RESTRICT_MEDIA_ACCESS = True
 
 # By setting RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER to True, if the user is attempting
