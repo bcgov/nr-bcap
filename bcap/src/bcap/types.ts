@@ -84,7 +84,6 @@ export interface FormattedMessage {
     author: string;
     text: string;
     date: string;
-    isUnread: boolean;
     attachments: MessageAttachment[];
 }
 
@@ -93,9 +92,9 @@ export interface MessageThread {
     topic: string;
     startedBy: string;
     lastMessageDate: string;
-    hasUnread: boolean;
-    unreadCount: number;
-    isResolved?: boolean;
+    isResolved: boolean;
+    resolvedBy: string;
+    isInternal: boolean;
 }
 
 export interface DetailsData {

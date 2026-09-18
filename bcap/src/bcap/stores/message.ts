@@ -3,10 +3,10 @@ import { defineStore } from 'pinia';
 import {
     createBcapMessage,
     getMessagesForThread,
-    getSubmissionModulesUnreadCounts,
+    getSubmissionModulesUnresolvedCounts,
     getThreadsForResource,
-    markMessageAsRead,
     setThreadArchived,
+    setThreadResolved,
 } from '@/bcap/apps/Permit/api.ts';
 import type {
     MessageThread,
@@ -21,7 +21,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     const active = reactive(new Map<string, MessageThread[]>());
     const archived = reactive(new Map<string, MessageThread[]>());
     const inFlight = new Map<string, Promise<MessageThread[]>>();
-    const moduleUnread = reactive(new Map<string, number>());
+    const moduleUnresolved = reactive(new Map<string, number>());
     const openMessages = ref<FormattedMessage[]>([]);
 
     const cacheFor = (isArchived: boolean) => (isArchived ? archived : active);
@@ -33,26 +33,25 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         return cacheFor(isArchived).get(resourceId) ?? [];
     }
 
-    function unreadCount(resourceId: string): number {
-        return threadsFor(resourceId).reduce(
-            (sum, thread) => sum + (thread.unreadCount || 0),
-            0,
-        );
+    function unresolvedCount(resourceId: string): number {
+        return threadsFor(resourceId).filter((thread) => !thread.isResolved)
+            .length;
     }
 
-    async function loadModuleUnread(submissionId: string) {
+    async function loadModuleUnresolved(submissionId: string) {
         try {
-            const rows = await getSubmissionModulesUnreadCounts(submissionId);
-            for (const { module_id, unread_count } of rows) {
-                moduleUnread.set(module_id, unread_count);
+            const rows =
+                await getSubmissionModulesUnresolvedCounts(submissionId);
+            for (const { module_id, unresolved_count } of rows) {
+                moduleUnresolved.set(module_id, unresolved_count);
             }
         } catch (error) {
-            console.error('Error loading module unread counts:', error);
+            console.error('Error loading module unresolved counts:', error);
         }
     }
 
-    const moduleUnreadCount = (moduleTileId: string): number =>
-        moduleUnread.get(moduleTileId) ?? 0;
+    const moduleUnresolvedCount = (moduleTileId: string): number =>
+        moduleUnresolved.get(moduleTileId) ?? 0;
 
     async function load(resourceId: string, isArchived = false) {
         const key = `${resourceId}:${isArchived}`;
@@ -77,6 +76,9 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         await load(message.resourceId);
     }
 
+    const reloadBoth = (resourceId: string) =>
+        Promise.all([load(resourceId), load(resourceId, true)]);
+
     async function setArchived(
         threadId: string,
         archived: boolean,
@@ -87,7 +89,20 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         } catch (error) {
             console.error('Failed to archive thread:', error);
         }
-        await Promise.all([load(resourceId), load(resourceId, true)]);
+        await reloadBoth(resourceId);
+    }
+
+    async function setResolved(
+        threadId: string,
+        resolved: boolean,
+        resourceId: string,
+    ) {
+        try {
+            await setThreadResolved(threadId, resolved);
+        } catch (error) {
+            console.error('Failed to resolve thread:', error);
+        }
+        await reloadBoth(resourceId);
     }
 
     // Fetch a thread's messages into openMessages, clearing first so the open
@@ -101,35 +116,16 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         }
     }
 
-    // Mark the open thread's unread messages read, updating its badge counts.
-    async function markThreadRead(thread: MessageThread) {
-        if (!thread.hasUnread) return;
-
-        for (const message of openMessages.value.filter(
-            (m) => m.isUnread && m.id,
-        )) {
-            try {
-                await markMessageAsRead(message.id);
-                message.isUnread = false;
-                if (thread.unreadCount) thread.unreadCount--;
-            } catch (error) {
-                console.error('Failed to mark message as read:', error);
-            }
-        }
-
-        thread.hasUnread = false;
-    }
-
     return {
         threadsFor,
-        unreadCount,
-        loadModuleUnread,
-        moduleUnreadCount,
+        unresolvedCount,
+        loadModuleUnresolved,
+        moduleUnresolvedCount,
         openMessages,
         load,
         send,
         setArchived,
+        setResolved,
         loadThreadMessages,
-        markThreadRead,
     };
 });

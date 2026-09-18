@@ -2,20 +2,20 @@ import { useMessageStore } from '@/bcap/stores/message.ts';
 import {
     createBcapMessage,
     getMessagesForThread,
-    getSubmissionModulesUnreadCounts,
+    getSubmissionModulesUnresolvedCounts,
     getThreadsForResource,
-    markMessageAsRead,
     setThreadArchived,
+    setThreadResolved,
 } from '@/bcap/apps/Permit/api.ts';
-import type { MessageThread, FormattedMessage } from '@/bcap/types.ts';
+import type { MessageThread } from '@/bcap/types.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
     getMessagesForThread: vi.fn(),
-    getSubmissionModulesUnreadCounts: vi.fn(),
+    getSubmissionModulesUnresolvedCounts: vi.fn(),
     getThreadsForResource: vi.fn(),
-    markMessageAsRead: vi.fn(),
     setThreadArchived: vi.fn(),
+    setThreadResolved: vi.fn(),
 }));
 
 const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
@@ -23,10 +23,19 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
     topic: 'General Question',
     startedBy: 'Amy',
     lastMessageDate: '',
-    hasUnread: false,
-    unreadCount: 0,
+    isResolved: false,
+    resolvedBy: '',
+    isInternal: false,
     ...over,
 });
+
+const reloadedBoth = () =>
+    expect(vi.mocked(getThreadsForResource).mock.calls).toEqual(
+        expect.arrayContaining([
+            ['permit-1', false],
+            ['permit-1', true],
+        ]),
+    );
 
 describe('message store', () => {
     beforeEach(() => {
@@ -34,20 +43,21 @@ describe('message store', () => {
         vi.mocked(getThreadsForResource).mockResolvedValue([]);
     });
 
-    it("loads a resource's threads and sums their unread counts", async () => {
+    it("counts a resource's unresolved threads", async () => {
         vi.mocked(getThreadsForResource).mockResolvedValue([
-            thread({ id: 'a', unreadCount: 2, hasUnread: true }),
-            thread({ id: 'b', unreadCount: 5, hasUnread: true }),
+            thread({ id: 'a' }),
+            thread({ id: 'b' }),
+            thread({ id: 'c', isResolved: true }),
         ]);
         const store = useMessageStore();
 
         await store.load('permit-1');
 
-        expect(store.threadsFor('permit-1')).toHaveLength(2);
-        expect(store.unreadCount('permit-1')).toBe(7);
+        expect(store.threadsFor('permit-1')).toHaveLength(3);
+        expect(store.unresolvedCount('permit-1')).toBe(2);
         // A resource never loaded is empty, not an error.
         expect(store.threadsFor('permit-2')).toEqual([]);
-        expect(store.unreadCount('permit-2')).toBe(0);
+        expect(store.unresolvedCount('permit-2')).toBe(0);
     });
 
     it('keeps active and archived threads in separate lists', async () => {
@@ -62,6 +72,18 @@ describe('message store', () => {
 
         expect(store.threadsFor('permit-1')[0].id).toBe('active');
         expect(store.threadsFor('permit-1', true)[0].id).toBe('arch');
+    });
+
+    it('does not count archived threads', async () => {
+        vi.mocked(getThreadsForResource).mockImplementation(
+            (_id: string, archived?: boolean) =>
+                Promise.resolve(archived ? [thread({ id: 'arch' })] : []),
+        );
+        const store = useMessageStore();
+
+        await store.load('permit-1', true);
+
+        expect(store.unresolvedCount('permit-1')).toBe(0);
     });
 
     it('shares one in-flight fetch when the same list is loaded concurrently', async () => {
@@ -89,7 +111,6 @@ describe('message store', () => {
         await store.send({
             messageText: 'hi',
             recipientId: 'r1',
-            applicationId: 'APP-1',
             resourceId: 'permit-1',
         });
 
@@ -103,32 +124,47 @@ describe('message store', () => {
         await store.setArchived('t1', true, 'permit-1');
 
         expect(setThreadArchived).toHaveBeenCalledWith('t1', true);
-        expect(vi.mocked(getThreadsForResource).mock.calls).toEqual(
-            expect.arrayContaining([
-                ['permit-1', false],
-                ['permit-1', true],
-            ]),
-        );
+        reloadedBoth();
     });
 
-    it('maps module tile ids to their unread counts', async () => {
-        vi.mocked(getSubmissionModulesUnreadCounts).mockResolvedValue([
-            { module_id: 'mod-a', unread_count: 3 },
-            { module_id: 'mod-b', unread_count: 0 },
+    it('resolves or reopens a thread then reloads both lists', async () => {
+        const store = useMessageStore();
+
+        await store.setResolved('t1', true, 'permit-1');
+        await store.setResolved('t1', false, 'permit-1');
+
+        expect(setThreadResolved).toHaveBeenCalledWith('t1', true);
+        expect(setThreadResolved).toHaveBeenCalledWith('t1', false);
+        reloadedBoth();
+    });
+
+    it('still reloads when resolving fails', async () => {
+        vi.mocked(setThreadResolved).mockRejectedValueOnce(new Error('nope'));
+        const store = useMessageStore();
+
+        await store.setResolved('t1', true, 'permit-1');
+
+        reloadedBoth();
+    });
+
+    it('maps module tile ids to their unresolved counts', async () => {
+        vi.mocked(getSubmissionModulesUnresolvedCounts).mockResolvedValue([
+            { module_id: 'mod-a', unresolved_count: 3 },
+            { module_id: 'mod-b', unresolved_count: 0 },
         ]);
         const store = useMessageStore();
 
-        await store.loadModuleUnread('submission-1');
+        await store.loadModuleUnresolved('submission-1');
 
-        expect(store.moduleUnreadCount('mod-a')).toBe(3);
-        expect(store.moduleUnreadCount('mod-b')).toBe(0);
+        expect(store.moduleUnresolvedCount('mod-a')).toBe(3);
+        expect(store.moduleUnresolvedCount('mod-b')).toBe(0);
         // An unknown module reads as zero, not undefined.
-        expect(store.moduleUnreadCount('mod-x')).toBe(0);
+        expect(store.moduleUnresolvedCount('mod-x')).toBe(0);
     });
 
     it("loads a thread's messages into openMessages", async () => {
         vi.mocked(getMessagesForThread).mockResolvedValue([
-            { id: 'm1', author: 'Amy', text: 'hi', date: 'x', isUnread: false },
+            { id: 'm1', author: 'Amy', text: 'hi', date: 'x', attachments: [] },
         ]);
         const store = useMessageStore();
 
@@ -136,37 +172,5 @@ describe('message store', () => {
 
         expect(getMessagesForThread).toHaveBeenCalledWith('thread-1');
         expect(store.openMessages).toHaveLength(1);
-    });
-
-    it('marks only the open thread unread messages read', async () => {
-        vi.mocked(getMessagesForThread).mockResolvedValue([
-            { id: 'm1', author: '', text: 'a', date: '', isUnread: true },
-            { id: 'm2', author: '', text: 'b', date: '', isUnread: false },
-            { id: 'm3', author: '', text: 'c', date: '', isUnread: true },
-        ]);
-        const store = useMessageStore();
-        const t = thread({ hasUnread: true, unreadCount: 2 });
-
-        // Messages live in the store, loaded for the open thread.
-        await store.loadThreadMessages(t.id);
-        await store.markThreadRead(t);
-
-        expect(markMessageAsRead).toHaveBeenCalledTimes(2);
-        expect(markMessageAsRead).toHaveBeenCalledWith('m1');
-        expect(markMessageAsRead).toHaveBeenCalledWith('m3');
-        expect(markMessageAsRead).not.toHaveBeenCalledWith('m2');
-        expect(t.hasUnread).toBe(false);
-        expect(t.unreadCount).toBe(0);
-        expect(
-            store.openMessages.every((m: FormattedMessage) => !m.isUnread),
-        ).toBe(true);
-    });
-
-    it('does nothing when the thread has no unread messages', async () => {
-        const store = useMessageStore();
-
-        await store.markThreadRead(thread({ hasUnread: false }));
-
-        expect(markMessageAsRead).not.toHaveBeenCalled();
     });
 });

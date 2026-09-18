@@ -4,6 +4,8 @@ from unittest import mock
 
 from django.test import TestCase
 
+from arches.app.models.models import ResourceInstance
+
 from bcap.services.contributor.contributor_service import (
     ContributorSummary,
     NewContributor,
@@ -21,7 +23,11 @@ from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
-from tests.services.contributor_fixtures import ACTIVE, ContributorFixtureMixin
+from tests.services.contributor_fixtures import (
+    ACTIVE,
+    ContributorFixtureMixin,
+    make_user,
+)
 
 
 class ContributorServiceTest(ContributorFixtureMixin, TestCase):
@@ -268,6 +274,11 @@ class ContributorsForResourceTests(TestCase):
         cls.permit = permit
         cls.req = req
         cls.plain = builder.make_resource("permit_application")
+        # The bystander filed the permit: offered only to staff.
+        cls.proponent = make_user("bea")
+        ResourceInstance.objects.filter(pk=permit.pk).update(
+            principaluser=cls.proponent
+        )
 
     def _ids(self, resource):
         return {c.id for c in self.service.contributors_for_resource(str(resource.pk))}
@@ -303,3 +314,38 @@ class ContributorsForResourceTests(TestCase):
 
     def test_assigned_resource_does_not_get_the_branch(self):
         self.assertNotIn(self.service.archaeology_branch_id(), self._ids(self.permit))
+        self.assertNotIn(
+            self.service.archaeology_branch_id(), self._with_proponent(self.permit)
+        )
+
+    def _with_proponent(self, resource):
+        return {
+            c.id
+            for c in self.service.contributors_for_resource(
+                str(resource.pk), with_proponent=True
+            )
+        }
+
+    def test_staff_are_offered_the_proponent(self):
+        self.assertIn(str(self.bystander.pk), self._with_proponent(self.permit))
+
+    def test_staff_are_offered_the_proponent_of_a_requirements_permit(self):
+        self.assertIn(str(self.bystander.pk), self._with_proponent(self.req))
+
+    def test_applicants_are_not_offered_the_proponent(self):
+        self.assertNotIn(str(self.bystander.pk), self._ids(self.permit))
+        self.assertNotIn(str(self.bystander.pk), self._ids(self.req))
+
+    def test_a_permit_with_no_proponent_adds_nobody(self):
+        self.assertEqual(
+            self._with_proponent(self.plain), {self.service.archaeology_branch_id()}
+        )
+
+    def test_the_proponent_alone_still_gets_the_branch(self):
+        ResourceInstance.objects.filter(pk=self.plain.pk).update(
+            principaluser=self.proponent
+        )
+        self.assertEqual(
+            self._with_proponent(self.plain),
+            {str(self.bystander.pk), self.service.archaeology_branch_id()},
+        )

@@ -119,8 +119,9 @@ class BcapMessageModuleUnresolvedView(APIView):
 )
 class BcapMessageContributorsView(APIView):
     """GET the contributors you can address a message to for a resource: the
-    login-linked contributors referenced on it, its ministry assignees, and the
-    Archaeology Branch; staff also get the proponent and their company."""
+    login-linked contributors referenced on it and its ministry assignees, or
+    the Archaeology Branch when there are none; staff also get whoever filed
+    the permit."""
 
     permission_classes = [SubmitterOrInternal]
 

@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.message.bcap_message_service import ModuleUnread
+from bcap.services.message.bcap_message_service import ModuleUnresolved
 from bcap.views.generated.bcap_message import BcapMessageSerializer
 
 
@@ -31,32 +31,27 @@ class ThreadsQuerySerializer(DataclassSerializer):
         dataclass = ThreadsQuery
 
 
-class BcapMessagePatchSerializer(BcapMessageSerializer):
-    """PATCH body schema: the message representation plus a top-level archived
-    flag that toggles the caller's personal archive of the whole thread. It is a
-    command, not a stored node, so it lives beside aliased_data rather than in it."""
+class BcapMessagePatchSerializer(serializers.Serializer):
+    """PATCH body schema: commands on the message's thread rather than node
+    edits, since both land on the thread root, not on the message."""
 
     archived = serializers.BooleanField(
         required=False,
         help_text="Toggle the caller's personal archive of the thread.",
     )
+    resolved = serializers.BooleanField(
+        required=False,
+        help_text="Resolve or reopen the thread for everyone party to it.",
+    )
 
 
 class ThreadRootSerializer(BcapMessageSerializer):
-    """A thread root plus service-annotated summary fields, so the list renders
-    unread state and last activity without fetching each thread's messages."""
+    """A thread root plus the thread's latest activity, so the list renders
+    without fetching each thread's messages."""
 
-    unread_count = serializers.IntegerField(read_only=True)
     last_message_date = serializers.DateTimeField(read_only=True)
 
 
-class ThreadMessageSerializer(BcapMessageSerializer):
-    """A thread message plus the queryset's per-viewer is_unread annotation, so
-    the client shows unread only for messages addressed to the viewer."""
-
-    is_unread = serializers.BooleanField(read_only=True)
-
-
-class ModuleUnreadSerializer(DataclassSerializer):
+class ModuleUnresolvedSerializer(DataclassSerializer):
     class Meta:
-        dataclass = ModuleUnread
+        dataclass = ModuleUnresolved

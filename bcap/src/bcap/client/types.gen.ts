@@ -2211,9 +2211,9 @@ export type ExternalDashboardCard = {
      */
     priority_level?: string;
     /**
-     * Count of the application's BCAP messages not yet read for the user or group.
+     * Count of the application's unresolved BCAP message threads the user can see.
      */
-    unread_messages?: number;
+    unresolved_messages?: number;
     module_progress?: ModuleProgress;
 };
 
@@ -2867,9 +2867,9 @@ export type InternalDashboardCard = {
      */
     priority_level?: string;
     /**
-     * Count of the permit's BCAP messages not yet read for the user or group.
+     * Count of the permit's unresolved BCAP message threads the user can see.
      */
-    unread_messages?: number;
+    unresolved_messages?: number;
     module_progress?: ModuleProgress;
 };
 
@@ -3739,9 +3739,9 @@ export type ModuleProgress = {
     total?: number;
 };
 
-export type ModuleUnread = {
+export type ModuleUnresolved = {
     module_id: string;
-    unread_count: number;
+    unresolved_count: number;
 };
 
 /**
@@ -4025,6 +4025,13 @@ export type PaginatedArchaeologicalSiteList = {
     results: Array<ArchaeologicalSite>;
 };
 
+export type PaginatedBcapMessageList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapMessage>;
+};
+
 export type PaginatedContributorList = {
     count: number;
     next?: string | null;
@@ -4116,13 +4123,6 @@ export type PaginatedSiteVisitList = {
     results: Array<SiteVisit>;
 };
 
-export type PaginatedThreadMessageList = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<ThreadMessage>;
-};
-
 export type PaginatedThreadRootList = {
     count: number;
     next?: string | null;
@@ -4130,28 +4130,19 @@ export type PaginatedThreadRootList = {
     results: Array<ThreadRoot>;
 };
 
+/**
+ * PATCH body schema: commands on the message's thread rather than node
+ * edits, since both land on the thread root, not on the message.
+ */
 export type PatchedBcapMessagePatch = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedData;
-    readonly graph_has_different_publication?: boolean;
     /**
      * Toggle the caller's personal archive of the thread.
      */
     archived?: boolean;
-    readonly name?: string | null;
-    readonly descriptors?: {
-        en?: {
-            name?: string;
-            description?: string;
-            map_popup?: string;
-        };
-    } | null;
-    readonly legacyid?: string | null;
-    readonly createdtime?: string;
-    graph?: string | null;
-    readonly graph_publication?: string | null;
-    readonly resource_instance_lifecycle_state?: string;
-    readonly principaluser?: number | null;
+    /**
+     * Resolve or reopen the thread for everyone party to it.
+     */
+    resolved?: boolean;
 };
 
 /**
@@ -6677,32 +6668,10 @@ export type StringAliasedNodeDataMax9 = {
     }>;
 };
 
-export type ThreadMessage = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedData;
-    readonly graph_has_different_publication: boolean;
-    readonly is_unread: boolean;
-    readonly name: string | null;
-    readonly descriptors: {
-        en?: {
-            name?: string;
-            description?: string;
-            map_popup?: string;
-        };
-    } | null;
-    readonly legacyid: string | null;
-    readonly createdtime: string;
-    graph?: string | null;
-    readonly graph_publication: string | null;
-    readonly resource_instance_lifecycle_state: string;
-    readonly principaluser: number | null;
-};
-
 export type ThreadRoot = {
     resourceinstanceid?: string | null;
     aliased_data?: BcapMessageResourceAliasedData;
     readonly graph_has_different_publication: boolean;
-    readonly unread_count: number;
     readonly last_message_date: string;
     readonly name: string | null;
     readonly descriptors: {
@@ -10223,6 +10192,13 @@ export type PaginatedArchaeologicalSiteListWritable = {
     results: Array<ArchaeologicalSiteWritable>;
 };
 
+export type PaginatedBcapMessageListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapMessageWritable>;
+};
+
 export type PaginatedContributorListWritable = {
     count: number;
     next?: string | null;
@@ -10314,28 +10290,11 @@ export type PaginatedSiteVisitListWritable = {
     results: Array<SiteVisitWritable>;
 };
 
-export type PaginatedThreadMessageListWritable = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<ThreadMessageWritable>;
-};
-
 export type PaginatedThreadRootListWritable = {
     count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<ThreadRootWritable>;
-};
-
-export type PatchedBcapMessagePatchWritable = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedDataWritable;
-    /**
-     * Toggle the caller's personal archive of the thread.
-     */
-    archived?: boolean;
-    graph?: string | null;
 };
 
 /**
@@ -12610,12 +12569,6 @@ export type StringAliasedNodeDataMax9Writable = {
     } | null;
 };
 
-export type ThreadMessageWritable = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedDataWritable;
-    graph?: string | null;
-};
-
 export type ThreadRootWritable = {
     resourceinstanceid?: string | null;
     aliased_data?: BcapMessageResourceAliasedDataWritable;
@@ -12719,7 +12672,7 @@ export type ApiBcapMessageRetrieveResponse =
     ApiBcapMessageRetrieveResponses[keyof ApiBcapMessageRetrieveResponses];
 
 export type ApiBcapMessagePartialUpdateData = {
-    body?: PatchedBcapMessagePatchWritable;
+    body?: PatchedBcapMessagePatch;
     path: {
         id: string;
     };
@@ -12779,21 +12732,21 @@ export type ApiBcapMessageResourceThreadsListResponses = {
 export type ApiBcapMessageResourceThreadsListResponse =
     ApiBcapMessageResourceThreadsListResponses[keyof ApiBcapMessageResourceThreadsListResponses];
 
-export type ApiBcapMessageSubmissionUnreadByModuleListData = {
+export type ApiBcapMessageSubmissionUnresolvedByModuleListData = {
     body?: never;
     path: {
         submission_id: string;
     };
     query?: never;
-    url: '/bcap/api/bcap_message/submission/{submission_id}/unread-by-module';
+    url: '/bcap/api/bcap_message/submission/{submission_id}/unresolved-by-module';
 };
 
-export type ApiBcapMessageSubmissionUnreadByModuleListResponses = {
-    200: Array<ModuleUnread>;
+export type ApiBcapMessageSubmissionUnresolvedByModuleListResponses = {
+    200: Array<ModuleUnresolved>;
 };
 
-export type ApiBcapMessageSubmissionUnreadByModuleListResponse =
-    ApiBcapMessageSubmissionUnreadByModuleListResponses[keyof ApiBcapMessageSubmissionUnreadByModuleListResponses];
+export type ApiBcapMessageSubmissionUnresolvedByModuleListResponse =
+    ApiBcapMessageSubmissionUnresolvedByModuleListResponses[keyof ApiBcapMessageSubmissionUnresolvedByModuleListResponses];
 
 export type ApiBcapMessageThreadMessagesListData = {
     body?: never;
@@ -12814,7 +12767,7 @@ export type ApiBcapMessageThreadMessagesListData = {
 };
 
 export type ApiBcapMessageThreadMessagesListResponses = {
-    200: PaginatedThreadMessageList;
+    200: PaginatedBcapMessageList;
 };
 
 export type ApiBcapMessageThreadMessagesListResponse =

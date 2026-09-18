@@ -8,7 +8,7 @@ from django.db.models.fields.json import KeyTextTransform, KeyTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 
-from arches.app.models.models import ResourceXResource, TileModel
+from arches.app.models.models import ResourceInstance, ResourceXResource, TileModel
 from arches.app.models.resource import Resource
 
 from bcap.util.graph import node_id, nodegroup_id
@@ -175,11 +175,11 @@ class ContributorService(AliasedDataReader):
         )
         return str(pk) if pk else None
 
-    def contributors_for_resource(self, resource_id):
+    def contributors_for_resource(self, resource_id, with_proponent=False):
         """Pick-list options for a resource: its referenced contributors that
         have a login (ministry assignees included), name-sorted. Falls back to
         the Archaeology Branch when nobody is assigned, so there is always
-        someone to address."""
+        someone to address. with_proponent adds whoever filed the permit."""
         # A requirement resource references nobody; its assignees are on the
         # permit application pointing at it.
         permits = ResourceXResource.objects.filter(
@@ -190,9 +190,13 @@ class ContributorService(AliasedDataReader):
             all_referenced_resource_ids(resource_id, *permits)
         )
         if not ids:
-            branch = self.archaeology_branch_id()
-            ids = {branch} if branch else set()
-        return self.by_ids(ids)
+            ids.add(self.archaeology_branch_id())
+        if with_proponent:
+            filers = ResourceInstance.objects.filter(
+                pk__in=[resource_id, *permits], principaluser__isnull=False
+            ).values_list("principaluser__username", flat=True)
+            ids |= {self.username_contributor_id(name) for name in filers}
+        return self.by_ids(ids - {None})
 
     def contributor_username(self, contributor_id):
         """The bcap_username linked to a Contributor, or None when it is unset
@@ -208,8 +212,13 @@ class ContributorService(AliasedDataReader):
         return username or None
 
     def contributor_is_internal(self, contributor_id):
-        """True when the Contributor is linked to an internal (staff) user."""
-        return is_internal_username(self.contributor_username(contributor_id))
+        """True when the Contributor's user is staff (the Archaeology Branch
+        group decides). Falls back to matching the Branch organization itself,
+        which has no user for the group to vouch for."""
+        username = self.contributor_username(contributor_id)
+        if username:
+            return is_internal_username(username)
+        return str(contributor_id) == self.archaeology_branch_id()
 
     def _contributor_tile(self, contributor_id, lock=False):
         """The single Contributor group tile of a resource, or None. Pass

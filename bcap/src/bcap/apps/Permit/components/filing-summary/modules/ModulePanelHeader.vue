@@ -128,14 +128,14 @@ const moreItems = computed(() => [
             />
         </span>
         <span
-            v-if="messageStore.moduleUnreadCount(row.tileid)"
+            v-if="messageStore.moduleUnresolvedCount(row.tileid)"
             class="module-unread-badge"
-            :title="`${messageStore.moduleUnreadCount(
+            :title="`${messageStore.moduleUnresolvedCount(
                 row.tileid,
-            )} unread message(s)`"
+            )} unresolved message(s)`"
         >
             <i class="fa-solid fa-comment-dots"></i>
-            {{ messageStore.moduleUnreadCount(row.tileid) }}
+            {{ messageStore.moduleUnresolvedCount(row.tileid) }}
         </span>
     </span>
 </template>

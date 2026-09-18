@@ -26,8 +26,9 @@ const thread = (overrides: Partial<MessageThread> = {}) =>
         topic: 'Site access',
         startedBy: 'Hopper, Grace',
         lastMessageDate: '2026-03-04T10:00:00',
-        hasUnread: false,
         isResolved: false,
+        resolvedBy: '',
+        isInternal: false,
         ...overrides,
     }) as MessageThread;
 
@@ -126,10 +127,10 @@ describe('MessageThreadSidebar', () => {
         ).toContain('active');
     });
 
-    it('flags the selected, unread and resolved threads', () => {
+    it('flags the selected, unresolved and resolved threads', () => {
         const wrapper = mountSidebar({
             threads: [
-                thread({ id: 't-1', hasUnread: true }),
+                thread({ id: 't-1' }),
                 thread({ id: 't-2', isResolved: true }),
             ],
             selectedThreadId: 't-1',
@@ -137,9 +138,23 @@ describe('MessageThreadSidebar', () => {
 
         const items = wrapper.findAll('.thread-list .sidebar-item');
         expect(items[0].classes()).toContain('active');
-        expect(items[0].classes()).toContain('unread');
+        expect(items[0].classes()).toContain('unresolved');
         expect(items[1].classes()).not.toContain('active');
         expect(items[1].classes()).toContain('resolved');
+        expect(items[1].classes()).not.toContain('unresolved');
+    });
+
+    it('tags internal threads only', () => {
+        const wrapper = mountSidebar({
+            threads: [
+                thread({ id: 't-1', isInternal: true }),
+                thread({ id: 't-2' }),
+            ],
+        });
+
+        const items = wrapper.findAll('.thread-list .sidebar-item');
+        expect(items[0].find('.thread-internal').text()).toContain('Internal');
+        expect(items[1].find('.thread-internal').exists()).toBe(false);
     });
 
     it('emits the thread the user picked', async () => {

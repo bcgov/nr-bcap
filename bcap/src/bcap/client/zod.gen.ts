@@ -199,7 +199,7 @@ export const zExternalDashboardCard = z.object({
     permit_number: z.string().optional(),
     urgency: z.int().optional(),
     priority_level: z.string().optional(),
-    unread_messages: z.int().optional(),
+    unresolved_messages: z.int().optional(),
     module_progress: zModuleProgress.optional()
 });
 
@@ -241,7 +241,7 @@ export const zInternalDashboardCard = z.object({
     requirement_id: z.string().optional(),
     urgency: z.int().optional(),
     priority_level: z.string().optional(),
-    unread_messages: z.int().optional(),
+    unresolved_messages: z.int().optional(),
     module_progress: zModuleProgress.optional()
 });
 
@@ -261,9 +261,9 @@ export const zInternalDashboardPage = z.object({
     results: z.array(zInternalDashboardCard).optional()
 });
 
-export const zModuleUnread = z.object({
+export const zModuleUnresolved = z.object({
     module_id: z.string(),
-    unread_count: z.int()
+    unresolved_count: z.int()
 });
 
 /**
@@ -369,6 +369,15 @@ export const zPaginatedInformationRequestList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zInformationRequest)
+});
+
+/**
+ * PATCH body schema: commands on the message's thread rather than node
+ * edits, since both land on the thread root, not on the message.
+ */
+export const zPatchedBcapMessagePatch = z.object({
+    archived: z.boolean().optional(),
+    resolved: z.boolean().optional()
 });
 
 /**
@@ -2389,6 +2398,13 @@ export const zNoticeOfProjectIntent = z.object({
     principaluser: z.int().readonly().nullable()
 });
 
+export const zPaginatedBcapMessageList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zBcapMessage)
+});
+
 export const zPaginatedLocalGovernmentList = z.object({
     count: z.int(),
     next: z.url().nullish(),
@@ -2401,27 +2417,6 @@ export const zPaginatedNoticeOfProjectIntentList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zNoticeOfProjectIntent)
-});
-
-export const zPatchedBcapMessagePatch = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zBcapMessageResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly().optional(),
-    archived: z.boolean().optional(),
-    name: z.string().readonly().nullish(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullish(),
-    legacyid: z.string().readonly().nullish(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly().optional(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullish(),
-    resource_instance_lifecycle_state: z.uuid().readonly().optional(),
-    principaluser: z.int().readonly().nullish()
 });
 
 export const zPermitApplicationApplicationContactsAliasedData = z.object({
@@ -4563,39 +4558,10 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTile = z.object({
     })).nullish()
 });
 
-export const zThreadMessage = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zBcapMessageResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly(),
-    is_unread: z.boolean().readonly(),
-    name: z.string().readonly().nullable(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullable(),
-    legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullable(),
-    resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable()
-});
-
-export const zPaginatedThreadMessageList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zThreadMessage)
-});
-
 export const zThreadRoot = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
-    unread_count: z.int().readonly(),
     last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
@@ -6805,6 +6771,13 @@ export const zNoticeOfProjectIntentWritable = z.object({
     graph: z.uuid().nullish()
 });
 
+export const zPaginatedBcapMessageListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zBcapMessageWritable)
+});
+
 export const zPaginatedLocalGovernmentListWritable = z.object({
     count: z.int(),
     next: z.url().nullish(),
@@ -6817,13 +6790,6 @@ export const zPaginatedNoticeOfProjectIntentListWritable = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zNoticeOfProjectIntentWritable)
-});
-
-export const zPatchedBcapMessagePatchWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
-    archived: z.boolean().optional(),
-    graph: z.uuid().nullish()
 });
 
 export const zPermitApplicationApplicationContactsAliasedDataWritable = z.object({
@@ -8816,19 +8782,6 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTileWritable = z.
     })).nullish()
 });
 
-export const zThreadMessageWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zPaginatedThreadMessageListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zThreadMessageWritable)
-});
-
 export const zThreadRootWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
@@ -9002,7 +8955,7 @@ export const zApiBcapMessageRetrievePath = z.object({
 
 export const zApiBcapMessageRetrieveResponse = zBcapMessage;
 
-export const zApiBcapMessagePartialUpdateBody = zPatchedBcapMessagePatchWritable;
+export const zApiBcapMessagePartialUpdateBody = zPatchedBcapMessagePatch;
 
 export const zApiBcapMessagePartialUpdatePath = z.object({
     id: z.uuid()
@@ -9028,11 +8981,11 @@ export const zApiBcapMessageResourceThreadsListQuery = z.object({
 
 export const zApiBcapMessageResourceThreadsListResponse = zPaginatedThreadRootList;
 
-export const zApiBcapMessageSubmissionUnreadByModuleListPath = z.object({
+export const zApiBcapMessageSubmissionUnresolvedByModuleListPath = z.object({
     submission_id: z.uuid()
 });
 
-export const zApiBcapMessageSubmissionUnreadByModuleListResponse = z.array(zModuleUnread);
+export const zApiBcapMessageSubmissionUnresolvedByModuleListResponse = z.array(zModuleUnresolved);
 
 export const zApiBcapMessageThreadMessagesListPath = z.object({
     thread_id: z.uuid()
@@ -9043,7 +8996,7 @@ export const zApiBcapMessageThreadMessagesListQuery = z.object({
     offset: z.int().optional()
 });
 
-export const zApiBcapMessageThreadMessagesListResponse = zPaginatedThreadMessageList;
+export const zApiBcapMessageThreadMessagesListResponse = zPaginatedBcapMessageList;
 
 export const zApiContributorListQuery = z.object({
     limit: z.int().optional(),

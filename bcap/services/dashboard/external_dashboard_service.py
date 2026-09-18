@@ -76,9 +76,8 @@ class ExternalDashboardService(BaseDashboardService):
         unresolved = self._unresolved_counts_by_permit(permits, user.username)
         cards = []
         for permit in permits:
-            card = self._application_card(
-                permit, hca_permits, unresolved.get(str(permit.pk), 0)
-            )
+            unresolved_count = unresolved.get(str(permit.pk), 0)
+            card = self._application_card(permit, hca_permits, unresolved_count)
             card.module_progress = self._module_progress(permit)
             cards.append(card)
         return count, cards

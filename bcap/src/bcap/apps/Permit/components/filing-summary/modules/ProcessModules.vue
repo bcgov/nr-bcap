@@ -73,7 +73,7 @@ const dnd = useDragReorder();
 const messageStore = useMessageStore();
 const headerStore = usePermitHeaderStore();
 onMounted(() => {
-    messageStore.loadModuleUnread(props.permitId);
+    messageStore.loadModuleUnresolved(props.permitId);
     if (props.isStaff) loadAssignees();
 });
 

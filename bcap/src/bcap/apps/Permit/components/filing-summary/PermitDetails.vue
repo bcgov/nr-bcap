@@ -228,7 +228,7 @@ const loadDraftsForPermitApp = async () => {
         (d): d is PermitDraft => isInv(d) || isDoc(d),
     );
 
-    // Load each draft's threads up front so its header can badge unread without
+    // Load each draft's threads up front so its header can badge unresolved without
     // the dialog being opened. Drafts are few, so a fetch each is fine.
     for (const draft of state.permitDrafts) {
         if (draft.id) messageStore.load(draft.id);
@@ -409,20 +409,20 @@ watch(activeModuleId, (id) => {
                                             </span>
                                             <span
                                                 v-if="
-                                                    messageStore.unreadCount(
+                                                    messageStore.unresolvedCount(
                                                         draft.id,
                                                     )
                                                 "
                                                 class="draft-unread-badge"
-                                                :title="`${messageStore.unreadCount(
+                                                :title="`${messageStore.unresolvedCount(
                                                     draft.id,
-                                                )} unread message(s)`"
+                                                )} unresolved message(s)`"
                                             >
                                                 <i
                                                     class="fa-solid fa-comment-dots"
                                                 ></i>
                                                 {{
-                                                    messageStore.unreadCount(
+                                                    messageStore.unresolvedCount(
                                                         draft.id,
                                                     )
                                                 }}
@@ -829,7 +829,7 @@ watch(activeModuleId, (id) => {
     white-space: nowrap;
 }
 
-/* Red unread pill at the far right of the draft header, by the chevron. */
+/* Red unresolved pill at the far right of the draft header, by the chevron. */
 .draft-unread-badge {
     display: inline-flex;
     align-items: center;

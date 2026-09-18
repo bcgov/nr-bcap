@@ -14,8 +14,8 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     getContributorsForResources: vi.fn(() => Promise.resolve([])),
     // Pulled in by the message store the dialog uses.
     createBcapMessage: vi.fn(),
-    markMessageAsRead: vi.fn(),
     setThreadArchived: vi.fn(),
+    setThreadResolved: vi.fn(),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({

@@ -74,8 +74,8 @@ beforeAll(() => {
 
     vi.mock('vue3-gettext', () => ({
         useGettext: () => ({
-            $gettext: (text: string) => text,
-        }),
+            $gettext: (text: string) => (text)
+        })
     }));
 
     // The real GenericWidget needs an active pinia and a live
