@@ -42,10 +42,14 @@ const mockPush = vi.fn();
 const mockQuery = vi.hoisted(() => ({
     value: {} as Record<string, string>,
 }));
+const mockMeta = vi.hoisted(() => ({
+    value: {} as Record<string, unknown>,
+}));
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
         query: mockQuery.value,
+        meta: mockMeta.value,
     }),
     useRouter: () => ({
         push: mockPush,
@@ -94,6 +98,7 @@ describe('PermitDetails.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockQuery.value = {};
+        mockMeta.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
             mockPermitData as unknown as PermitApplicationResourceAliasedData,
@@ -311,6 +316,7 @@ describe('PermitDetails.vue', () => {
 
         it('gives staff a read-only draft list', async () => {
             twoDrafts();
+            mockMeta.value = { requiresInternal: true };
             useUserStore().state.profile = { is_internal: true } as UserProfile;
 
             const wrapper = mount(PermitDetails, globalMountOptions);

@@ -39,13 +39,16 @@ import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
 const headerStore = usePermitHeaderStore();
-const userStore = useUserStore();
 
+const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
 // Staff view: enables the module reorder/add/remove controls.
-const isStaff = computed(() => userStore.isInternal);
+// Staff reaching a permit through /submissions/ get the applicant view.
+const isStaff = computed(
+    () => Boolean(route.meta.requiresInternal) && userStore.isInternal,
+);
 
 type PermitDraft =
     DraftOf<GraphSlug.Investigation> | DraftOf<GraphSlug.DocumentSubmission>;

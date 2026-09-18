@@ -20,9 +20,7 @@ class UserProfileTests(AuthTestHelper, TestCase):
         cls.branch_member = User.objects.create_user(
             username="branch-member", password="pass"
         )
-        cls.branch_member.groups.add(
-            Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH)
-        )
+        cls.branch_member.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
         cls.superuser = User.objects.create_superuser(
             username="profile-admin", password="pass", email="admin@example.com"
         )
