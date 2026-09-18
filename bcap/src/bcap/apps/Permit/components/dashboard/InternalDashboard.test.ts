@@ -510,7 +510,7 @@ describe('onCardClick', () => {
         expect(push).toHaveBeenCalledWith({
             name: 'permitDetails',
             params: { id: 'res-1' },
-            query: { requirement: 'req-1', staff: 'true' },
+            query: { requirement: 'req-1' },
         });
     });
 
@@ -525,7 +525,7 @@ describe('onCardClick', () => {
         expect(push).toHaveBeenCalledWith({
             name: 'permitDetails',
             params: { id: 'res-1' },
-            query: { staff: 'true' },
+            query: {},
         });
     });
 

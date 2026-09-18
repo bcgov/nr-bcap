@@ -113,10 +113,11 @@ paths:
     get:
       operationId: api_bcap_message_retrieve
       description: |-
-        GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
-        in the body) and/or the caller's personal archive of the thread (a top-level
-        "archived" boolean), whichever the body carries.
+        GET or PATCH a single message, gated on the resource_context rather than
+        owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
+        sets the read date (message_read_date in the body) and/or the caller's
+        personal archive of the thread (a top-level "archived" boolean), whichever
+        the body carries.
       parameters:
       - in: path
         name: id
@@ -138,10 +139,11 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
-        in the body) and/or the caller's personal archive of the thread (a top-level
-        "archived" boolean), whichever the body carries.
+        GET or PATCH a single message, gated on the resource_context rather than
+        owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
+        sets the read date (message_read_date in the body) and/or the caller's
+        personal archive of the thread (a top-level "archived" boolean), whichever
+        the body carries.
       parameters:
       - in: path
         name: id
@@ -177,7 +179,6 @@ paths:
       description: |-
         GET the contributors you can address a message to for a resource: the
         login-linked contributors referenced on it plus its ministry assignees.
-        Gated on edit access to the resource, like posting a message about it.
       parameters:
       - in: path
         name: resource_id
@@ -245,8 +246,7 @@ paths:
       operationId: api_bcap_message_submission_unread_by_module_list
       description: |-
         GET the viewer's unread count per process_module of a submission, so the
-        module list badges unread without loading each module's threads. Counts are
-        the caller's own, so IsAuthenticated leaks nothing.
+        module list badges unread without loading each module's threads.
       parameters:
       - in: path
         name: submission_id
@@ -406,6 +406,13 @@ paths:
         The applicant-facing dashboard: cards for the requesting user's own and
         their associated companies' permit applications (and their drafts), scoped by
         created-by.
+
+        The gate only says who may ask: isolation between applicants is the
+        service's queryset filter alone, so a query added without it leaks.
+
+        TODO: staff are not widened here the way they are on the permit routes --
+        the filter treats them as an applicant, so they see only what they filed
+        themselves. Temporary, pending the decision on what staff should see here.
       parameters:
       - in: query
         name: limit
@@ -984,7 +991,8 @@ paths:
     get:
       operationId: api_permit_application_retrieve
       description: |-
-        GET/PATCH a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles, for the applicant
+        filing it as much as for the staff reviewing it.
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
@@ -1009,7 +1017,8 @@ paths:
     patch:
       operationId: api_permit_application_partial_update
       description: |-
-        GET/PATCH a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles, for the applicant
+        filing it as much as for the staff reviewing it.
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
@@ -1137,7 +1146,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1180,7 +1189,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       security:
       - cookieAuth: []
       responses:
@@ -1210,7 +1219,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1250,7 +1259,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1342,8 +1351,8 @@ paths:
     get:
       operationId: api_process_requirement_list
       description: |-
-        Collection endpoint: superusers and Resource Editors see every Process
-        Requirement; other users see only the ones they created.
+        Collection endpoint: branch staff see every Process Requirement; an
+        applicant sees the ones on the permits they or their company filed.
       parameters:
       - name: limit
         required: false
@@ -1372,8 +1381,12 @@ paths:
     get:
       operationId: api_process_requirement_retrieve
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1395,8 +1408,12 @@ paths:
     put:
       operationId: api_process_requirement_update
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1429,8 +1446,12 @@ paths:
     patch:
       operationId: api_process_requirement_partial_update
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1463,8 +1484,12 @@ paths:
     delete:
       operationId: api_process_requirement_destroy
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1495,7 +1520,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1527,7 +1552,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1946,7 +1971,6 @@ paths:
       - 'External: user_profile'
       security:
       - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -5410,6 +5434,7 @@ components:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
           nullable: true
       required:
+      - message_author
       - message_content
       - message_subject
       - message_type
@@ -16012,9 +16037,17 @@ components:
           items:
             type: string
           readOnly: true
+        is_internal:
+          type: boolean
+          description: |-
+            Whether the client should show the Archaeology Branch view. Answered here
+            rather than from the group list, so the superuser case and the name of
+            the group that marks staff stay in one place.
+          readOnly: true
       required:
       - first_name
       - groups
+      - is_internal
       - last_name
       - username
   securitySchemes:

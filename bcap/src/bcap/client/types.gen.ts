@@ -1653,7 +1653,7 @@ export type BcapMessageArchivedByTile = {
 
 export type BcapMessageMessageContentAliasedData = {
     is_internal?: BooleanAliasedNodeData | null;
-    message_author?: ResourceInstanceAliasedNodeData | null;
+    message_author: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -6735,6 +6735,12 @@ export type UserProfileResponse = {
     first_name: string;
     last_name: string;
     readonly groups: Array<string>;
+    /**
+     * Whether the client should show the Archaeology Branch view. Answered here
+     * rather than from the group list, so the superuser case and the name of
+     * the group that marks staff stay in one place.
+     */
+    readonly is_internal: boolean;
 };
 
 export type AlterationWritable = {
@@ -8319,7 +8325,7 @@ export type BcapMessageArchivedByTileWritable = {
 
 export type BcapMessageMessageContentAliasedDataWritable = {
     is_internal?: BooleanAliasedNodeDataWritable | null;
-    message_author?: ResourceInstanceAliasedNodeDataWritable | null;
+    message_author: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */

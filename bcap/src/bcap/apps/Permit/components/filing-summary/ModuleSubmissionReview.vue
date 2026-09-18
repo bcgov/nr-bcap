@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, onMounted, computed, type Component } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
@@ -16,7 +16,6 @@ import InvestigationReview from '@/bcap/apps/Permit/Modules/InvestigationModule/
 import GenericReview from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 
 const router = useRouter();
-const route = useRoute();
 const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
@@ -29,9 +28,7 @@ const ActiveReviewComponent = computed(() => {
     return componentMap[nav?.graph ?? ''] ?? GenericReview;
 });
 
-const crumbs = computed(() =>
-    permitCrumbs(nav?.permitId, route.query.staff, title),
-);
+const crumbs = computed(() => permitCrumbs(nav?.permitId, title));
 
 // Set by the permit view; loaded here only if this page was opened cold.
 const header = computed(() => headerStore.state.header);

@@ -21,7 +21,6 @@ const isEditing = computed(() => !!processId.value);
 const crumbs = computed(() =>
     permitCrumbs(
         route.query.permit,
-        route.query.staff,
         state.requirementTitle || 'Edit Checklist',
     ),
 );

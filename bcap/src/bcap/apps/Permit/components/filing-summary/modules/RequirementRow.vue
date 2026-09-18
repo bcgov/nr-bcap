@@ -4,7 +4,6 @@ import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import Select from 'primevue/select';
 import type { ContributorSummary } from '@/bcap/client/types.gen.ts';
-import type { QueryParam } from '@/bcap/types.ts';
 import { initials } from '@/bcap/util.ts';
 import MessageDialog from '@/bcap/apps/Permit/components/common/messages/MessageDialog.vue';
 import {
@@ -22,7 +21,6 @@ const props = defineProps<{
     permitId: string;
     isStaff?: boolean;
     applicationId?: string;
-    staff?: QueryParam;
     toggling?: string | null;
     canViewSubmission?: boolean;
     assignees?: ContributorSummary[];
@@ -87,7 +85,6 @@ const moreItems = computed(() => [
                   url: withPermitContext(
                       editChecklistHref(props.requirement.resourceId),
                       props.permitId,
-                      props.staff,
                   ),
                   target: '_blank',
               },
@@ -242,7 +239,6 @@ const moreItems = computed(() => [
                             withPermitContext(
                                 checklistHref(requirement.resourceId),
                                 permitId,
-                                staff,
                             )
                         "
                         target="_blank"

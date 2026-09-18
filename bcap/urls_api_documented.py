@@ -58,7 +58,7 @@ from bcap.views.registration_link_api import (
 # proxy prefix; the prefix is applied once at each urlconf entrypoint (here for
 # the schema, and in bcap.urls for the served app).
 documented_api_patterns = [
-    path("user_profile", UserProfile.as_view(), name="user_profile"),
+    path("user_profile", UserProfile.as_view(), name="bcap_user_profile"),
     path(
         "api/dashboard/internal",
         InternalDashboardView.as_view(),

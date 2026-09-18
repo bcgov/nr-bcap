@@ -14,6 +14,7 @@ import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
 import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
 import type {
     PermitApplicationResourceAliasedData,
@@ -38,16 +39,13 @@ import { useMessageStore } from '@/bcap/stores/message.ts';
 
 const messageStore = useMessageStore();
 const headerStore = usePermitHeaderStore();
+const userStore = useUserStore();
 
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
-// Staff view: enables the module reorder/add/remove controls. Set as ?staff on
-// the URL when a staff member opens the permit.
-// We will fix this when roles and permissions are done correctly.
-const isStaff = computed(
-    () => String(route.query.staff).toLowerCase() === 'true',
-);
+// Staff view: enables the module reorder/add/remove controls.
+const isStaff = computed(() => userStore.isInternal);
 
 type PermitDraft =
     DraftOf<GraphSlug.Investigation> | DraftOf<GraphSlug.DocumentSubmission>;

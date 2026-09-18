@@ -27,6 +27,8 @@ const urls: Record<string, unknown> = {
         `/bcap/api/resource/${graphSlug}/${id}`,
     api_resource_blank: (graphSlug: string) =>
         `/bcap/api/resource/${graphSlug}/blank`,
+    api_resource_list: (graphSlug: string) => `/bcap/api/resource/${graphSlug}`,
+    api_user_profile: '/bcap/user_profile',
     api_site_related_resources: (graphSlug: string, id: string) =>
         `/bcap/api/arch_site_related_resources/${graphSlug}/${id}`,
     api_workflow_draft: (graphSlug: string) =>

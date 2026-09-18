@@ -1500,7 +1500,7 @@ export const zArchaeologicalSiteUnprotectedAreasTile = z.object({
 
 export const zBcapMessageMessageContentAliasedData = z.object({
     is_internal: zBooleanAliasedNodeData.nullish(),
-    message_author: zResourceInstanceAliasedNodeData.nullish(),
+    message_author: zResourceInstanceAliasedNodeData.nullable(),
     message_content: zStringAliasedNodeData.nullable(),
     message_creation_date: zDateAliasedNodeData.nullish(),
     message_subject: zStringAliasedNodeData.nullable(),
@@ -4796,7 +4796,8 @@ export const zUserProfileResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    groups: z.array(z.string()).readonly()
+    groups: z.array(z.string()).readonly(),
+    is_internal: z.boolean().readonly()
 });
 
 export const zBooleanAliasedNodeDataWritable = z.object({
@@ -5985,7 +5986,7 @@ export const zArchaeologicalSiteUnprotectedAreasTileWritable = z.object({
 
 export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     is_internal: zBooleanAliasedNodeDataWritable.nullish(),
-    message_author: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    message_author: zResourceInstanceAliasedNodeDataWritable.nullable(),
     message_content: zStringAliasedNodeDataWritable.nullable(),
     message_creation_date: zDateAliasedNodeDataWritable.nullish(),
     message_subject: zStringAliasedNodeDataWritable.nullable(),
