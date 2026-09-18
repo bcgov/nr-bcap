@@ -4,7 +4,7 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(14);
+        expect(routes).toHaveLength(15);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
             'EditChecklist',
@@ -14,6 +14,7 @@ describe('Permit routes', () => {
             'documentSubmission',
             'inspectionModule',
             'internal-root',
+            'internalPermitDetails',
             'investigationModule',
             'methodsModule',
             'moduleReview',
@@ -67,6 +68,7 @@ describe('Permit routes', () => {
             'Checklist',
             'EditChecklist',
             'internal-root',
+            'internalPermitDetails',
         ]);
         expect(byName['root'].meta?.requiresInternal).toBeUndefined();
     });
