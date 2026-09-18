@@ -50,6 +50,16 @@ class ThreadRootSerializer(BcapMessageSerializer):
     without fetching each thread's messages."""
 
     last_message_date = serializers.DateTimeField(read_only=True)
+    viewer_side = serializers.CharField(
+        read_only=True,
+        help_text="The viewer's side of the thread, author or recipient, whose "
+        "resolved_* nodes are theirs; empty when they are on neither.",
+    )
+    viewer_is_staff = serializers.BooleanField(
+        read_only=True,
+        help_text="Staff resolve by hand; an applicant's side resolves as they "
+        "open the thread.",
+    )
 
 
 class ModuleUnresolvedSerializer(DataclassSerializer):

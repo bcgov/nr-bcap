@@ -1672,11 +1672,16 @@ export type BcapMessageMessageContentAliasedData = {
     message_type: ReferenceAliasedNodeDataRequired | null;
     recipient: ResourceInstanceAliasedNodeData | null;
     resource_context: ResourceInstanceAliasedNodeData | null;
-    thread_resolved_by?: ResourceInstanceAliasedNodeData | null;
+    author_resolved_by?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter date
      */
-    thread_resolved_date?: DateAliasedNodeData | null;
+    author_resolved_date?: DateAliasedNodeData | null;
+    recipient_resolved_by?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    recipient_resolved_date?: DateAliasedNodeData | null;
     attachments?: FileListAliasedNodeData | null;
 };
 
@@ -1800,6 +1805,7 @@ export type ContributorSummary = {
     name: string;
     email: string;
     type: string;
+    is_proponent?: boolean;
 };
 
 export type ContributorAssociatedOrganizationAliasedData = {
@@ -6673,6 +6679,14 @@ export type ThreadRoot = {
     aliased_data?: BcapMessageResourceAliasedData;
     readonly graph_has_different_publication: boolean;
     readonly last_message_date: string;
+    /**
+     * The viewer's side of the thread, author or recipient, whose resolved_* nodes are theirs; empty when they are on neither.
+     */
+    readonly viewer_side: string;
+    /**
+     * Staff resolve by hand; an applicant's side resolves as they open the thread.
+     */
+    readonly viewer_is_staff: boolean;
     readonly name: string | null;
     readonly descriptors: {
         en?: {
@@ -8308,11 +8322,16 @@ export type BcapMessageMessageContentAliasedDataWritable = {
     message_type: ReferenceAliasedNodeDataRequiredWritable | null;
     recipient: ResourceInstanceAliasedNodeDataWritable | null;
     resource_context: ResourceInstanceAliasedNodeDataWritable | null;
-    thread_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
+    author_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
-    thread_resolved_date?: DateAliasedNodeDataWritable | null;
+    author_resolved_date?: DateAliasedNodeDataWritable | null;
+    recipient_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    recipient_resolved_date?: DateAliasedNodeDataWritable | null;
     attachments?: FileListAliasedNodeDataWritable | null;
 };
 

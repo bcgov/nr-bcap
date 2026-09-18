@@ -73,7 +73,8 @@ export const zContributorSummary = z.object({
     id: z.string(),
     name: z.string(),
     email: z.string(),
-    type: z.string()
+    type: z.string(),
+    is_proponent: z.boolean().optional()
 });
 
 export const zDateAliasedNodeData = z.object({
@@ -1516,8 +1517,10 @@ export const zBcapMessageMessageContentAliasedData = z.object({
     message_type: zReferenceAliasedNodeDataRequired.nullable(),
     recipient: zResourceInstanceAliasedNodeData.nullable(),
     resource_context: zResourceInstanceAliasedNodeData.nullable(),
-    thread_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
-    thread_resolved_date: zDateAliasedNodeData.nullish(),
+    author_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
+    author_resolved_date: zDateAliasedNodeData.nullish(),
+    recipient_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
+    recipient_resolved_date: zDateAliasedNodeData.nullish(),
     attachments: zFileListAliasedNodeData.nullish()
 });
 
@@ -4563,6 +4566,8 @@ export const zThreadRoot = z.object({
     aliased_data: zBcapMessageResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
     last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
+    viewer_side: z.string().readonly(),
+    viewer_is_staff: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
         en: z.object({
@@ -5959,8 +5964,10 @@ export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     message_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     recipient: zResourceInstanceAliasedNodeDataWritable.nullable(),
     resource_context: zResourceInstanceAliasedNodeDataWritable.nullable(),
-    thread_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    thread_resolved_date: zDateAliasedNodeDataWritable.nullish(),
+    author_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    author_resolved_date: zDateAliasedNodeDataWritable.nullish(),
+    recipient_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    recipient_resolved_date: zDateAliasedNodeDataWritable.nullish(),
     attachments: zFileListAliasedNodeDataWritable.nullish()
 });
 

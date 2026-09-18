@@ -17,15 +17,13 @@ from arches.app.models.models import File, ResourceInstance
 
 from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.message.bcap_message_service import (
-    ModuleUnread,
-)
+from bcap.services.message.bcap_message_service import ModuleUnresolved
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import RequirementRow, build_permit, make_requirement
-from tests.services.test_bcap_message_service import make_message
+from tests.services.test_bcap_message_service import make_message, resolution
 from tests.views.helpers import AuthTestHelper, api_reference_value
 
 
@@ -104,6 +102,23 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             recipient=staff_contrib,
             is_internal=True,
             subject="Internal",
+        )
+        cls.internal_requirement_root = make_message(
+            builder,
+            context=cls.requirement,
+            author=staff_contrib,
+            recipient=staff_contrib,
+            is_internal=True,
+            subject="Internal on the requirement",
+        )
+        cls.internal_requirement_reply = make_message(
+            builder,
+            context=cls.requirement,
+            author=staff_contrib,
+            recipient=staff_contrib,
+            is_internal=True,
+            subject="Internal reply",
+            root=cls.internal_requirement_root,
         )
 
     def _thread_roots(self, user, archived=False):
@@ -201,6 +216,38 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 201, resp.content)
 
+    def test_applicant_cannot_start_an_internal_thread(self):
+        self.idir_login_simulate(self.user)
+        payload = self._message_payload(is_internal={"node_value": True})
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 201, resp.content)
+        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
+        self.assertFalse(content["is_internal"]["node_value"])
+
+    def test_applicant_cannot_reply_into_an_internal_thread(self):
+        self.idir_login_simulate(self.user)
+        payload = self._message_payload()
+        payload["aliased_data"]["related_source_message"] = {
+            "aliased_data": {
+                "related_source_message": {
+                    "node_value": [{"resourceId": str(self.internal_root.pk)}]
+                }
+            }
+        }
+        messages = ResourceInstance.objects.filter(graph__slug="bcap_message")
+        before = messages.count()
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 403, resp.content)
+        self.assertEqual(messages.count(), before)
+
     def test_applicant_cannot_create_against_someone_elses_permit(self):
         self.idir_login_simulate(self.user)
         resp = self.client.post(
@@ -224,9 +271,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         # The detail route runs the same gate: the applicant cannot edit a
         # process_requirement, but reaches this one through their permit.
         self.idir_login_simulate(self.user)
-        resp = self._patch_read_date(
-            self.requirement_message.pk, "2026-07-10T14:04:46.334Z"
-        )
+        resp = self._patch(self.requirement_message.pk, resolved=True)
         self.assertEqual(resp.status_code, 200, resp.content)
 
     def test_applicant_reads_the_contributors_of_their_own_permit(self):
@@ -295,11 +340,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 403)
 
-    def test_applicant_cannot_read_unread_counts_of_another_submission(self):
+    def test_applicant_cannot_read_unresolved_counts_of_another_submission(self):
         self.idir_login_simulate(self.user)
         resp = self.client.get(
             reverse(
-                "bcap_message_module_unread",
+                "bcap_message_module_unresolved",
                 kwargs={"submission_id": str(self.other_permit.pk)},
             )
         )
@@ -388,26 +433,39 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(File.objects.count(), before + 1)
 
-    def _patch_read_date(self, message_id, node_value):
-        payload = {
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "message_read_date": {"node_value": node_value},
-                    }
-                }
-            }
-        }
-        return self.client.patch(
-            reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
-            data=json.dumps(payload),
-            content_type="application/json",
+    def test_patching_a_thread_keeps_its_attachments(self):
+        # A PATCH writes the root; it must not re-save the attachments through
+        # the file-list datatype, which deleted their stored files, so a second
+        # open of an attachment 404'd.
+        payload = self._message_payload(
+            attachments={"node_value": [{"name": "keep.txt", "url": None}]}
         )
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data={
+                "json": json.dumps(payload),
+                "attachments": SimpleUploadedFile("keep.txt", b"kept"),
+            },
+        )
+        self.assertEqual(resp.status_code, 201, resp.content)
+        message_id = resp.json()["resourceinstanceid"]
+        stored = File.objects.get(tile__resourceinstance_id=message_id)
 
-    def _patch_archived(self, message_id, archived):
+        self.assertEqual(self._patch(message_id, resolved=True).status_code, 200)
+        self.assertEqual(self._patch(message_id, resolved=False).status_code, 200)
+        self.assertEqual(self._patch(message_id, archived=True).status_code, 200)
+        self.assertEqual(self._patch(message_id, archived=False).status_code, 200)
+
+        after = File.objects.get(tile__resourceinstance_id=message_id)
+        self.assertEqual(after.pk, stored.pk)
+        self.assertEqual(after.path.name, stored.path.name)
+        self.assertTrue(after.path.storage.exists(after.path.name))
+
+    def _patch(self, message_id, **body):
         return self.client.patch(
             reverse("bcap_message_detail", kwargs={"pk": str(message_id)}),
-            data=json.dumps({"archived": archived}),
+            data=json.dumps(body),
             content_type="application/json",
         )
 
@@ -430,46 +488,116 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.idir_login_simulate(self.user)
         self.assertEqual(self._get_detail(self.internal_root.pk).status_code, 404)
 
+    def _requirement_threads(self):
+        resp = self.client.get(
+            reverse(
+                "bcap_message_resource_threads",
+                kwargs={"resource_id": str(self.requirement.pk)},
+            )
+        )
+        self.assertEqual(resp.status_code, 200)
+        return {r["resourceinstanceid"] for r in resp.json()["results"]}
+
+    def _thread_count(self, thread_id):
+        resp = self.client.get(
+            reverse(
+                "bcap_message_thread_messages", kwargs={"thread_id": str(thread_id)}
+            )
+        )
+        self.assertEqual(resp.status_code, 200)
+        return resp.json()["count"]
+
+    def test_applicant_cannot_get_an_internal_thread_on_their_requirement(self):
+        self.idir_login_simulate(self.user)
+        self.assertNotIn(
+            str(self.internal_requirement_root.pk), self._requirement_threads()
+        )
+        self.assertEqual(self._thread_count(self.internal_requirement_root.pk), 0)
+        for message in (
+            self.internal_requirement_root,
+            self.internal_requirement_reply,
+        ):
+            self.assertEqual(self._get_detail(message.pk).status_code, 404)
+
+    def test_staff_get_an_internal_thread_on_a_requirement(self):
+        self.idir_login_simulate(self.staff)
+        self.assertIn(
+            str(self.internal_requirement_root.pk), self._requirement_threads()
+        )
+        self.assertEqual(self._thread_count(self.internal_requirement_root.pk), 2)
+        for message in (
+            self.internal_requirement_root,
+            self.internal_requirement_reply,
+        ):
+            self.assertEqual(self._get_detail(message.pk).status_code, 200)
+
     def test_applicant_cannot_patch_an_internal_message_on_their_own_permit(self):
         self.idir_login_simulate(self.user)
-        resp = self._patch_read_date(self.internal_root.pk, "2026-07-10T14:04:46.334Z")
+        resp = self._patch(self.internal_root.pk, resolved=True)
         self.assertEqual(resp.status_code, 404)
+        for side in ("author", "recipient"):
+            self.assertEqual(resolution(self.internal_root, side), (None, None))
 
-    def test_patch_marks_a_message_read(self):
-        # Staff (the recipient, not the message's creator) marks it read.
+    # The applicant started the public thread, so staff are its recipient side.
+    def test_staff_patch_resolves_their_side_only(self):
         self.idir_login_simulate(self.staff)
-        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
+        resp = self._patch(self.public_root.pk, resolved=True)
         self.assertEqual(resp.status_code, 200)
-        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
-            "message_read_date"
-        ]["node_value"]
-        self.assertIsNotNone(read)
+        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
+        self.assertIsNotNone(content["recipient_resolved_date"]["node_value"])
+        resolved_by = content["recipient_resolved_by"]["node_value"]
+        self.assertEqual(resolved_by[0]["resourceId"], self.recipient_id)
+        self.assertIsNone(content["author_resolved_date"]["node_value"])
 
-    def test_patch_can_mark_unread_by_clearing_the_date(self):
+    def test_applicant_patch_resolves_their_side_only(self):
+        self.idir_login_simulate(self.user)
+        self.assertEqual(
+            self._patch(self.public_root.pk, resolved=True).status_code, 200
+        )
+        self.assertEqual(
+            resolution(self.public_root, "author")[1],
+            str(self.applicant_contrib.pk),
+        )
+        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
+
+    def test_threads_tell_the_viewer_their_side_and_whether_they_are_staff(self):
+        for user, side, staff in (
+            (self.staff, "recipient", True),
+            (self.user, "author", False),
+        ):
+            self.idir_login_simulate(user)
+            resp = self.client.get(
+                reverse(
+                    "bcap_message_resource_threads",
+                    kwargs={"resource_id": self.permit_id},
+                )
+            )
+            roots = {r["resourceinstanceid"]: r for r in resp.json()["results"]}
+            root = roots[str(self.public_root.pk)]
+            self.assertEqual(root["viewer_side"], side)
+            self.assertIs(root["viewer_is_staff"], staff)
+
+    def test_patch_reopens_the_thread(self):
         self.idir_login_simulate(self.staff)
-        self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
-        resp = self._patch_read_date(self.public_root.pk, None)
+        self._patch(self.public_root.pk, resolved=True)
+        resp = self._patch(self.public_root.pk, resolved=False)
         self.assertEqual(resp.status_code, 200)
-        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
-            "message_read_date"
-        ]["node_value"]
-        self.assertIsNone(read)
+        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
 
     def test_patch_denied_when_caller_cannot_edit_resource_context(self):
         # Same gate as create: no edit access to the resource_context, no write.
         self.idir_login_simulate(self.viewer)
-        resp = self._patch_read_date(self.public_root.pk, "2026-07-10T14:04:46.334Z")
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(
+            self._patch(self.public_root.pk, resolved=True).status_code, 403
+        )
 
-    def test_patch_ignores_writes_to_non_read_date_fields(self):
-        # The endpoint is locked to the read state: a PATCH that also tries to
-        # rewrite the message content changes only the read date, leaving the
-        # content as it was.
+    def test_patch_ignores_node_edits(self):
+        # Only the commands apply: a PATCH carrying a node value leaves the
+        # message as it was.
         payload = {
             "aliased_data": {
                 "message_content": {
                     "aliased_data": {
-                        "message_read_date": {"node_value": "2026-07-10T14:04:46.334Z"},
                         "message_content": {
                             "node_value": {
                                 "en": {"value": "HACKED", "direction": "ltr"}
@@ -480,24 +608,43 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             }
         }
         self.idir_login_simulate(self.staff)
-        resp = self.client.patch(
-            reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
+        resp = self._patch(self.public_root.pk, **payload)
+        self.assertEqual(resp.status_code, 200)
+        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
+        self.assertEqual(
+            content["message_content"]["node_value"]["en"]["value"], "Public"
+        )
+
+    def test_a_reply_reopens_the_thread_for_the_other_side(self):
+        self.idir_login_simulate(self.staff)
+        self._patch(self.public_root.pk, resolved=True)
+        self.idir_login_simulate(self.user)
+        self._patch(self.public_root.pk, resolved=True)
+        payload = self._message_payload()
+        payload["aliased_data"]["related_source_message"] = {
+            "aliased_data": {
+                "related_source_message": {
+                    "node_value": [{"resourceId": str(self.public_root.pk)}]
+                }
+            }
+        }
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
             data=json.dumps(payload),
             content_type="application/json",
         )
-        self.assertEqual(resp.status_code, 200)
-        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
-        self.assertIsNotNone(content["message_read_date"]["node_value"])
-        # The seeded content ("Public") survived; the injected value did not.
+        self.assertEqual(resp.status_code, 201, resp.content)
+        # The applicant wrote: staff's side reopens, the applicant's is kept.
+        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
         self.assertEqual(
-            content["message_content"]["node_value"]["en"]["value"], "Public"
+            resolution(self.public_root, "author")[1], str(self.applicant_contrib.pk)
         )
 
     def test_patch_archives_thread_for_that_viewer_only(self):
         # A top-level "archived": true on the PATCH moves the thread to the
         # caller's archived list; the other party's view is untouched.
         self.idir_login_simulate(self.staff)
-        resp = self._patch_archived(self.public_root.pk, True)
+        resp = self._patch(self.public_root.pk, archived=True)
         self.assertEqual(resp.status_code, 200)
         self.assertNotIn(str(self.public_root.pk), self._thread_roots(self.staff))
         self.assertIn(
@@ -510,36 +657,17 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_patch_unarchives_thread_back_to_active(self):
         self.idir_login_simulate(self.staff)
-        self._patch_archived(self.public_root.pk, True)
-        resp = self._patch_archived(self.public_root.pk, False)
+        self._patch(self.public_root.pk, archived=True)
+        resp = self._patch(self.public_root.pk, archived=False)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
         self.assertEqual(self._thread_roots(self.staff, archived=True), set())
 
-    def test_patch_sets_read_date_and_archive_in_one_request(self):
-        # The detail PATCH is shared: read date (a node in the body) and the
-        # top-level archive flag both apply from a single request.
-        payload = {
-            "archived": True,
-            "aliased_data": {
-                "message_content": {
-                    "aliased_data": {
-                        "message_read_date": {"node_value": "2026-07-10T14:04:46.334Z"},
-                    }
-                }
-            },
-        }
+    def test_patch_resolves_and_archives_in_one_request(self):
         self.idir_login_simulate(self.staff)
-        resp = self.client.patch(
-            reverse("bcap_message_detail", kwargs={"pk": str(self.public_root.pk)}),
-            data=json.dumps(payload),
-            content_type="application/json",
-        )
+        resp = self._patch(self.public_root.pk, resolved=True, archived=True)
         self.assertEqual(resp.status_code, 200)
-        read = resp.json()["aliased_data"]["message_content"]["aliased_data"][
-            "message_read_date"
-        ]["node_value"]
-        self.assertIsNotNone(read)
+        self.assertIsNotNone(resolution(self.public_root, "recipient")[0])
         self.assertIn(
             str(self.public_root.pk),
             self._thread_roots(self.staff, archived=True),
@@ -555,17 +683,17 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         resp = self._post_message()
         self.assertEqual(resp.status_code, 400)
 
-    def test_module_unread_returns_the_serialized_counts(self):
+    def test_module_unresolved_returns_the_serialized_counts(self):
         self.idir_login_simulate(self.user)
         url = reverse(
-            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+            "bcap_message_module_unresolved", kwargs={"submission_id": self.permit_id}
         )
         rows = [
-            ModuleUnread(module_id="tile-1", unread_count=3),
-            ModuleUnread(module_id="tile-2", unread_count=0),
+            ModuleUnresolved(module_id="tile-1", unresolved_count=3),
+            ModuleUnresolved(module_id="tile-2", unresolved_count=0),
         ]
         with patch(
-            "bcap.views.bcap_message_api.BcapMessageService.unread_by_module",
+            "bcap.views.bcap_message_api.BcapMessageService.unresolved_by_module",
             return_value=rows,
         ):
             resp = self.client.get(url)
@@ -573,14 +701,14 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(
             resp.json(),
             [
-                {"module_id": "tile-1", "unread_count": 3},
-                {"module_id": "tile-2", "unread_count": 0},
+                {"module_id": "tile-1", "unresolved_count": 3},
+                {"module_id": "tile-2", "unresolved_count": 0},
             ],
         )
 
-    def test_module_unread_requires_authentication(self):
+    def test_module_unresolved_requires_authentication(self):
         url = reverse(
-            "bcap_message_module_unread", kwargs={"submission_id": self.permit_id}
+            "bcap_message_module_unresolved", kwargs={"submission_id": self.permit_id}
         )
         resp = self.client.get(url)
         # Unauthenticated is blocked: DRF denies (401/403), or the project's auth

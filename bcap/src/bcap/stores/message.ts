@@ -34,8 +34,9 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     }
 
     function unresolvedCount(resourceId: string): number {
-        return threadsFor(resourceId).filter((thread) => !thread.isResolved)
-            .length;
+        return threadsFor(resourceId).filter(
+            (thread) => thread.onSide && !thread.isResolved,
+        ).length;
     }
 
     async function loadModuleUnresolved(submissionId: string) {

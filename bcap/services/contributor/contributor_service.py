@@ -49,6 +49,7 @@ class ContributorSummary:
     name: str
     email: str
     type: str
+    is_proponent: bool = False
 
     @classmethod
     def from_resource(cls, resource) -> Self:
@@ -191,12 +192,17 @@ class ContributorService(AliasedDataReader):
         )
         if not ids:
             ids.add(self.archaeology_branch_id())
+        proponents = set()
         if with_proponent:
             filers = ResourceInstance.objects.filter(
                 pk__in=[resource_id, *permits], principaluser__isnull=False
             ).values_list("principaluser__username", flat=True)
-            ids |= {self.username_contributor_id(name) for name in filers}
-        return self.by_ids(ids - {None})
+            proponents = {self.username_contributor_id(name) for name in filers}
+            ids |= proponents
+        options = self.by_ids(ids - {None})
+        for option in options:
+            option.is_proponent = option.id in proponents
+        return options
 
     def contributor_username(self, contributor_id):
         """The bcap_username linked to a Contributor, or None when it is unset

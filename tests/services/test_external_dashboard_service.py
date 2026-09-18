@@ -553,16 +553,24 @@ class ExternalDashboardUnresolvedTests(TestCase):
             resource_instance_lifecycle_state_id=LIFECYCLE_STATE_IDS["Active"],
         )
 
-        make_message(
-            builder, context=cls.permit, recipient=cls.contributor, subject="p"
-        )
-        make_message(
-            builder, context=cls.requirement, recipient=cls.contributor, subject="req"
-        )
-        make_message(builder, context=cls.host, recipient=cls.contributor, subject="h")
+        # Staff wrote each, so each waits on the applicant.
+        staff = make_party(builder, "dashstaff", "Sam", "Staff", internal=True)[1]
+        for context, subject in (
+            (cls.permit, "p"),
+            (cls.requirement, "req"),
+            (cls.host, "h"),
+        ):
+            make_message(
+                builder,
+                context=context,
+                author=staff,
+                recipient=cls.contributor,
+                subject=subject,
+            )
         make_message(
             builder,
             context=cls.host,
+            author=staff,
             recipient=cls.contributor,
             resolved_date="2026-02-01",
             subject="resolved",

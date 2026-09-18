@@ -8,6 +8,7 @@ import {
     fetchMyProjects,
     fetchAssignableContributors,
     fetchRequirementDetails,
+    getContributorsForResources,
     patchProcessRequirement,
     setRequirementAssignee,
     submitApplication,
@@ -20,6 +21,7 @@ import {
     getSubmissionModulesUnresolvedCounts,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
+import { ThreadSide } from '@/bcap/types.ts';
 
 // apiFetch returns a Response-like object (callers read
 // .json() themselves); apiFetchJson returns the parsed body directly. HttpMethod
@@ -210,6 +212,20 @@ describe('Permit API', () => {
 
             apiFetchJson.mockResolvedValue(null);
             expect(await fetchAssignableContributors()).toEqual([]);
+        });
+    });
+
+    describe('getContributorsForResources', () => {
+        it('labels the proponent so staff can tell them apart', async () => {
+            apiFetchJson.mockResolvedValue([
+                { id: 'c-1', name: 'Applicant, Amy', is_proponent: true },
+                { id: 'c-2', name: 'Staff, Sam', is_proponent: false },
+            ]);
+
+            expect(await getContributorsForResources('permit-1')).toEqual([
+                { label: 'Applicant, Amy (Proponent)', value: 'c-1' },
+                { label: 'Staff, Sam', value: 'c-2' },
+            ]);
         });
     });
 
@@ -434,23 +450,55 @@ describe('Permit API', () => {
                     startedBy: 'Jane Doe',
                     lastMessageDate: '',
                     isResolved: false,
+                    onSide: false,
+                    viewerIsStaff: false,
                     resolvedBy: '',
+                    resolvedDate: '',
                     isInternal: false,
                 },
             ]);
         });
 
-        it("reads the thread's resolution and internal flag off its root", async () => {
+        // The author side resolved, the recipient side has not: each viewer
+        // sees their own side's.
+        const resolvedByAuthor = (viewerSide: string) => ({
+            ...root('t1', 'Closed', {
+                author_resolved_date: {
+                    node_value: '2026-02-01 12:00:00+00:00',
+                },
+                author_resolved_by: { display_value: 'Sam Staff' },
+                is_internal: { node_value: true },
+            }),
+            viewer_side: viewerSide,
+        });
+
+        it('shows the recipient their own side, still open', async () => {
             apiFetchJson.mockResolvedValue({
-                results: [
-                    root('t1', 'Closed', {
-                        thread_resolved_date: {
-                            node_value: '2026-02-01 12:00:00+00:00',
-                        },
-                        thread_resolved_by: { display_value: 'Sam Staff' },
-                        is_internal: { node_value: true },
-                    }),
-                ],
+                results: [resolvedByAuthor(ThreadSide.Recipient)],
+            });
+
+            const [thread] = await getThreadsForResource('res-1');
+
+            expect(thread).toMatchObject({
+                onSide: true,
+                isResolved: false,
+                resolvedBy: '',
+            });
+        });
+
+        it('leaves a viewer on neither side nothing to resolve', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [resolvedByAuthor('')],
+            });
+
+            const [thread] = await getThreadsForResource('res-1');
+
+            expect(thread).toMatchObject({ onSide: false, isResolved: false });
+        });
+
+        it("reads the viewer's side's resolution and the internal flag", async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [resolvedByAuthor(ThreadSide.Author)],
             });
 
             const [thread] = await getThreadsForResource('res-1');
@@ -458,6 +506,7 @@ describe('Permit API', () => {
             expect(thread).toMatchObject({
                 isResolved: true,
                 resolvedBy: 'Sam Staff',
+                resolvedDate: '2026-02-01 12:00:00+00:00',
                 isInternal: true,
             });
         });

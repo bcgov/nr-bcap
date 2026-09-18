@@ -329,6 +329,14 @@ class ContributorsForResourceTests(TestCase):
     def test_staff_are_offered_the_proponent(self):
         self.assertIn(str(self.bystander.pk), self._with_proponent(self.permit))
 
+    def test_only_the_proponent_is_marked(self):
+        rows = self.service.contributors_for_resource(
+            str(self.permit.pk), with_proponent=True
+        )
+        self.assertEqual(
+            {r.id for r in rows if r.is_proponent}, {str(self.bystander.pk)}
+        )
+
     def test_staff_are_offered_the_proponent_of_a_requirements_permit(self):
         self.assertIn(str(self.bystander.pk), self._with_proponent(self.req))
 

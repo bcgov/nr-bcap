@@ -27,7 +27,10 @@ const thread = (overrides: Partial<MessageThread> = {}) =>
         startedBy: 'Hopper, Grace',
         lastMessageDate: '2026-03-04T10:00:00',
         isResolved: false,
+        onSide: true,
+        viewerIsStaff: true,
         resolvedBy: '',
+        resolvedDate: '',
         isInternal: false,
         ...overrides,
     }) as MessageThread;
@@ -155,6 +158,21 @@ describe('MessageThreadSidebar', () => {
         const items = wrapper.findAll('.thread-list .sidebar-item');
         expect(items[0].find('.thread-internal').text()).toContain('Internal');
         expect(items[1].find('.thread-internal').exists()).toBe(false);
+    });
+
+    it('badges resolved threads for staff only', () => {
+        const wrapper = mountSidebar({
+            threads: [
+                thread({ id: 't-1', isResolved: true }),
+                thread({ id: 't-2' }),
+                thread({ id: 't-3', isResolved: true, viewerIsStaff: false }),
+            ],
+        });
+
+        const items = wrapper.findAll('.thread-list .sidebar-item');
+        expect(items[0].find('.thread-resolved').text()).toContain('Resolved');
+        expect(items[1].find('.thread-resolved').exists()).toBe(false);
+        expect(items[2].find('.thread-resolved').exists()).toBe(false);
     });
 
     it('emits the thread the user picked', async () => {

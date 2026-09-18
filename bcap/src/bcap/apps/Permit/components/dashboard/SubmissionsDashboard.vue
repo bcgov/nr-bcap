@@ -592,7 +592,6 @@ const openResourceReport = (resourceId: string) => {
 
 .text-muted {
     color: #6c757d;
-    font-style: italic;
     padding: 1rem 0;
 }
 

@@ -91,7 +91,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
                         "defaultValue": "",
-                        "label": "Thread Resolved Date",
+                        "label": "Author Resolved Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -99,7 +99,7 @@
                     },
                     "id": "0fa05bce-9926-493f-93e3-63a5c177f4e6",
                     "label": {
-                        "en": "Thread Resolved Date"
+                        "en": "Author Resolved Date"
                     },
                     "node_id": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "sortorder": 5,
@@ -112,16 +112,57 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Thread Resolved By",
+                        "label": "Author Resolved By",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "ac344d56-799a-43d4-a294-08f5baebbd25",
                     "label": {
-                        "en": "Thread Resolved By"
+                        "en": "Author Resolved By"
                     },
                     "node_id": "df4e3a42-e830-481d-850e-e2e1024f6c49",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
+                        "defaultValue": "",
+                        "label": "Recipient Resolved Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "d61ffa67-27e3-4139-b079-6b9766ff6aaf",
+                    "label": {
+                        "en": "Recipient Resolved Date"
+                    },
+                    "node_id": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Recipient Resolved By",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "16696d65-d9a6-44dc-a674-f7b11a10fc2a",
+                    "label": {
+                        "en": "Recipient Resolved By"
+                    },
+                    "node_id": "b0dfebbd-0538-4bf4-9f88-237983adc621",
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
@@ -420,6 +461,26 @@
                 {
                     "description": null,
                     "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "3e42a226-1a8b-4beb-91ee-8e331d140209",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "7deca492-3668-4761-b74c-5380c6f85950",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "b0dfebbd-0538-4bf4-9f88-237983adc621",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "edgeid": "dffbfb3c-dbcb-48bc-b924-2b9aac25acf2",
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "name": null,
@@ -581,12 +642,12 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "thread_resolved_date",
+                    "alias": "author_resolved_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
                     },
                     "datatype": "date",
-                    "description": "When the thread was resolved, for everyone party to it. Set on the thread root only; empty means unresolved.",
+                    "description": "When the side that started the thread (the root's author, or all staff when a staff member started an external thread) resolved it. Set on the thread root only; empty means unresolved for that side.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
@@ -596,7 +657,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Thread Resolved Date",
+                    "name": "Author Resolved Date",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
@@ -606,7 +667,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "thread_resolved_by",
+                    "alias": "author_resolved_by",
                     "config": {
                         "graphs": [
                             {
@@ -618,7 +679,7 @@
                         "searchString": ""
                     },
                     "datatype": "resource-instance",
-                    "description": "Who resolved the thread. Set on the thread root only, alongside the resolved date.",
+                    "description": "Who on the author side resolved the thread. Set on the thread root only, alongside the author resolved date.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
@@ -628,9 +689,66 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Thread Resolved By",
+                    "name": "Author Resolved By",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "df4e3a42-e830-481d-850e-e2e1024f6c49",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recipient_resolved_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
+                    },
+                    "datatype": "date",
+                    "description": "When the side the thread was addressed to (the root's recipient, a group's members, or all staff when a staff member is the recipient of an external thread) resolved it. Set on the thread root only; empty means unresolved for that side.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recipient Resolved Date",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "recipient_resolved_by",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Who on the recipient side resolved the thread. Set on the thread root only, alongside the recipient resolved date.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Recipient Resolved By",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "b0dfebbd-0538-4bf4-9f88-237983adc621",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 6,

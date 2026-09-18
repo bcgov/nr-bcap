@@ -24,7 +24,10 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
     startedBy: 'Amy',
     lastMessageDate: '',
     isResolved: false,
+    onSide: true,
+    viewerIsStaff: true,
     resolvedBy: '',
+    resolvedDate: '',
     isInternal: false,
     ...over,
 });
@@ -58,6 +61,18 @@ describe('message store', () => {
         // A resource never loaded is empty, not an error.
         expect(store.threadsFor('permit-2')).toEqual([]);
         expect(store.unresolvedCount('permit-2')).toBe(0);
+    });
+
+    it('does not count a thread the viewer is on neither side of', async () => {
+        vi.mocked(getThreadsForResource).mockResolvedValue([
+            thread({ id: 'a' }),
+            thread({ id: 'b', onSide: false }),
+        ]);
+        const store = useMessageStore();
+
+        await store.load('permit-1');
+
+        expect(store.unresolvedCount('permit-1')).toBe(1);
     });
 
     it('keeps active and archived threads in separate lists', async () => {

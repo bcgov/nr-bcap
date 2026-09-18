@@ -87,13 +87,21 @@ export interface FormattedMessage {
     attachments: MessageAttachment[];
 }
 
+export enum ThreadSide {
+    Author = 'author',
+    Recipient = 'recipient',
+}
+
 export interface MessageThread {
     id: string;
     topic: string;
     startedBy: string;
     lastMessageDate: string;
     isResolved: boolean;
+    onSide: boolean;
+    viewerIsStaff: boolean;
     resolvedBy: string;
+    resolvedDate: string;
     isInternal: boolean;
 }
 

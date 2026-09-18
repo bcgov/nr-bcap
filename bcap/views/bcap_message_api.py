@@ -89,10 +89,11 @@ class BcapMessageCreateView(BcapMessageListView):
         return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        """A reply reopens the thread and resurfaces it for everyone party to it."""
+        """A new message reopens the thread for the other side and resurfaces it
+        for everyone party to it."""
         super().perform_create(serializer)
         service = BcapMessageService()
-        service.reopen_thread(serializer.instance.pk)
+        service.reopen_after_post(serializer.instance.pk, self.request.user)
         service.unarchive_thread_for_all(serializer.instance.pk)
 
 

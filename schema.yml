@@ -5425,11 +5425,20 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        thread_resolved_by:
+        author_resolved_by:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        thread_resolved_date:
+        author_resolved_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        recipient_resolved_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        recipient_resolved_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
@@ -5731,6 +5740,8 @@ components:
           type: string
         type:
           type: string
+        is_proponent:
+          type: boolean
       required:
       - email
       - id
@@ -15834,6 +15845,16 @@ components:
           type: string
           format: date-time
           readOnly: true
+        viewer_side:
+          type: string
+          readOnly: true
+          description: The viewer's side of the thread, author or recipient, whose
+            resolved_* nodes are theirs; empty when they are on neither.
+        viewer_is_staff:
+          type: boolean
+          readOnly: true
+          description: Staff resolve by hand; an applicant's side resolves as they
+            open the thread.
         name:
           type: string
           readOnly: true
@@ -15887,6 +15908,8 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+      - viewer_is_staff
+      - viewer_side
     UrlAliasedNodeData:
       type: object
       properties:

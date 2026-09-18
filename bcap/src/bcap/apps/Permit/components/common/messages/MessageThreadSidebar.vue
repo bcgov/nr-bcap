@@ -42,11 +42,27 @@ defineEmits<{
                 class="sidebar-item"
                 :class="{
                     active: selectedThreadId === thread.id,
-                    unread: thread.hasUnread,
+                    unresolved: !thread.isResolved,
                     resolved: thread.isResolved,
                 }"
                 @click="$emit('select-thread', thread.id)"
             >
+                <span class="thread-badges">
+                    <span
+                        v-if="thread.isInternal"
+                        class="thread-badge thread-internal"
+                    >
+                        <i class="fa-solid fa-lock"></i>
+                        Internal
+                    </span>
+                    <span
+                        v-if="thread.viewerIsStaff && thread.isResolved"
+                        class="thread-badge thread-resolved"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                        Resolved
+                    </span>
+                </span>
                 <span class="thread-topic-label">{{ thread.topic }}</span>
                 <span class="thread-started-by">{{ thread.startedBy }}</span>
                 <span
@@ -155,13 +171,39 @@ defineEmits<{
     color: #6c757d;
 }
 
-.sidebar-item.unread .thread-topic-label {
+.sidebar-item.unresolved .thread-topic-label {
     font-weight: 700;
     color: #000;
 }
 
-.sidebar-item.resolved {
-    color: #a0a0a0;
+.thread-badges {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.3rem;
+}
+
+.thread-badges:empty {
+    display: none;
+}
+
+.thread-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.thread-internal {
+    background-color: #fef1d8;
+    color: #6c4a00;
+}
+
+.thread-resolved {
+    background-color: #e3f1e6;
+    color: #2e6b3a;
 }
 
 .sidebar-item.active {
@@ -175,8 +217,7 @@ defineEmits<{
     color: rgba(255, 255, 255, 0.9);
 }
 
-.sidebar-item.active.unread .thread-topic-label,
-.sidebar-item.active.resolved {
+.sidebar-item.active.unresolved .thread-topic-label {
     color: #ffffff;
 }
 

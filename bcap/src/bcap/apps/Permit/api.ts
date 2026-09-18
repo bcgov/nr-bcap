@@ -40,6 +40,7 @@ import {
     zProcessRequirement,
 } from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { ThreadSide } from '@/bcap/types.ts';
 
 export const fetchDraft = async (
     graphSlug: string,
@@ -604,6 +605,21 @@ export const getThreadsForResource = async (
         const subjectText =
             subject?.display_value || subject?.node_value?.en?.value || '';
         const typeLabel = content?.message_type?.display_value || '';
+        // Each side resolves for itself; show the viewer their own side's. A
+        // viewer on neither side has nothing to resolve.
+        const side = (root as { viewer_side?: string }).viewer_side;
+        const resolvedDate =
+            side === ThreadSide.Author
+                ? content?.author_resolved_date
+                : side === ThreadSide.Recipient
+                  ? content?.recipient_resolved_date
+                  : undefined;
+        const resolvedBy =
+            side === ThreadSide.Author
+                ? content?.author_resolved_by
+                : side === ThreadSide.Recipient
+                  ? content?.recipient_resolved_by
+                  : undefined;
         return {
             id: root.resourceinstanceid ?? '',
             topic:
@@ -616,8 +632,13 @@ export const getThreadsForResource = async (
                 (root as { last_message_date?: string }).last_message_date ||
                 content?.message_creation_date?.node_value ||
                 '',
-            isResolved: Boolean(content?.thread_resolved_date?.node_value),
-            resolvedBy: content?.thread_resolved_by?.display_value || '',
+            isResolved: Boolean(resolvedDate?.node_value),
+            onSide: Boolean(side),
+            viewerIsStaff: Boolean(
+                (root as { viewer_is_staff?: boolean }).viewer_is_staff,
+            ),
+            resolvedBy: resolvedBy?.display_value || '',
+            resolvedDate: resolvedDate?.node_value || '',
             isInternal: Boolean(content?.is_internal?.node_value),
         };
     });
@@ -678,7 +699,9 @@ export const getContributorsForResources = async (
     );
 
     return (data ?? []).map((item) => ({
-        label: item.name || 'Unknown Contributor',
+        label:
+            (item.name || 'Unknown Contributor') +
+            (item.is_proponent ? ' (Proponent)' : ''),
         value: item.id,
     }));
 };

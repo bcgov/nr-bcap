@@ -5,6 +5,7 @@ import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import { getContributorsForResources } from '@/bcap/apps/Permit/api.ts';
+import { formatTimestamp } from '@/bcap/util.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import MessageThreadSidebar from '@/bcap/apps/Permit/components/common/messages/MessageThreadSidebar.vue';
@@ -36,6 +37,7 @@ const state = reactive({
     messageText: '',
     subjectText: '',
     isSubmitting: false,
+    isArchiving: false,
     isResolving: false,
     selectedRecipient: '',
     recipients: [] as Array<{ label: string; value: string }>,
@@ -62,7 +64,9 @@ const visibleThreads = computed(() =>
     messageStore.threadsFor(props.resourceId, state.showArchived),
 );
 
-const unreadCount = computed(() => messageStore.unreadCount(props.resourceId));
+const unresolvedCount = computed(() =>
+    messageStore.unresolvedCount(props.resourceId),
+);
 
 const activeThread = computed(
     () =>
@@ -134,9 +138,12 @@ const selectThread = async (threadId: string) => {
         state.isLoadingMessages = true;
         try {
             await messageStore.loadThreadMessages(threadId);
-            await messageStore.markThreadRead(thread);
         } finally {
             state.isLoadingMessages = false;
+        }
+        // For now an applicant resolves their side just by reading it.
+        if (!thread.viewerIsStaff && thread.onSide && !thread.isResolved) {
+            await messageStore.setResolved(threadId, true, props.resourceId);
         }
     }
 
@@ -185,12 +192,12 @@ const submitMessage = async () => {
     }
 };
 
-// Resolving archives the thread for this viewer only, so it moves to the
-// archived tab rather than disappearing.
-const markAsResolved = async () => {
+// Archiving is this viewer's only, so the thread moves to the archived tab
+// rather than disappearing.
+const toggleArchived = async () => {
     if (!activeThread.value) return;
     const threadId = activeThread.value.id;
-    state.isResolving = true;
+    state.isArchiving = true;
     try {
         await messageStore.setArchived(
             threadId,
@@ -198,6 +205,21 @@ const markAsResolved = async () => {
             props.resourceId,
         );
         state.selectedThreadId = 'new';
+    } finally {
+        state.isArchiving = false;
+    }
+};
+
+// Resolution is per side, so it clears the alert for everyone on the viewer's.
+const toggleResolved = async () => {
+    if (!activeThread.value) return;
+    state.isResolving = true;
+    try {
+        await messageStore.setResolved(
+            activeThread.value.id,
+            !activeThread.value.isResolved,
+            props.resourceId,
+        );
     } finally {
         state.isResolving = false;
     }
@@ -220,10 +242,10 @@ onMounted(() => {
             <span class="trigger-label">Messages</span>
 
             <span
-                v-if="unreadCount"
+                v-if="unresolvedCount"
                 class="message-badge"
             >
-                {{ unreadCount }}
+                {{ unresolvedCount }}
             </span>
         </Button>
     </div>
@@ -419,6 +441,41 @@ onMounted(() => {
                     v-else
                     class="reply-view"
                 >
+                    <!-- Staff only: an applicant sees neither kind nor resolution. -->
+                    <div
+                        v-if="activeThread?.viewerIsStaff"
+                        class="thread-status"
+                    >
+                        <span
+                            v-if="activeThread.isInternal"
+                            class="thread-tag internal-tag"
+                        >
+                            <i class="fa-solid fa-lock"></i>
+                            Internal (staff only)
+                        </span>
+                        <span
+                            v-else
+                            class="thread-tag external-tag"
+                        >
+                            <i class="fa-solid fa-users"></i>
+                            External (shared with applicant)
+                        </span>
+                        <span
+                            v-if="activeThread.isResolved"
+                            class="thread-tag resolved-tag"
+                        >
+                            <i class="fa-solid fa-check"></i>
+                            Resolved
+                            <template v-if="activeThread?.resolvedBy">
+                                by {{ activeThread.resolvedBy }}
+                            </template>
+                            <template v-if="activeThread?.resolvedDate">
+                                on
+                                {{ formatTimestamp(activeThread.resolvedDate) }}
+                            </template>
+                        </span>
+                    </div>
+
                     <MessageHistory
                         ref="threadContainer"
                         :messages="messageStore.openMessages"
@@ -450,14 +507,32 @@ onMounted(() => {
 
                     <div class="action-footer">
                         <Button
+                            v-if="
+                                !state.showArchived &&
+                                activeThread?.viewerIsStaff &&
+                                activeThread?.onSide
+                            "
                             :label="
-                                state.showArchived
-                                    ? 'Restore'
+                                activeThread?.isResolved
+                                    ? 'Mark as Unresolved'
                                     : 'Mark as Resolved'
                             "
-                            class="resolve-btn"
+                            class="resolve-btn resolved-btn"
                             :loading="state.isResolving"
-                            @click="markAsResolved"
+                            @click="toggleResolved"
+                        />
+                        <Button
+                            v-if="
+                                state.showArchived ||
+                                activeThread?.isResolved ||
+                                !activeThread?.onSide
+                            "
+                            :label="
+                                state.showArchived ? 'Unarchive' : 'Archive'
+                            "
+                            class="resolve-btn archive-btn"
+                            :loading="state.isArchiving"
+                            @click="toggleArchived"
                         />
                         <Button
                             label="Send"
@@ -721,6 +796,10 @@ onMounted(() => {
     font-weight: 700;
 }
 
+.send-btn {
+    margin-left: auto;
+}
+
 /* PrimeVue's label span carries its own weight/size, so set it on the label. */
 .send-btn .p-button-label,
 .resolve-btn .p-button-label {
@@ -747,6 +826,37 @@ onMounted(() => {
 
 .resolve-btn:hover {
     background-color: var(--bc-selected);
+}
+
+.thread-status {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.thread-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.internal-tag {
+    background-color: #fef1d8;
+    color: #6c4a00;
+}
+
+.external-tag {
+    background-color: #e3ecf7;
+    color: #1f4a7a;
+}
+
+.resolved-tag {
+    background-color: #e3f1e6;
+    color: #2e6b3a;
 }
 
 .dropdown-value-template {

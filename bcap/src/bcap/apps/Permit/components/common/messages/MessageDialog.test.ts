@@ -2,21 +2,36 @@ import { mount, flushPromises } from '@vue/test-utils';
 import MessageDialog from './MessageDialog.vue';
 import {
     createBcapMessage,
-    markMessageAsRead,
     getContributorsForResources,
     getThreadsForResource,
     getMessagesForThread,
+    setThreadArchived,
+    setThreadResolved,
 } from '@/bcap/apps/Permit/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
-    markMessageAsRead: vi.fn(),
     getContributorsForResources: vi.fn(),
     getThreadsForResource: vi.fn(),
     getMessagesForThread: vi.fn(),
     setThreadArchived: vi.fn(),
+    setThreadResolved: vi.fn(),
 }));
+
+const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
+    id: 't1',
+    topic: 'General Question',
+    startedBy: 'Amy',
+    lastMessageDate: '',
+    isResolved: false,
+    onSide: true,
+    viewerIsStaff: true,
+    resolvedBy: '',
+    resolvedDate: '',
+    isInternal: false,
+    ...over,
+});
 
 describe('MessageDialog.vue', () => {
     beforeEach(() => {
@@ -41,13 +56,24 @@ describe('MessageDialog.vue', () => {
     });
 
     // The dialog loads its own threads; the archived tab loads a second list.
-    const withThreads = (active: unknown[], archived: unknown[] = []) => {
+    const withThreads = (
+        active: MessageThread[],
+        archived: MessageThread[] = [],
+    ) => {
         vi.mocked(getThreadsForResource).mockImplementation(
             (_resourceId: string, isArchived?: boolean) =>
-                Promise.resolve(
-                    (isArchived ? archived : active) as MessageThread[],
-                ),
+                Promise.resolve(isArchived ? archived : active),
         );
+    };
+
+    const button = (wrapper: ReturnType<typeof mount>, label: string) =>
+        wrapper.findAll('.mock-button').find((b) => b.text() === label);
+
+    const openThread = async (wrapper: ReturnType<typeof mount>) => {
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await flushPromises();
     };
 
     // Stub the PrimeVue components to avoid Teleport/DOM issues in tests.
@@ -100,7 +126,8 @@ describe('MessageDialog.vue', () => {
         expect((wrapper.vm as unknown).state.selectedRecipient).toBe('user-1');
     });
 
-    it('renders the "View Messages" trigger without a badge when there are no unread threads', async () => {
+    it('renders the "View Messages" trigger without a badge when every thread is resolved', async () => {
+        withThreads([thread({ isResolved: true })]);
         const wrapper = mountComponent();
         await flushPromises();
 
@@ -111,37 +138,11 @@ describe('MessageDialog.vue', () => {
         expect(wrapper.find('.message-badge').exists()).toBe(false);
     });
 
-    it('renders the badge when threads have unread messages', async () => {
+    it('loads threads on mount so the unresolved count is ready before the dialog opens', async () => {
         withThreads([
-            {
-                id: 't1',
-                topic: 'General Question',
-                messages: [],
-                hasUnread: true,
-                unreadCount: 3,
-            },
-        ]);
-
-        const wrapper = mountComponent();
-        await flushPromises();
-
-        const triggerBtn = wrapper.findAll('.mock-button')[0];
-        expect(triggerBtn.text()).toContain('Messages');
-
-        const badge = wrapper.find('.message-badge');
-        expect(badge.exists()).toBe(true);
-        expect(badge.text()).toBe('3');
-    });
-
-    it('loads threads on mount so unread counts are ready before the dialog opens', async () => {
-        withThreads([
-            {
-                id: 't1',
-                topic: 'General Question',
-                messages: [],
-                hasUnread: true,
-                unreadCount: 4,
-            },
+            thread({ id: 't1' }),
+            thread({ id: 't2' }),
+            thread({ id: 't3', isResolved: true }),
         ]);
 
         const wrapper = mountComponent();
@@ -150,27 +151,15 @@ describe('MessageDialog.vue', () => {
         // No dialog open yet: the fetch and the badge both come from mount.
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
         expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
-        expect(wrapper.find('.message-badge').text()).toBe('4');
+        expect(wrapper.find('.message-badge').text()).toBe('2');
     });
 
     // The dialog is scoped to its resource id, so it lists every thread on that
-    // resource and the badge sums their unread counts.
-    it('lists every thread on the resource and sums their unread counts', async () => {
+    // resource and the badge counts the unresolved ones.
+    it('lists every thread on the resource', async () => {
         withThreads([
-            {
-                id: 't1',
-                topic: 'Site Plan general question',
-                messages: [],
-                hasUnread: true,
-                unreadCount: 2,
-            },
-            {
-                id: 't2',
-                topic: 'Water Licence general question',
-                messages: [],
-                hasUnread: true,
-                unreadCount: 5,
-            },
+            thread({ id: 't1', topic: 'Site Plan general question' }),
+            thread({ id: 't2', topic: 'Water Licence general question' }),
         ]);
 
         const wrapper = mountComponent();
@@ -179,7 +168,7 @@ describe('MessageDialog.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        expect(wrapper.find('.message-badge').text()).toBe('7');
+        expect(wrapper.find('.message-badge').text()).toBe('2');
 
         const topics = wrapper.findAll('.thread-topic-label');
         expect(topics.map((t) => t.text())).toEqual([
@@ -202,13 +191,7 @@ describe('MessageDialog.vue', () => {
     });
 
     it('displays existing messages in the thread when a sidebar thread is selected (Reply mode)', async () => {
-        withThreads([
-            {
-                id: 'thread-555',
-                topic: 'General Question',
-                hasUnread: false,
-            },
-        ]);
+        withThreads([thread({ id: 'thread-555' })]);
         // Messages are fetched for the open thread, not carried on the list.
         vi.mocked(getMessagesForThread).mockResolvedValue([
             {
@@ -216,7 +199,6 @@ describe('MessageDialog.vue', () => {
                 author: 'Jane',
                 text: 'Please fix this',
                 date: 'Oct 1',
-                isUnread: false,
                 attachments: [],
             },
         ]);
@@ -230,11 +212,11 @@ describe('MessageDialog.vue', () => {
         await wrapper.findAll('.sidebar-item')[0].trigger('click');
         await flushPromises();
 
-        const thread = wrapper.find('.message-thread');
-        expect(thread.exists()).toBe(true);
-        expect(thread.html()).toContain('Jane');
-        expect(thread.html()).toContain('Please fix this');
-        expect(thread.html()).toContain('Oct 1');
+        const history = wrapper.find('.message-thread');
+        expect(history.exists()).toBe(true);
+        expect(history.html()).toContain('Jane');
+        expect(history.html()).toContain('Please fix this');
+        expect(history.html()).toContain('Oct 1');
     });
 
     it('does not call submit if message text is empty', async () => {
@@ -294,37 +276,137 @@ describe('MessageDialog.vue', () => {
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
     });
 
-    it('marks unread messages as read when an unread thread is selected', async () => {
-        withThreads([
-            {
-                id: 'thread-999',
-                topic: 'Modification Request',
-                hasUnread: true,
-                unreadCount: 1,
-            },
-        ]);
-        vi.mocked(getMessagesForThread).mockResolvedValue([
-            {
-                id: 'msg-55',
-                author: 'Ministry',
-                text: 'Needs update',
-                date: '',
-                isUnread: true,
-                attachments: [],
-            },
-        ]);
+    it('opening a thread only reads it: nothing is written back', async () => {
+        withThreads([thread({ id: 'thread-999' })]);
 
         const wrapper = mountComponent();
         await flushPromises();
+        await openThread(wrapper);
 
-        await wrapper.findAll('.mock-button')[0].trigger('click');
+        expect(getMessagesForThread).toHaveBeenCalledWith('thread-999');
+        expect(setThreadResolved).not.toHaveBeenCalled();
+        expect(setThreadArchived).not.toHaveBeenCalled();
+    });
+
+    it('resolves an open thread for everyone, and reopens a resolved one', async () => {
+        withThreads([thread({ id: 'thread-1' })]);
+        const wrapper = mountComponent();
         await flushPromises();
+        await openThread(wrapper);
 
+        await button(wrapper, 'Mark as Resolved')?.trigger('click');
+        await flushPromises();
+        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', true);
+
+        withThreads([
+            thread({
+                id: 'thread-1',
+                isResolved: true,
+                resolvedBy: 'Sam',
+                resolvedDate: '2026-02-01T12:00:00Z',
+            }),
+        ]);
+        const reopened = mountComponent();
+        await flushPromises();
+        await openThread(reopened);
+
+        const tag = reopened.find('.resolved-tag').text();
+        expect(tag).toContain('by Sam');
+        expect(tag).toContain('2026');
+        await button(reopened, 'Mark as Unresolved')?.trigger('click');
+        await flushPromises();
+        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', false);
+    });
+
+    it('only offers Archive once the thread is resolved', async () => {
+        withThreads([thread()]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(button(wrapper, 'Archive')).toBeUndefined();
+    });
+
+    it('archives a thread for this viewer, and unarchives from the archived tab', async () => {
+        withThreads(
+            [thread({ id: 'active-1', isResolved: true })],
+            [thread({ id: 'arch-1', isResolved: true })],
+        );
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        await button(wrapper, 'Archive')?.trigger('click');
+        await flushPromises();
+        expect(setThreadArchived).toHaveBeenCalledWith('active-1', true);
+        expect(setThreadResolved).not.toHaveBeenCalled();
+
+        await wrapper.findAll('.sidebar-tab')[1].trigger('click');
+        await flushPromises();
         await wrapper.findAll('.sidebar-item')[0].trigger('click');
         await flushPromises();
+        // An archived thread has to come back before it can be unresolved.
+        expect(button(wrapper, 'Mark as Unresolved')).toBeUndefined();
+        await button(wrapper, 'Unarchive')?.trigger('click');
+        await flushPromises();
+        expect(setThreadArchived).toHaveBeenCalledWith('arch-1', false);
+    });
 
-        expect(markMessageAsRead).toHaveBeenCalledWith('msg-55');
-        expect(markMessageAsRead).toHaveBeenCalledTimes(1);
+    it('marks an internal thread as staff only', async () => {
+        withThreads([thread({ isInternal: true })]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(wrapper.find('.internal-tag').text()).toContain('Internal');
+        expect(wrapper.find('.external-tag').exists()).toBe(false);
+        expect(wrapper.find('.resolved-tag').exists()).toBe(false);
+    });
+
+    it('marks a shared thread as external', async () => {
+        withThreads([thread()]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(wrapper.find('.external-tag').text()).toContain('External');
+        expect(wrapper.find('.internal-tag').exists()).toBe(false);
+    });
+
+    it('resolves the applicant side on open, with no resolve controls', async () => {
+        withThreads([thread({ id: 'thread-1', viewerIsStaff: false })]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', true);
+        expect(button(wrapper, 'Mark as Resolved')).toBeUndefined();
+    });
+
+    it('shows an applicant no thread status tags', async () => {
+        withThreads([
+            thread({
+                viewerIsStaff: false,
+                isResolved: true,
+                resolvedBy: 'Amy',
+            }),
+        ]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(wrapper.find('.thread-status').exists()).toBe(false);
+        expect(setThreadResolved).not.toHaveBeenCalled();
+    });
+
+    it('offers no Resolve to a viewer on neither side', async () => {
+        withThreads([thread({ onSide: false })]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(button(wrapper, 'Mark as Resolved')).toBeUndefined();
+        expect(button(wrapper, 'Archive')).toBeDefined();
     });
 
     // The typed subject and the picked type travel as separate nodes; the
@@ -421,19 +503,7 @@ describe('MessageDialog.vue', () => {
         });
 
         withThreads([
-            {
-                id: 'thread-777',
-                topic: 'Investigation question',
-                hasUnread: false,
-                messages: [
-                    {
-                        id: 'm1',
-                        author: 'Ministry',
-                        text: 'Hi',
-                        isUnread: false,
-                    },
-                ],
-            },
+            thread({ id: 'thread-777', topic: 'Investigation question' }),
         ]);
 
         const wrapper = mountComponent();
