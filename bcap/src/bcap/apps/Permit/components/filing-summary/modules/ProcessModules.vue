@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue';
+import { onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
