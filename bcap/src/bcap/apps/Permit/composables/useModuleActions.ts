@@ -1,5 +1,5 @@
 import { computed, onScopeDispose, reactive, watch } from 'vue';
-import { notifyError } from '@/bcap/notify.ts';
+import { inlineMessage, notifyError } from '@/bcap/notify.ts';
 import {
     patchModuleOrder,
     removeModuleAndRequirements,
@@ -46,6 +46,7 @@ export const useModuleActions = (options: {
         rows: [] as ModuleRow[],
         saving: false,
         loading: [] as string[],
+        loadError: '',
         assignees: [] as ContributorSummary[],
     });
 
@@ -61,8 +62,11 @@ export const useModuleActions = (options: {
         if (!rowsToLoad.length) return;
         const tileids = rowsToLoad.map((row) => row.tileid);
         state.loading.push(...tileids);
+        state.loadError = '';
         try {
             await hydrateRows(rowsToLoad);
+        } catch (error) {
+            state.loadError = inlineMessage(error);
         } finally {
             state.loading = state.loading.filter((id) => !tileids.includes(id));
         }

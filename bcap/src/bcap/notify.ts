@@ -16,12 +16,14 @@ export const userMessage = (error: unknown): string | undefined =>
 
 export type InlineErrorData = { title: string; detail: string };
 
-// The text for an error a page shows itself. Api failures are already logged by
-// the fetch wrapper, so only anything else (a bug) is logged here.
-export const inlineMessage = (error: unknown, fallback = TRY_AGAIN): string => {
+// The detail line for an error a page shows itself: what the server said, or the
+// generic retry when it said nothing usable. The surrounding slot titles it, so
+// this never repeats the context. Api failures are already logged by the fetch
+// wrapper, so only anything else (a bug) is logged here.
+export const inlineMessage = (error: unknown): string => {
     const message = userMessage(error);
     if (message === undefined) console.error(error);
-    return message ?? fallback;
+    return message ?? TRY_AGAIN;
 };
 
 export const notifyError = (summary: string, error?: unknown): void => {

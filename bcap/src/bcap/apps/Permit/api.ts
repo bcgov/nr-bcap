@@ -40,7 +40,6 @@ import {
     zProcessRequirement,
 } from '@/bcap/client/zod.gen.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
-import { notifyError } from '@/bcap/notify.ts';
 
 export const fetchDraft = async (
     graphSlug: string,
@@ -81,12 +80,7 @@ export const fetchDrafts = async (
         };
         url += `?${new URLSearchParams(query as Record<string, string>)}`;
     }
-    try {
-        return await apiFetchJson<WorkflowDraft[]>(url);
-    } catch (error) {
-        notifyError('Failed to load drafts', error);
-        return [];
-    }
+    return apiFetchJson<WorkflowDraft[]>(url);
 };
 
 export const deleteDraft = async (
@@ -108,14 +102,10 @@ export const saveDraftFieldToBackend = async (
         data: JSON.parse(JSON.stringify(fullDraftData, dropFiles)),
     };
     if (currentStep) payload.current_step = currentStep;
-    try {
-        await apiFetch(
-            `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`,
-            { method: HttpMethod.Patch, body: payload },
-        );
-    } catch (error) {
-        notifyError('Your draft could not be saved', error);
-    }
+    await apiFetch(`${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`, {
+        method: HttpMethod.Patch,
+        body: payload,
+    });
 };
 
 type ExternalDashboardStatus = NonNullable<
@@ -141,15 +131,10 @@ export const fetchCompanyDraftCards = async () =>
 const fetchExternalDashboardCards = async (
     status: ExternalDashboardStatus,
 ): Promise<ExternalDashboardCard[]> => {
-    try {
-        const url = `${arches.urls.dashboard_external}?status=${status}`;
+    const url = `${arches.urls.dashboard_external}?status=${status}`;
 
-        const page = await apiFetchJson<ExternalDashboardPage>(url);
-        return page.results || [];
-    } catch (error) {
-        notifyError('Failed to load dashboard', error);
-        return [];
-    }
+    const page = await apiFetchJson<ExternalDashboardPage>(url);
+    return page.results || [];
 };
 
 export const getInternalDashboardData = async (
@@ -157,25 +142,15 @@ export const getInternalDashboardData = async (
     page: number = 1,
     limit: number = 100,
 ): Promise<InternalDashboardCard[]> => {
-    try {
-        // no status means all results -- omit the param entirely
-        const statusParam = status ? `&status=${status}` : '';
-        const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
-        const result = zInternalDashboardPage.safeParse(
-            await apiFetchJson(apiUrl),
-        );
-        if (!result.success) {
-            console.warn(
-                'InternalDashboardPage failed validation:',
-                result.error,
-            );
-            return [];
-        }
-        return result.data.results ?? [];
-    } catch (error) {
-        notifyError('Failed to load dashboard', error);
+    // no status means all results -- omit the param entirely
+    const statusParam = status ? `&status=${status}` : '';
+    const apiUrl = `${arches.urls.dashboard}?limit=${limit}&page=${page}${statusParam}`;
+    const result = zInternalDashboardPage.safeParse(await apiFetchJson(apiUrl));
+    if (!result.success) {
+        console.warn('InternalDashboardPage failed validation:', result.error);
         return [];
     }
+    return result.data.results ?? [];
 };
 
 export const getProcessRequirementData = async (
@@ -196,39 +171,32 @@ export const submitApplication = async (
     payload: ArchesDraftData,
     graphSlug: string = GraphSlug.PermitApplication,
 ): Promise<PermitApplication> => {
-    try {
-        const submitUrl = arches.urls.permit_application_create;
-        const cleanPayload = JSON.parse(
-            JSON.stringify(payload),
-        ) as ArchesDraftData;
-        // dummy application ID for POST
-        cleanPayload.application_identification ??= {};
-        cleanPayload.application_identification.aliased_data ??= {};
-        cleanPayload.application_identification.aliased_data.application_id = {
-            node_value: {
-                en: {
-                    value: 'DUMMY-APP-0000',
-                    direction: 'ltr',
-                },
+    const submitUrl = arches.urls.permit_application_create;
+    const cleanPayload = JSON.parse(JSON.stringify(payload)) as ArchesDraftData;
+    // dummy application ID for POST
+    cleanPayload.application_identification ??= {};
+    cleanPayload.application_identification.aliased_data ??= {};
+    cleanPayload.application_identification.aliased_data.application_id = {
+        node_value: {
+            en: {
+                value: 'DUMMY-APP-0000',
+                direction: 'ltr',
             },
-        } as DraftNode;
+        },
+    } as DraftNode;
 
-        const finalResource = await apiFetchJson<PermitApplication>(submitUrl, {
-            method: HttpMethod.Post,
-            body: {
-                draft_id: draftId,
-                aliased_data: cleanPayload,
-            },
-        });
+    const finalResource = await apiFetchJson<PermitApplication>(submitUrl, {
+        method: HttpMethod.Post,
+        body: {
+            draft_id: draftId,
+            aliased_data: cleanPayload,
+        },
+    });
 
-        const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
-        await apiFetch(deleteUrl, { method: HttpMethod.Delete });
+    const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
+    await apiFetch(deleteUrl, { method: HttpMethod.Delete });
 
-        return finalResource;
-    } catch (error) {
-        console.error('Submission API failed:', error);
-        throw error;
-    }
+    return finalResource;
 };
 
 // Submit a permit module: the route creates the module's host resource from the
@@ -244,50 +212,39 @@ export const submitModule = async (
     payload: DraftPayloadWritable['data'],
     files: Array<[string, File]> = [],
 ): Promise<PermitApplication> => {
-    try {
-        const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
-        const json = { aliased_data: payload };
-        let body: FormData | typeof json = json;
-        if (files.length) {
-            body = new FormData();
-            // MultiPartJSONParser reads the body from the part named "json";
-            // the Files in it go as their own parts, rebound by filename.
-            body.append('json', JSON.stringify(json, dropFiles));
-            for (const [key, file] of files) {
-                body.append(key, file);
-            }
+    const url = arches.urls.seed_process_requirements(permitId, moduleSlug);
+    const json = { aliased_data: payload };
+    let body: FormData | typeof json = json;
+    if (files.length) {
+        body = new FormData();
+        // MultiPartJSONParser reads the body from the part named "json";
+        // the Files in it go as their own parts, rebound by filename.
+        body.append('json', JSON.stringify(json, dropFiles));
+        for (const [key, file] of files) {
+            body.append(key, file);
         }
-        const result = await apiFetchJson<PermitApplication>(url, {
-            method: HttpMethod.Post,
-            body,
-        });
-        if (draftId) {
-            await deleteDraft(moduleSlug, draftId);
-        }
-        return result;
-    } catch (error) {
-        console.error('Module submission API failed:', error);
-        throw error;
     }
+    const result = await apiFetchJson<PermitApplication>(url, {
+        method: HttpMethod.Post,
+        body,
+    });
+    if (draftId) {
+        await deleteDraft(moduleSlug, draftId);
+    }
+    return result;
 };
 
 export const fetchRequirementDetails = async (
     ids: string[],
 ): Promise<Record<string, ProcessRequirement>> => {
     const entries = await Promise.all(
-        ids.map(async (id): Promise<[string, ProcessRequirement] | null> => {
-            try {
-                // The graph-scoped route: the one an applicant may read through.
-                const url = arches.urls.api_process_requirements(id);
-                const json = await apiFetchJson<ProcessRequirement>(url);
-                return [id, json];
-            } catch (error) {
-                notifyError('Failed to load requirement', error);
-                return null;
-            }
+        ids.map(async (id): Promise<[string, ProcessRequirement]> => {
+            // The graph-scoped route: the one an applicant may read through.
+            const url = arches.urls.api_process_requirements(id);
+            return [id, await apiFetchJson<ProcessRequirement>(url)];
         }),
     );
-    return Object.fromEntries(entries.filter((entry) => entry !== null));
+    return Object.fromEntries(entries);
 };
 
 export const fetchPermitDetails = async (

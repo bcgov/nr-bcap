@@ -23,7 +23,8 @@ import type { ExternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
-import { notifyError } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 const { $gettext } = useGettext();
 const router = useRouter();
@@ -70,9 +71,11 @@ const dashboardTabs = [
 ];
 
 const isLoading = ref(true);
+const loadError = ref('');
 
 const loadDashboardData = async () => {
     isLoading.value = true;
+    loadError.value = '';
     try {
         const [draftsData, companyDraftsData, projectsData, companyData] =
             await Promise.all([
@@ -88,7 +91,7 @@ const loadDashboardData = async () => {
         cards.companyProjects = companyData;
         ui.lastUpdated = new Date();
     } catch (error) {
-        notifyError('Failed to load dashboard', error);
+        loadError.value = inlineMessage(error);
     } finally {
         isLoading.value = false;
     }
@@ -277,6 +280,12 @@ const openResourceReport = (resourceId: string) => {
                 />
                 <p>Loading submissions...</p>
             </div>
+
+            <InlineError
+                v-else-if="loadError"
+                title="Your submissions could not be loaded."
+                :detail="loadError"
+            />
 
             <div
                 v-else

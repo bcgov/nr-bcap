@@ -14,7 +14,8 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import type { InternalDashboardCard } from '@/bcap/client/types.gen.ts';
 import { buildModuleSummary } from '@/bcap/apps/Permit/moduleSummary.ts';
-import { notifyError } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 const currentRoute = useRoute();
 const router = useRouter();
@@ -117,6 +118,7 @@ const initialTab = internalTabs.some((tab) => tab.value === savedTab)
 const state = reactive({
     rawProjects: [] as ProjectData[],
     isLoading: true,
+    loadError: '',
     currentFilter: initialTab,
     currentSearch: '',
     lastUpdateDate: new Date(),
@@ -141,6 +143,7 @@ watch(
 
 const loadData = async () => {
     state.isLoading = true;
+    state.loadError = '';
     try {
         const status =
             state.currentFilter === 'ALL' ? undefined : state.currentFilter;
@@ -154,7 +157,7 @@ const loadData = async () => {
         state.rawProjects = response.map(mapToDashboardCard);
         state.lastUpdateDate = new Date();
     } catch (error) {
-        notifyError('Failed to load dashboard', error);
+        state.loadError = inlineMessage(error);
     } finally {
         state.isLoading = false;
     }
@@ -278,6 +281,12 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 <p>Loading projects...</p>
             </div>
 
+            <InlineError
+                v-else-if="state.loadError"
+                title="The dashboard could not be loaded."
+                :detail="state.loadError"
+            />
+
             <div
                 v-else
                 class="dash-row"
@@ -295,7 +304,11 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
             </div>
 
             <div
-                v-if="!state.isLoading && displayedProjects.length === 0"
+                v-if="
+                    !state.isLoading &&
+                    !state.loadError &&
+                    displayedProjects.length === 0
+                "
                 class="empty-state"
             >
                 <p>No projects match your search criteria.</p>

@@ -17,6 +17,7 @@ import {
 } from '@/bcgov_arches_common/constants.ts';
 
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import { fetchUser } from '@/bcgov_arches_common/api.ts';
 
 import type { Ref } from 'vue';
@@ -41,7 +42,7 @@ const loadUser = async (): Promise<User | null> => {
     try {
         return await fetchUser();
     } catch (error) {
-        console.error('Failed to load the current user:', error);
+        notifyError('Failed to load the current user', error);
         return null;
     }
 };
@@ -53,13 +54,14 @@ router.beforeEach(async (to) => {
     );
     const loginNeeded = requiresAuthentication && user?.username === ANONYMOUS;
     if (user && !loginNeeded) return true;
-    if (to.name !== routeNames.home) {
-        toast.add({
-            severity: ERROR,
-            life: DEFAULT_ERROR_TOAST_LIFE,
-            summary: $gettext('Login required.'),
-        });
-    }
+    // Already heading home: redirecting there again re-enters this guard, which
+    // refetches the user and fails the same way.
+    if (to.name === routeNames.home) return true;
+    toast.add({
+        severity: ERROR,
+        life: DEFAULT_ERROR_TOAST_LIFE,
+        summary: $gettext('Login required.'),
+    });
     // TODO: send to routeNames.login once that route is configured.
     return { name: routeNames.home };
 });

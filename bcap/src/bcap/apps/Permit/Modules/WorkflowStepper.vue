@@ -91,6 +91,7 @@ const state = reactive({
     finalizedResourceData: null as PermitApplication | null,
     // Shown under the header, beside the button that failed, until the next try.
     submissionError: '',
+    loadError: '',
 });
 
 // The rail's steps: the caller's, then the two this shell always appends.
@@ -261,7 +262,7 @@ onMounted(async () => {
         }
         state.isDataLoaded = true;
     } catch (error) {
-        notifyError('Failed to load draft', error);
+        state.loadError = inlineMessage(error);
         state.isDataLoaded = true;
     }
 });
@@ -282,8 +283,15 @@ onMounted(async () => {
             <ProgressSpinner />
         </div>
 
+        <InlineError
+            v-else-if="state.loadError"
+            title="Your draft could not be loaded."
+            :detail="state.loadError"
+            class="submission-error"
+        />
+
         <Stepper
-            v-if="state.isDataLoaded"
+            v-if="state.isDataLoaded && !state.loadError"
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"
@@ -356,6 +364,13 @@ onMounted(async () => {
                         v-if="state.submissionError"
                         title="Your filing could not be submitted."
                         :detail="state.submissionError"
+                        class="submission-error"
+                    />
+
+                    <InlineError
+                        v-else-if="draft.saveError"
+                        title="Your draft could not be saved."
+                        :detail="draft.saveError"
                         class="submission-error"
                     />
                     <StepPanels class="bc-step-card">

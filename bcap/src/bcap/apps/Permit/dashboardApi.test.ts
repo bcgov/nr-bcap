@@ -110,22 +110,20 @@ describe('getInternalDashboardData', () => {
         expect(result).toEqual([]);
     });
 
-    it('returns empty array on HTTP error', async () => {
+    it('throws on HTTP error, for the page to report inline', async () => {
         vi.stubGlobal('fetch', mockFetchError(500, 'Internal Server Error'));
 
-        const result = await getInternalDashboardData();
-
-        expect(result).toEqual([]);
+        await expect(getInternalDashboardData()).rejects.toThrow();
     });
 
-    it('returns empty array when fetch throws', async () => {
+    it('throws when fetch throws', async () => {
         vi.stubGlobal(
             'fetch',
             vi.fn().mockRejectedValue(new Error('Network failure')),
         );
 
-        const result = await getInternalDashboardData();
-
-        expect(result).toEqual([]);
+        await expect(getInternalDashboardData()).rejects.toThrow(
+            'Network failure',
+        );
     });
 });

@@ -131,3 +131,40 @@ describe('draft store step tracking', () => {
         expect(store.currentStep).toBe('Details');
     });
 });
+
+// Autosave has no caller waiting on it, so save() reports into state for the
+// workflow shell to show rather than rejecting into nothing.
+describe('draft store save', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        vi.mocked(createDraft).mockResolvedValue({ id: 'new-1' } as never);
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    it('reports a failed save and clears it on the next one', async () => {
+        const store = useDraftStore();
+        store.initDraft('investigation');
+        store.loadDraft('draft-7', {});
+
+        vi.mocked(saveDraftFieldToBackend).mockRejectedValueOnce(
+            new Error('boom'),
+        );
+        await store.save();
+        expect(store.saveError).toContain('Your draft could not be saved.');
+
+        vi.mocked(saveDraftFieldToBackend).mockResolvedValueOnce(undefined);
+        await store.save();
+        expect(store.saveError).toBe('');
+    });
+
+    it('reports a draft that could not be created', async () => {
+        const store = useDraftStore();
+        store.initDraft('investigation');
+        vi.mocked(createDraft).mockRejectedValueOnce(new Error('boom'));
+
+        await store.save();
+
+        expect(store.saveError).toContain('Your draft could not be saved.');
+        expect(saveDraftFieldToBackend).not.toHaveBeenCalled();
+    });
+});

@@ -5,27 +5,9 @@ import {
     createDraft,
     saveDraftFieldToBackend,
 } from '@/bcap/apps/Permit/api.ts';
-import { notifyError } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
-
-const debouncedSave = debounce(
-    async (
-        draftData: ArchesDraftData,
-        graphSlug: string,
-        ensureDraftId: () => Promise<string>,
-        currentStep: string,
-    ) => {
-        try {
-            const id = await ensureDraftId();
-            if (id)
-                saveDraftFieldToBackend(id, graphSlug, draftData, currentStep);
-        } catch (error) {
-            notifyError('Your draft could not be saved', error);
-        }
-    },
-    1000,
-);
 
 // Write newValue into the nested aliased_data path, creating intermediate tiles
 // and arrays as needed.
@@ -90,9 +72,15 @@ export const useDraftStore = defineStore('draft', () => {
         graphSlug: '',
         parentPermitId: null as string | null,
         currentStep: '',
+        // Autosave runs while the user types, so a failure has no button to sit
+        // beside; the workflow shell reads this and shows it under its header.
+        saveError: '',
     });
 
     let draftCreation: Promise<string> | null = null;
+
+    // Debounced here rather than at module scope so it can report into state.
+    const debouncedSave = debounce(() => save(), 1000);
 
     function initDraft(slug: string, parent: string | null = null) {
         state.graphSlug = slug;
@@ -136,6 +124,22 @@ export const useDraftStore = defineStore('draft', () => {
         return draftCreation;
     }
 
+    async function save() {
+        try {
+            const id = await ensureDraftId();
+            if (!id) return;
+            await saveDraftFieldToBackend(
+                id,
+                state.graphSlug,
+                state.draftData,
+                state.currentStep,
+            );
+            state.saveError = '';
+        } catch (error) {
+            state.saveError = `Your draft could not be saved. ${inlineMessage(error)}`;
+        }
+    }
+
     async function saveNow() {
         debouncedSave.cancel();
         if (!state.draftId && !Object.keys(state.draftData).length) return;
@@ -151,13 +155,7 @@ export const useDraftStore = defineStore('draft', () => {
 
     function setCurrentStep(step: string) {
         state.currentStep = step;
-        if (state.draftId)
-            debouncedSave(
-                state.draftData,
-                state.graphSlug,
-                ensureDraftId,
-                step,
-            );
+        if (state.draftId) debouncedSave();
     }
 
     function updateValue(
@@ -171,12 +169,7 @@ export const useDraftStore = defineStore('draft', () => {
             attribute_name,
             node_group_alias,
         );
-        debouncedSave(
-            state.draftData,
-            state.graphSlug,
-            ensureDraftId,
-            state.currentStep,
-        );
+        debouncedSave();
     }
 
     return {
@@ -184,6 +177,7 @@ export const useDraftStore = defineStore('draft', () => {
         initDraft,
         loadDraft,
         ensureDraftId,
+        save,
         saveNow,
         setCurrentStep,
         updateValue,

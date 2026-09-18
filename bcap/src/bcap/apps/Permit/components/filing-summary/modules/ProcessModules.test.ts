@@ -3,7 +3,11 @@ import { mount, flushPromises } from '@vue/test-utils';
 import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen.ts';
 
 const notifyError = vi.hoisted(() => vi.fn());
-vi.mock('@/bcap/notify.ts', () => ({ notifyError }));
+// Spread the real module: the error paths below use its inlineMessage.
+vi.mock('@/bcap/notify.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/notify.ts')>()),
+    notifyError,
+}));
 
 const routerMock = vi.hoisted(() => ({
     query: {} as Record<string, string>,
@@ -25,6 +29,8 @@ const api = vi.hoisted(() => ({
     setRequirementSatisfied: vi.fn(),
     setRequirementAssignee: vi.fn(),
     fetchAssignableContributors: vi.fn().mockResolvedValue([]),
+    // The message store badges unread counts per module on mount.
+    getSubmissionModulesUnreadCounts: vi.fn().mockResolvedValue([]),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
@@ -121,6 +127,7 @@ beforeEach(() => {
     // The reset above drops the hoisted default; without a list the staff
     // assignee control renders nothing and takes its requirement row with it.
     api.fetchAssignableContributors.mockResolvedValue([]);
+    api.getSubmissionModulesUnreadCounts.mockResolvedValue([]);
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -227,6 +234,42 @@ describe('ProcessModules requirement detail loading', () => {
             'is-complete',
         );
         expect(wrapper.find('.requirement-status').text()).toBe('Complete');
+    });
+
+    // Requirement details and unread badges share one slot above the accordion.
+    it('reports a failed detail load in the one error slot', async () => {
+        api.fetchRequirementDetails.mockRejectedValue(new Error('boom'));
+        const wrapper = mountModules({
+            modules: [
+                moduleTile({
+                    tileid: 'm',
+                    name: 'Mod',
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-1', order: 1 },
+                    ],
+                }),
+            ],
+        });
+        await flushPromises();
+
+        expect(wrapper.find('.inline-error').text()).toContain(
+            'Some module details could not be loaded.',
+        );
+    });
+
+    it('reports a failed unread count in that same slot', async () => {
+        api.getSubmissionModulesUnreadCounts.mockRejectedValue(
+            new Error('boom'),
+        );
+        const wrapper = mountModules({
+            modules: [moduleTile({ tileid: 'm', name: 'Mod' })],
+        });
+        await flushPromises();
+
+        expect(wrapper.findAll('.inline-error')).toHaveLength(1);
+        expect(wrapper.find('.inline-error').text()).toContain(
+            'Unread message counts could not be loaded.',
+        );
     });
 
     it('does not fetch when no requirement has a resource id', async () => {

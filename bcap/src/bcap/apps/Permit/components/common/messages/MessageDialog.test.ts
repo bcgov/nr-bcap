@@ -322,6 +322,39 @@ describe('MessageDialog.vue', () => {
         expect(wrapper.find('.mock-dialog').exists()).toBe(true);
     });
 
+    // The store reports what it loaded, the dialog what it did itself; both go
+    // to the one slot at the top.
+    it('shows a failed thread load in the slot at the top', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getThreadsForResource).mockRejectedValue(new Error('boom'));
+
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'Messages could not be loaded.',
+        );
+    });
+
+    it('shows a failed recipient load in that same slot', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getContributorsForResources).mockRejectedValue(
+            new Error('boom'),
+        );
+
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.findAll('.inline-error')).toHaveLength(1);
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'The list of recipients could not be loaded.',
+        );
+    });
+
     it('marks unread messages as read when an unread thread is selected', async () => {
         withThreads([
             {

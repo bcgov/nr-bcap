@@ -16,8 +16,7 @@ import {
     issueRegistrationLink,
 } from '@/bcap/apps/Admin/api.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
-import { TRY_AGAIN } from '@/bcap/api.ts';
-import { userMessage } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 
 import type { InlineErrorData } from '@/bcap/notify.ts';
 import type {
@@ -160,8 +159,7 @@ const searchContributors = debounce(async (event: { value: string }) => {
 }, 250);
 
 function showError(title: string, error: unknown) {
-    console.error(title, error);
-    state.error = { title, detail: userMessage(error) ?? TRY_AGAIN };
+    state.error = { title, detail: inlineMessage(error) };
 }
 </script>
 

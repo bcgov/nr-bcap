@@ -13,8 +13,7 @@ import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messag
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
-import { TRY_AGAIN } from '@/bcap/api.ts';
-import { notifyError, userMessage } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
@@ -48,6 +47,7 @@ const state = reactive({
     selectedTopicValue: [] as ReferenceAliasedNodeDataWritable['node_value'],
     selectedThreadId: 'new',
     files: [] as File[],
+    error: '',
     // Shown beside the Send button, where the user is looking, until they
     // change the attachments, switch threads or try again.
     sendError: '',
@@ -57,6 +57,10 @@ watch(
     () => [state.files, state.selectedThreadId, state.visible],
     () => (state.sendError = ''),
 );
+
+// One slot at the top for whatever failed to load; sending reports itself at
+// the bottom, next to the button that triggered it.
+const dialogError = computed(() => state.error || messageStore.error);
 
 const messageInput = ref();
 const threadContainer = ref<HTMLElement | null>(null);
@@ -104,13 +108,14 @@ const showTab = async (archived: boolean) => {
 
 const loadRecipients = async () => {
     state.isLoadingRecipients = true;
+    state.error = '';
     try {
         state.recipients = await getContributorsForResources(props.resourceId);
         // A module resource may have no contributors of its own; the message
         // still files against it, unaddressed.
         state.selectedRecipient = state.recipients[0]?.value ?? '';
     } catch (error) {
-        notifyError('Failed to load recipients', error);
+        state.error = `The list of recipients could not be loaded. ${inlineMessage(error)}`;
         state.recipients = [];
         state.selectedRecipient = '';
     } finally {
@@ -190,8 +195,7 @@ const submitMessage = async () => {
 
         closeDialog();
     } catch (error) {
-        console.error('Your message could not be sent:', error);
-        state.sendError = userMessage(error) ?? TRY_AGAIN;
+        state.sendError = inlineMessage(error);
     } finally {
         state.isSubmitting = false;
     }
@@ -249,7 +253,7 @@ onMounted(() => {
             root: { class: 'message-dialog' },
             header: { class: 'message-dialog-header' },
             closeButton: { class: 'message-dialog-close' },
-            content: { style: { padding: '0', overflow: 'hidden' } },
+            content: { class: 'message-dialog-content' },
         }"
     >
         <template #header>
@@ -265,6 +269,13 @@ onMounted(() => {
         <template #closeicon>
             <i class="fa-solid fa-xmark custom-close-icon"></i>
         </template>
+
+        <InlineError
+            v-if="dialogError"
+            title="Something went wrong."
+            :detail="dialogError"
+            class="dialog-error"
+        />
 
         <div class="dialog-body-split">
             <MessageThreadSidebar
@@ -586,9 +597,18 @@ onMounted(() => {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
+.message-dialog-content {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: min(80vh, 760px);
+}
+
 .dialog-body-split {
     display: flex;
-    height: min(80vh, 760px);
+    flex: 1;
+    min-height: 0;
     background-color: #f8f9fa;
 }
 
@@ -742,6 +762,10 @@ onMounted(() => {
 .send-error {
     flex-basis: 100%;
     margin: 0;
+}
+
+.dialog-error {
+    margin: 0.75rem 1.5rem;
 }
 
 .send-btn,
