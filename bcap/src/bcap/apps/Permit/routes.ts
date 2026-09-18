@@ -33,6 +33,15 @@ const routes = [
         },
     },
     {
+        path: arches.urls.plugin('internal-permit-dashboard/permit/:id'),
+        name: 'internalPermitDetails',
+        component: () =>
+            import('@/bcap/apps/Permit/components/filing-summary/PermitDetails.vue'),
+        meta: {
+            requiresInternal: true,
+        },
+    },
+    {
         path: arches.urls.plugin('submissions/moduleReview'),
         name: 'moduleReview',
         component: () =>
@@ -136,6 +145,7 @@ const routes = [
 type ExternalPermitRouteNamesType = RouteNamesType & {
     home: string;
     permitDetails: string;
+    internalPermitDetails: string;
     checklist: string;
     editchecklist: string;
     moduleReview: string;
@@ -153,6 +163,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     home: 'root',
     login: '',
     permitDetails: 'permitDetails',
+    internalPermitDetails: 'internalPermitDetails',
     checklist: 'Checklist',
     editchecklist: 'EditChecklist',
     moduleReview: 'moduleReview',
