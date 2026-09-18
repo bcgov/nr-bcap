@@ -236,14 +236,11 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
         window.open(`/bcap/resource/${item.id}`, '_blank');
         return;
     }
-    // Staff open the permit view; isStaff enables the module edit controls.
     // ?requirement is the one the card is showing, so the summary opens on it.
     router.push({
-        name: routeNames.permitDetails,
+        name: routeNames.internalPermitDetails,
         params: { id: item.id },
-        query: item.requirementId
-            ? { requirement: item.requirementId, staff: 'true' }
-            : { staff: 'true' },
+        query: item.requirementId ? { requirement: item.requirementId } : {},
     });
 };
 </script>

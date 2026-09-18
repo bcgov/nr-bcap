@@ -508,14 +508,16 @@ export const createBcapMessage = async ({
     files,
 }: NewBcapMessage) => {
     // A reply carries no subject, type or recipient: the service copies the
-    // thread's onto it. The nodes are required by the generated writable type,
-    // so they travel as null rather than being left out.
+    // thread's onto it, and it sets the author from the caller. The nodes are
+    // required by the generated writable type, so they travel as null rather
+    // than being left out.
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
                 message_content: {
                     node_value: localized(messageText),
                 },
+                message_author: null,
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
                     node_value: [{ resourceId }],
@@ -686,6 +688,7 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
             message_content: {
                 aliased_data: {
                     message_content: null,
+                    message_author: null,
                     resource_context: null,
                     message_subject: null,
                     message_type: null,

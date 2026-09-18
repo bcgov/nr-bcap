@@ -7,6 +7,7 @@ from rest_framework.serializers import (
 )
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
+from bcap.permissions.groups import is_internal_user
 from bcap.services.dashboard.dashboard_types import (
     InternalDashboardPage,
     DashboardFilter,
@@ -21,9 +22,16 @@ class UserProfileResponseSerializer(Serializer):
     first_name = CharField(allow_blank=True)
     last_name = CharField(allow_blank=True)
     groups = SerializerMethodField()
+    is_internal = SerializerMethodField()
 
     def get_groups(self, user) -> list[str]:
         return [group.name for group in user.groups.all()]
+
+    def get_is_internal(self, user) -> bool:
+        """Whether the client should show the Archaeology Branch view. Answered here
+        rather than from the group list, so the superuser case and the name of
+        the group that marks staff stay in one place."""
+        return is_internal_user(user)
 
 
 class InternalDashboardFilterSerializer(DataclassSerializer):

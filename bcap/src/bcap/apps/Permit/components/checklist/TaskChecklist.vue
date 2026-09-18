@@ -32,11 +32,7 @@ const requirementName = computed(
 );
 
 const crumbs = computed(() =>
-    permitCrumbs(
-        route.query.permit,
-        route.query.staff,
-        requirementName.value || 'Checklist',
-    ),
+    permitCrumbs(route.query.permit, requirementName.value || 'Checklist'),
 );
 
 const backLink = computed(() => crumbs.value[0]?.to ?? '');
