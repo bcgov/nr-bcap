@@ -44,7 +44,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageContributorsView,
     BcapMessageCreateView,
     BcapMessageDetailView,
-    BcapMessageModuleUnreadView,
+    BcapMessageModuleUnresolvedView,
     BcapMessageThreadsView,
     BcapMessageThreadView,
 )
@@ -184,9 +184,9 @@ documented_api_patterns = [
     ),
     # Permit App will be renamed to Submission
     path(
-        "api/bcap_message/submission/<uuid:submission_id>/unread-by-module",
-        BcapMessageModuleUnreadView.as_view(),
-        name="bcap_message_module_unread",
+        "api/bcap_message/submission/<uuid:submission_id>/unresolved-by-module",
+        BcapMessageModuleUnresolvedView.as_view(),
+        name="bcap_message_module_unresolved",
     ),
     path(
         "api/bcap_message/thread/<uuid:thread_id>/messages",

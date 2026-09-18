@@ -40,6 +40,8 @@ const urls: Record<string, unknown> = {
         `/bcap/api/bcap_message/resource/${resourceId}/threads`,
     bcap_message_thread_messages: (threadId: string) =>
         `/bcap/api/bcap_message/thread/${threadId}`,
+    bcap_message_module_unresolved: (submissionId: string) =>
+        `/bcap/api/bcap_message/submission/${submissionId}/unresolved-by-module`,
     dashboard: '/bcap/api/dashboard',
     dashboard_external: '/bcap/api/dashboard/external',
     module_requirement: (
@@ -72,8 +74,8 @@ beforeAll(() => {
 
     vi.mock('vue3-gettext', () => ({
         useGettext: () => ({
-            $gettext: (text: string) => (text)
-        })
+            $gettext: (text: string) => text,
+        }),
     }));
 
     // The real GenericWidget needs an active pinia and a live

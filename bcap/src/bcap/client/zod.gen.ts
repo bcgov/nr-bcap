@@ -1500,14 +1500,15 @@ export const zArchaeologicalSiteUnprotectedAreasTile = z.object({
 
 export const zBcapMessageMessageContentAliasedData = z.object({
     is_internal: zBooleanAliasedNodeData.nullish(),
-    message_author: zResourceInstanceAliasedNodeData.nullish(),
+    message_author: zResourceInstanceAliasedNodeData.nullable(),
     message_content: zStringAliasedNodeData.nullable(),
     message_creation_date: zDateAliasedNodeData.nullish(),
     message_subject: zStringAliasedNodeData.nullable(),
     message_type: zReferenceAliasedNodeDataRequired.nullable(),
     recipient: zResourceInstanceAliasedNodeData.nullable(),
     resource_context: zResourceInstanceAliasedNodeData.nullable(),
-    message_read_date: zDateAliasedNodeData.nullish(),
+    thread_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
+    thread_resolved_date: zDateAliasedNodeData.nullish(),
     attachments: zFileListAliasedNodeData.nullish()
 });
 
@@ -5985,14 +5986,15 @@ export const zArchaeologicalSiteUnprotectedAreasTileWritable = z.object({
 
 export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     is_internal: zBooleanAliasedNodeDataWritable.nullish(),
-    message_author: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    message_author: zResourceInstanceAliasedNodeDataWritable.nullable(),
     message_content: zStringAliasedNodeDataWritable.nullable(),
     message_creation_date: zDateAliasedNodeDataWritable.nullish(),
     message_subject: zStringAliasedNodeDataWritable.nullable(),
     message_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     recipient: zResourceInstanceAliasedNodeDataWritable.nullable(),
     resource_context: zResourceInstanceAliasedNodeDataWritable.nullable(),
-    message_read_date: zDateAliasedNodeDataWritable.nullish(),
+    thread_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    thread_resolved_date: zDateAliasedNodeDataWritable.nullish(),
     attachments: zFileListAliasedNodeDataWritable.nullish()
 });
 

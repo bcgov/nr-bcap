@@ -18,15 +18,13 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
-    ModuleUnreadSerializer,
-    ThreadMessageSerializer,
+    ModuleUnresolvedSerializer,
     ThreadRootSerializer,
     ThreadsQuerySerializer,
 )
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
 from bcap.services.message.bcap_message_service import (
     BcapMessageService,
-    InternalMessageToExternal,
     NoAuthorContributor,
 )
 from bcap.views.generated.bcap_message import (
@@ -61,7 +59,6 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
 
     permission_classes = [SubmitterOrInternal]
     pagination_class = ArchesLimitOffsetPagination
-    serializer_class = ThreadMessageSerializer
 
     def get_queryset(self):
         return BcapMessageService().thread_messages_query(
@@ -89,30 +86,31 @@ class BcapMessageCreateView(BcapMessageListView):
             raise ValidationError(
                 "No Contributor is linked to your account to author this message."
             )
-        except InternalMessageToExternal:
-            raise ValidationError(
-                "An internal message cannot be addressed to an external recipient."
-            )
         return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        """A reply resurfaces the thread for everyone party to it."""
+        """A reply reopens the thread and resurfaces it for everyone party to it."""
         super().perform_create(serializer)
-        BcapMessageService().unarchive_thread_for_all(serializer.instance.pk)
+        service = BcapMessageService()
+        service.reopen_thread(serializer.instance.pk)
+        service.unarchive_thread_for_all(serializer.instance.pk)
 
 
 @extend_schema(
-    tags=["External: bcap_message"], responses=ModuleUnreadSerializer(many=True)
+    tags=["External: bcap_message"], responses=ModuleUnresolvedSerializer(many=True)
 )
-class BcapMessageModuleUnreadView(APIView):
-    """GET the viewer's unread count per process_module of a submission, so the
-    module list badges unread without loading each module's threads."""
+class BcapMessageModuleUnresolvedView(APIView):
+    """GET the viewer's unresolved thread count per process_module of a
+    submission, so the module list badges them without loading each module's
+    threads."""
 
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
-        rows = BcapMessageService().unread_by_module(str(submission_id), request.user)
-        return Response(ModuleUnreadSerializer(rows, many=True).data)
+        rows = BcapMessageService().unresolved_by_module(
+            str(submission_id), request.user
+        )
+        return Response(ModuleUnresolvedSerializer(rows, many=True).data)
 
 
 @extend_schema(
@@ -121,7 +119,8 @@ class BcapMessageModuleUnreadView(APIView):
 )
 class BcapMessageContributorsView(APIView):
     """GET the contributors you can address a message to for a resource: the
-    login-linked contributors referenced on it plus its ministry assignees."""
+    login-linked contributors referenced on it, its ministry assignees, and the
+    Archaeology Branch; staff also get the proponent and their company."""
 
     permission_classes = [SubmitterOrInternal]
 
@@ -139,9 +138,8 @@ class BcapMessageDetailView(
 ):
     """GET or PATCH a single message, gated on the resource_context rather than
     owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
-    sets the read date (message_read_date in the body) and/or the caller's
-    personal archive of the thread (a top-level "archived" boolean), whichever
-    the body carries."""
+    resolves or reopens the thread for everyone ("resolved") and/or toggles the
+    caller's personal archive of it ("archived"), whichever the body carries."""
 
     permission_classes = [SubmitterOrInternal]
     http_method_names = ["get", "patch", "options"]
@@ -154,5 +152,5 @@ class BcapMessageDetailView(
 
     def update(self, request, *args, **kwargs):
         self.get_object()
-        BcapMessageService().apply_patch(request, self.kwargs["pk"], request.data)
+        BcapMessageService().apply_patch(request.user, self.kwargs["pk"], request.data)
         return Response(self.get_serializer(self.get_object()).data)

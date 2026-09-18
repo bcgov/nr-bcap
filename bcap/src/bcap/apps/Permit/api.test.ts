@@ -16,7 +16,8 @@ import {
     getThreadsForResource,
     getMessagesForThread,
     setThreadArchived,
-    markMessageAsRead,
+    setThreadResolved,
+    getSubmissionModulesUnresolvedCounts,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
 
@@ -399,14 +400,18 @@ describe('Permit API', () => {
     });
 
     describe('getThreadsForResource', () => {
-        const root = (id: string, subject: string, unread: number) => ({
+        const root = (
+            id: string,
+            subject: string,
+            extra: Record<string, unknown> = {},
+        ) => ({
             resourceinstanceid: id,
-            unread_count: unread,
             aliased_data: {
                 message_content: {
                     aliased_data: {
                         message_subject: { display_value: subject },
                         message_author: { display_value: 'Jane Doe' },
+                        ...extra,
                     },
                 },
             },
@@ -414,7 +419,7 @@ describe('Permit API', () => {
 
         it('builds thread stubs from roots without fetching messages', async () => {
             apiFetchJson.mockResolvedValue({
-                results: [root('t1', 'A question', 2)],
+                results: [root('t1', 'A question')],
             });
 
             const threads = await getThreadsForResource('res-1');
@@ -428,10 +433,33 @@ describe('Permit API', () => {
                     topic: 'A question',
                     startedBy: 'Jane Doe',
                     lastMessageDate: '',
-                    hasUnread: true,
-                    unreadCount: 2,
+                    isResolved: false,
+                    resolvedBy: '',
+                    isInternal: false,
                 },
             ]);
+        });
+
+        it("reads the thread's resolution and internal flag off its root", async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [
+                    root('t1', 'Closed', {
+                        thread_resolved_date: {
+                            node_value: '2026-02-01 12:00:00+00:00',
+                        },
+                        thread_resolved_by: { display_value: 'Sam Staff' },
+                        is_internal: { node_value: true },
+                    }),
+                ],
+            });
+
+            const [thread] = await getThreadsForResource('res-1');
+
+            expect(thread).toMatchObject({
+                isResolved: true,
+                resolvedBy: 'Sam Staff',
+                isInternal: true,
+            });
         });
 
         it('requests the archived list when asked', async () => {
@@ -444,7 +472,7 @@ describe('Permit API', () => {
             );
         });
 
-        it('defaults a missing unread_count to zero and not-unread', async () => {
+        it('treats a root without those nodes as open and shared', async () => {
             apiFetchJson.mockResolvedValue({
                 results: [
                     {
@@ -456,9 +484,23 @@ describe('Permit API', () => {
 
             const [thread] = await getThreadsForResource('res-1');
 
-            expect(thread.unreadCount).toBe(0);
-            expect(thread.hasUnread).toBe(false);
+            expect(thread.isResolved).toBe(false);
+            expect(thread.isInternal).toBe(false);
             expect(thread.topic).toBe('General Question');
+        });
+    });
+
+    describe('getSubmissionModulesUnresolvedCounts', () => {
+        it('reads the per-module unresolved counts', async () => {
+            const rows = [{ module_id: 'mod-a', unresolved_count: 2 }];
+            apiFetchJson.mockResolvedValue(rows);
+
+            await expect(
+                getSubmissionModulesUnresolvedCounts('sub-1'),
+            ).resolves.toEqual(rows);
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/bcap_message/submission/sub-1/unresolved-by-module',
+            );
         });
     });
 
@@ -468,10 +510,8 @@ describe('Permit API', () => {
             author: string,
             text: string,
             date: string,
-            unread = false,
         ) => ({
             resourceinstanceid: id,
-            is_unread: unread,
             aliased_data: {
                 message_content: {
                     aliased_data: {
@@ -488,7 +528,7 @@ describe('Permit API', () => {
         it('returns messages oldest-first and drops empty ones', async () => {
             apiFetchJson.mockResolvedValue({
                 results: [
-                    message('m2', 'Sam', 'Later', '2026-01-02T00:00:00Z', true),
+                    message('m2', 'Sam', 'Later', '2026-01-02T00:00:00Z'),
                     message('m1', 'Amy', 'Earlier', '2026-01-01T00:00:00Z'),
                     message('m3', 'Amy', '', '2026-01-03T00:00:00Z'),
                 ],
@@ -503,13 +543,8 @@ describe('Permit API', () => {
             expect(messages[0]).toMatchObject({
                 author: 'Amy',
                 text: 'Earlier',
-                isUnread: false,
             });
-            expect(messages[1]).toMatchObject({
-                author: 'Sam',
-                text: 'Later',
-                isUnread: true,
-            });
+            expect(messages[1]).toMatchObject({ author: 'Sam', text: 'Later' });
         });
     });
 
@@ -526,21 +561,16 @@ describe('Permit API', () => {
         });
     });
 
-    describe('markMessageAsRead', () => {
-        it('PATCHes the message with a read date', async () => {
+    describe('setThreadResolved', () => {
+        it('PATCHes the message with the resolved flag', async () => {
             apiFetch.mockResolvedValue(okResponse({}));
 
-            await markMessageAsRead('m1');
+            await setThreadResolved('m1', false);
 
-            expect(apiFetch).toHaveBeenCalledWith(
-                '/bcap/api/bcap_message/m1',
-                expect.objectContaining({ method: 'PATCH' }),
-            );
-            const body = apiFetch.mock.calls[0][1].body;
-            expect(
-                body.aliased_data.message_content.aliased_data.message_read_date
-                    .node_value,
-            ).toEqual(expect.any(String));
+            expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
+                method: 'PATCH',
+                body: { resolved: false },
+            });
         });
     });
 });

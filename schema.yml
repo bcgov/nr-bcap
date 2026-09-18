@@ -113,10 +113,10 @@ paths:
     get:
       operationId: api_bcap_message_retrieve
       description: |-
-        GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
-        in the body) and/or the caller's personal archive of the thread (a top-level
-        "archived" boolean), whichever the body carries.
+        GET or PATCH a single message, gated on the resource_context rather than
+        owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
+        resolves or reopens the thread for everyone ("resolved") and/or toggles the
+        caller's personal archive of it ("archived"), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -138,10 +138,10 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        GET or PATCH a single message, both gated like create (edit access to the
-        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
-        in the body) and/or the caller's personal archive of the thread (a top-level
-        "archived" boolean), whichever the body carries.
+        GET or PATCH a single message, gated on the resource_context rather than
+        owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
+        resolves or reopens the thread for everyone ("resolved") and/or toggles the
+        caller's personal archive of it ("archived"), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -176,8 +176,8 @@ paths:
       operationId: api_bcap_message_resource_contributors_list
       description: |-
         GET the contributors you can address a message to for a resource: the
-        login-linked contributors referenced on it plus its ministry assignees.
-        Gated on edit access to the resource, like posting a message about it.
+        login-linked contributors referenced on it, its ministry assignees, and the
+        Archaeology Branch; staff also get the proponent and their company.
       parameters:
       - in: path
         name: resource_id
@@ -240,13 +240,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedThreadRootList'
           description: ''
-  /bcap/api/bcap_message/submission/{submission_id}/unread-by-module:
+  /bcap/api/bcap_message/submission/{submission_id}/unresolved-by-module:
     get:
-      operationId: api_bcap_message_submission_unread_by_module_list
+      operationId: api_bcap_message_submission_unresolved_by_module_list
       description: |-
-        GET the viewer's unread count per process_module of a submission, so the
-        module list badges unread without loading each module's threads. Counts are
-        the caller's own, so IsAuthenticated leaks nothing.
+        GET the viewer's unresolved thread count per process_module of a
+        submission, so the module list badges them without loading each module's
+        threads.
       parameters:
       - in: path
         name: submission_id
@@ -265,7 +265,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ModuleUnread'
+                  $ref: '#/components/schemas/ModuleUnresolved'
           description: ''
   /bcap/api/bcap_message/thread/{thread_id}/messages:
     get:
@@ -301,7 +301,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedThreadMessageList'
+                $ref: '#/components/schemas/PaginatedBcapMessageList'
           description: ''
   /bcap/api/contributor:
     get:
@@ -406,6 +406,13 @@ paths:
         The applicant-facing dashboard: cards for the requesting user's own and
         their associated companies' permit applications (and their drafts), scoped by
         created-by.
+
+        The gate only says who may ask: isolation between applicants is the
+        service's queryset filter alone, so a query added without it leaks.
+
+        TODO: staff are not widened here the way they are on the permit routes --
+        the filter treats them as an applicant, so they see only what they filed
+        themselves. Temporary, pending the decision on what staff should see here.
       parameters:
       - in: query
         name: limit
@@ -984,7 +991,8 @@ paths:
     get:
       operationId: api_permit_application_retrieve
       description: |-
-        GET/PATCH a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles, for the applicant
+        filing it as much as for the staff reviewing it.
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
@@ -1009,7 +1017,8 @@ paths:
     patch:
       operationId: api_permit_application_partial_update
       description: |-
-        GET/PATCH a Permit Application and its nested tiles.
+        GET/PATCH a Permit Application and its nested tiles, for the applicant
+        filing it as much as for the staff reviewing it.
 
         The update that first sets the submission date is the submission: it assigns
         the application id and attaches the requirement working copies.
@@ -1137,7 +1146,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1180,7 +1189,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       security:
       - cookieAuth: []
       responses:
@@ -1210,7 +1219,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1250,7 +1259,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1342,8 +1351,8 @@ paths:
     get:
       operationId: api_process_requirement_list
       description: |-
-        Collection endpoint: superusers and Resource Editors see every Process
-        Requirement; other users see only the ones they created.
+        Collection endpoint: branch staff see every Process Requirement; an
+        applicant sees the ones on the permits they or their company filed.
       parameters:
       - name: limit
         required: false
@@ -1372,8 +1381,12 @@ paths:
     get:
       operationId: api_process_requirement_retrieve
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1395,8 +1408,12 @@ paths:
     put:
       operationId: api_process_requirement_update
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1429,8 +1446,12 @@ paths:
     patch:
       operationId: api_process_requirement_partial_update
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1463,8 +1484,12 @@ paths:
     delete:
       operationId: api_process_requirement_destroy
       description: |-
-        Detail endpoint: superusers and Resource Editors may read any instance;
-        other users requesting one they don't own get a 404.
+        Detail endpoint: ministry staff read and write any instance; an applicant
+        may read a requirement on a permit application they can reach, and gets a 403
+        on one they cannot. Writing is staff-only.
+
+        No owner mixin: the creator filter would hide the working copies made for an
+        applicant by someone else, and the queryset answers the access question anyway.
       parameters:
       - in: path
         name: id
@@ -1495,7 +1520,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1527,7 +1552,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - 'External: process_requirement'
+      - 'Internal: process_requirement'
       requestBody:
         content:
           application/json:
@@ -1946,7 +1971,6 @@ paths:
       - 'External: user_profile'
       security:
       - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -5400,7 +5424,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        message_read_date:
+        thread_resolved_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        thread_resolved_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
@@ -5410,6 +5438,7 @@ components:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
           nullable: true
       required:
+      - message_author
       - message_content
       - message_subject
       - message_type
@@ -6429,10 +6458,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
-        unread_messages:
+        unresolved_messages:
           type: integer
-          description: Count of the application's BCAP messages not yet read for the
-            user or group.
+          description: Count of the application's unresolved BCAP message threads
+            the user can see.
         module_progress:
           $ref: '#/components/schemas/ModuleProgress'
       required:
@@ -7677,10 +7706,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
-        unread_messages:
+        unresolved_messages:
           type: integer
-          description: Count of the permit's BCAP messages not yet read for the user
-            or group.
+          description: Count of the permit's unresolved BCAP message threads the user
+            can see.
         module_progress:
           $ref: '#/components/schemas/ModuleProgress'
       required:
@@ -9449,16 +9478,16 @@ components:
         total:
           type: integer
           description: How many modules the permit has.
-    ModuleUnread:
+    ModuleUnresolved:
       type: object
       properties:
         module_id:
           type: string
-        unread_count:
+        unresolved_count:
           type: integer
       required:
       - module_id
-      - unread_count
+      - unresolved_count
     NewContributor:
       type: object
       description: |-
@@ -10044,6 +10073,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArchaeologicalSite'
+    PaginatedBcapMessageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BcapMessage'
     PaginatedContributorList:
       type: object
       required:
@@ -10343,29 +10395,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SiteVisit'
-    PaginatedThreadMessageList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThreadMessage'
     PaginatedThreadRootList:
       type: object
       required:
@@ -10391,62 +10420,16 @@ components:
             $ref: '#/components/schemas/ThreadRoot'
     PatchedBcapMessagePatch:
       type: object
+      description: |-
+        PATCH body schema: commands on the message's thread rather than node
+        edits, since both land on the thread root, not on the message.
       properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
         archived:
           type: boolean
           description: Toggle the caller's personal archive of the thread.
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
+        resolved:
+          type: boolean
+          description: Resolve or reopen the thread for everyone party to it.
     PatchedChecklistPatch:
       type: object
       description: |-
@@ -15834,74 +15817,6 @@ components:
           readOnly: true
       required:
       - node_value
-    ThreadMessage:
-      type: object
-      properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
-        is_unread:
-          type: boolean
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
-      required:
-      - createdtime
-      - descriptors
-      - graph_has_different_publication
-      - graph_publication
-      - is_unread
-      - legacyid
-      - name
-      - principaluser
-      - resource_instance_lifecycle_state
     ThreadRoot:
       type: object
       properties:
@@ -15913,9 +15828,6 @@ components:
           $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
         graph_has_different_publication:
           type: boolean
-          readOnly: true
-        unread_count:
-          type: integer
           readOnly: true
         last_message_date:
           type: string
@@ -15974,7 +15886,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-      - unread_count
     UrlAliasedNodeData:
       type: object
       properties:

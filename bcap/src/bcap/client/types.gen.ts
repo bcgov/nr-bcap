@@ -1653,7 +1653,7 @@ export type BcapMessageArchivedByTile = {
 
 export type BcapMessageMessageContentAliasedData = {
     is_internal?: BooleanAliasedNodeData | null;
-    message_author?: ResourceInstanceAliasedNodeData | null;
+    message_author: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -1672,10 +1672,11 @@ export type BcapMessageMessageContentAliasedData = {
     message_type: ReferenceAliasedNodeDataRequired | null;
     recipient: ResourceInstanceAliasedNodeData | null;
     resource_context: ResourceInstanceAliasedNodeData | null;
+    thread_resolved_by?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter date
      */
-    message_read_date?: DateAliasedNodeData | null;
+    thread_resolved_date?: DateAliasedNodeData | null;
     attachments?: FileListAliasedNodeData | null;
 };
 
@@ -8319,7 +8320,7 @@ export type BcapMessageArchivedByTileWritable = {
 
 export type BcapMessageMessageContentAliasedDataWritable = {
     is_internal?: BooleanAliasedNodeDataWritable | null;
-    message_author?: ResourceInstanceAliasedNodeDataWritable | null;
+    message_author: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
@@ -8338,10 +8339,11 @@ export type BcapMessageMessageContentAliasedDataWritable = {
     message_type: ReferenceAliasedNodeDataRequiredWritable | null;
     recipient: ResourceInstanceAliasedNodeDataWritable | null;
     resource_context: ResourceInstanceAliasedNodeDataWritable | null;
+    thread_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
-    message_read_date?: DateAliasedNodeDataWritable | null;
+    thread_resolved_date?: DateAliasedNodeDataWritable | null;
     attachments?: FileListAliasedNodeDataWritable | null;
 };
 

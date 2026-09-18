@@ -25,14 +25,14 @@ import type {
     PatchedRequirementAssignee,
     DraftPayloadWritable,
     DraftRecord,
-    PatchedBcapMessagePatchWritable,
+    PatchedBcapMessagePatch,
     PatchedPermitApplicationWritable,
     PermitApplication,
     PermitApplicationResourceAliasedData,
     PermitApplicationApplicationAdminTileWritable,
     PermitApplicationProcessModuleTileWritable,
     ProcessRequirement,
-    ModuleUnread,
+    ModuleUnresolved,
 } from '@/bcap/client/types.gen.ts';
 import {
     zApiDashboardExternalRetrieveQuery,
@@ -508,11 +508,13 @@ export const createBcapMessage = async ({
     files,
 }: NewBcapMessage) => {
     // A reply carries no subject, type or recipient: the service copies the
-    // thread's onto it. The nodes are required by the generated writable type,
-    // so they travel as null rather than being left out.
+    // thread's onto it, and stamps the author on every message. The nodes are
+    // required by the generated writable type, so they travel as null rather
+    // than being left out.
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
+                message_author: null,
                 message_content: {
                     node_value: localized(messageText),
                 },
@@ -571,13 +573,20 @@ export const createBcapMessage = async ({
     });
 };
 
-export const setThreadArchived = async (messageId: string, archived: boolean) =>
+const patchThread = async (messageId: string, body: PatchedBcapMessagePatch) =>
     apiFetch(arches.urls.bcap_message_detail(messageId), {
         method: HttpMethod.Patch,
-        body: { archived },
+        body,
     });
 
-// One root per thread with an annotated unread_count; messages load on click.
+// Archive is the viewer's own; resolve is the thread's, for everyone on it.
+export const setThreadArchived = async (messageId: string, archived: boolean) =>
+    patchThread(messageId, { archived });
+
+export const setThreadResolved = async (messageId: string, resolved: boolean) =>
+    patchThread(messageId, { resolved });
+
+// One root per thread; it carries the thread's resolution and internal flag.
 export const getThreadsForResource = async (
     resourceId: string,
     archived = false,
@@ -595,8 +604,6 @@ export const getThreadsForResource = async (
         const subjectText =
             subject?.display_value || subject?.node_value?.en?.value || '';
         const typeLabel = content?.message_type?.display_value || '';
-        const unreadCount =
-            (root as { unread_count?: number }).unread_count ?? 0;
         return {
             id: root.resourceinstanceid ?? '',
             topic:
@@ -609,21 +616,22 @@ export const getThreadsForResource = async (
                 (root as { last_message_date?: string }).last_message_date ||
                 content?.message_creation_date?.node_value ||
                 '',
-            hasUnread: unreadCount > 0,
-            unreadCount,
+            isResolved: Boolean(content?.thread_resolved_date?.node_value),
+            resolvedBy: content?.thread_resolved_by?.display_value || '',
+            isInternal: Boolean(content?.is_internal?.node_value),
         };
     });
 };
 
-export const getSubmissionModulesUnreadCounts = async (
+export const getSubmissionModulesUnresolvedCounts = async (
     submissionId: string,
-): Promise<ModuleUnread[]> => {
-    return apiFetchJson<ModuleUnread[]>(
-        arches.urls.bcap_message_module_unread(submissionId),
+): Promise<ModuleUnresolved[]> => {
+    return apiFetchJson<ModuleUnresolved[]>(
+        arches.urls.bcap_message_module_unresolved(submissionId),
     );
 };
 
-// One thread's messages, oldest-first; is_unread is per-viewer.
+// One thread's messages, oldest-first.
 export const getMessagesForThread = async (
     threadId: string,
 ): Promise<FormattedMessage[]> => {
@@ -643,9 +651,6 @@ export const getMessagesForThread = async (
                     '',
                 // ISO timestamps, so string order is chronological order.
                 date: content?.message_creation_date?.node_value ?? '',
-                isUnread: Boolean(
-                    (message as { is_unread?: boolean }).is_unread,
-                ),
                 attachments: (content?.attachments?.node_value ?? [])
                     .filter((file) => file.url)
                     .map((file) => ({
@@ -676,30 +681,4 @@ export const getContributorsForResources = async (
         label: item.name || 'Unknown Contributor',
         value: item.id,
     }));
-};
-
-export const markMessageAsRead = async (messageId: string): Promise<void> => {
-    // The route reads only the read date; the null siblings are required by the
-    // generated writable type.
-    const body: PatchedBcapMessagePatchWritable = {
-        aliased_data: {
-            message_content: {
-                aliased_data: {
-                    message_content: null,
-                    resource_context: null,
-                    message_subject: null,
-                    message_type: null,
-                    recipient: null,
-                    message_read_date: {
-                        node_value: new Date().toISOString(),
-                    },
-                },
-            },
-        },
-    };
-
-    await apiFetch(arches.urls.bcap_message_detail(messageId), {
-        method: HttpMethod.Patch,
-        body,
-    });
 };

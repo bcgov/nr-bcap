@@ -73,11 +73,12 @@ class ExternalDashboardService(BaseDashboardService):
         queryset = self._filter_by_status(self.base_query(user), query.status, user)
         count, permits = self._page(queryset, query)
         hca_permits = self._hca_permits(permits)
-        unread = self._unread_counts_by_permit(permits, user.username)
+        unresolved = self._unresolved_counts_by_permit(permits, user.username)
         cards = []
         for permit in permits:
-            unread_count = unread.get(str(permit.pk), 0)
-            card = self._application_card(permit, hca_permits, unread_count)
+            card = self._application_card(
+                permit, hca_permits, unresolved.get(str(permit.pk), 0)
+            )
             card.module_progress = self._module_progress(permit)
             cards.append(card)
         return count, cards
@@ -97,7 +98,7 @@ class ExternalDashboardService(BaseDashboardService):
                 # former company doesn't come back on this tab.
                 return queryset.filter(principaluser=user)
 
-    def _application_card(self, permit, hca_permits, unread_messages=0):
+    def _application_card(self, permit, hca_permits, unresolved_messages=0):
         core = self._application_core(permit.aliased_data)
         hca = self._related_hca(core.related_permit_id, hca_permits)
         return ExternalDashboardCard(
@@ -119,7 +120,7 @@ class ExternalDashboardService(BaseDashboardService):
             permit_number=hca.number,
             urgency=0,
             priority_level=core.priority_level,
-            unread_messages=unread_messages,
+            unresolved_messages=unresolved_messages,
         )
 
     def _status_for(self, permit):
@@ -133,7 +134,7 @@ class ExternalDashboardService(BaseDashboardService):
         store = WorkflowDraftService()
         own_only = query.status == ExternalDashboardStatus.DRAFTS_CREATED_BY_ME
         count, drafts = self._page(store.base_query(user, own_only=own_only), query)
-        unread = BcapMessageService().unread_counts_by_context(
+        unresolved = BcapMessageService().unresolved_counts_by_context(
             {str(draft.pk) for draft in drafts}, user.username
         )
         parents = self._draft_parents(drafts)
@@ -141,7 +142,7 @@ class ExternalDashboardService(BaseDashboardService):
             self._draft_card(
                 draft,
                 user,
-                unread.get(str(draft.pk), 0),
+                unresolved.get(str(draft.pk), 0),
                 parents.get(WorkflowDraftService.parent_id(draft)),
             )
             for draft in drafts
@@ -173,7 +174,7 @@ class ExternalDashboardService(BaseDashboardService):
             for permit in permits
         }
 
-    def _draft_card(self, draft, user, unread_messages=0, parent=None):
+    def _draft_card(self, draft, user, unresolved_messages=0, parent=None):
         parent = parent or ApplicationCore()
         ident = self._group_aliased_data(
             {"aliased_data": WorkflowDraftService.blob(draft)},
@@ -202,5 +203,5 @@ class ExternalDashboardService(BaseDashboardService):
             ),
             submission_type=identification(self.PA.FILING_TYPE, parent.submission_type),
             organization=parent.organization,
-            unread_messages=unread_messages,
+            unresolved_messages=unresolved_messages,
         )

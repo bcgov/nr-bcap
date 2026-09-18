@@ -91,21 +91,41 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
                         "defaultValue": "",
-                        "label": "Message Read Date",
+                        "label": "Thread Resolved Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
                         "viewMode": "days"
                     },
-                    "id": "52677aeb-2ae5-43e9-a245-e1425a8cca30",
+                    "id": "0fa05bce-9926-493f-93e3-63a5c177f4e6",
                     "label": {
-                        "en": "Message Read Date"
+                        "en": "Thread Resolved Date"
                     },
-                    "node_id": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "node_id": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Thread Resolved By",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "ac344d56-799a-43d4-a294-08f5baebbd25",
+                    "label": {
+                        "en": "Thread Resolved By"
+                    },
+                    "node_id": "df4e3a42-e830-481d-850e-e2e1024f6c49",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
@@ -384,7 +404,17 @@
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "rangenode_id": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "rangenode_id": "6a84814e-9100-42dd-82ac-b13d8a323095",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "5893b8a7-a3d2-44cd-ae7d-462ce333ad53",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "df4e3a42-e830-481d-850e-e2e1024f6c49",
                     "source_identifier_id": null
                 },
                 {
@@ -551,12 +581,12 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "message_read_date",
+                    "alias": "thread_resolved_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
                     },
                     "datatype": "date",
-                    "description": "When the recipient read the message; empty means unread.",
+                    "description": "When the thread was resolved, for everyone party to it. Set on the thread root only; empty means unresolved.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
@@ -566,11 +596,43 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Message Read Date",
+                    "name": "Thread Resolved Date",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
-                    "nodeid": "901d4737-496b-4a27-a30e-c5d7f121e8be",
+                    "nodeid": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "thread_resolved_by",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Who resolved the thread. Set on the thread root only, alongside the resolved date.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Thread Resolved By",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "df4e3a42-e830-481d-850e-e2e1024f6c49",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -828,7 +890,7 @@
                         }
                     },
                     "datatype": "boolean",
-                    "description": "Whether this message is internal (staff only) rather than shared with the applicant.",
+                    "description": "Whether the thread is internal (staff only) rather than shared with the applicant. Decided on the thread root; replies inherit it.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",

@@ -530,8 +530,8 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         self.assertEqual(card.application_number, "")
 
 
-class ExternalDashboardUnreadTests(TestCase):
-    """The applicant's card counts unread messages filed anywhere on their
+class ExternalDashboardUnresolvedTests(TestCase):
+    """The applicant's card counts unresolved threads filed anywhere on their
     application: the permit, its process requirements, and their submission
     hosts."""
 
@@ -564,12 +564,12 @@ class ExternalDashboardUnreadTests(TestCase):
             builder,
             context=cls.host,
             recipient=cls.contributor,
-            read_date="2026-02-01",
-            subject="read",
+            resolved_date="2026-02-01",
+            subject="resolved",
         )
 
     def test_card_count_spans_the_permit_its_requirement_and_the_host(self):
         page = self.service.get_cards(DashboardFilter(), self.user)
 
         card = next(c for c in page.results if c.id == str(self.permit.pk))
-        self.assertEqual(card.unread_messages, 3)
+        self.assertEqual(card.unresolved_messages, 3)

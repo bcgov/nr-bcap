@@ -153,8 +153,8 @@ class InternalDashboardCard:
     priority_level: str = described(
         "Permit application's priority level (reference label).", ""
     )
-    unread_messages: int = described(
-        "Count of the permit's BCAP messages not yet read for the user or group.",
+    unresolved_messages: int = described(
+        "Count of the permit's unresolved BCAP message threads the user can see.",
         0,
     )
     module_progress: ModuleProgress = field(default_factory=ModuleProgress)
@@ -230,9 +230,9 @@ class ExternalDashboardCard:
     priority_level: str = described(
         "Permit application's priority level (reference label).", ""
     )
-    unread_messages: int = described(
-        "Count of the application's BCAP messages not yet read for the user or "
-        "group.",
+    unresolved_messages: int = described(
+        "Count of the application's unresolved BCAP message threads the user "
+        "can see.",
         0,
     )
     module_progress: ModuleProgress = field(default_factory=ModuleProgress)
@@ -304,4 +304,4 @@ class InternalDashboardData:
     assignee_dates: dict[str, str]
     hca_permits: dict[str, HcaPermit]
     contributor_names: dict[str, str]
-    unread_counts: dict[str, int]
+    unresolved_counts: dict[str, int]

@@ -95,15 +95,17 @@ class BaseDashboardService(AliasedDataReader):
         """The HcaPermit a permit application relates to, or an empty one."""
         return hca_permits.get(related_permit_id) or HcaPermit()
 
-    def _unread_counts_by_permit(self, permits, username, requirements_by_permit=None):
-        """Unread message counts keyed by permit id, each rolled up across the
+    def _unresolved_counts_by_permit(
+        self, permits, username, requirements_by_permit=None
+    ):
+        """Unresolved thread counts keyed by permit id, each rolled up across the
         permit's submission contexts (itself plus its requirements' hosts) in a
         single grouped query. When the caller already knows each permit's
         requirement ids, passing them skips re-reading them from the DB."""
         contexts = PermitApplicationService().submission_context_ids_for_permits(
             permits, requirements_by_permit
         )
-        counts = BcapMessageService().unread_counts_by_context(
+        counts = BcapMessageService().unresolved_counts_by_context(
             set(chain.from_iterable(contexts.values())), username
         )
         return {

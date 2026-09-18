@@ -21,7 +21,7 @@ const router = useRouter();
 interface ProjectData {
     id: string;
     requirementId: string;
-    unreadMessages: number;
+    unresolvedMessages: number;
     capPriority: boolean;
     capLabel: string;
     capDate: string;
@@ -50,7 +50,7 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
     return {
         id: rawItem.id,
         requirementId: rawItem.requirement_id || '',
-        unreadMessages: rawItem.unread_messages || 0,
+        unresolvedMessages: rawItem.unresolved_messages || 0,
 
         capPriority: isPriority,
         capLabel: rawItem.requirement_name || '',
@@ -163,7 +163,7 @@ const displayedProjects = computed(() => {
     let filtered = state.rawProjects;
 
     if (state.messagesOnly) {
-        filtered = filtered.filter((item) => item.unreadMessages > 0);
+        filtered = filtered.filter((item) => item.unresolvedMessages > 0);
     }
 
     if (state.currentSearch) {
@@ -260,7 +260,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                 :tabs="internalTabs"
                 :last-updated="state.lastUpdateDate"
                 :sort-options="sortOptions"
-                messages-only-label="Unread messages only"
+                messages-only-label="Unresolved messages only"
                 :shown="state.isLoading ? 0 : displayedProjects.length"
                 :total="state.isLoading ? 0 : state.rawProjects.length"
                 @refresh="loadData"
@@ -285,7 +285,7 @@ const onCardClick = (event: MouseEvent, item: ProjectData) => {
                     v-for="item in displayedProjects"
                     :key="item.id"
                     v-bind="item"
-                    :unread-messages="item.unreadMessages"
+                    :unread-messages="item.unresolvedMessages"
                     :body="item.body.map(formatBodyLine)"
                     :route="{ name: item.route }"
                     :search-query="state.currentSearch"
