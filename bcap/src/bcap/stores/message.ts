@@ -8,6 +8,7 @@ import {
     markMessageAsRead,
     setThreadArchived,
 } from '@/bcap/apps/Permit/api.ts';
+import { inlineMessage, notifyError } from '@/bcap/notify.ts';
 import type {
     MessageThread,
     FormattedMessage,
@@ -23,6 +24,10 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     const inFlight = new Map<string, Promise<MessageThread[]>>();
     const moduleUnread = reactive(new Map<string, number>());
     const openMessages = ref<FormattedMessage[]>([]);
+    // An empty thread list is indistinguishable from a failed one, so the
+    // dialog reads this to say which it is. One slot: the dialog shows a single
+    // error, and whichever load failed last is the one worth reading.
+    const error = ref('');
 
     const cacheFor = (isArchived: boolean) => (isArchived ? archived : active);
 
@@ -46,8 +51,8 @@ export const useMessageStore = defineStore('bcapMessages', () => {
             for (const { module_id, unread_count } of rows) {
                 moduleUnread.set(module_id, unread_count);
             }
-        } catch (error) {
-            console.error('Error loading module unread counts:', error);
+        } catch (failure) {
+            error.value = `Unread message counts could not be loaded. ${inlineMessage(failure)}`;
         }
     }
 
@@ -64,8 +69,9 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         }
         try {
             cacheFor(isArchived).set(resourceId, await pending);
-        } catch (error) {
-            console.error('Error loading threads:', error);
+            error.value = '';
+        } catch (failure) {
+            error.value = `Messages could not be loaded. ${inlineMessage(failure)}`;
             cacheFor(isArchived).set(resourceId, []);
         } finally {
             inFlight.delete(key);
@@ -84,8 +90,9 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     ) {
         try {
             await setThreadArchived(threadId, archived);
-        } catch (error) {
-            console.error('Failed to archive thread:', error);
+        } catch (failure) {
+            error.value = `This thread could not be archived. ${inlineMessage(failure)}`;
+            return;
         }
         await Promise.all([load(resourceId), load(resourceId, true)]);
     }
@@ -94,10 +101,11 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     // thread shows a loading gap rather than the previous thread's messages.
     async function loadThreadMessages(threadId: string) {
         openMessages.value = [];
+        error.value = '';
         try {
             openMessages.value = await getMessagesForThread(threadId);
-        } catch (error) {
-            console.error('Error loading thread messages:', error);
+        } catch (failure) {
+            error.value = `This conversation could not be loaded. ${inlineMessage(failure)}`;
         }
     }
 
@@ -113,7 +121,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
                 message.isUnread = false;
                 if (thread.unreadCount) thread.unreadCount--;
             } catch (error) {
-                console.error('Failed to mark message as read:', error);
+                notifyError('Failed to mark message as read', error);
             }
         }
 
@@ -126,6 +134,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         loadModuleUnread,
         moduleUnreadCount,
         openMessages,
+        error,
         load,
         send,
         setArchived,

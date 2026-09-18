@@ -14,6 +14,8 @@ import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import DocumentSubmissionReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue';
 import InvestigationReview from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
 import GenericReview from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -38,6 +40,7 @@ const header = computed(() => headerStore.state.header);
 
 const state = reactive({
     loading: true,
+    loadError: '',
     data: null as ArchesDraftData | null,
 });
 
@@ -51,7 +54,8 @@ onMounted(async () => {
         headerStore.load(nav.permitId);
         state.data = await fetchResourceData(nav.graph, nav.resourceId);
     } catch (error) {
-        console.error('Failed to load submission:', error);
+        // The slot has its own title, so the detail is just what the server said.
+        state.loadError = inlineMessage(error);
     } finally {
         state.loading = false;
     }
@@ -79,6 +83,12 @@ onMounted(async () => {
                 >
                     <ProgressSpinner />
                 </div>
+
+                <InlineError
+                    v-else-if="state.loadError"
+                    title="This submission could not be loaded."
+                    :detail="state.loadError"
+                />
 
                 <component
                     :is="ActiveReviewComponent"

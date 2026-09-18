@@ -10,6 +10,7 @@ import CustomReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/st
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { submitModule } from '@/bcap/apps/Permit/api.ts';
 import { fileParts } from '@/bcap/util.ts';
+import { UserFacingError } from '@/bcap/api.ts';
 import type {
     DocumentSubmissionDocumentSubmissionProcessAliasedDataWritable as ProcessAliasedData,
     DocumentSubmissionDocumentSubmissionProcessTileWritable as ProcessTile,
@@ -35,9 +36,9 @@ interface DocumentSubmissionDraft {
 }
 
 const customDocumentSubmit = async () => {
-    if (!draft.draftId) throw new Error('No active draft found.');
+    if (!draft.draftId) throw new UserFacingError('No active draft found.');
     if (!draft.parentPermitId)
-        throw new Error('No permit associated with this filing.');
+        throw new UserFacingError('No permit associated with this filing.');
 
     const draftData: DocumentSubmissionDraft = draft.draftData;
     const process = draftData.document_submission_process?.aliased_data;

@@ -80,7 +80,20 @@ describe('message store', () => {
 
         await store.load('permit-1');
 
+        // An empty list and a failed one look the same, hence the message.
         expect(store.threadsFor('permit-1')).toEqual([]);
+        expect(store.error).toContain('Messages could not be loaded.');
+    });
+
+    it('reports a failed archive without reloading the threads', async () => {
+        vi.mocked(setThreadArchived).mockRejectedValueOnce(new Error('nope'));
+        const store = useMessageStore();
+
+        await store.setArchived('t1', true, 'permit-1');
+
+        expect(store.error).toContain('This thread could not be archived.');
+        // Nothing moved, and a reload would clear the message just set.
+        expect(getThreadsForResource).not.toHaveBeenCalled();
     });
 
     it('sends a message then reloads that resource', async () => {

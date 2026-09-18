@@ -1,4 +1,5 @@
 import { reactive, type UnwrapRef } from 'vue';
+import { notifyError } from '@/bcap/notify.ts';
 
 // Confirm-then-run flow for a destructive action: opening records the target and
 // shows the dialog, confirming runs the action and closes it.
@@ -21,7 +22,7 @@ export function useConfirmAction<T>(action: (target: T) => Promise<void>) {
             await action(state.target as T);
             state.visible = false;
         } catch (error) {
-            console.error('Confirm action failed:', error);
+            notifyError('That action could not be completed', error);
         } finally {
             state.busy = false;
         }
