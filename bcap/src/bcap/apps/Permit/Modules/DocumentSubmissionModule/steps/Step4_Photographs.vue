@@ -9,7 +9,6 @@ import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { asFileNode } from '@/bcap/util.ts';
-import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 import MultiFileUploader from '@/bcgov_arches_common/components/MultiFileUploader/MultiFileUploader.vue';
 
 import type {
@@ -154,13 +153,7 @@ const saveImage = async () => {
         currentPhoto.value,
     ] as typeof draftData.value.submission_photographs;
 
-    if (draftStore.draftId) {
-        await saveDraftFieldToBackend(
-            draftStore.draftId,
-            draftStore.graphSlug,
-            draftStore.draftData,
-        );
-    }
+    await draftStore.save();
 
     currentPhoto.value = getBlankPhotograph();
     photoKey.value = photoList.value.length;
@@ -174,13 +167,7 @@ const deletePhoto = async (index: number) => {
         currentData.splice(index, 1);
         draftData.value.submission_photographs = currentData;
 
-        if (draftStore.draftId) {
-            await saveDraftFieldToBackend(
-                draftStore.draftId,
-                draftStore.graphSlug,
-                draftStore.draftData,
-            );
-        }
+        await draftStore.save();
         emit('update:step-is-valid', customIsValid());
     }
 };

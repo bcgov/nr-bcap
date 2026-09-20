@@ -2,6 +2,7 @@ import { shallowMount, flushPromises } from '@vue/test-utils';
 import WorkflowStepper from './WorkflowStepper.vue';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { ApiError } from '@/bcap/api.ts';
 
 // Own the api mocks so assertions read them without a top-level import (which
 // Vite resolves before the mock applies).
@@ -54,7 +55,7 @@ type StepperVm = {
     state: {
         isDataLoaded: boolean;
         finalizedResourceData: unknown;
-        submissionErrors: { message: string }[];
+        submissionError: string;
     };
 };
 
@@ -124,9 +125,11 @@ describe('WorkflowStepper.vue', () => {
         });
     });
 
-    it('records a submission error when the submit fails', async () => {
+    it("shows the server's reason when the submit fails", async () => {
         routeQuery.value = { permitId: 'permit-1' };
-        submitModule.mockRejectedValue(new Error('nope'));
+        submitModule.mockRejectedValue(
+            new ApiError('Submission Type is required.', 400),
+        );
 
         const wrapper = mountStepper();
         await flushPromises();
@@ -137,8 +140,22 @@ describe('WorkflowStepper.vue', () => {
 
         expect(ok).toBe(false);
         expect(submitModule).toHaveBeenCalled();
-        expect(vm.state.submissionErrors).toHaveLength(1);
-        expect(vm.state.submissionErrors[0].message).toBe('nope');
+        expect(vm.state.submissionError).toBe('Submission Type is required.');
+    });
+
+    it('keeps a bug out of the message', async () => {
+        routeQuery.value = { permitId: 'permit-1' };
+        submitModule.mockRejectedValue(new TypeError('x is undefined'));
+
+        const wrapper = mountStepper();
+        await flushPromises();
+        useDraftStore().loadDraft('draft-7', {});
+
+        const vm = wrapper.vm as unknown as StepperVm;
+        await vm.submitFiling();
+
+        expect(vm.state.submissionError).not.toContain('undefined');
+        expect(vm.state.submissionError).toContain('Please try again');
     });
 
     it('saves the draft and returns to the parent permit on save and exit', async () => {
@@ -223,8 +240,6 @@ describe('WorkflowStepper.vue', () => {
 
         expect(ok).toBe(false);
         expect(submitModule).not.toHaveBeenCalled();
-        expect(vm.state.submissionErrors[0].message).toBe(
-            'No active draft found.',
-        );
+        expect(vm.state.submissionError).toBe('No active draft found.');
     });
 });

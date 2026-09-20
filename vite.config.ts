@@ -140,7 +140,6 @@ function MultiRootBareJsResolver() {
                 skipSelf: true,
             });
             // out(`prior? ${prior}`);
-            // console.error(prior);
             if (prior && fs.statSync(prior.id).isFile()) return prior;
 
             // out(`isBare(${source}) = ${isBare(source)}`);

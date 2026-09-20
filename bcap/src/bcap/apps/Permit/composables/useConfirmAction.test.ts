@@ -1,7 +1,12 @@
+const notifyError = vi.fn();
+vi.mock('@/bcap/notify.ts', () => ({
+    notifyError: (...args: unknown[]) => notifyError(...args),
+}));
+
 import { useConfirmAction } from './useConfirmAction';
 
 beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    notifyError.mockReset();
 });
 
 describe('useConfirmAction', () => {
@@ -60,7 +65,8 @@ describe('useConfirmAction', () => {
     });
 
     it('keeps the dialog open and clears busy when the action rejects', async () => {
-        const action = vi.fn().mockRejectedValue(new Error('boom'));
+        const error = new Error('boom');
+        const action = vi.fn().mockRejectedValue(error);
         const { state, open, confirm } = useConfirmAction<string>(action);
         open('t');
 
@@ -69,6 +75,16 @@ describe('useConfirmAction', () => {
         // A failed action leaves the dialog open so the user can retry.
         expect(state.visible).toBe(true);
         expect(state.busy).toBe(false);
-        expect(console.error).toHaveBeenCalled();
+        expect(notifyError).toHaveBeenCalledWith(
+            'That action could not be completed',
+            error,
+        );
+    });
+
+    it('does not report anything when the action succeeds', async () => {
+        const { open, confirm } = useConfirmAction<string>(async () => {});
+        open('t');
+        await confirm();
+        expect(notifyError).not.toHaveBeenCalled();
     });
 });
