@@ -317,7 +317,9 @@ describe('PermitDetails.vue', () => {
         it('gives staff a read-only draft list', async () => {
             twoDrafts();
             mockMeta.value = { requiresInternal: true };
-            useUserStore().state.profile = { is_internal: true } as UserProfile;
+            useUserStore().state.profile = {
+                is_superuser: true,
+            } as UserProfile;
 
             const wrapper = mount(PermitDetails, globalMountOptions);
             await flushPromises();

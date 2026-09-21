@@ -50,7 +50,7 @@ const authorize = async (to: RouteLocationNormalized) => {
         return false;
     }
     const staffOnly = to.matched.some((record) => record.meta.requiresInternal);
-    if (staffOnly && !profile.is_internal) {
+    if (staffOnly && !userStore.isInternal) {
         accessError.value = $gettext(
             'This page is for Archaeology Branch staff.',
         );

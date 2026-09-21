@@ -6,8 +6,10 @@ import { zUserProfileResponse } from '@/bcap/client/zod.gen.ts';
 
 export type UserProfile = ReturnType<typeof zUserProfileResponse.parse>;
 
-// The signed-in user. is_internal is the server's answer on whether to show the
-// staff view, so the group that marks staff is never named here.
+// The signed-in user. Ministry staff are superusers or members of Archaeology
+// Branch; every other group authorizes a function rather than the staff view.
+const ARCHAEOLOGY_BRANCH = 'Archaeology Branch';
+
 export const useUserStore = defineStore('bcapUser', () => {
     const state = reactive({
         profile: null as UserProfile | null,
@@ -18,7 +20,7 @@ export const useUserStore = defineStore('bcapUser', () => {
     async function loadProfile(): Promise<UserProfile | null> {
         if (state.profile) return state.profile;
         const result = zUserProfileResponse.safeParse(
-            await apiFetchJson(arches.urls.api_user_profile),
+            await apiFetchJson(arches.urls.api_user),
         );
         if (!result.success) {
             console.warn(
@@ -31,7 +33,12 @@ export const useUserStore = defineStore('bcapUser', () => {
         return state.profile;
     }
 
-    const isInternal = computed(() => state.profile?.is_internal ?? false);
+    const isInternal = computed(
+        () =>
+            !!state.profile &&
+            (state.profile.is_superuser ||
+                ARCHAEOLOGY_BRANCH in state.profile.groups),
+    );
 
     return { state, isInternal, loadProfile };
 });

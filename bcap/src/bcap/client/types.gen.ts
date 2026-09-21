@@ -6734,13 +6734,10 @@ export type UserProfileResponse = {
     username: string;
     first_name: string;
     last_name: string;
-    readonly groups: Array<string>;
-    /**
-     * Whether the client should show the Archaeology Branch view. Answered here
-     * rather than from the group list, so the superuser case and the name of
-     * the group that marks staff stay in one place.
-     */
-    readonly is_internal: boolean;
+    readonly groups: {
+        [key: string]: number;
+    };
+    is_superuser: boolean;
 };
 
 export type AlterationWritable = {
@@ -12637,6 +12634,7 @@ export type UserProfileResponseWritable = {
     username: string;
     first_name: string;
     last_name: string;
+    is_superuser: boolean;
 };
 
 export type ApiArchaeologicalSiteListData = {
@@ -13800,16 +13798,16 @@ export type ApiWorkflowDraftPartialUpdateResponses = {
 export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
 
-export type UserProfileRetrieveData = {
+export type UserRetrieveData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/bcap/user_profile';
+    url: '/bcap/api/user/';
 };
 
-export type UserProfileRetrieveResponses = {
+export type UserRetrieveResponses = {
     200: UserProfileResponse;
 };
 
-export type UserProfileRetrieveResponse =
-    UserProfileRetrieveResponses[keyof UserProfileRetrieveResponses];
+export type UserRetrieveResponse =
+    UserRetrieveResponses[keyof UserRetrieveResponses];

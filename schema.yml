@@ -1962,11 +1962,11 @@ paths:
       responses:
         '204':
           description: No response body
-  /bcap/user_profile:
+  /bcap/api/user/:
     get:
-      operationId: user_profile_retrieve
-      description: Returns the authenticated user's profile, group memberships, and
-        linked Contributor resource id.
+      operationId: user_retrieve
+      description: Returns the authenticated user's name, group memberships, and whether
+        they are a superuser.
       tags:
       - 'External: user_profile'
       security:
@@ -16033,21 +16033,16 @@ components:
         last_name:
           type: string
         groups:
-          type: array
-          items:
-            type: string
+          type: object
+          additionalProperties:
+            type: integer
           readOnly: true
-        is_internal:
+        is_superuser:
           type: boolean
-          description: |-
-            Whether the client should show the Archaeology Branch view. Answered here
-            rather than from the group list, so the superuser case and the name of
-            the group that marks staff stay in one place.
-          readOnly: true
       required:
       - first_name
       - groups
-      - is_internal
+      - is_superuser
       - last_name
       - username
   securitySchemes:

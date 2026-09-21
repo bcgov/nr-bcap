@@ -71,7 +71,7 @@ class SchemaEndpointTests(AuthTestHelper, TestCase):
         self.assertTrue(
             any(p.endswith("/api/dashboard/external") for p in paths), paths
         )
-        self.assertTrue(any(p.endswith("/user_profile") for p in paths), paths)
+        self.assertTrue(any(p.endswith("/api/user/") for p in paths), paths)
 
     def test_dashboard_response_schema_matches_the_page_dataclass(self):
         schema = self.schema()

@@ -4796,8 +4796,8 @@ export const zUserProfileResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    groups: z.array(z.string()).readonly(),
-    is_internal: z.boolean().readonly()
+    groups: z.record(z.string(), z.int()).readonly(),
+    is_superuser: z.boolean()
 });
 
 export const zBooleanAliasedNodeDataWritable = z.object({
@@ -8973,7 +8973,8 @@ export const zPaginatedProcessRequirementListWritable = z.object({
 export const zUserProfileResponseWritable = z.object({
     username: z.string(),
     first_name: z.string(),
-    last_name: z.string()
+    last_name: z.string(),
+    is_superuser: z.boolean()
 });
 
 export const zApiArchaeologicalSiteListQuery = z.object({
@@ -9428,4 +9429,4 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
 
-export const zUserProfileRetrieveResponse = zUserProfileResponse;
+export const zUserRetrieveResponse = zUserProfileResponse;

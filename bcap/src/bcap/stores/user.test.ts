@@ -11,8 +11,8 @@ const profile = (isInternal: boolean) =>
         username: 'someone',
         first_name: '',
         last_name: '',
-        groups: isInternal ? ['Archaeology Branch'] : ['Submitter'],
-        is_internal: isInternal,
+        groups: isInternal ? { 'Archaeology Branch': 1 } : { Submitter: 2 },
+        is_superuser: false,
     }) as UserProfile;
 
 beforeEach(() => {
@@ -28,7 +28,7 @@ describe('user store', () => {
         await store.loadProfile();
 
         expect(mockFetchJson).toHaveBeenCalledTimes(1);
-        expect(mockFetchJson).toHaveBeenCalledWith('/bcap/user_profile');
+        expect(mockFetchJson).toHaveBeenCalledWith('/bcap/api/user/');
         expect(store.isInternal).toBe(true);
     });
 

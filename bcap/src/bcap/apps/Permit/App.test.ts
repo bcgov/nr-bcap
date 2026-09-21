@@ -17,8 +17,8 @@ const profile = (isInternal: boolean) =>
         username: 'someone',
         first_name: '',
         last_name: '',
-        groups: [],
-        is_internal: isInternal,
+        groups: isInternal ? { 'Archaeology Branch': 1 } : {},
+        is_superuser: false,
     }) as unknown as UserProfile;
 
 const routes = [

@@ -269,10 +269,15 @@ const BcapSiteViewModel = function (params) {
             groups: [],
         });
         $.ajax({
-            url: `${self.urls.root}user_profile`,
+            url: `${self.urls.root}api/user/`,
         }).done(function (data) {
             if (data) {
-                ko.mapping.fromJS(data, user);
+                // The endpoint returns groups as {name: id}; keep the
+                // observableArray of names this viewmodel binds against.
+                ko.mapping.fromJS(
+                    { ...data, groups: Object.keys(data.groups || {}) },
+                    user,
+                );
             }
         });
         return user;

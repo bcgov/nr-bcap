@@ -14,6 +14,7 @@ from bcap.views.api import (
 from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
 from bcap.views.auth import auth_callback
+from bcap.views.user_api import UserProfile
 from bcap.views.file import BCAPFileView
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results

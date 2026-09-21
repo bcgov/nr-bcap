@@ -985,7 +985,7 @@ export type {
     UrlAliasedNodeDataWritable,
     UserProfileResponse,
     UserProfileResponseWritable,
-    UserProfileRetrieveData,
-    UserProfileRetrieveResponse,
-    UserProfileRetrieveResponses,
+    UserRetrieveData,
+    UserRetrieveResponse,
+    UserRetrieveResponses,
 } from './types.gen';

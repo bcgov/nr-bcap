@@ -58,7 +58,10 @@ from bcap.views.registration_link_api import (
 # proxy prefix; the prefix is applied once at each urlconf entrypoint (here for
 # the schema, and in bcap.urls for the served app).
 documented_api_patterns = [
-    path("user_profile", UserProfile.as_view(), name="bcap_user_profile"),
+    # Same path as bcgov_arches_common's api_user, declared ahead of that
+    # include so the gated view answers. Its own name because reverse()
+    # resolves the shared api_user to arches core's slashless route.
+    path("api/user/", UserProfile.as_view(), name="bcap_api_user"),
     path(
         "api/dashboard/internal",
         InternalDashboardView.as_view(),

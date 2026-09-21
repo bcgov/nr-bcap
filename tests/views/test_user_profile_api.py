@@ -1,6 +1,5 @@
-"""GET user_profile: who the caller is, and whether the client should give them
-the staff view. is_internal is answered here so the frontend never has to know
-which group marks staff, nor that a superuser counts as one."""
+"""GET user_profile: who the caller is. The client decides from the group list
+and is_superuser whether to show the staff view."""
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -25,7 +24,7 @@ class UserProfileTests(AuthTestHelper, TestCase):
             username="profile-admin", password="pass", email="admin@example.com"
         )
         cls.superuser.groups.add(Group.objects.get(name=Groups.SUBMITTER))
-        cls.url = reverse("bcap_user_profile")
+        cls.url = reverse("bcap_api_user")
 
     def get_profile(self, user):
         self.idir_login_simulate(user)
@@ -37,21 +36,21 @@ class UserProfileTests(AuthTestHelper, TestCase):
         profile = self.get_profile(self.user)
 
         self.assertEqual(profile["username"], "testuser")
-        self.assertEqual(profile["groups"], [Groups.SUBMITTER])
+        self.assertEqual(list(profile["groups"]), [Groups.SUBMITTER])
+        self.assertIs(profile["is_superuser"], False)
 
-    def test_an_applicant_is_not_internal(self):
-        self.assertIs(self.get_profile(self.user)["is_internal"], False)
+    def test_reports_the_group_that_marks_staff(self):
+        profile = self.get_profile(self.branch_member)
 
-    def test_an_archaeology_branch_member_is_internal(self):
-        self.assertIs(self.get_profile(self.branch_member)["is_internal"], True)
+        self.assertIn(Groups.ARCHAEOLOGY_BRANCH, profile["groups"])
 
-    def test_a_superuser_is_internal_without_the_branch_group(self):
-        # The group list alone would call them external, which is why the answer
-        # is not left to the client to work out.
+    def test_reports_a_superuser_without_the_branch_group(self):
+        # The group list alone would call them external, which is why the client
+        # is given is_superuser as well.
         profile = self.get_profile(self.superuser)
 
         self.assertNotIn(Groups.ARCHAEOLOGY_BRANCH, profile["groups"])
-        self.assertIs(profile["is_internal"], True)
+        self.assertIs(profile["is_superuser"], True)
 
     def test_refuses_a_caller_holding_no_role(self):
         roleless = get_user_model().objects.create_user(
