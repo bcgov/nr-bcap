@@ -4,7 +4,11 @@ import { apiFetchJson } from '@/bcap/api.ts';
 import App from './App.vue';
 import type { UserProfile } from '@/bcap/stores/user.ts';
 
-vi.mock('@/bcap/api.ts', () => ({ apiFetchJson: vi.fn() }));
+// Partial: the guard checks the real ApiError with instanceof.
+vi.mock('@/bcap/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/api.ts')>()),
+    apiFetchJson: vi.fn(),
+}));
 
 const mockFetchJson = vi.mocked(apiFetchJson);
 
