@@ -7,6 +7,8 @@
      class="bc-form" to a form's root to opt in, and overlay-class="bc-overlay"
      on teleported Select/MultiSelect panels. */
 
+@import url('./bc-toast.css');
+
 :root {
     --bc-navy: #003366;
     --bc-navy-dark: #00264d;

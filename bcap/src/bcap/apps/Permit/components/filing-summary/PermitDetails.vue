@@ -32,11 +32,9 @@ import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
-import MessageDialog from '../common/messages/MessageDialog.vue';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
-import { useMessageStore } from '@/bcap/stores/message.ts';
-
-const messageStore = useMessageStore();
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 const headerStore = usePermitHeaderStore();
 
 const route = useRoute();
@@ -89,6 +87,7 @@ interface ModuleResponse {
 // Loaded permit view state, grouped so the async loaders update one object.
 const state = reactive({
     isLoading: true,
+    loadError: '',
     permitData: {
         projectName: 'Loading...',
         applicationNumber: '...',
@@ -155,6 +154,7 @@ const getModuleStatus = (moduleId: string) => {
 };
 
 const loadPermitDetails = async () => {
+    state.loadError = '';
     try {
         const aliased = await fetchPermitDetails(permitId.value);
         if (!aliased) return;
@@ -191,8 +191,7 @@ const loadPermitDetails = async () => {
             },
         };
     } catch (error) {
-        console.error('Failed to load permit details:', error);
-        state.permitData.projectName = 'Failed to load project data';
+        state.loadError = inlineMessage(error);
     } finally {
         state.isLoading = false;
     }
@@ -219,7 +218,17 @@ const {
 
 // This needs to be more generic in the future
 const loadDraftsForPermitApp = async () => {
-    const drafts = await fetchDrafts(permitId.value);
+    let drafts;
+    try {
+        drafts = await fetchDrafts(permitId.value);
+    } catch (error) {
+        // The permit load reports the same outage; don't overwrite its message.
+        // The slot's title names the permit, so this one says what it was.
+        if (!state.loadError) {
+            state.loadError = `Your drafts could not be loaded. ${inlineMessage(error)}`;
+        }
+        return;
+    }
 
     const isInv = isDraftOf(GraphSlug.Investigation);
     const isDoc = isDraftOf(GraphSlug.DocumentSubmission);
@@ -227,12 +236,6 @@ const loadDraftsForPermitApp = async () => {
     state.permitDrafts = drafts.filter(
         (d): d is PermitDraft => isInv(d) || isDoc(d),
     );
-
-    // Load each draft's threads up front so its header can badge unresolved without
-    // the dialog being opened. Drafts are few, so a fetch each is fine.
-    for (const draft of state.permitDrafts) {
-        if (draft.id) messageStore.load(draft.id);
-    }
 };
 
 onMounted(() => {
@@ -270,6 +273,13 @@ watch(activeModuleId, (id) => {
         >
             <ProgressSpinner />
         </div>
+
+        <InlineError
+            v-else-if="state.loadError"
+            title="This permit could not be loaded."
+            :detail="state.loadError"
+            class="permit-error"
+        />
 
         <div
             v-else
@@ -407,26 +417,6 @@ watch(activeModuleId, (id) => {
                                                     )
                                                 }}
                                             </span>
-                                            <span
-                                                v-if="
-                                                    messageStore.unresolvedCount(
-                                                        draft.id,
-                                                    )
-                                                "
-                                                class="draft-unread-badge"
-                                                :title="`${messageStore.unresolvedCount(
-                                                    draft.id,
-                                                )} unresolved message(s)`"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-comment-dots"
-                                                ></i>
-                                                {{
-                                                    messageStore.unresolvedCount(
-                                                        draft.id,
-                                                    )
-                                                }}
-                                            </span>
                                         </span>
                                     </AccordionHeader>
                                     <AccordionContent>
@@ -460,14 +450,6 @@ watch(activeModuleId, (id) => {
                                                 icon="fa-solid fa-trash"
                                                 label="Remove"
                                                 @click="confirmDelete(draft)"
-                                            />
-                                            <MessageDialog
-                                                :application-id="
-                                                    state.permitData
-                                                        .applicationNumber
-                                                "
-                                                :resource-id="draft.id"
-                                                :context="draftTitle(draft)"
                                             />
                                         </div>
                                     </AccordionContent>
@@ -521,6 +503,10 @@ watch(activeModuleId, (id) => {
     justify-content: center;
     align-items: center;
     min-height: 60vh;
+}
+
+.permit-error {
+    margin: 2rem;
 }
 
 /* Header. PrimeVue wraps this in its own padded, bordered bar; that is stripped

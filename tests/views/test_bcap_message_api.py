@@ -433,6 +433,23 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(File.objects.count(), before + 1)
 
+    def test_a_disallowed_attachment_is_refused_readably(self):
+        payload = self._message_payload(
+            attachments={"node_value": [{"name": "setup.exe", "url": None}]}
+        )
+        upload = SimpleUploadedFile("setup.exe", b"MZ\x90\x00binary")
+        before = File.objects.count()
+        self.idir_login_simulate(self.user)
+        resp = self.client.post(
+            reverse("bcap_message_list_create"),
+            data={"json": json.dumps(payload), "attachments": upload},
+        )
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(
+            resp.json()["files"][:2], ["These files are not permitted:", "setup.exe"]
+        )
+        self.assertEqual(File.objects.count(), before)
+
     def test_patching_a_thread_keeps_its_attachments(self):
         # A PATCH writes the root; it must not re-save the attachments through
         # the file-list datatype, which deleted their stored files, so a second

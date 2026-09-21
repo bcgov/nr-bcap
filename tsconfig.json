@@ -23,6 +23,12 @@
         "paths": {
             "geojson": ["node_modules/@types/geojson/index.d.ts"],
             "js-cookie": ["node_modules/@types/js-cookie/index.d.ts"],
+            // The catch-all below would hand bcgov_arches_common the root's stray
+            // turf 6, whose own GeoJSON types reject its turf 7 code.
+            "@turf/*": [
+                "node_modules/bcgov_arches_common/node_modules/@turf/*",
+                "node_modules/@turf/*"
+            ],
             "@/bcap/*": ["bcap/src/bcap/*"],
             "@/bcgov_arches_common/*": [
                 "node_modules/bcgov_arches_common/bcgov_arches_common/src/bcgov_arches_common/*"

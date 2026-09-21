@@ -8,7 +8,6 @@ import LabelledInput from '@/bcgov_arches_common/components/labelledinput/Labell
 import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import { asFileNode } from '@/bcap/util.ts';
-import { saveDraftFieldToBackend } from '@/bcap/apps/Permit/api.ts';
 import MultiFileUploader from '@/bcgov_arches_common/components/MultiFileUploader/MultiFileUploader.vue';
 
 import type {
@@ -141,13 +140,7 @@ const saveDoc = async () => {
 
     reportData.report_file.node_value.push(...newFileVals);
 
-    if (draftStore.draftId) {
-        await saveDraftFieldToBackend(
-            draftStore.draftId,
-            draftStore.graphSlug,
-            draftStore.draftData,
-        );
-    }
+    await draftStore.save();
 
     currentFile.value = getBlankFileNode();
     docKey.value = docList.value.length;
@@ -161,13 +154,7 @@ const deleteDoc = async (index: number) => {
 
     if (Array.isArray(fileArray)) {
         fileArray.splice(index, 1);
-        if (draftStore.draftId) {
-            await saveDraftFieldToBackend(
-                draftStore.draftId,
-                draftStore.graphSlug,
-                draftStore.draftData,
-            );
-        }
+        await draftStore.save();
         emit('update:step-is-valid', customIsValid());
     }
 };

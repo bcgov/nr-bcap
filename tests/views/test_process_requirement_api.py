@@ -3,14 +3,17 @@ resource endpoint: GET/PATCH the requirement and its sub-requirements through
 the generic resource serializer (nested aliased_data), no custom service."""
 
 import json
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from arches.app.models.models import ResourceInstance
 
+from arches.app.models.models import File
 from arches_querysets.models import ResourceTileTree
 
 from bcap.permissions.groups import Groups
@@ -23,6 +26,7 @@ from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import RequirementRow, build_permit
+from bcap.util.graph import node_id
 from tests.views.helpers import AuthTestHelper
 
 
@@ -262,7 +266,58 @@ class ProcessRequirementViewTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    def test_patch_by_a_user_with_no_role_is_refused(self):
+    def test_patch_by_an_applicant_is_refused(self):
         self.idir_login_simulate(self.user)
         resp = self._patch({ALIASED_DATA: {}})
         self.assertEqual(resp.status_code, 403)
+
+
+@override_settings(ROOT_URLCONF="tests.test_urls")
+class DocumentSubmissionUploadTests(AuthTestHelper, TestCase):
+    """The document submission keys its report and photographs by tile, which
+    arches' own file-type check never looks at."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        permit = ProcessRequirementBuilder().make_resource(
+            GraphSlugs.PERMIT_APPLICATION
+        )
+        cls.permit_id = str(permit.pk)
+
+    def test_an_exe_report_is_refused(self):
+        tileid = str(uuid.uuid4())
+        report_node = node_id(GraphSlugs.DOCUMENT_SUBMISSION, "report_file")
+        payload = {
+            ALIASED_DATA: {
+                "report_submission": {
+                    "tileid": tileid,
+                    ALIASED_DATA: {
+                        "report_file": {
+                            "node_value": [{"name": "notepad.exe", "url": None}]
+                        }
+                    },
+                }
+            }
+        }
+        before = File.objects.count()
+        self.idir_login_simulate()
+
+        resp = self.client.post(
+            reverse(
+                "seed_process_requirements",
+                args=[self.permit_id, GraphSlugs.DOCUMENT_SUBMISSION],
+            ),
+            data={
+                "json": json.dumps(payload),
+                f"file-list_{tileid}-{report_node}": SimpleUploadedFile(
+                    "notepad.exe", b"MZ\x90\x00binary"
+                ),
+            },
+        )
+
+        # Asserting the refusal names the file, since this bare payload is a 400
+        # on its own.
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("notepad.exe", resp.json().get("files", []))
+        self.assertEqual(File.objects.count(), before)

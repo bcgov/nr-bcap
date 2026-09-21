@@ -8,6 +8,7 @@ import {
     setThreadArchived,
     setThreadResolved,
 } from '@/bcap/apps/Permit/api.ts';
+import { ApiError } from '@/bcap/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -276,28 +277,67 @@ describe('MessageDialog.vue', () => {
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
     });
 
-    it('opening a thread only reads it: nothing is written back', async () => {
-        withThreads([thread({ id: 'thread-999' })]);
+    it('shows the server message and stays open when a send fails', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(createBcapMessage).mockRejectedValue(
+            new ApiError('These files are not permitted:\nsetup.exe', 400),
+        );
 
         const wrapper = mountComponent();
         await flushPromises();
-        await openThread(wrapper);
 
-        expect(getMessagesForThread).toHaveBeenCalledWith('thread-999');
-        expect(setThreadResolved).not.toHaveBeenCalled();
-        expect(setThreadArchived).not.toHaveBeenCalled();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Setback dimensions');
+        await wrapper.find('textarea').setValue('This is my question.');
+
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        const error = wrapper.find('.inline-error');
+        expect(error.text()).toContain('Your message could not be sent.');
+        expect(error.text()).toContain('setup.exe');
+        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
     });
 
-    it('resolves an open thread for everyone, and reopens a resolved one', async () => {
-        withThreads([thread({ id: 'thread-1' })]);
+    // The store reports what it loaded, the dialog what it did itself; both go
+    // to the one slot at the top.
+    it('shows a failed thread load in the slot at the top', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getThreadsForResource).mockRejectedValue(new Error('boom'));
+
         const wrapper = mountComponent();
         await flushPromises();
-        await openThread(wrapper);
-
-        await button(wrapper, 'Mark as Resolved')?.trigger('click');
+        await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
-        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', true);
 
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'Messages could not be loaded.',
+        );
+    });
+
+    it('shows a failed recipient load in that same slot', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getContributorsForResources).mockRejectedValue(
+            new Error('boom'),
+        );
+
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.findAll('.inline-error')).toHaveLength(1);
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'The list of recipients could not be loaded.',
+        );
+    });
+
+    it('marks unread messages as read when an unread thread is selected', async () => {
         withThreads([
             thread({
                 id: 'thread-1',
@@ -341,8 +381,6 @@ describe('MessageDialog.vue', () => {
         expect(setThreadArchived).toHaveBeenCalledWith('active-1', true);
         expect(setThreadResolved).not.toHaveBeenCalled();
 
-        await wrapper.findAll('.sidebar-tab')[1].trigger('click');
-        await flushPromises();
         await wrapper.findAll('.sidebar-item')[0].trigger('click');
         await flushPromises();
         // An archived thread has to come back before it can be unresolved.

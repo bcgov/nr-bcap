@@ -1,6 +1,7 @@
 import { reactive } from 'vue';
 import { defineStore } from 'pinia';
 import { fetchPermitDetails } from '@/bcap/apps/Permit/api.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
@@ -69,7 +70,7 @@ export const usePermitHeaderStore = defineStore('bcapPermitHeader', () => {
             const aliased = await fetchPermitDetails(permitId);
             if (aliased) setFromAliased(permitId, aliased);
         } catch (error) {
-            console.error('Failed to load permit header:', error);
+            notifyError('Failed to load permit header', error);
         }
         return state.header;
     }

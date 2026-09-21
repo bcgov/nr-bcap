@@ -32,7 +32,10 @@ provide(systemLanguageKey, ENGLISH);
             <RouterView />
         </div>
     </main>
-    <Toast />
+    <Toast
+        position="top-center"
+        error-icon="bc-toast-error-icon"
+    />
 </template>
 
 <style scoped>

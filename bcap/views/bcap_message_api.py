@@ -11,7 +11,6 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
@@ -27,6 +26,7 @@ from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     NoAuthorContributor,
 )
+from bcap.views.parsers import ValidatedMultiPartJSONParser
 from bcap.services.message.message_context import MessageGraph
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from bcap.views.generated.bcap_message import (
@@ -74,7 +74,7 @@ class BcapMessageCreateView(BcapMessageListView):
     checks the caller may edit the resource the new message's resource_context
     points at. POST-only: reads go through the threads/messages endpoints."""
 
-    parser_classes = [JSONParser, MultiPartJSONParser]
+    parser_classes = [JSONParser, ValidatedMultiPartJSONParser]
 
     def create(self, request, *args, **kwargs):
         """Ready the body before the standard create validates it: the author and

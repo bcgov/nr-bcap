@@ -54,13 +54,15 @@ describe('useResourceData', () => {
         expect(data.value).toEqual({ name: 'A' });
     });
 
-    it('clears data on fetch error', async () => {
+    it('clears data and reports the failure', async () => {
         getResourceData.mockRejectedValue(new Error('boom'));
-        const { data, loading } = useResourceData('site', ref('a'));
+        const { data, loading, error } = useResourceData('site', ref('a'));
         await flushPromises();
 
         expect(data.value).toBeNull();
         expect(loading.value).toBe(false);
+        // The page titles its own error box; this is the detail line.
+        expect(error.value).toBeTruthy();
     });
 });
 
@@ -79,10 +81,11 @@ describe('useRelatedResourceData', () => {
         expect(data.value).toEqual({ id: 1 });
     });
 
-    it('clears data on fetch error', async () => {
+    it('clears data and reports the failure', async () => {
         getRelatedResourceData.mockRejectedValue(new Error('boom'));
-        const { data } = useRelatedResourceData('visit', ref('a'));
+        const { data, error } = useRelatedResourceData('visit', ref('a'));
         await flushPromises();
         expect(data.value).toBeNull();
+        expect(error.value).toBeTruthy();
     });
 });

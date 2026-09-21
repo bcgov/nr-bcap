@@ -159,7 +159,7 @@ describe('data loading', () => {
         const wrapper = await mountDashboard();
 
         expect(wrapper.find('.loading-state').exists()).toBe(false);
-        expect(wrapper.find('.tab-content-container').exists()).toBe(true);
+        expect(wrapper.find('.inline-error').exists()).toBe(true);
     });
 });
 

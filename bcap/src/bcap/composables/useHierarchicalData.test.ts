@@ -77,14 +77,18 @@ describe('useHierarchicalData', () => {
         const { processedData } = useHierarchicalData(source, config);
         await flushPromises();
 
-        expect(fetchMock).toHaveBeenCalledWith('/bcap/api/hierarchy/abc123/');
+        expect(fetchMock.mock.calls[0][0]).toBe('/bcap/api/hierarchy/abc123/');
         const row = processedData.value[0].aliased_data;
         expect(row.level1.display_value).toBe('Root');
         expect(row.level2.display_value).toBe('Child');
     });
 
-    it('falls back to the display value when the hierarchy fetch fails', async () => {
-        fetchMock.mockResolvedValue({ ok: false, status: 500 });
+    it('reports an error rather than a partial hierarchy when the fetch fails', async () => {
+        fetchMock.mockResolvedValue({
+            ok: false,
+            status: 500,
+            text: async () => '',
+        });
 
         const source = ref([
             {
@@ -99,13 +103,12 @@ describe('useHierarchicalData', () => {
             },
         ]);
 
-        const { processedData } = useHierarchicalData(source, config);
+        const { processedData, error } = useHierarchicalData(source, config);
         await flushPromises();
 
         expect(fetchMock).toHaveBeenCalled();
-        expect(processedData.value[0].aliased_data.level1.display_value).toBe(
-            'Leaf',
-        );
+        expect(processedData.value).toEqual([]);
+        expect(error.value).toBeTruthy();
     });
 
     it('passes flat fields through and defaults the missing ones', async () => {

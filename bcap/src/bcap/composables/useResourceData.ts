@@ -4,6 +4,7 @@ import {
     getResourceList,
     getRelatedResourceData,
 } from '@/bcap/components/pages/api.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 
 export function useResourceData<T>(
     resourceType: string,
@@ -12,6 +13,7 @@ export function useResourceData<T>(
     const cache = ref<Record<string, T | null>>({});
     const current = ref<T | null>(null);
     const loading = ref(true);
+    const error = ref('');
 
     watchEffect(async () => {
         const id = resourceId.value;
@@ -22,13 +24,14 @@ export function useResourceData<T>(
 
         if (!(id in cache.value)) {
             loading.value = true;
+            error.value = '';
 
             try {
                 const data = await getResourceData(resourceType, id);
                 cache.value[id] = data as T;
                 current.value = cache.value[id];
-            } catch (error) {
-                console.error(`Failed to fetch ${resourceType}:`, error);
+            } catch (err) {
+                error.value = inlineMessage(err);
                 cache.value[id] = null;
                 current.value = null;
             } finally {
@@ -43,6 +46,7 @@ export function useResourceData<T>(
     return {
         data: current,
         loading,
+        error,
         cache,
     };
 }
@@ -54,6 +58,7 @@ export function useResourceList<T>(
     const cache = ref<Record<string, T | null>>({});
     const current = ref<T | null>(null);
     const loading = ref(true);
+    const error = ref('');
 
     watchEffect(async () => {
         const ids = resourceIds.value;
@@ -63,12 +68,13 @@ export function useResourceList<T>(
         }
 
         loading.value = true;
+        error.value = '';
 
         try {
             const data = await getResourceList(resourceType, ids);
             current.value = data as T;
-        } catch (error) {
-            console.error(`Failed to fetch ${resourceType}:`, error);
+        } catch (err) {
+            error.value = inlineMessage(err);
             current.value = null;
         } finally {
             loading.value = false;
@@ -78,6 +84,7 @@ export function useResourceList<T>(
     return {
         data: current,
         loading,
+        error,
         cache,
     };
 }
@@ -90,6 +97,7 @@ export function useRelatedResourceData<T>(
     const cache = ref<Record<string, T[] | T | null>>({});
     const current = ref<T[] | T | null>(null);
     const loading = ref(true);
+    const error = ref('');
 
     watchEffect(async () => {
         const id = resourceId.value;
@@ -101,17 +109,15 @@ export function useRelatedResourceData<T>(
 
         if (!(id in cache.value)) {
             loading.value = true;
+            error.value = '';
 
             try {
                 const data = await getRelatedResourceData(resourceType, id);
                 const result = getFirst && data.length > 0 ? data[0] : data;
                 cache.value[id] = result as T[] | T;
                 current.value = cache.value[id];
-            } catch (error) {
-                console.error(
-                    `Failed to fetch related ${resourceType}:`,
-                    error,
-                );
+            } catch (err) {
+                error.value = inlineMessage(err);
                 cache.value[id] = null;
                 current.value = null;
             } finally {
@@ -126,6 +132,7 @@ export function useRelatedResourceData<T>(
     return {
         data: current,
         loading,
+        error,
         cache,
     };
 }

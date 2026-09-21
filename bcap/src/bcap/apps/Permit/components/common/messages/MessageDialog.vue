@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, nextTick, onMounted } from 'vue';
+import { reactive, ref, computed, nextTick, onMounted, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Button from 'primevue/button';
@@ -14,6 +14,8 @@ import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messag
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 // The dialog shows the threads on one resource, scoped by its id: the permit for
 // the permit view, or a module's own resource for that module's view. context is a
@@ -45,7 +47,20 @@ const state = reactive({
     selectedTopicValue: [] as ReferenceAliasedNodeDataWritable['node_value'],
     selectedThreadId: 'new',
     files: [] as File[],
+    error: '',
+    // Shown beside the Send button, where the user is looking, until they
+    // change the attachments, switch threads or try again.
+    sendError: '',
 });
+
+watch(
+    () => [state.files, state.selectedThreadId, state.visible],
+    () => (state.sendError = ''),
+);
+
+// One slot at the top for whatever failed to load; sending reports itself at
+// the bottom, next to the button that triggered it.
+const dialogError = computed(() => state.error || messageStore.error);
 
 const messageInput = ref();
 
@@ -94,13 +109,14 @@ const showTab = async (archived: boolean) => {
 
 const loadRecipients = async () => {
     state.isLoadingRecipients = true;
+    state.error = '';
     try {
         state.recipients = await getContributorsForResources(props.resourceId);
         // A module resource may have no contributors of its own; the message
         // still files against it, unaddressed.
         state.selectedRecipient = state.recipients[0]?.value ?? '';
     } catch (error) {
-        console.error('Error loading recipients:', error);
+        state.error = `The list of recipients could not be loaded. ${inlineMessage(error)}`;
         state.recipients = [];
         state.selectedRecipient = '';
     } finally {
@@ -154,6 +170,7 @@ const submitMessage = async () => {
     if (!canSend.value) return;
 
     state.isSubmitting = true;
+    state.sendError = '';
 
     try {
         const targetThreadId = isReplyMode.value
@@ -176,8 +193,7 @@ const submitMessage = async () => {
 
         closeDialog();
     } catch (error) {
-        console.error('Error submitting message:', error);
-        alert('There was an error sending your message. Please try again.');
+        state.sendError = inlineMessage(error);
     } finally {
         state.isSubmitting = false;
     }
@@ -250,7 +266,7 @@ onMounted(() => {
             root: { class: 'message-dialog' },
             header: { class: 'message-dialog-header' },
             closeButton: { class: 'message-dialog-close' },
-            content: { style: { padding: '0', overflow: 'hidden' } },
+            content: { class: 'message-dialog-content' },
         }"
         @hide="messageStore.reloadModuleUnresolved()"
     >
@@ -267,6 +283,13 @@ onMounted(() => {
         <template #closeicon>
             <i class="fa-solid fa-xmark custom-close-icon"></i>
         </template>
+
+        <InlineError
+            v-if="dialogError"
+            title="Something went wrong."
+            :detail="dialogError"
+            class="dialog-error"
+        />
 
         <div class="dialog-body-split">
             <MessageThreadSidebar
@@ -418,6 +441,12 @@ onMounted(() => {
                     />
 
                     <div class="action-footer">
+                        <InlineError
+                            v-if="state.sendError"
+                            title="Your message could not be sent."
+                            :detail="state.sendError"
+                            class="send-error"
+                        />
                         <Button
                             label="Send"
                             class="send-btn"
@@ -497,6 +526,12 @@ onMounted(() => {
                     />
 
                     <div class="action-footer">
+                        <InlineError
+                            v-if="state.sendError"
+                            title="Your message could not be sent."
+                            :detail="state.sendError"
+                            class="send-error"
+                        />
                         <Button
                             v-if="
                                 !state.showArchived &&
@@ -628,9 +663,18 @@ onMounted(() => {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
+.message-dialog-content {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: min(80vh, 760px);
+}
+
 .dialog-body-split {
     display: flex;
-    height: min(80vh, 760px);
+    flex: 1;
+    min-height: 0;
     background-color: #f8f9fa;
 }
 
@@ -777,6 +821,17 @@ onMounted(() => {
     bottom: 0;
     padding: 0.75rem 0;
     background-color: var(--bc-panel);
+    flex-wrap: wrap;
+}
+
+/* Its own line above the buttons, so it rides along with the sticky footer. */
+.send-error {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+.dialog-error {
+    margin: 0.75rem 1.5rem;
 }
 
 .send-btn,

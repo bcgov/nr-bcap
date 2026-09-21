@@ -17,6 +17,7 @@ import {
 } from '@/bcgov_arches_common/constants.ts';
 
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import { fetchUser } from '@/bcgov_arches_common/api.ts';
 
 import type { Ref } from 'vue';
@@ -37,42 +38,32 @@ const router = useRouter();
 const toast = useToast();
 const { $gettext } = useGettext();
 
-router.beforeEach(async (to, _from, next) => {
+const loadUser = async (): Promise<User | null> => {
     try {
-        let userData = await fetchUser();
-        // if (
-        //     to.meta.requiresAuthentication &&
-        //     !(
-        //         'Local Government' in userData.groups ||
-        //         'Heritage Branch' in userData.groups
-        //     )
-        // ) {
-        //     window.location.replace(window.location.origin + '/bcap');
-        // }
-
-        // setUser(userData);
-
-        const requiresAuthentication = to.matched.some(
-            (record) => record.meta.requiresAuthentication,
-        );
-        if (requiresAuthentication && userData.username === ANONYMOUS) {
-            throw new Error();
-        } else {
-            next();
-        }
+        return await fetchUser();
     } catch (error) {
-        if (to.name !== routeNames.home) {
-            toast.add({
-                severity: ERROR,
-                life: DEFAULT_ERROR_TOAST_LIFE,
-                summary: $gettext('Login required.'),
-                detail: error instanceof Error ? error.message : undefined,
-            });
-        }
-        // next({ name: routeNames.login });
-        // This should be the above but it's not configured yet
-        next({ name: routeNames.home });
+        notifyError('Failed to load the current user', error);
+        return null;
     }
+};
+
+router.beforeEach(async (to) => {
+    const user = await loadUser();
+    const requiresAuthentication = to.matched.some(
+        (record) => record.meta.requiresAuthentication,
+    );
+    const loginNeeded = requiresAuthentication && user?.username === ANONYMOUS;
+    if (user && !loginNeeded) return true;
+    // Already heading home: redirecting there again re-enters this guard, which
+    // refetches the user and fails the same way.
+    if (to.name === routeNames.home) return true;
+    toast.add({
+        severity: ERROR,
+        life: DEFAULT_ERROR_TOAST_LIFE,
+        summary: $gettext('Login required.'),
+    });
+    // TODO: send to routeNames.login once that route is configured.
+    return { name: routeNames.home };
 });
 </script>
 
@@ -87,7 +78,10 @@ router.beforeEach(async (to, _from, next) => {
             </div>
         </div>
     </main>
-    <Toast />
+    <Toast
+        position="top-center"
+        error-icon="bc-toast-error-icon"
+    />
 </template>
 
 <style scoped>

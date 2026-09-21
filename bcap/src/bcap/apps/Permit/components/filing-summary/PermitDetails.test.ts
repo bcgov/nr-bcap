@@ -320,4 +320,32 @@ describe('PermitDetails.vue', () => {
             expect(wrapper.find('.draft-delete').exists()).toBe(false);
         });
     });
+
+    // The permit and its drafts load in parallel into one error slot.
+    describe('load failures', () => {
+        it('reports a failed draft list', async () => {
+            vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.inline-error').text()).toContain(
+                'Your drafts could not be loaded.',
+            );
+        });
+
+        it('keeps the permit message when both fail', async () => {
+            vi.mocked(fetchPermitDetails).mockRejectedValue(new Error('boom'));
+            vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            const errors = wrapper.findAll('.inline-error');
+            expect(errors).toHaveLength(1);
+            // One outage, and the permit is the headline; the drafts message
+            // would otherwise land on top of it.
+            expect(errors[0].text()).not.toContain('Your drafts');
+        });
+    });
 });

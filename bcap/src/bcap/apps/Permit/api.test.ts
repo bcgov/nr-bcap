@@ -85,13 +85,10 @@ describe('Permit API', () => {
             );
         });
 
-        it('returns nothing when the request fails', async () => {
+        it('throws when the request fails, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('Server Error'));
 
-            const result = await fetchDrafts();
-
-            expect(result).toEqual([]);
-            expect(console.error).toHaveBeenCalled();
+            await expect(fetchDrafts()).rejects.toThrow('Server Error');
         });
     });
 
@@ -259,10 +256,12 @@ describe('Permit API', () => {
             });
         });
 
-        it('drops a requirement that fails to load', async () => {
+        it('throws when a requirement fails to load, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('403'));
 
-            expect(await fetchRequirementDetails(['req-1'])).toEqual({});
+            await expect(fetchRequirementDetails(['req-1'])).rejects.toThrow(
+                '403',
+            );
         });
     });
 
@@ -281,10 +280,9 @@ describe('Permit API', () => {
             expect(await fetchMyProjects()).toEqual([]);
         });
 
-        it('returns empty array on error', async () => {
+        it('throws on error, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('Forbidden'));
-            const result = await fetchMyProjects();
-            expect(result).toEqual([]);
+            await expect(fetchMyProjects()).rejects.toThrow('Forbidden');
         });
     });
 
@@ -339,7 +337,7 @@ describe('Permit API', () => {
             expect(apiFetch).not.toHaveBeenCalled();
         });
 
-        it('re-throws and logs when the POST fails', async () => {
+        it('re-throws when the POST fails, for the page to report inline', async () => {
             const failure = new Error('POST investigation failed');
             apiFetchJson.mockRejectedValue(failure);
 
@@ -351,10 +349,8 @@ describe('Permit API', () => {
                     {} as never,
                 ),
             ).rejects.toThrow('POST investigation failed');
-            expect(console.error).toHaveBeenCalledWith(
-                'Module submission API failed:',
-                failure,
-            );
+            // The draft is only deleted once the module has landed.
+            expect(apiFetch).not.toHaveBeenCalled();
         });
     });
 
@@ -401,17 +397,16 @@ describe('Permit API', () => {
             expect(result).toEqual(finalResource);
         });
 
-        it('re-throws and logs when a request fails', async () => {
-            const failure = new Error('POST .../create failed (400)');
-            apiFetchJson.mockRejectedValue(failure);
+        it('re-throws when a request fails, for the page to report inline', async () => {
+            apiFetchJson.mockRejectedValue(
+                new Error('POST .../create failed (400)'),
+            );
 
             await expect(submitApplication('draft-123', {})).rejects.toThrow(
                 'POST .../create failed (400)',
             );
-            expect(console.error).toHaveBeenCalledWith(
-                'Submission API failed:',
-                failure,
-            );
+            // The draft survives a failed submission.
+            expect(apiFetch).not.toHaveBeenCalled();
         });
     });
 
