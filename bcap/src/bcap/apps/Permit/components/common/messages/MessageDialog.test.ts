@@ -7,6 +7,7 @@ import {
     getThreadsForResource,
     getMessagesForThread,
 } from '@/bcap/apps/Permit/api.ts';
+import { ApiError } from '@/bcap/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -292,6 +293,66 @@ describe('MessageDialog.vue', () => {
         ]);
 
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+    });
+
+    it('shows the server message and stays open when a send fails', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(createBcapMessage).mockRejectedValue(
+            new ApiError('These files are not permitted:\nsetup.exe', 400),
+        );
+
+        const wrapper = mountComponent();
+        await flushPromises();
+
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        await wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', topicNode('General Question'));
+        await wrapper.find('.subject-input').setValue('Setback dimensions');
+        await wrapper.find('textarea').setValue('This is my question.');
+
+        await wrapper.findAll('.mock-button')[1].trigger('click');
+        await flushPromises();
+
+        const error = wrapper.find('.inline-error');
+        expect(error.text()).toContain('Your message could not be sent.');
+        expect(error.text()).toContain('setup.exe');
+        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
+    });
+
+    // The store reports what it loaded, the dialog what it did itself; both go
+    // to the one slot at the top.
+    it('shows a failed thread load in the slot at the top', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getThreadsForResource).mockRejectedValue(new Error('boom'));
+
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'Messages could not be loaded.',
+        );
+    });
+
+    it('shows a failed recipient load in that same slot', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.mocked(getContributorsForResources).mockRejectedValue(
+            new Error('boom'),
+        );
+
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.findAll('.inline-error')).toHaveLength(1);
+        expect(wrapper.find('.dialog-error').text()).toContain(
+            'The list of recipients could not be loaded.',
+        );
     });
 
     it('marks unread messages as read when an unread thread is selected', async () => {

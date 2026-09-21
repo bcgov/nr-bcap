@@ -3,6 +3,7 @@ import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
     FileListAliasedNodeData,
     FileListAliasedNodeDataWritable,
+    GeojsonFeatureCollectionAliasedNodeData,
     PermitApplicationResourceAliasedData,
 } from '@/bcap/client/types.gen.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
@@ -187,7 +188,9 @@ export const getBasicInfoFields = (
         },
         {
             label: 'Project Boundary',
-            value: project?.project_boundary,
+            // A draft's boundary is the loose draft node, but the same geojson.
+            value: project?.project_boundary as
+                GeojsonFeatureCollectionAliasedNodeData | null | undefined,
             type: 'map',
             nodeAlias: 'project_boundary',
         },

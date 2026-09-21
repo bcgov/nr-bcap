@@ -1,10 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref, reactive } from 'vue';
 import { shallowMount, config, VueWrapper } from '@vue/test-utils';
-import {
-    submitModule,
-    saveDraftFieldToBackend,
-} from '@/bcap/apps/Permit/api.ts';
+import { submitModule } from '@/bcap/apps/Permit/api.ts';
 
 import DocumentSubmissionModule from '../DocumentSubmissionModule.vue';
 import Step1 from './Step1_About.vue';
@@ -60,6 +57,7 @@ const mockStoreState = reactive({
     draftData:
         {} as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>,
     updateValue: vi.fn(),
+    save: vi.fn(),
 });
 
 storeContainer.state = mockStoreState;
@@ -208,14 +206,14 @@ describe('DocumentSubmissionModule extended coverage', () => {
             'report_title',
             'report_submission',
         );
-        expect(saveDraftFieldToBackend).not.toHaveBeenCalled();
+        expect(mockStoreState.save).not.toHaveBeenCalled();
 
         // The uploader forwards the widget's bare node_value, not the node.
         await uploader.vm.$emit('file-updated', [{ name: 'report.pdf' }]);
         expect(uploader.props('disableAddOrSave')).toBe(false);
 
         await uploader.vm.$emit('save-item');
-        expect(saveDraftFieldToBackend).toHaveBeenCalled();
+        expect(mockStoreState.save).toHaveBeenCalled();
 
         await uploader.vm.$emit('select-item', 0);
         await uploader.vm.$emit('clear-pending');
@@ -260,7 +258,7 @@ describe('DocumentSubmissionModule extended coverage', () => {
         });
 
         await uploader.vm.$emit('save-item');
-        expect(saveDraftFieldToBackend).toHaveBeenCalled();
+        expect(mockStoreState.save).toHaveBeenCalled();
 
         mockStoreState.draftData = {
             ...mockStoreState.draftData,

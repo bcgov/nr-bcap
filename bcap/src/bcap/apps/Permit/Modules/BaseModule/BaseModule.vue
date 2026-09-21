@@ -13,6 +13,7 @@ import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prel
 import Step3_Contacts from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Contacts.vue';
 import Step4_Details from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step4_Details.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
+import { UserFacingError } from '@/bcap/api.ts';
 
 const steps = [
     { label: 'Submission Information', component: Step1_About, heading: '' },
@@ -26,7 +27,7 @@ const draft = useDraftStore();
 // The permit application is the root resource (no parent permit), so it creates
 // a new permit rather than filing a module against one.
 const submit = (): Promise<PermitApplication> => {
-    if (!draft.draftId) throw new Error('No active draft found.');
+    if (!draft.draftId) throw new UserFacingError('No active draft found.');
 
     // Stamp the submission date: the server treats application_submission_date
     // as the "submitted" signal. Temporary until the backend owns this.

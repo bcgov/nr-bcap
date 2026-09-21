@@ -225,6 +225,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "django_hosts",
     "arches",
     "arches.app.models",
@@ -257,6 +258,7 @@ INSTALLED_APPS += (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "bcap.views.exception_handler.bcap_exception_handler",
     "DEFAULT_PERMISSION_CLASSES": ["bcap.permissions.route_guards.Internal"],
     # Session cookies only. DRF's own default adds BasicAuthentication, which
     # would accept a password on every API route.
@@ -574,12 +576,24 @@ else:
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  #<-- Only need to uncomment this for testing without an actual email server
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST = "apps.smtp.gov.bc.ca"
-EMAIL_HOST_USER = "BCHistoricPlacesRegister@gov.bc.ca"
 # EMAIL_HOST_PASSWORD = 'xxxxxxx'
 # EMAIL_PORT = 587
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Read by Django 6 / Arches 8.2 On upgrade, drop EMAIL_* below and above.
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "apps.smtp.gov.bc.ca",
+            "username": "BCHistoricPlacesRegister@gov.bc.ca",
+        },
+    }
+}
+
+EMAIL_HOST = MAILERS["default"]["OPTIONS"]["host"]
+EMAIL_HOST_USER = MAILERS["default"]["OPTIONS"]["username"]
+
+DEFAULT_FROM_EMAIL = MAILERS["default"]["OPTIONS"]["username"]
 
 CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME")
 CELERY_BROKER_URL = get_env_variable(

@@ -2,6 +2,7 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
@@ -172,6 +173,7 @@ const decisionData = computed(() => currentData.value?.site_decision);
 const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
+    error: decisionError,
 } = useHierarchicalData(decisionData, {
     sourceField: 'site_decision',
     hierarchicalFields: ['site_decision', 'decision_criteria'],
@@ -463,8 +465,13 @@ const parentSite = computed(() => {
                 :class="{ 'empty-section': !hasDecisionHistory }"
             >
                 <template #sectionContent>
+                    <InlineError
+                        v-if="decisionError"
+                        title="The registration status history could not be loaded."
+                        :detail="decisionError"
+                    />
                     <StandardDataTable
-                        v-if="hasDecisionHistory"
+                        v-else-if="hasDecisionHistory"
                         :table-data="decisionTableData"
                         :column-definitions="siteDecisionColumns"
                         :initial-sort-field-index="0"

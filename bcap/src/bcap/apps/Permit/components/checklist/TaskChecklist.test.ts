@@ -151,7 +151,7 @@ describe('TaskChecklist', () => {
             mockRouteQuery.value = {};
             const wrapper = mount(TaskChecklist);
             await nextTick();
-            expect(wrapper.find('.status-state.error').text()).toContain(
+            expect(wrapper.find('.inline-error').text()).toContain(
                 'No resource ID provided in the URL.',
             );
         });
@@ -160,8 +160,10 @@ describe('TaskChecklist', () => {
             mockedGet.mockRejectedValue(new Error('boom'));
             const wrapper = mount(TaskChecklist);
             await flushPromises();
-            expect(wrapper.find('.status-state.error').exists()).toBe(true);
-            expect(wrapper.text()).toContain('Failed to load checklist data');
+            expect(wrapper.find('.inline-error').exists()).toBe(true);
+            expect(wrapper.text()).toContain(
+                'The checklist could not be loaded.',
+            );
         });
 
         it('passes the resource ID from the URL to the API', async () => {

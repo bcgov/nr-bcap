@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import {
     useResourceData,
     useRelatedResourceData,
@@ -39,16 +40,20 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: current, loading } = useResourceData<SiteVisitSchema>(
-    'site_visit',
-    resourceId,
-);
+const {
+    data: current,
+    loading,
+    error: visitError,
+} = useResourceData<SiteVisitSchema>('site_visit', resourceId);
 
-const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
-    'hria_discontinued_data',
-    resourceId,
-    true,
-);
+const { data: hriaData, error: hriaError } =
+    useRelatedResourceData<HriaDiscontinuedDataSchema>(
+        'hria_discontinued_data',
+        resourceId,
+        true,
+    );
+
+const loadError = computed(() => visitError.value || hriaError.value);
 </script>
 
 <template>
@@ -61,6 +66,11 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
     </div>
 
     <div class="container">
+        <InlineError
+            v-if="loadError"
+            title="Some of this record could not be loaded."
+            :detail="loadError"
+        />
         <Section1
             :data="current || undefined"
             :loading="loading"

@@ -1,4 +1,6 @@
 import { ref, watch, type Ref } from 'vue';
+import { apiFetchJson } from '@/bcap/api.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 import type {
     AliasedTileData,
     AliasedNodeData,
@@ -11,22 +13,10 @@ interface HierarchicalFieldConfig {
 }
 
 async function fetchHierarchy(listItemId: string): Promise<string[]> {
-    try {
-        const response = await fetch(`/bcap/api/hierarchy/${listItemId}/`);
-
-        if (!response.ok) {
-            console.error(
-                `Failed to fetch hierarchy for ${listItemId}: ${response.status}`,
-            );
-            return [];
-        }
-
-        const data = await response.json();
-        return data.labels || [];
-    } catch (error) {
-        console.error(`API error for ${listItemId}:`, error);
-        return [];
-    }
+    const data = await apiFetchJson<{ labels?: string[] }>(
+        `/bcap/api/hierarchy/${listItemId}/`,
+    );
+    return data.labels || [];
 }
 
 export function useHierarchicalData(
@@ -35,6 +25,7 @@ export function useHierarchicalData(
 ) {
     const processedData = ref<AliasedTileData[]>([]);
     const isProcessing = ref(false);
+    const error = ref('');
 
     async function loadData() {
         if (!dataSource.value || !dataSource.value.length) {
@@ -43,6 +34,7 @@ export function useHierarchicalData(
         }
 
         isProcessing.value = true;
+        error.value = '';
 
         try {
             const results = await Promise.all(
@@ -120,11 +112,8 @@ export function useHierarchicalData(
             );
 
             processedData.value = results;
-        } catch (error) {
-            console.error(
-                `Error processing ${config.sourceField} data:`,
-                error,
-            );
+        } catch (err) {
+            error.value = inlineMessage(err);
             processedData.value = [];
         } finally {
             isProcessing.value = false;
@@ -144,6 +133,7 @@ export function useHierarchicalData(
     return {
         processedData,
         isProcessing,
+        error,
         reload: loadData,
     };
 }

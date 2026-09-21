@@ -6,6 +6,7 @@ import {
     getAssignableGroups,
     issueRegistrationLink,
 } from './api';
+import { UNEXPECTED_ERROR } from '@/bcap/api.ts';
 
 function mockFetchOk(body: unknown) {
     return vi.fn().mockResolvedValue({
@@ -88,11 +89,11 @@ describe('issueRegistrationLink error flattening', () => {
         );
     });
 
-    it('falls back to raw text when the body is not JSON', async () => {
+    it('never shows a body that is not JSON', async () => {
         vi.stubGlobal('fetch', mockFetchError(500, 'Server Error', 'boom'));
 
         await expect(issueRegistrationLink({ groups: [] })).rejects.toThrow(
-            'boom',
+            UNEXPECTED_ERROR,
         );
     });
 });

@@ -29,10 +29,9 @@ from bcap.util.register_type_api import RegisterTypeApi
 from bcap.util.business_data_proxy import LegislativeActDataProxy
 from bcap.util.map_attributes import inject_map_attributes
 from bcap.util.mvt_tiler import MVTTiler
-from arches.app.models.system_settings import settings
+from bcap.views.parsers import ValidatedMultiPartJSONParser
 
 from arches_querysets.rest_framework.generic_views import ArchesResourceDetailView
-from arches_querysets.rest_framework.multipart_json_parser import MultiPartJSONParser
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
@@ -166,7 +165,7 @@ class MVT(MVTBase):
 class RelatedSiteVisits(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [Internal]
     serializer_class = ArchesResourceSerializer
-    parser_classes = [JSONParser, MultiPartJSONParser]
+    parser_classes = [JSONParser, ValidatedMultiPartJSONParser]
     pagination_class = ArchesLimitOffsetPagination
 
     def get_queryset(self):

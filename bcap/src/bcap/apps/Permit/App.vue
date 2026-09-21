@@ -10,6 +10,7 @@ import {
     selectedLanguageKey,
     systemLanguageKey,
 } from '@/bcgov_arches_common/constants.ts';
+import { notifyError } from '@/bcap/notify.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
 
 import type { Ref } from 'vue';
@@ -32,7 +33,10 @@ const accessError = ref('');
 
 const authorize = async (to: RouteLocationNormalized) => {
     // The profile endpoint returns 403 for anonymous users. Change this if anonymous access is wanted.
-    const profile = await userStore.load().catch(() => null);
+    const profile = await userStore.load().catch((error) => {
+        notifyError($gettext('Failed to load the current user.'), error);
+        return null;
+    });
     if (!profile) {
         // TODO: send to routeNames.login once that route is configured.
         accessError.value = $gettext(
@@ -75,7 +79,10 @@ router.isReady().then(() => authorize(router.currentRoute.value));
             </div>
         </div>
     </main>
-    <Toast />
+    <Toast
+        position="top-center"
+        error-icon="bc-toast-error-icon"
+    />
 </template>
 
 <style scoped>

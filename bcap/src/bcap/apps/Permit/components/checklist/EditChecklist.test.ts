@@ -8,7 +8,11 @@ vi.mock('vue-router', () => ({
     useRoute: () => ({ query: mockQuery.value }),
 }));
 
-vi.mock('@/bcap/api.ts', () => ({ apiFetchJson: vi.fn() }));
+// Spread the real module: notify.ts reads UserFacingError and TRY_AGAIN from it.
+vi.mock('@/bcap/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/api.ts')>()),
+    apiFetchJson: vi.fn(),
+}));
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     saveChecklist: vi.fn(),
     // The header band loads through the permit header store.
@@ -184,9 +188,12 @@ describe('edit mode (route id present)', () => {
         mockFetchJson.mockRejectedValue(new Error('boom'));
         const wrapper = mount(EditChecklist);
         await flushPromises();
-        expect(wrapper.find('.status-state').text()).toContain(
-            'Error loading existing checklist data.',
+        expect(wrapper.find('.inline-error').text()).toContain(
+            'The checklist could not be loaded.',
         );
+        // Nothing loaded, so the form would be an empty one the user can't save.
+        expect(wrapper.find('.req-title-input').exists()).toBe(false);
+        expect(wrapper.find('.validation-hint').exists()).toBe(false);
     });
 });
 

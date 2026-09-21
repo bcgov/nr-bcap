@@ -2,6 +2,7 @@
 import { computed, toRef } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
@@ -129,18 +130,19 @@ const disturbColumns = [
 
 const typologyData = computed(() => currentData.value?.site_typology);
 
-const { processedData: typologyTableData, isProcessing } = useHierarchicalData(
-    typologyData,
-    {
-        sourceField: 'typology_class',
-        hierarchicalFields: [
-            'typology_class',
-            'site_type',
-            'site_subtype',
-            'typology_descriptor',
-        ],
-    },
-);
+const {
+    processedData: typologyTableData,
+    isProcessing,
+    error: typologyError,
+} = useHierarchicalData(typologyData, {
+    sourceField: 'typology_class',
+    hierarchicalFields: [
+        'typology_class',
+        'site_type',
+        'site_subtype',
+        'typology_descriptor',
+    ],
+});
 
 const typologyRemarksData = computed(() => {
     if (!currentData.value?.site_typology) return [];
@@ -280,8 +282,13 @@ const hasDisturbances = computed(() => disturbancesData.value.length > 0);
                 :class="{ 'empty-section': !hasTypology }"
             >
                 <template #sectionContent>
+                    <InlineError
+                        v-if="typologyError"
+                        title="The site typology could not be loaded."
+                        :detail="typologyError"
+                    />
                     <StandardDataTable
-                        v-if="hasTypology"
+                        v-else-if="hasTypology"
                         :table-data="typologyTableData"
                         :column-definitions="typologyColumns"
                         :initial-sort-field-index="0"
