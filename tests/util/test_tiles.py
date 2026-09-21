@@ -2,7 +2,11 @@ from types import SimpleNamespace
 
 from django.test import SimpleTestCase
 
-from bcap.util.tiles import referenced_resource_ids
+from bcap.util.tiles import (
+    payload_resource_id,
+    referenced_resource_ids,
+    set_payload_node,
+)
 
 
 def _tile(data):
@@ -33,3 +37,20 @@ class ReferencedResourceIdsTests(SimpleTestCase):
     def test_skips_references_without_a_resource_id(self):
         tiles = [_tile({self.NODE: [{"resourceId": ""}, {"other": "x"}]})]
         self.assertEqual(referenced_resource_ids(tiles, self.NODE), set())
+
+
+class PayloadNodeTests(SimpleTestCase):
+    def test_reads_back_a_written_reference(self):
+        payload = {}
+        set_payload_node(payload, "group", "node", [{"resourceId": "a"}])
+        self.assertEqual(payload_resource_id(payload, "group", "node"), "a")
+
+    def test_reads_a_bare_reference(self):
+        payload = {}
+        set_payload_node(payload, "group", "node", {"resourceId": "a"})
+        self.assertEqual(payload_resource_id(payload, "group", "node"), "a")
+
+    def test_absent_or_malformed_reads_as_none(self):
+        for payload in ({}, {"aliased_data": "junk"}, {"aliased_data": {"group": 1}}):
+            with self.subTest(payload=payload):
+                self.assertIsNone(payload_resource_id(payload, "group", "node"))

@@ -39,7 +39,10 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         ).length;
     }
 
+    let moduleSubmissionId = '';
+
     async function loadModuleUnresolved(submissionId: string) {
+        moduleSubmissionId = submissionId;
         try {
             const rows =
                 await getSubmissionModulesUnresolvedCounts(submissionId);
@@ -50,6 +53,10 @@ export const useMessageStore = defineStore('bcapMessages', () => {
             console.error('Error loading module unresolved counts:', error);
         }
     }
+
+    const reloadModuleUnresolved = async () => {
+        if (moduleSubmissionId) await loadModuleUnresolved(moduleSubmissionId);
+    };
 
     const moduleUnresolvedCount = (moduleTileId: string): number =>
         moduleUnresolved.get(moduleTileId) ?? 0;
@@ -121,6 +128,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         threadsFor,
         unresolvedCount,
         loadModuleUnresolved,
+        reloadModuleUnresolved,
         moduleUnresolvedCount,
         openMessages,
         load,

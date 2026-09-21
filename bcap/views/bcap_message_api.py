@@ -27,6 +27,8 @@ from bcap.services.message.bcap_message_service import (
     BcapMessageService,
     NoAuthorContributor,
 )
+from bcap.services.message.message_context import MessageGraph
+from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from bcap.views.generated.bcap_message import (
     BcapMessageListView,
     BcapMessageViewMixin,
@@ -78,10 +80,14 @@ class BcapMessageCreateView(BcapMessageListView):
         """Ready the body before the standard create validates it: the author and
         the reply fields are stamped onto it, so validating any earlier would save
         a message without them."""
-        try:
-            BcapMessageService().prepare_message(
-                request.data, request.user, request.FILES
+        # Clients upload as "attachments"; the file-list datatype reads its own key.
+        attachments = request.FILES.getlist("attachments")
+        if attachments:
+            request.FILES.setlist(
+                f"file-list_{MessageGraph.node(A.ATTACHMENTS)}", attachments
             )
+        try:
+            BcapMessageService().prepare_create_payload(request.data, request.user)
         except NoAuthorContributor:
             raise ValidationError(
                 "No Contributor is linked to your account to author this message."
@@ -93,8 +99,8 @@ class BcapMessageCreateView(BcapMessageListView):
         for everyone party to it."""
         super().perform_create(serializer)
         service = BcapMessageService()
-        service.reopen_after_post(serializer.instance.pk, self.request.user)
-        service.unarchive_thread_for_all(serializer.instance.pk)
+        service.update_resolutions_after_post(serializer.instance.pk, self.request.user)
+        service.unarchive_for_everyone(serializer.instance.pk)
 
 
 @extend_schema(
@@ -108,7 +114,7 @@ class BcapMessageModuleUnresolvedView(APIView):
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
-        rows = BcapMessageService().unresolved_by_module(
+        rows = BcapMessageService().unresolved_counts_by_module(
             str(submission_id), request.user
         )
         return Response(ModuleUnresolvedSerializer(rows, many=True).data)
@@ -127,9 +133,7 @@ class BcapMessageContributorsView(APIView):
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, resource_id):
-        options = BcapMessageService().addressable_contributors(
-            resource_id, request.user
-        )
+        options = BcapMessageService().recipient_options(resource_id, request.user)
         return Response(ContributorSummarySerializer(options, many=True).data)
 
 
@@ -154,5 +158,7 @@ class BcapMessageDetailView(
 
     def update(self, request, *args, **kwargs):
         self.get_object()
-        BcapMessageService().apply_patch(request.user, self.kwargs["pk"], request.data)
+        BcapMessageService().update_thread_state(
+            request.user, self.kwargs["pk"], request.data
+        )
         return Response(self.get_serializer(self.get_object()).data)

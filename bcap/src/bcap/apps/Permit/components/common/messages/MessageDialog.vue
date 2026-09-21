@@ -29,8 +29,6 @@ const props = defineProps<{
 
 const messageStore = useMessageStore();
 
-// Dialog state grouped in one reactive object. The two template refs below bind
-// to DOM nodes, so they stay refs.
 const state = reactive({
     visible: false,
     showArchived: false,
@@ -50,7 +48,6 @@ const state = reactive({
 });
 
 const messageInput = ref();
-const threadContainer = ref<HTMLElement | null>(null);
 
 // The topic is used as a label, so read display_value: node_value is a list of
 // reference objects, not strings.
@@ -151,12 +148,6 @@ const selectThread = async (threadId: string) => {
     if (messageInput.value) {
         messageInput.value.$el.focus({ preventScroll: true });
     }
-    requestAnimationFrame(() => {
-        if (threadContainer.value) {
-            threadContainer.value.scrollTop =
-                threadContainer.value.scrollHeight;
-        }
-    });
 };
 
 const submitMessage = async () => {
@@ -261,6 +252,7 @@ onMounted(() => {
             closeButton: { class: 'message-dialog-close' },
             content: { style: { padding: '0', overflow: 'hidden' } },
         }"
+        @hide="messageStore.reloadModuleUnresolved()"
     >
         <template #header>
             <span class="header-block">
@@ -477,7 +469,6 @@ onMounted(() => {
                     </div>
 
                     <MessageHistory
-                        ref="threadContainer"
                         :messages="messageStore.openMessages"
                         :is-loading="state.isLoadingMessages"
                     />

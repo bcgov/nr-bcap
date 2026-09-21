@@ -693,7 +693,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             ModuleUnresolved(module_id="tile-2", unresolved_count=0),
         ]
         with patch(
-            "bcap.views.bcap_message_api.BcapMessageService.unresolved_by_module",
+            "bcap.views.bcap_message_api.BcapMessageService.unresolved_counts_by_module",
             return_value=rows,
         ):
             resp = self.client.get(url)

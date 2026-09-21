@@ -1,15 +1,31 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { downloadFile, formatFileSize } from '@/bcap/util.ts';
 import type { FormattedMessage } from '@/bcap/types.ts';
 
-defineProps<{
+const props = defineProps<{
     messages: FormattedMessage[];
     isLoading: boolean;
 }>();
+
+const thread = ref<HTMLElement | null>(null);
+
+// Open on the latest message. Messages arrive while the spinner still shows, so
+// also scroll once it clears.
+watch(
+    () => [props.messages, props.isLoading],
+    () => {
+        if (thread.value) thread.value.scrollTop = thread.value.scrollHeight;
+    },
+    { flush: 'post' },
+);
 </script>
 
 <template>
-    <div class="message-thread">
+    <div
+        ref="thread"
+        class="message-thread"
+    >
         <div
             v-if="isLoading"
             class="messages-loading"

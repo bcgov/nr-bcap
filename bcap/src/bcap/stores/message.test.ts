@@ -177,6 +177,20 @@ describe('message store', () => {
         expect(store.moduleUnresolvedCount('mod-x')).toBe(0);
     });
 
+    it('reloads module counts for the last loaded submission only', async () => {
+        vi.mocked(getSubmissionModulesUnresolvedCounts).mockResolvedValue([]);
+        const store = useMessageStore();
+
+        await store.reloadModuleUnresolved();
+        expect(getSubmissionModulesUnresolvedCounts).not.toHaveBeenCalled();
+
+        await store.loadModuleUnresolved('submission-1');
+        await store.reloadModuleUnresolved();
+        expect(
+            vi.mocked(getSubmissionModulesUnresolvedCounts).mock.calls,
+        ).toEqual([['submission-1'], ['submission-1']]);
+    });
+
     it("loads a thread's messages into openMessages", async () => {
         vi.mocked(getMessagesForThread).mockResolvedValue([
             { id: 'm1', author: 'Amy', text: 'hi', date: 'x', attachments: [] },
