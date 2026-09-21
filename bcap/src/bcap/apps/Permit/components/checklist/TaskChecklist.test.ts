@@ -157,6 +157,7 @@ describe('TaskChecklist', () => {
         });
 
         it('shows an error message when the API call fails', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             mockedGet.mockRejectedValue(new Error('boom'));
             const wrapper = mount(TaskChecklist);
             await flushPromises();

@@ -324,6 +324,7 @@ describe('PermitDetails.vue', () => {
     // The permit and its drafts load in parallel into one error slot.
     describe('load failures', () => {
         it('reports a failed draft list', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
 
             const wrapper = mount(PermitDetails, globalMountOptions);
@@ -335,6 +336,7 @@ describe('PermitDetails.vue', () => {
         });
 
         it('keeps the permit message when both fail', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             vi.mocked(fetchPermitDetails).mockRejectedValue(new Error('boom'));
             vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
 

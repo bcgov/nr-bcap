@@ -45,6 +45,7 @@ describe('getResourceData', () => {
     });
 
     it("throws the server's message on error", async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(404, 'Not Found', '{"detail": "Resource missing"}'),
@@ -56,6 +57,7 @@ describe('getResourceData', () => {
     });
 
     it('throws a generic message when the body is empty', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(500, 'Internal Server Error', ''),
@@ -81,6 +83,7 @@ describe('getResourceList', () => {
     });
 
     it("throws the server's message on error", async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(400, 'Bad Request', '{"detail": "Bad resource id"}'),
@@ -107,6 +110,7 @@ describe('getRelatedResourceData', () => {
     });
 
     it("throws the server's message on error", async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(403, 'Forbidden', '{"detail": "Access denied"}'),
@@ -118,6 +122,7 @@ describe('getRelatedResourceData', () => {
     });
 
     it('throws a generic message when the body is empty', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal('fetch', mockFetchError(500, 'Server Error', ''));
 
         await expect(getRelatedResourceData('arch-site', '1')).rejects.toThrow(
