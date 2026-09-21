@@ -166,13 +166,14 @@ describe('message store', () => {
         reloadedBoth();
     });
 
-    it('still reloads when resolving fails', async () => {
+    it('reports a failed resolve without reloading the threads', async () => {
         vi.mocked(setThreadResolved).mockRejectedValueOnce(new Error('nope'));
         const store = useMessageStore();
 
         await store.setResolved('t1', true, 'permit-1');
 
-        reloadedBoth();
+        expect(store.error).toContain('This thread could not be updated.');
+        expect(getThreadsForResource).not.toHaveBeenCalled();
     });
 
     it('maps module tile ids to their unresolved counts', async () => {
