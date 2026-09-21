@@ -15,7 +15,7 @@ export const useUserStore = defineStore('bcapUser', () => {
 
     // Kept once loaded: the route guard asks on every navigation. Nothing is
     // assigned on a failure, so the next navigation retries.
-    async function load(): Promise<UserProfile | null> {
+    async function loadProfile(): Promise<UserProfile | null> {
         if (state.profile) return state.profile;
         const result = zUserProfileResponse.safeParse(
             await apiFetchJson(arches.urls.api_user_profile),
@@ -33,5 +33,5 @@ export const useUserStore = defineStore('bcapUser', () => {
 
     const isInternal = computed(() => state.profile?.is_internal ?? false);
 
-    return { state, isInternal, load };
+    return { state, isInternal, loadProfile };
 });

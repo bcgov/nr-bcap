@@ -24,8 +24,8 @@ describe('user store', () => {
         mockFetchJson.mockResolvedValue(profile(true));
         const store = useUserStore();
 
-        expect(await store.load()).toEqual(profile(true));
-        await store.load();
+        expect(await store.loadProfile()).toEqual(profile(true));
+        await store.loadProfile();
 
         expect(mockFetchJson).toHaveBeenCalledTimes(1);
         expect(mockFetchJson).toHaveBeenCalledWith('/bcap/user_profile');
@@ -36,7 +36,7 @@ describe('user store', () => {
         mockFetchJson.mockResolvedValue(profile(false));
         const store = useUserStore();
 
-        await store.load();
+        await store.loadProfile();
 
         expect(store.isInternal).toBe(false);
     });
@@ -47,11 +47,11 @@ describe('user store', () => {
         mockFetchJson.mockRejectedValueOnce(new Error('403'));
         const store = useUserStore();
 
-        await expect(store.load()).rejects.toThrow('403');
+        await expect(store.loadProfile()).rejects.toThrow('403');
         expect(store.isInternal).toBe(false);
 
         mockFetchJson.mockResolvedValue(profile(true));
-        expect(await store.load()).toEqual(profile(true));
+        expect(await store.loadProfile()).toEqual(profile(true));
     });
 
     it('treats a profile that fails validation as no profile', async () => {
@@ -59,7 +59,7 @@ describe('user store', () => {
         mockFetchJson.mockResolvedValue({ username: 'someone' });
         const store = useUserStore();
 
-        expect(await store.load()).toBeNull();
+        expect(await store.loadProfile()).toBeNull();
         expect(store.isInternal).toBe(false);
     });
 });

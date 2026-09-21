@@ -37,7 +37,7 @@ const authorize = async (to: RouteLocationNormalized) => {
     // The profile endpoint returns 403 for anonymous users. Change this if anonymous access is wanted.
     let profile: UserProfile | null = null;
     try {
-        profile = await userStore.load();
+        profile = await userStore.loadProfile();
     } catch (error) {
         if (!(error instanceof ApiError && error.status === 403))
             notifyError($gettext('Failed to load the current user.'), error);
