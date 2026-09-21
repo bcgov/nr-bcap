@@ -110,6 +110,7 @@ describe('message store', () => {
     });
 
     it('falls back to an empty list when the fetch fails', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.mocked(getThreadsForResource).mockRejectedValueOnce(
             new Error('nope'),
         );

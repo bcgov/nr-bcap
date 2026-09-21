@@ -594,6 +594,8 @@ describe('TaskChecklist', () => {
 
     describe('saveChanges', () => {
         it('sends a PATCH to the correct URL', async () => {
+            // The fixture body is partial, and the patch soft-validates it.
+            vi.spyOn(console, 'warn').mockImplementation(() => {});
             mockRouteQuery.value = { id: 'my-resource' };
             mockedGet.mockResolvedValue(
                 buildRequirement({
@@ -678,9 +680,15 @@ describe('TaskChecklist', () => {
                     assessment: null,
                 }),
             );
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             vi.stubGlobal(
                 'fetch',
-                vi.fn().mockResolvedValue({ ok: false, status: 500 }),
+                vi.fn().mockResolvedValue({
+                    ok: false,
+                    status: 500,
+                    // Read by the error path to build the message.
+                    text: () => Promise.resolve(''),
+                }),
             );
             const wrapper = mount(TaskChecklist);
             await flushPromises();

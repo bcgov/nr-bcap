@@ -381,6 +381,8 @@ describe('MessageDialog.vue', () => {
         expect(setThreadArchived).toHaveBeenCalledWith('active-1', true);
         expect(setThreadResolved).not.toHaveBeenCalled();
 
+        await wrapper.findAll('.sidebar-tab')[1].trigger('click');
+        await flushPromises();
         await wrapper.findAll('.sidebar-item')[0].trigger('click');
         await flushPromises();
         // An archived thread has to come back before it can be unresolved.
