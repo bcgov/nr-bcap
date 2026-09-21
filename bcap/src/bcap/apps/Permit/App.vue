@@ -10,12 +10,14 @@ import {
     selectedLanguageKey,
     systemLanguageKey,
 } from '@/bcgov_arches_common/constants.ts';
+import { ApiError } from '@/bcap/api.ts';
 import { notifyError } from '@/bcap/notify.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
 
 import type { Ref } from 'vue';
 import type { RouteLocationNormalized } from 'vue-router';
 import type { Language } from '@/bcgov_arches_common/types.ts';
+import type { UserProfile } from '@/bcap/stores/user.ts';
 
 const selectedLanguage: Ref<Language> = ref(ENGLISH);
 provide(selectedLanguageKey, selectedLanguage);
@@ -33,10 +35,13 @@ const accessError = ref('');
 
 const authorize = async (to: RouteLocationNormalized) => {
     // The profile endpoint returns 403 for anonymous users. Change this if anonymous access is wanted.
-    const profile = await userStore.load().catch((error) => {
-        notifyError($gettext('Failed to load the current user.'), error);
-        return null;
-    });
+    let profile: UserProfile | null = null;
+    try {
+        profile = await userStore.load();
+    } catch (error) {
+        if (!(error instanceof ApiError && error.status === 403))
+            notifyError($gettext('Failed to load the current user.'), error);
+    }
     if (!profile) {
         // TODO: send to routeNames.login once that route is configured.
         accessError.value = $gettext(
