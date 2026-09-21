@@ -8,7 +8,7 @@ import {
     setThreadArchived,
     setThreadResolved,
 } from '@/bcap/apps/Permit/api.ts';
-import { inlineMessage, notifyError } from '@/bcap/notify.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 import type {
     MessageThread,
     FormattedMessage,
@@ -114,8 +114,9 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     ) {
         try {
             await setThreadResolved(threadId, resolved);
-        } catch (error) {
-            console.error('Failed to resolve thread:', error);
+        } catch (failure) {
+            error.value = `This thread could not be updated. ${inlineMessage(failure)}`;
+            return;
         }
         await reloadBoth(resourceId);
     }
