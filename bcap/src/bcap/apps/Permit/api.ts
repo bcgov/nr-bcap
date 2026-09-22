@@ -469,7 +469,6 @@ export const createBcapMessage = async ({
     const aliasedData: NonNullable<BcapMessageWritable['aliased_data']> = {
         message_content: {
             aliased_data: {
-                message_author: null,
                 message_content: {
                     node_value: localized(messageText),
                 },
