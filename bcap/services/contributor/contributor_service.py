@@ -198,6 +198,8 @@ class ContributorService(AliasedDataReader):
                 pk__in=[resource_id, *permits], principaluser__isnull=False
             ).values_list("principaluser__username", flat=True)
             proponents = {self.username_contributor_id(name) for name in filers}
+            # The permit's owning_organization could be offered here too: a thread
+            # addressed to an organization already reaches all its members.
             ids |= proponents
         options = self.by_ids(ids - {None})
         for option in options:
