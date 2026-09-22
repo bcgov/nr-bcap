@@ -89,9 +89,7 @@ const activeThread = computed(
         ) || null,
 );
 
-const isReplyMode = computed(() => {
-    return state.selectedThreadId !== 'new' && activeThread.value !== null;
-});
+const isReplyMode = computed(() => activeThread.value !== null);
 
 const canSend = computed(
     () =>
@@ -183,7 +181,7 @@ const submitMessage = async () => {
 
         await messageStore.send({
             messageText: state.messageText,
-            recipientId: state.selectedRecipient as string,
+            recipientId: state.selectedRecipient,
             resourceId: props.resourceId,
             threadId: targetThreadId,
             topic: isReplyMode.value ? undefined : subject || undefined,

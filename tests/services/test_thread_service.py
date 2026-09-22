@@ -254,19 +254,18 @@ class BcapMessageResolutionTests(TestCase):
             (message or self.root).pk, {"resolved": resolved}, MessageViewer(user)
         )
 
-    def test_staff_resolve_the_recipient_side_only(self):
-        self._resolve(self.staff)
-        date, by = resolution(self.root, "recipient")
-        self.assertIsNotNone(date)
-        self.assertEqual(by, str(self.staff_contrib.pk))
-        self.assertEqual(resolution(self.root, "author"), (None, None))
-
-    def test_the_applicant_resolves_the_author_side_only(self):
-        self._resolve(self.applicant)
-        date, by = resolution(self.root, "author")
-        self.assertIsNotNone(date)
-        self.assertEqual(by, str(self.applicant_contrib.pk))
-        self.assertEqual(resolution(self.root, "recipient"), (None, None))
+    def test_each_party_resolves_only_their_own_side(self):
+        for user, contrib, mine, other in (
+            (self.staff, self.staff_contrib, "recipient", "author"),
+            (self.applicant, self.applicant_contrib, "author", "recipient"),
+        ):
+            with self.subTest(side=mine):
+                self._resolve(user)
+                date, by = resolution(self.root, mine)
+                self.assertIsNotNone(date)
+                self.assertEqual(by, str(contrib.pk))
+                self.assertEqual(resolution(self.root, other), (None, None))
+                self._resolve(user, resolved=False)
 
     def test_resolving_from_a_reply_lands_on_the_root(self):
         self._resolve(self.staff, self.reply)

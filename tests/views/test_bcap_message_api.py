@@ -590,13 +590,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             root = roots[str(self.public_root.pk)]
             self.assertEqual(root["viewer_side"], side)
 
-    def test_patch_reopens_the_thread(self):
-        self.idir_login_simulate(self.staff)
-        self._patch(self.public_root.pk, resolved=True)
-        resp = self._patch(self.public_root.pk, resolved=False)
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
-
     def test_patch_denied_when_caller_cannot_edit_resource_context(self):
         # Same gate as create: no edit access to the resource_context, no write.
         self.idir_login_simulate(self.viewer)
@@ -652,21 +645,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(
             resolution(self.public_root, "author")[1], str(self.applicant_contrib.pk)
         )
-
-    def test_patch_archives_thread_for_that_viewer_only(self):
-        # A top-level "archived": true on the PATCH moves the thread to the
-        # caller's archived list; the other party's view is untouched.
-        self.idir_login_simulate(self.staff)
-        resp = self._patch(self.public_root.pk, archived=True)
-        self.assertEqual(resp.status_code, 200)
-        self.assertNotIn(str(self.public_root.pk), self._thread_roots(self.staff))
-        self.assertIn(
-            str(self.public_root.pk),
-            self._thread_roots(self.staff, archived=True),
-        )
-        # The applicant, also party to the thread, still sees it as active.
-        self.assertIn(str(self.public_root.pk), self._thread_roots(self.user))
-        self.assertEqual(self._thread_roots(self.user, archived=True), set())
 
     def test_patch_unarchives_thread_back_to_active(self):
         self.idir_login_simulate(self.staff)

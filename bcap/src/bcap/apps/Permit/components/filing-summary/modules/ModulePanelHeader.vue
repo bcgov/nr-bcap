@@ -26,6 +26,9 @@ const emit = defineEmits<{
 }>();
 
 const messageStore = useMessageStore();
+const unresolved = computed(() =>
+    messageStore.moduleUnresolvedCount(props.row.tileid),
+);
 
 const moreMenu = ref();
 
@@ -128,14 +131,12 @@ const moreItems = computed(() => [
             />
         </span>
         <span
-            v-if="messageStore.moduleUnresolvedCount(row.tileid)"
+            v-if="unresolved"
             class="module-unresolved-badge"
-            :title="`${messageStore.moduleUnresolvedCount(
-                row.tileid,
-            )} unresolved message(s)`"
+            :title="`${unresolved} unresolved message(s)`"
         >
             <i class="fa-solid fa-comment-dots"></i>
-            {{ messageStore.moduleUnresolvedCount(row.tileid) }}
+            {{ unresolved }}
         </span>
     </span>
 </template>

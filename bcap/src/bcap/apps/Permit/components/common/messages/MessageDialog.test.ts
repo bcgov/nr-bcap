@@ -124,6 +124,7 @@ describe('MessageDialog.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
+        expect(wrapper.html()).toContain('Permit Application');
         expect(getContributorsForResources).toHaveBeenCalledWith('permit-999');
 
         expect((wrapper.vm as unknown).state.recipients.length).toBe(2);
@@ -181,19 +182,6 @@ describe('MessageDialog.vue', () => {
         ]);
     });
 
-    it('opens the dialog when the trigger button is clicked', async () => {
-        const wrapper = mountComponent();
-        await flushPromises();
-
-        expect(wrapper.find('.mock-dialog').exists()).toBe(false);
-
-        await wrapper.findAll('.mock-button')[0].trigger('click');
-        await flushPromises();
-
-        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
-        expect(wrapper.html()).toContain('Permit Application');
-    });
-
     it('displays existing messages in the thread when a sidebar thread is selected (Reply mode)', async () => {
         withThreads([thread({ id: 'thread-555' })]);
         // Messages are fetched for the open thread, not carried on the list.
@@ -221,19 +209,6 @@ describe('MessageDialog.vue', () => {
         expect(history.html()).toContain('Jane');
         expect(history.html()).toContain('Please fix this');
         expect(history.html()).toContain('Oct 1');
-    });
-
-    it('does not call submit if message text is empty', async () => {
-        const wrapper = mountComponent();
-        await flushPromises();
-
-        await wrapper.findAll('.mock-button')[0].trigger('click');
-        await flushPromises();
-
-        // Index 1 is the Send button in the new-message view.
-        await wrapper.findAll('.mock-button')[1].trigger('click');
-
-        expect(createBcapMessage).not.toHaveBeenCalled();
     });
 
     it('submits a NEW message successfully and reloads the thread list', async () => {
@@ -395,26 +370,32 @@ describe('MessageDialog.vue', () => {
         expect(setThreadArchived).toHaveBeenCalledWith('arch-1', false);
     });
 
-    it('marks an internal thread as staff only', async () => {
-        withThreads([thread({ isInternal: true })]);
-        const wrapper = mountComponent();
-        await flushPromises();
-        await openThread(wrapper);
+    it.each([
+        {
+            isInternal: true,
+            shown: '.internal-tag',
+            hidden: '.external-tag',
+            label: 'Internal',
+        },
+        {
+            isInternal: false,
+            shown: '.external-tag',
+            hidden: '.internal-tag',
+            label: 'External',
+        },
+    ])(
+        'tags a thread with isInternal=$isInternal as $label',
+        async ({ isInternal, shown, hidden, label }) => {
+            withThreads([thread({ isInternal })]);
+            const wrapper = mountComponent();
+            await flushPromises();
+            await openThread(wrapper);
 
-        expect(wrapper.find('.internal-tag').text()).toContain('Internal');
-        expect(wrapper.find('.external-tag').exists()).toBe(false);
-        expect(wrapper.find('.resolved-tag').exists()).toBe(false);
-    });
-
-    it('marks a shared thread as external', async () => {
-        withThreads([thread()]);
-        const wrapper = mountComponent();
-        await flushPromises();
-        await openThread(wrapper);
-
-        expect(wrapper.find('.external-tag').text()).toContain('External');
-        expect(wrapper.find('.internal-tag').exists()).toBe(false);
-    });
+            expect(wrapper.find(shown).text()).toContain(label);
+            expect(wrapper.find(hidden).exists()).toBe(false);
+            expect(wrapper.find('.resolved-tag').exists()).toBe(false);
+        },
+    );
 
     it('resolves the applicant side on open, with no resolve controls', async () => {
         useUserStore().state.profile = null;
@@ -487,16 +468,19 @@ describe('MessageDialog.vue', () => {
         });
     });
 
-    // A new thread needs a message type, so Send stays disabled until one is
-    // picked; typing text alone posts nothing.
-    it('does not send a new thread without a message type', async () => {
+    // Send stays disabled until a new thread has text and a message type.
+    it.each([
+        { missing: 'message text', text: '' },
+        { missing: 'a message type', text: 'No topic picked.' },
+    ])('does not send a new thread without $missing', async ({ text }) => {
         const wrapper = mountComponent();
         await flushPromises();
 
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        await wrapper.find('textarea').setValue('No topic picked.');
+        await wrapper.find('textarea').setValue(text);
+        // Index 1 is the Send button in the new-message view.
         await wrapper.findAll('.mock-button')[1].trigger('click');
         await flushPromises();
 

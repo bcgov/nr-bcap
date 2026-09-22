@@ -591,29 +591,20 @@ describe('Permit API', () => {
         });
     });
 
-    describe('setThreadArchived', () => {
-        it('PATCHes the message with the archived flag', async () => {
+    it.each([
+        { setter: setThreadArchived, flag: 'archived', value: true },
+        { setter: setThreadResolved, flag: 'resolved', value: false },
+    ])(
+        'PATCHes the message with the $flag flag',
+        async ({ setter, flag, value }) => {
             apiFetch.mockResolvedValue(okResponse({}));
 
-            await setThreadArchived('m1', true);
+            await setter('m1', value);
 
             expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
                 method: 'PATCH',
-                body: { archived: true },
+                body: { [flag]: value },
             });
-        });
-    });
-
-    describe('setThreadResolved', () => {
-        it('PATCHes the message with the resolved flag', async () => {
-            apiFetch.mockResolvedValue(okResponse({}));
-
-            await setThreadResolved('m1', false);
-
-            expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
-                method: 'PATCH',
-                body: { resolved: false },
-            });
-        });
-    });
+        },
+    );
 });

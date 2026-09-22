@@ -93,33 +93,41 @@ export const useMessageStore = defineStore('bcapMessages', () => {
     const reloadBoth = (resourceId: string) =>
         Promise.all([load(resourceId), load(resourceId, true)]);
 
-    async function setArchived(
-        threadId: string,
-        archived: boolean,
+    async function updateThread(
+        call: () => Promise<unknown>,
+        failureTitle: string,
         resourceId: string,
     ) {
         try {
-            await setThreadArchived(threadId, archived);
+            await call();
         } catch (failure) {
-            error.value = `This thread could not be archived. ${inlineMessage(failure)}`;
+            error.value = `${failureTitle} ${inlineMessage(failure)}`;
             return;
         }
         await reloadBoth(resourceId);
     }
 
-    async function setResolved(
+    const setArchived = (
+        threadId: string,
+        archived: boolean,
+        resourceId: string,
+    ) =>
+        updateThread(
+            () => setThreadArchived(threadId, archived),
+            'This thread could not be archived.',
+            resourceId,
+        );
+
+    const setResolved = (
         threadId: string,
         resolved: boolean,
         resourceId: string,
-    ) {
-        try {
-            await setThreadResolved(threadId, resolved);
-        } catch (failure) {
-            error.value = `This thread could not be updated. ${inlineMessage(failure)}`;
-            return;
-        }
-        await reloadBoth(resourceId);
-    }
+    ) =>
+        updateThread(
+            () => setThreadResolved(threadId, resolved),
+            'This thread could not be updated.',
+            resourceId,
+        );
 
     // Fetch a thread's messages into openMessages, clearing first so the open
     // thread shows a loading gap rather than the previous thread's messages.

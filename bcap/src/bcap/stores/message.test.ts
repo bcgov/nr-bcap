@@ -122,17 +122,6 @@ describe('message store', () => {
         expect(store.error).toContain('Messages could not be loaded.');
     });
 
-    it('reports a failed archive without reloading the threads', async () => {
-        vi.mocked(setThreadArchived).mockRejectedValueOnce(new Error('nope'));
-        const store = useMessageStore();
-
-        await store.setArchived('t1', true, 'permit-1');
-
-        expect(store.error).toContain('This thread could not be archived.');
-        // Nothing moved, and a reload would clear the message just set.
-        expect(getThreadsForResource).not.toHaveBeenCalled();
-    });
-
     it('sends a message then reloads that resource', async () => {
         const store = useMessageStore();
 
@@ -146,35 +135,44 @@ describe('message store', () => {
         expect(getThreadsForResource).toHaveBeenCalledWith('permit-1', false);
     });
 
-    it('reloads both the active and archived lists after archiving', async () => {
-        const store = useMessageStore();
+    const threadUpdates = [
+        {
+            action: 'setArchived',
+            api: setThreadArchived,
+            failure: 'This thread could not be archived.',
+        },
+        {
+            action: 'setResolved',
+            api: setThreadResolved,
+            failure: 'This thread could not be updated.',
+        },
+    ] as const;
 
-        await store.setArchived('t1', true, 'permit-1');
+    it.each(threadUpdates)(
+        '$action updates the thread then reloads both lists',
+        async ({ action, api }) => {
+            const store = useMessageStore();
 
-        expect(setThreadArchived).toHaveBeenCalledWith('t1', true);
-        reloadedBoth();
-    });
+            await store[action]('t1', true, 'permit-1');
 
-    it('resolves or reopens a thread then reloads both lists', async () => {
-        const store = useMessageStore();
+            expect(api).toHaveBeenCalledWith('t1', true);
+            reloadedBoth();
+        },
+    );
 
-        await store.setResolved('t1', true, 'permit-1');
-        await store.setResolved('t1', false, 'permit-1');
+    it.each(threadUpdates)(
+        '$action reports a failure without reloading the threads',
+        async ({ action, api, failure }) => {
+            vi.mocked(api).mockRejectedValueOnce(new Error('nope'));
+            const store = useMessageStore();
 
-        expect(setThreadResolved).toHaveBeenCalledWith('t1', true);
-        expect(setThreadResolved).toHaveBeenCalledWith('t1', false);
-        reloadedBoth();
-    });
+            await store[action]('t1', true, 'permit-1');
 
-    it('reports a failed resolve without reloading the threads', async () => {
-        vi.mocked(setThreadResolved).mockRejectedValueOnce(new Error('nope'));
-        const store = useMessageStore();
-
-        await store.setResolved('t1', true, 'permit-1');
-
-        expect(store.error).toContain('This thread could not be updated.');
-        expect(getThreadsForResource).not.toHaveBeenCalled();
-    });
+            expect(store.error).toContain(failure);
+            // Nothing moved, and a reload would clear the message just set.
+            expect(getThreadsForResource).not.toHaveBeenCalled();
+        },
+    );
 
     it('maps module tile ids to their unresolved counts', async () => {
         vi.mocked(getSubmissionModulesUnresolvedCounts).mockResolvedValue([
