@@ -6714,11 +6714,14 @@ export type UrlAliasedNodeData = {
     }>;
 };
 
-export type UserProfileResponse = {
+export type UserResponse = {
     username: string;
     first_name: string;
     last_name: string;
-    readonly groups: Array<string>;
+    readonly groups: {
+        [key: string]: number;
+    };
+    is_superuser: boolean;
 };
 
 export type AlterationWritable = {
@@ -12601,10 +12604,11 @@ export type UrlAliasedNodeDataWritable = {
     } | null;
 };
 
-export type UserProfileResponseWritable = {
+export type UserResponseWritable = {
     username: string;
     first_name: string;
     last_name: string;
+    is_superuser: boolean;
 };
 
 export type ApiArchaeologicalSiteListData = {
@@ -13663,6 +13667,20 @@ export type ApiSiteVisitRetrieveResponses = {
 export type ApiSiteVisitRetrieveResponse =
     ApiSiteVisitRetrieveResponses[keyof ApiSiteVisitRetrieveResponses];
 
+export type ApiUserRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/bcap/api/user/';
+};
+
+export type ApiUserRetrieveResponses = {
+    200: UserResponse;
+};
+
+export type ApiUserRetrieveResponse =
+    ApiUserRetrieveResponses[keyof ApiUserRetrieveResponses];
+
 export type ApiWorkflowDraftListAllData = {
     body?: never;
     path?: never;
@@ -13767,17 +13785,3 @@ export type ApiWorkflowDraftPartialUpdateResponses = {
 
 export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
-
-export type UserProfileRetrieveData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/bcap/user_profile';
-};
-
-export type UserProfileRetrieveResponses = {
-    200: UserProfileResponse;
-};
-
-export type UserProfileRetrieveResponse =
-    UserProfileRetrieveResponses[keyof UserProfileRetrieveResponses];

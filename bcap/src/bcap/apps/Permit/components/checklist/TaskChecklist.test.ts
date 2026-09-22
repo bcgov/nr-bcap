@@ -205,26 +205,6 @@ describe('TaskChecklist', () => {
                 'Site Checklist',
             );
         });
-
-        it('keeps the staff view on the return trip', async () => {
-            mockRouteQuery.value = {
-                id: 'res-1',
-                permit: 'permit-1',
-                staff: '1',
-            };
-            mockedGet.mockResolvedValue(buildRequirement());
-
-            const wrapper = mount(TaskChecklist);
-            await flushPromises();
-
-            expect(
-                wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
-            ).toEqual({
-                name: 'permitDetails',
-                params: { id: 'permit-1' },
-                query: { staff: '1' },
-            });
-        });
     });
 
     describe('page title', () => {

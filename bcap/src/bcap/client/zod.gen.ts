@@ -4764,11 +4764,12 @@ export const zPaginatedProcessRequirementList = z.object({
     results: z.array(zProcessRequirement)
 });
 
-export const zUserProfileResponse = z.object({
+export const zUserResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    groups: z.array(z.string()).readonly()
+    groups: z.record(z.string(), z.int()).readonly(),
+    is_superuser: z.boolean()
 });
 
 export const zBooleanAliasedNodeDataWritable = z.object({
@@ -8931,10 +8932,11 @@ export const zPaginatedProcessRequirementListWritable = z.object({
     results: z.array(zProcessRequirementWritable)
 });
 
-export const zUserProfileResponseWritable = z.object({
+export const zUserResponseWritable = z.object({
     username: z.string(),
     first_name: z.string(),
-    last_name: z.string()
+    last_name: z.string(),
+    is_superuser: z.boolean()
 });
 
 export const zApiArchaeologicalSiteListQuery = z.object({
@@ -9343,6 +9345,8 @@ export const zApiSiteVisitRetrievePath = z.object({
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
 
+export const zApiUserRetrieveResponse = zUserResponse;
+
 export const zApiWorkflowDraftListAllQuery = z.object({
     parent: z.uuid().optional()
 });
@@ -9388,5 +9392,3 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 });
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
-
-export const zUserProfileRetrieveResponse = zUserProfileResponse;

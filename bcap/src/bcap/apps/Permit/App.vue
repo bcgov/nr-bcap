@@ -4,30 +4,20 @@ import { useRouter } from 'vue-router';
 import { useGettext } from 'vue3-gettext';
 
 import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
 
 import {
-    ANONYMOUS,
-    DEFAULT_ERROR_TOAST_LIFE,
     ENGLISH,
-    ERROR,
-    USER_KEY,
     selectedLanguageKey,
     systemLanguageKey,
 } from '@/bcgov_arches_common/constants.ts';
-
-import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { ApiError } from '@/bcap/api.ts';
 import { notifyError } from '@/bcap/notify.ts';
-import { fetchUser } from '@/bcgov_arches_common/api.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
 
 import type { Ref } from 'vue';
-import type { Language, User } from '@/bcgov_arches_common/types.ts';
-
-const user = ref<User | null>(null);
-const setUser = (userToSet: User | null) => {
-    user.value = userToSet;
-};
-provide(USER_KEY, { user, setUser });
+import type { RouteLocationNormalized } from 'vue-router';
+import type { Language } from '@/bcgov_arches_common/types.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 
 const selectedLanguage: Ref<Language> = ref(ENGLISH);
 provide(selectedLanguageKey, selectedLanguage);
@@ -35,36 +25,46 @@ const systemLanguage = ENGLISH; // TODO: get from settings
 provide(systemLanguageKey, systemLanguage);
 
 const router = useRouter();
-const toast = useToast();
 const { $gettext } = useGettext();
+const userStore = useUserStore();
 
-const loadUser = async (): Promise<User | null> => {
+// Shown in place of the router view. A refusal is not redirected anywhere: the
+// staff pages are their own arches plugin, so sending the router elsewhere would
+// leave the wrong page rendered inside their shell under a url that disagrees.
+const accessError = ref('');
+
+const authorize = async (to: RouteLocationNormalized) => {
+    // The profile endpoint returns 403 for anonymous users. Change this if anonymous access is wanted.
+    let profile: UserResponse | null = null;
     try {
-        return await fetchUser();
+        profile = await userStore.fetchUser();
     } catch (error) {
-        notifyError('Failed to load the current user', error);
-        return null;
+        if (!(error instanceof ApiError && error.status === 403))
+            notifyError($gettext('Failed to load the current user.'), error);
     }
+    if (!profile) {
+        // TODO: send to routeNames.login once that route is configured.
+        accessError.value = $gettext(
+            'You need to be signed in to use this page.',
+        );
+        return false;
+    }
+    const staffOnly = to.matched.some((record) => record.meta.requiresInternal);
+    if (staffOnly && !userStore.isInternal) {
+        accessError.value = $gettext(
+            'This page is for Archaeology Branch staff.',
+        );
+        return false;
+    }
+    accessError.value = '';
+    return true;
 };
 
-router.beforeEach(async (to) => {
-    const user = await loadUser();
-    const requiresAuthentication = to.matched.some(
-        (record) => record.meta.requiresAuthentication,
-    );
-    const loginNeeded = requiresAuthentication && user?.username === ANONYMOUS;
-    if (user && !loginNeeded) return true;
-    // Already heading home: redirecting there again re-enters this guard, which
-    // refetches the user and fails the same way.
-    if (to.name === routeNames.home) return true;
-    toast.add({
-        severity: ERROR,
-        life: DEFAULT_ERROR_TOAST_LIFE,
-        summary: $gettext('Login required.'),
-    });
-    // TODO: send to routeNames.login once that route is configured.
-    return { name: routeNames.home };
-});
+router.beforeEach(authorize);
+
+// Installing the router starts its first navigation, and that happens before
+// this component's setup runs, so the guard above never sees the landing route.
+router.isReady().then(() => authorize(router.currentRoute.value));
 </script>
 
 <template>
@@ -74,7 +74,13 @@ router.beforeEach(async (to) => {
                 class="bcgov-main-content bc-form"
                 style="flex: auto; background-color: #e9e9e9"
             >
-                <RouterView />
+                <div
+                    v-if="accessError"
+                    class="access-error"
+                >
+                    {{ accessError }}
+                </div>
+                <RouterView v-else />
             </div>
         </div>
     </main>
@@ -98,6 +104,10 @@ main {
 
 .full-height {
     height: 100%;
+}
+
+.access-error {
+    margin: 1.5rem;
 }
 </style>
 

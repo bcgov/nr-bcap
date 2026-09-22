@@ -91,21 +91,6 @@ describe('permit context', () => {
         expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
         expect(wrapper.find('.crumb-current').text()).toBe('My Checklist');
     });
-
-    it('keeps the staff view on the return trip', async () => {
-        mockQuery.value = { permit: 'permit-1', staff: '1' };
-
-        const wrapper = mount(EditChecklist);
-        await flushPromises();
-
-        expect(
-            wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
-        ).toEqual({
-            name: 'permitDetails',
-            params: { id: 'permit-1' },
-            query: { staff: '1' },
-        });
-    });
 });
 
 describe('create mode (no route id)', () => {

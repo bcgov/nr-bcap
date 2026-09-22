@@ -473,6 +473,7 @@ export const createBcapMessage = async ({
                 message_content: {
                     node_value: localized(messageText),
                 },
+                message_author: null,
                 message_creation_date: { node_value: new Date().toISOString() },
                 resource_context: {
                     node_value: [{ resourceId }],

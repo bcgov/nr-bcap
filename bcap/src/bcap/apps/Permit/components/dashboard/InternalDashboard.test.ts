@@ -565,9 +565,9 @@ describe('onCardClick', () => {
         await wrapper.findComponent(ProjectCard).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
-            name: 'permitDetails',
+            name: 'internalPermitDetails',
             params: { id: 'res-1' },
-            query: { requirement: 'req-1', staff: 'true' },
+            query: { requirement: 'req-1' },
         });
     });
 
@@ -580,9 +580,9 @@ describe('onCardClick', () => {
         await wrapper.findComponent(ProjectCard).trigger('click');
 
         expect(push).toHaveBeenCalledWith({
-            name: 'permitDetails',
+            name: 'internalPermitDetails',
             params: { id: 'res-1' },
-            query: { staff: 'true' },
+            query: {},
         });
     });
 

@@ -115,8 +115,9 @@ paths:
       description: |-
         GET or PATCH a single message, gated on the resource_context rather than
         owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
-        resolves or reopens the thread for everyone ("resolved") and/or toggles the
-        caller's personal archive of it ("archived"), whichever the body carries.
+        sets the read date (message_read_date in the body) and/or the caller's
+        personal archive of the thread (a top-level "archived" boolean), whichever
+        the body carries.
       parameters:
       - in: path
         name: id
@@ -138,10 +139,10 @@ paths:
     patch:
       operationId: api_bcap_message_partial_update
       description: |-
-        GET or PATCH a single message, gated on the resource_context rather than
-        owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
-        resolves or reopens the thread for everyone ("resolved") and/or toggles the
-        caller's personal archive of it ("archived"), whichever the body carries.
+        GET or PATCH a single message, both gated like create (edit access to the
+        resource_context, not owner-scoped). PATCH sets the read date (message_read_date
+        in the body) and/or the caller's personal archive of the thread (a top-level
+        "archived" boolean), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -176,9 +177,8 @@ paths:
       operationId: api_bcap_message_resource_contributors_list
       description: |-
         GET the contributors you can address a message to for a resource: the
-        login-linked contributors referenced on it and its ministry assignees, or
-        the Archaeology Branch when there are none; staff also get whoever filed
-        the permit.
+        login-linked contributors referenced on it plus its ministry assignees.
+        Gated on edit access to the resource, like posting a message about it.
       parameters:
       - in: path
         name: resource_id
@@ -245,9 +245,9 @@ paths:
     get:
       operationId: api_bcap_message_submission_unresolved_by_module_list
       description: |-
-        GET the viewer's unresolved thread count per process_module of a
-        submission, so the module list badges them without loading each module's
-        threads.
+        GET the viewer's unread count per process_module of a submission, so the
+        module list badges unread without loading each module's threads. Counts are
+        the caller's own, so IsAuthenticated leaks nothing.
       parameters:
       - in: path
         name: submission_id
@@ -1782,6 +1782,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/user/:
+    get:
+      operationId: api_user_retrieve
+      description: Returns the authenticated user's name, group memberships, and whether
+        they are a superuser.
+      tags:
+      - 'External: user'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+          description: ''
   /bcap/api/workflow_draft:
     get:
       operationId: api_workflow_draft_list_all
@@ -1972,6 +1988,7 @@ paths:
       - 'External: user_profile'
       security:
       - cookieAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -15933,7 +15950,7 @@ components:
           readOnly: true
       required:
       - node_value
-    UserProfileResponse:
+    UserResponse:
       type: object
       properties:
         username:
@@ -15943,13 +15960,16 @@ components:
         last_name:
           type: string
         groups:
-          type: array
-          items:
-            type: string
+          type: object
+          additionalProperties:
+            type: integer
           readOnly: true
+        is_superuser:
+          type: boolean
       required:
       - first_name
       - groups
+      - is_superuser
       - last_name
       - username
   securitySchemes:

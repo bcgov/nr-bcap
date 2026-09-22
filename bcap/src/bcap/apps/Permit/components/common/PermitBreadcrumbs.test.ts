@@ -38,19 +38,15 @@ describe('PermitBreadcrumbs', () => {
 
 describe('permitCrumbs', () => {
     it('returns nothing without a permit, so a standalone page shows no trail', () => {
-        expect(permitCrumbs(undefined, 'true', 'Checklist')).toEqual([]);
+        expect(permitCrumbs(undefined, 'Checklist')).toEqual([]);
     });
 
-    it('keeps ?staff on the return trip', () => {
-        const [summary] = permitCrumbs('permit-1', 'true', 'Checklist');
-        expect(summary.to).toMatchObject({
+    it('links back to the permit it was opened from', () => {
+        const [summary, current] = permitCrumbs('permit-1', 'Checklist');
+        expect(summary.to).toEqual({
+            name: 'permitDetails',
             params: { id: 'permit-1' },
-            query: { staff: 'true' },
         });
-    });
-
-    it('drops the staff query for an external view', () => {
-        const [summary] = permitCrumbs('permit-1', undefined, 'Checklist');
-        expect(summary.to).toMatchObject({ query: {} });
+        expect(current).toEqual({ label: 'Checklist' });
     });
 });
