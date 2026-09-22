@@ -266,18 +266,13 @@ const BcapSiteViewModel = function (params) {
             username: "",
             first_name: "",
             last_name: "",
-            groups: [],
+            groups: {},
         });
         $.ajax({
             url: `${self.urls.root}api/user/`,
         }).done(function (data) {
             if (data) {
-                // The endpoint returns groups as {name: id}; keep the
-                // observableArray of names this viewmodel binds against.
-                ko.mapping.fromJS(
-                    { ...data, groups: Object.keys(data.groups || {}) },
-                    user,
-                );
+                ko.mapping.fromJS(data, user);
             }
         });
         return user;
@@ -293,10 +288,9 @@ const BcapSiteViewModel = function (params) {
     });
 
     this.isAnonymous = ko.computed(function () {
-        return (
-            ko.unwrap(this.user.groups).length === 0 ||
-            this.user.groups().includes("Guest")
-        );
+        // The endpoint returns groups as {name: id}, so membership is a key test.
+        const groups = ko.unwrap(this.user.groups);
+        return Object.keys(groups).length === 0 || "Guest" in groups;
     }, this);
 
     this.getLegislativeAct = function (relatedActObject) {
