@@ -36,7 +36,6 @@ from bcap.util.graph import nodes_for
 from bcap.util.tiles import (
     delete_tiles,
     references_any,
-    resource_instance_id,
     resource_instance_value,
 )
 
@@ -134,8 +133,8 @@ class ThreadService:
         submission, summed over the module's requirements."""
         PermitAccess.require_view(user, str(submission_id))
         modules = ProcessRequirementService().module_requirement_ids(str(submission_id))
-        counts = self.unresolved_counts_by_context(
-            {rid for ids in modules.values() for rid in ids}, user.username
+        counts = self._unresolved_counts(
+            {rid for ids in modules.values() for rid in ids}, MessageViewer(user)
         )
         return [
             ModuleUnresolved(
@@ -153,7 +152,11 @@ class ThreadService:
         user = get_user_model().objects.filter(username=username).first()
         if user is None:
             return {}
-        viewer = MessageViewer(user)
+        return self._unresolved_counts(context_ids, MessageViewer(user))
+
+    def _unresolved_counts(self, context_ids, viewer: MessageViewer):
+        if not context_ids:
+            return {}
         roots = self.base_query(
             viewer,
             as_representation=False,
@@ -197,7 +200,7 @@ class ThreadService:
         if "resolved" not in data:
             return
         thread_id = G.thread_id(message_id)
-        side = viewer.side_of(*self._root_author_and_recipient(thread_id))
+        side = viewer.side_of(*G.author_and_recipient(G.content(thread_id)))
         if side is None:
             raise PermissionDenied("You are not on either side of this thread.")
         self._save_resolutions(
@@ -211,7 +214,7 @@ class ThreadService:
         theirs by hand), and bring the thread back for everyone who archived it."""
         viewer = MessageViewer(poster)
         thread_id = G.thread_id(message_id)
-        side = viewer.side_of(*self._root_author_and_recipient(thread_id))
+        side = viewer.side_of(*G.author_and_recipient(G.content(thread_id)))
         resolutions = {each: None for each in (AUTHOR, RECIPIENT) if each != side}
         if side and not viewer.staff:
             resolutions[side] = self._resolved_now_by(viewer)
@@ -318,15 +321,6 @@ class ThreadService:
         if archived:
             return roots.filter(pk__in=archived_ids)
         return roots.exclude(pk__in=archived_ids)
-
-    @staticmethod
-    def _root_author_and_recipient(thread_id):
-        """A thread root's (author id, recipient id)."""
-        content = G.content(thread_id)
-        return (
-            resource_instance_id(content.get(G.node(A.MESSAGE_AUTHOR))),
-            resource_instance_id(content.get(G.node(A.RECIPIENT))),
-        )
 
     @staticmethod
     def _resolved_now_by(viewer: MessageViewer):

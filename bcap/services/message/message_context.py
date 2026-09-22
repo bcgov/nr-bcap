@@ -44,6 +44,14 @@ class MessageGraph:
         ) or {}
 
     @classmethod
+    def author_and_recipient(cls, content):
+        """The (author id, recipient id) on a message's content tile data."""
+        return (
+            resource_instance_id(content.get(cls.node(A.MESSAGE_AUTHOR))),
+            resource_instance_id(content.get(cls.node(A.RECIPIENT))),
+        )
+
+    @classmethod
     def thread_id(cls, message_id):
         """The thread-root resource id for a message (itself if it starts one)."""
         link = (

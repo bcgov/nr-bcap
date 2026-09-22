@@ -33,6 +33,7 @@ import type {
     PermitApplicationProcessModuleTileWritable,
     ProcessRequirement,
     ModuleUnresolved,
+    ThreadRoot,
 } from '@/bcap/client/types.gen.ts';
 import {
     zApiDashboardExternalRetrieveQuery,
@@ -546,7 +547,7 @@ export const getThreadsForResource = async (
     resourceId: string,
     archived = false,
 ): Promise<MessageThread[]> => {
-    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
+    const { results = [] } = await apiFetchJson<{ results: ThreadRoot[] }>(
         `${arches.urls.bcap_message_resource_threads(resourceId)}?archived=${archived}`,
     );
 
@@ -561,7 +562,7 @@ export const getThreadsForResource = async (
         const typeLabel = content?.message_type?.display_value || '';
         // Each side resolves for itself; show the viewer their own side's. A
         // viewer on neither side has nothing to resolve.
-        const side = (root as { viewer_side?: string }).viewer_side;
+        const side = root.viewer_side;
         const [resolvedDate, resolvedBy] =
             side === ThreadSide.Author
                 ? [content?.author_resolved_date, content?.author_resolved_by]
@@ -580,7 +581,7 @@ export const getThreadsForResource = async (
             // The threads endpoint annotates the whole thread's latest date;
             // fall back to the root's own date if it is ever absent.
             lastMessageDate:
-                (root as { last_message_date?: string }).last_message_date ||
+                root.last_message_date ||
                 content?.message_creation_date?.node_value ||
                 '',
             isResolved: Boolean(resolvedDate?.node_value),

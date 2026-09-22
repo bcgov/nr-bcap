@@ -15,7 +15,6 @@ from bcap.services.message.thread_service import ThreadService
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from bcap.util.tiles import (
     payload_resource_id,
-    resource_instance_id,
     resource_instance_value,
     set_payload_node,
 )
@@ -49,10 +48,9 @@ class MessageService:
     def prepare_create_payload(self, data, user):
         """Ready a POST body for saving: stamp the author, clear any client-sent
         resolutions, take the thread's fields for a reply or decide internal for
-        a new thread, then require change access to the parent resource. Returns
-        the author's contributor id."""
+        a new thread, then require change access to the parent resource."""
         viewer = MessageViewer(user)
-        author_id = self.stamp_author(data, viewer)
+        self.stamp_author(data, viewer)
         for alias in (*G.RESOLUTION_ALIASES[AUTHOR], *G.RESOLUTION_ALIASES[RECIPIENT]):
             set_payload_node(data, A.MESSAGE_CONTENT, alias, None)
         if not self.inherit_thread_fields(data, viewer):
@@ -65,7 +63,6 @@ class MessageService:
         PermitAccess.require_change(
             user, payload_resource_id(data, A.MESSAGE_CONTENT, A.RESOURCE_CONTEXT)
         )
-        return author_id
 
     @staticmethod
     def stamp_author(data, viewer: MessageViewer):
@@ -79,7 +76,6 @@ class MessageService:
             A.MESSAGE_AUTHOR,
             resource_instance_value(viewer.contributor_id),
         )
-        return viewer.contributor_id
 
     @staticmethod
     def inherit_thread_fields(data, viewer: MessageViewer):
@@ -105,8 +101,7 @@ class MessageService:
         root = G.content(thread_id)
 
         # A reply goes to whichever side of the thread the poster isn't on.
-        author = resource_instance_id(root.get(G.node(A.MESSAGE_AUTHOR)))
-        recipient = resource_instance_id(root.get(G.node(A.RECIPIENT)))
+        author, recipient = G.author_and_recipient(root)
         to = recipient if viewer.side_of(author, recipient) == AUTHOR else author
         if to:
             set_payload_node(
