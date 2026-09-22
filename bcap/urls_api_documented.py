@@ -48,7 +48,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageThreadsView,
     BcapMessageThreadView,
 )
-from bcap.views.user_api import UserProfile
+from bcap.views.user_api import BCAPUserView
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
     RegistrationLinkView,
@@ -61,7 +61,7 @@ documented_api_patterns = [
     # Same path as bcgov_arches_common's api_user, declared ahead of that
     # include so the gated view answers. Its own name because reverse()
     # resolves the shared api_user to arches core's slashless route.
-    path("api/user/", UserProfile.as_view(), name="bcap_api_user"),
+    path("api/user/", BCAPUserView.as_view(), name="bcap_api_user"),
     path(
         "api/dashboard/internal",
         InternalDashboardView.as_view(),
