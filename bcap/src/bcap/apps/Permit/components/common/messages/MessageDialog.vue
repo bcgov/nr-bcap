@@ -7,6 +7,7 @@ import Dropdown from 'primevue/dropdown';
 import { getContributorsForResources } from '@/bcap/apps/Permit/api.ts';
 import { formatTimestamp } from '@/bcap/util.ts';
 import { useMessageStore } from '@/bcap/stores/message.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import MessageThreadSidebar from '@/bcap/apps/Permit/components/common/messages/MessageThreadSidebar.vue';
 import MessageHistory from '@/bcap/apps/Permit/components/common/messages/MessageHistory.vue';
@@ -30,6 +31,7 @@ const props = defineProps<{
 }>();
 
 const messageStore = useMessageStore();
+const userStore = useUserStore();
 
 const state = reactive({
     visible: false,
@@ -155,7 +157,7 @@ const selectThread = async (threadId: string) => {
             state.isLoadingMessages = false;
         }
         // For now an applicant resolves their side just by reading it.
-        if (!thread.viewerIsStaff && thread.onSide && !thread.isResolved) {
+        if (!userStore.isInternal && thread.onSide && !thread.isResolved) {
             await messageStore.setResolved(threadId, true, props.resourceId);
         }
     }
@@ -464,7 +466,7 @@ onMounted(() => {
                 >
                     <!-- Staff only: an applicant sees neither kind nor resolution. -->
                     <div
-                        v-if="activeThread?.viewerIsStaff"
+                        v-if="userStore.isInternal && activeThread"
                         class="thread-status"
                     >
                         <span
@@ -535,7 +537,7 @@ onMounted(() => {
                         <Button
                             v-if="
                                 !state.showArchived &&
-                                activeThread?.viewerIsStaff &&
+                                userStore.isInternal &&
                                 activeThread?.onSide
                             "
                             :label="
@@ -891,8 +893,8 @@ onMounted(() => {
 }
 
 .internal-tag {
-    background-color: #fef1d8;
-    color: #6c4a00;
+    background-color: var(--bc-internal-bg);
+    color: var(--bc-internal-text);
 }
 
 .external-tag {
@@ -901,8 +903,8 @@ onMounted(() => {
 }
 
 .resolved-tag {
-    background-color: #e3f1e6;
-    color: #2e6b3a;
+    background-color: var(--bc-resolved-bg);
+    color: var(--bc-resolved-text);
 }
 
 .dropdown-value-template {

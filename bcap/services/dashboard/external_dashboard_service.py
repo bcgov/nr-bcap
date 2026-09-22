@@ -2,7 +2,7 @@ from arches_querysets.models import ResourceTileTree
 
 from bcap.util.graph import nodes_for
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
-from bcap.services.message.bcap_message_service import BcapMessageService
+from bcap.services.message.thread_service import ThreadService
 from bcap.permissions.permit_access import PermitAccess
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
@@ -133,7 +133,7 @@ class ExternalDashboardService(BaseDashboardService):
         store = WorkflowDraftService()
         own_only = query.status == ExternalDashboardStatus.DRAFTS_CREATED_BY_ME
         count, drafts = self._page(store.base_query(user, own_only=own_only), query)
-        unresolved = BcapMessageService().unresolved_counts_by_context(
+        unresolved = ThreadService().unresolved_counts_by_context(
             {str(draft.pk) for draft in drafts}, user.username
         )
         parents = self._draft_parents(drafts)

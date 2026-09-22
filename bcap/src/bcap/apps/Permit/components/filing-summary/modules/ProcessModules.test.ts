@@ -29,8 +29,8 @@ const api = vi.hoisted(() => ({
     setRequirementSatisfied: vi.fn(),
     setRequirementAssignee: vi.fn(),
     fetchAssignableContributors: vi.fn().mockResolvedValue([]),
-    // The message store badges unread counts per module on mount.
-    getSubmissionModulesUnreadCounts: vi.fn().mockResolvedValue([]),
+    // The message store badges unresolved counts per module on mount.
+    getSubmissionModulesUnresolvedCounts: vi.fn().mockResolvedValue([]),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
@@ -127,7 +127,7 @@ beforeEach(() => {
     // The reset above drops the hoisted default; without a list the staff
     // assignee control renders nothing and takes its requirement row with it.
     api.fetchAssignableContributors.mockResolvedValue([]);
-    api.getSubmissionModulesUnreadCounts.mockResolvedValue([]);
+    api.getSubmissionModulesUnresolvedCounts.mockResolvedValue([]);
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -236,7 +236,7 @@ describe('ProcessModules requirement detail loading', () => {
         expect(wrapper.find('.requirement-status').text()).toBe('Complete');
     });
 
-    // Requirement details and unread badges share one slot above the accordion.
+    // Requirement details and unresolved badges share one slot above the accordion.
     it('reports a failed detail load in the one error slot', async () => {
         api.fetchRequirementDetails.mockRejectedValue(new Error('boom'));
         const wrapper = mountModules({
@@ -257,8 +257,8 @@ describe('ProcessModules requirement detail loading', () => {
         );
     });
 
-    it('reports a failed unread count in that same slot', async () => {
-        api.getSubmissionModulesUnreadCounts.mockRejectedValue(
+    it('reports a failed unresolved count in that same slot', async () => {
+        api.getSubmissionModulesUnresolvedCounts.mockRejectedValue(
             new Error('boom'),
         );
         const wrapper = mountModules({
@@ -268,7 +268,7 @@ describe('ProcessModules requirement detail loading', () => {
 
         expect(wrapper.findAll('.inline-error')).toHaveLength(1);
         expect(wrapper.find('.inline-error').text()).toContain(
-            'Unread message counts could not be loaded.',
+            'Unresolved message counts could not be loaded.',
         );
     });
 

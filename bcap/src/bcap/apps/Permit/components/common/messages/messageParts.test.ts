@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils';
 import type { FormattedMessage, MessageThread } from '@/bcap/types.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 
 const { downloadFile } = vi.hoisted(() => ({ downloadFile: vi.fn() }));
 vi.mock('@/bcap/util.ts', async (importOriginal) => ({
@@ -28,7 +30,6 @@ const thread = (overrides: Partial<MessageThread> = {}) =>
         lastMessageDate: '2026-03-04T10:00:00',
         isResolved: false,
         onSide: true,
-        viewerIsStaff: true,
         resolvedBy: '',
         resolvedDate: '',
         isInternal: false,
@@ -130,11 +131,12 @@ describe('MessageThreadSidebar', () => {
         ).toContain('active');
     });
 
-    it('flags the selected, unresolved and resolved threads', () => {
+    it("flags the selected thread and the viewer's unresolved ones", () => {
         const wrapper = mountSidebar({
             threads: [
                 thread({ id: 't-1' }),
                 thread({ id: 't-2', isResolved: true }),
+                thread({ id: 't-3', onSide: false }),
             ],
             selectedThreadId: 't-1',
         });
@@ -143,8 +145,8 @@ describe('MessageThreadSidebar', () => {
         expect(items[0].classes()).toContain('active');
         expect(items[0].classes()).toContain('unresolved');
         expect(items[1].classes()).not.toContain('active');
-        expect(items[1].classes()).toContain('resolved');
         expect(items[1].classes()).not.toContain('unresolved');
+        expect(items[2].classes()).not.toContain('unresolved');
     });
 
     it('tags internal threads only', () => {
@@ -161,18 +163,19 @@ describe('MessageThreadSidebar', () => {
     });
 
     it('badges resolved threads for staff only', () => {
-        const wrapper = mountSidebar({
-            threads: [
-                thread({ id: 't-1', isResolved: true }),
-                thread({ id: 't-2' }),
-                thread({ id: 't-3', isResolved: true, viewerIsStaff: false }),
-            ],
-        });
+        const threads = [
+            thread({ id: 't-1', isResolved: true }),
+            thread({ id: 't-2' }),
+        ];
+        const applicant = mountSidebar({ threads });
+        expect(applicant.find('.thread-resolved').exists()).toBe(false);
 
-        const items = wrapper.findAll('.thread-list .sidebar-item');
+        useUserStore().state.profile = { is_superuser: true } as UserResponse;
+        const items = mountSidebar({ threads }).findAll(
+            '.thread-list .sidebar-item',
+        );
         expect(items[0].find('.thread-resolved').text()).toContain('Resolved');
         expect(items[1].find('.thread-resolved').exists()).toBe(false);
-        expect(items[2].find('.thread-resolved').exists()).toBe(false);
     });
 
     it('emits the thread the user picked', async () => {

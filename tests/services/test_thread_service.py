@@ -125,7 +125,9 @@ class BcapMessageVisibilityTests(TestCase):
     def test_being_party_is_not_enough_off_their_own_permits(self):
         # The applicant authored this one, but it files against a permit neither
         # they nor their company filed, so the base query drops it.
-        visible = {str(m.pk) for m in self.service.base_query(self.applicant)}
+        visible = {
+            str(m.pk) for m in self.service.base_query(MessageViewer(self.applicant))
+        }
         self.assertNotIn(str(self.elsewhere.pk), visible)
         self.assertIn(str(self.public_root.pk), visible)
 
@@ -188,15 +190,15 @@ class BcapMessageVisibilityTests(TestCase):
 
     def test_a_user_with_no_contributor_sees_nothing(self):
         stranger = make_user("visstranger")
-        self.assertFalse(self.service.base_query(stranger).exists())
+        self.assertFalse(self.service.base_query(MessageViewer(stranger)).exists())
 
     def test_party_ids_span_self_company_and_branch_for_staff(self):
         self.assertEqual(
-            MessageViewer.party_ids(self.applicant),
+            MessageViewer(self.applicant).parties,
             {str(self.applicant_contrib.pk), str(self.acme.pk)},
         )
         self.assertEqual(
-            MessageViewer.party_ids(self.staff),
+            MessageViewer(self.staff).parties,
             {str(self.staff_contrib.pk), self.branch_id},
         )
 
@@ -209,7 +211,7 @@ class BcapMessageVisibilityTests(TestCase):
             associated_organization=ResourceInstance.objects.get(pk=self.branch_id),
             **ACTIVE,
         )
-        self.assertEqual(MessageViewer.party_ids(user), {str(contrib.pk)})
+        self.assertEqual(MessageViewer(user).parties, {str(contrib.pk)})
 
 
 class BcapMessageResolutionTests(TestCase):
@@ -249,7 +251,7 @@ class BcapMessageResolutionTests(TestCase):
 
     def _resolve(self, user, message=None, resolved=True):
         self.service.set_viewer_resolution(
-            (message or self.root).pk, {"resolved": resolved}, user
+            (message or self.root).pk, {"resolved": resolved}, MessageViewer(user)
         )
 
     def test_staff_resolve_the_recipient_side_only(self):
@@ -280,7 +282,9 @@ class BcapMessageResolutionTests(TestCase):
 
     def test_a_body_without_the_flag_leaves_it_alone(self):
         self._resolve(self.staff)
-        self.service.set_viewer_resolution(self.root.pk, {"archived": True}, self.staff)
+        self.service.set_viewer_resolution(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
         self.assertIsNotNone(resolution(self.root, "recipient")[0])
 
     def test_someone_on_neither_side_cannot_resolve(self):
@@ -302,19 +306,19 @@ class BcapMessageResolutionTests(TestCase):
     def test_posting_reopens_the_other_side_and_leaves_the_posters(self):
         self._resolve(self.applicant)
         self._resolve(self.staff)
-        self.service.update_resolutions_after_post(self.reply.pk, self.staff)
+        self.service.after_post(self.reply.pk, self.staff)
         self.assertEqual(resolution(self.root, "author"), (None, None))
         self.assertEqual(
             resolution(self.root, "recipient")[1], str(self.staff_contrib.pk)
         )
 
     def test_staff_posting_leaves_their_side_open(self):
-        self.service.update_resolutions_after_post(self.reply.pk, self.staff)
+        self.service.after_post(self.reply.pk, self.staff)
         self.assertEqual(resolution(self.root, "recipient"), (None, None))
 
     def test_an_applicant_posting_resolves_their_side(self):
         self._resolve(self.staff)
-        self.service.update_resolutions_after_post(self.root.pk, self.applicant)
+        self.service.after_post(self.root.pk, self.applicant)
         self.assertEqual(
             resolution(self.root, "author")[1], str(self.applicant_contrib.pk)
         )
@@ -431,7 +435,7 @@ class BcapMessageUnresolvedCountTests(TestCase):
                 subject=subject,
                 **kwargs,
             )
-            cls.service.update_resolutions_after_post(message.pk, user)
+            cls.service.after_post(message.pk, user)
             return message
 
         def from_staff(subject, recipient=applicant_contrib, **kwargs):
@@ -440,7 +444,7 @@ class BcapMessageUnresolvedCountTests(TestCase):
         # Staff asked and resolved their side; the applicant's answer reopens it.
         cls.answered = from_staff("answered")
         cls.service.set_viewer_resolution(
-            cls.answered.pk, {"resolved": True}, cls.staff
+            cls.answered.pk, {"resolved": True}, MessageViewer(cls.staff)
         )
         post(
             cls.applicant,
@@ -497,7 +501,7 @@ class BcapMessageUnresolvedCountTests(TestCase):
     def test_resolving_clears_the_alert_for_that_side_only(self):
         for thread in (self.answered, self.asked):
             self.service.set_viewer_resolution(
-                thread.pk, {"resolved": True}, self.staff
+                thread.pk, {"resolved": True}, MessageViewer(self.staff)
             )
         self.assertEqual(
             self._count("countstaff", self.permit), {str(self.permit.pk): 3}
@@ -518,7 +522,9 @@ class BcapMessageUnresolvedCountTests(TestCase):
         self.assertEqual(applicant[str(self.question.pk)], "author")
 
     def test_an_archived_thread_stops_counting_for_that_viewer_only(self):
-        self.service.set_viewer_archived(self.asked.pk, {"archived": True}, "reader")
+        self.service.set_viewer_archived(
+            self.asked.pk, {"archived": True}, MessageViewer(self.applicant)
+        )
         self.assertEqual(self._count("reader", self.permit), {str(self.permit.pk): 1})
         self.assertEqual(
             self._count("countstaff", self.permit), {str(self.permit.pk): 5}
@@ -579,7 +585,9 @@ class BcapMessageArchiveTests(TestCase):
         return {str(m.pk) for m in roots}
 
     def test_archive_is_per_viewer(self):
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archstaff")
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
 
         self.assertEqual(self._root_ids(self.staff, False), {str(self.other_root.pk)})
         self.assertEqual(self._root_ids(self.staff, True), {str(self.root.pk)})
@@ -596,21 +604,31 @@ class BcapMessageArchiveTests(TestCase):
             self.assertEqual(resolution(self.root, side), (None, None))
 
     def test_archiving_from_a_reply_archives_the_thread(self):
-        self.service.set_viewer_archived(self.reply.pk, {"archived": True}, "archstaff")
+        self.service.set_viewer_archived(
+            self.reply.pk, {"archived": True}, MessageViewer(self.staff)
+        )
         self.assertEqual(self._root_ids(self.staff, True), {str(self.root.pk)})
         self.assertNotIn(str(self.root.pk), self._root_ids(self.staff, False))
 
     def test_unarchive_restores_the_thread(self):
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archstaff")
-        self.service.set_viewer_archived(self.root.pk, {"archived": False}, "archstaff")
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": False}, MessageViewer(self.staff)
+        )
         self.assertIn(str(self.root.pk), self._root_ids(self.staff, False))
         self.assertEqual(self._root_ids(self.staff, True), set())
 
     def test_new_message_unarchives_the_thread_for_all(self):
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archstaff")
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archapp")
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.applicant)
+        )
 
-        self.service.unarchive_for_everyone(self.reply.pk)
+        self.service.after_post(self.reply.pk, self.staff)
 
         self.assertEqual(self._root_ids(self.staff, True), set())
         self.assertEqual(self._root_ids(self.applicant, True), set())
@@ -618,16 +636,22 @@ class BcapMessageArchiveTests(TestCase):
         self.assertIn(str(self.root.pk), self._root_ids(self.applicant, False))
 
     def test_archiving_twice_is_idempotent(self):
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archstaff")
-        self.service.set_viewer_archived(self.root.pk, {"archived": True}, "archstaff")
-        self.service.set_viewer_archived(self.root.pk, {"archived": False}, "archstaff")
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": True}, MessageViewer(self.staff)
+        )
+        self.service.set_viewer_archived(
+            self.root.pk, {"archived": False}, MessageViewer(self.staff)
+        )
         self.assertEqual(self._root_ids(self.staff, True), set())
 
     def test_archive_is_a_noop_for_a_user_without_a_contributor(self):
         # Internal so the party-visibility gate does not also hide the threads.
         stranger = make_user("archstranger", internal=True)
         self.service.set_viewer_archived(
-            self.root.pk, {"archived": True}, "archstranger"
+            self.root.pk, {"archived": True}, MessageViewer(stranger)
         )
         self.assertEqual(
             self._root_ids(stranger, False),

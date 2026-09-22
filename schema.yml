@@ -15850,11 +15850,6 @@ components:
           readOnly: true
           description: The viewer's side of the thread, author or recipient, whose
             resolved_* nodes are theirs; empty when they are on neither.
-        viewer_is_staff:
-          type: boolean
-          readOnly: true
-          description: Staff resolve by hand; an applicant's side resolves as they
-            open the thread.
         name:
           type: string
           readOnly: true
@@ -15908,7 +15903,6 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
-      - viewer_is_staff
       - viewer_side
     UrlAliasedNodeData:
       type: object

@@ -10,6 +10,8 @@ import {
 } from '@/bcap/apps/Permit/api.ts';
 import { ApiError } from '@/bcap/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
@@ -27,7 +29,6 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
     lastMessageDate: '',
     isResolved: false,
     onSide: true,
-    viewerIsStaff: true,
     resolvedBy: '',
     resolvedDate: '',
     isInternal: false,
@@ -37,6 +38,8 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
 describe('MessageDialog.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        // Staff by default; applicant tests clear the profile.
+        useUserStore().state.profile = { is_superuser: true } as UserResponse;
 
         vi.mocked(getContributorsForResources).mockResolvedValue([
             { label: 'John Doe', value: 'user-1' },
@@ -337,7 +340,7 @@ describe('MessageDialog.vue', () => {
         );
     });
 
-    it('marks unread messages as read when an unread thread is selected', async () => {
+    it('shows who resolved a thread and lets staff reopen it', async () => {
         withThreads([
             thread({
                 id: 'thread-1',
@@ -414,7 +417,8 @@ describe('MessageDialog.vue', () => {
     });
 
     it('resolves the applicant side on open, with no resolve controls', async () => {
-        withThreads([thread({ id: 'thread-1', viewerIsStaff: false })]);
+        useUserStore().state.profile = null;
+        withThreads([thread({ id: 'thread-1' })]);
         const wrapper = mountComponent();
         await flushPromises();
         await openThread(wrapper);
@@ -424,9 +428,9 @@ describe('MessageDialog.vue', () => {
     });
 
     it('shows an applicant no thread status tags', async () => {
+        useUserStore().state.profile = null;
         withThreads([
             thread({
-                viewerIsStaff: false,
                 isResolved: true,
                 resolvedBy: 'Amy',
             }),

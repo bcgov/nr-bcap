@@ -55,7 +55,7 @@ export const useMessageStore = defineStore('bcapMessages', () => {
                 moduleUnresolved.set(module_id, unresolved_count);
             }
         } catch (failure) {
-            error.value = `Unread message counts could not be loaded. ${inlineMessage(failure)}`;
+            error.value = `Unresolved message counts could not be loaded. ${inlineMessage(failure)}`;
         }
     }
 

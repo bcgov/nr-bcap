@@ -17,13 +17,13 @@ from arches.app.models.models import File, ResourceInstance
 
 from bcap.permissions.groups import Groups
 from bcap.builders.contributor_builder import ContributorSpec
-from bcap.services.message.bcap_message_service import ModuleUnresolved
+from bcap.services.message.thread_service import ModuleUnresolved
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import RequirementRow, build_permit, make_requirement
-from tests.services.test_bcap_message_service import make_message, resolution
+from tests.services.message_fixtures import make_message, resolution
 from tests.views.helpers import AuthTestHelper, api_reference_value
 
 
@@ -577,11 +577,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
 
-    def test_threads_tell_the_viewer_their_side_and_whether_they_are_staff(self):
-        for user, side, staff in (
-            (self.staff, "recipient", True),
-            (self.user, "author", False),
-        ):
+    def test_threads_tell_the_viewer_their_side(self):
+        for user, side in ((self.staff, "recipient"), (self.user, "author")):
             self.idir_login_simulate(user)
             resp = self.client.get(
                 reverse(
@@ -592,7 +589,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             roots = {r["resourceinstanceid"]: r for r in resp.json()["results"]}
             root = roots[str(self.public_root.pk)]
             self.assertEqual(root["viewer_side"], side)
-            self.assertIs(root["viewer_is_staff"], staff)
 
     def test_patch_reopens_the_thread(self):
         self.idir_login_simulate(self.staff)
@@ -710,7 +706,7 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             ModuleUnresolved(module_id="tile-2", unresolved_count=0),
         ]
         with patch(
-            "bcap.views.bcap_message_api.BcapMessageService.unresolved_counts_by_module",
+            "bcap.views.bcap_message_api.ThreadService.unresolved_counts_by_module",
             return_value=rows,
         ):
             resp = self.client.get(url)

@@ -25,7 +25,7 @@ from tests.services.contributor_fixtures import (
     make_party,
     make_user,
 )
-from tests.services.test_bcap_message_service import make_message
+from tests.services.message_fixtures import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 

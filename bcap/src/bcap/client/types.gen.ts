@@ -6683,10 +6683,6 @@ export type ThreadRoot = {
      * The viewer's side of the thread, author or recipient, whose resolved_* nodes are theirs; empty when they are on neither.
      */
     readonly viewer_side: string;
-    /**
-     * Staff resolve by hand; an applicant's side resolves as they open the thread.
-     */
-    readonly viewer_is_staff: boolean;
     readonly name: string | null;
     readonly descriptors: {
         en?: {

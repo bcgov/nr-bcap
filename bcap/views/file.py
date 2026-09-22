@@ -7,7 +7,8 @@ from arches.app.utils.permission_backend import user_can_read_resource
 from arches.app.views.file import FileView
 
 from bcap.permissions.groups import is_anonymous_user, is_internal_user
-from bcap.services.message.bcap_message_service import BcapMessageService
+from bcap.services.message.message_context import MessageViewer
+from bcap.services.message.thread_service import ThreadService
 from bcap.util.bcap_aliases import GraphSlugs
 
 
@@ -48,7 +49,9 @@ class BCAPFileView(FileView):
         # reaches one and the reach check always says no. Its attachments follow
         # the thread's own rule instead: party to it, and not internal-only.
         if resource.graph.slug == GraphSlugs.BCAP_MESSAGE:
-            return BcapMessageService.base_query(
-                user, resource_ids=[str(resource.pk)], as_representation=False
+            return ThreadService.base_query(
+                MessageViewer(user),
+                resource_ids=[str(resource.pk)],
+                as_representation=False,
             ).exists()
         return user_can_read_resource(user, resource.pk)

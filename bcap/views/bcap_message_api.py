@@ -2,7 +2,7 @@
 collection endpoint whose POST gates a new message on edit access to its
 resource_context. The list views extend the generated arches_querysets view
 (serialization and pagination come for free); query logic lives in
-BcapMessageService."""
+the message and thread services."""
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import ValidationError
@@ -22,10 +22,8 @@ from bcap.serializers.bcap_message_serializers import (
     ThreadsQuerySerializer,
 )
 from bcap.serializers.contributor_serializers import ContributorSummarySerializer
-from bcap.services.message.bcap_message_service import (
-    BcapMessageService,
-    NoAuthorContributor,
-)
+from bcap.services.message.message_service import MessageService, NoAuthorContributor
+from bcap.services.message.thread_service import ThreadService
 from bcap.views.parsers import ValidatedMultiPartJSONParser
 from bcap.services.message.message_context import MessageGraph
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
@@ -47,7 +45,7 @@ class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIV
     def get_queryset(self):
         params = ThreadsQuerySerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
-        return BcapMessageService().thread_roots_query(
+        return ThreadService().thread_roots_query(
             self.kwargs["resource_id"],
             self.request.user,
             archived=params.validated_data.archived,
@@ -63,7 +61,7 @@ class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIVi
     pagination_class = ArchesLimitOffsetPagination
 
     def get_queryset(self):
-        return BcapMessageService().thread_messages_query(
+        return ThreadService().thread_messages_query(
             self.kwargs["thread_id"], self.request.user
         )
 
@@ -87,7 +85,7 @@ class BcapMessageCreateView(BcapMessageListView):
                 f"file-list_{MessageGraph.node(A.ATTACHMENTS)}", attachments
             )
         try:
-            BcapMessageService().prepare_create_payload(request.data, request.user)
+            MessageService().prepare_create_payload(request.data, request.user)
         except NoAuthorContributor:
             raise ValidationError(
                 "No Contributor is linked to your account to author this message."
@@ -98,9 +96,7 @@ class BcapMessageCreateView(BcapMessageListView):
         """A new message reopens the thread for the other side and resurfaces it
         for everyone party to it."""
         super().perform_create(serializer)
-        service = BcapMessageService()
-        service.update_resolutions_after_post(serializer.instance.pk, self.request.user)
-        service.unarchive_for_everyone(serializer.instance.pk)
+        ThreadService().after_post(serializer.instance.pk, self.request.user)
 
 
 @extend_schema(
@@ -114,7 +110,7 @@ class BcapMessageModuleUnresolvedView(APIView):
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, submission_id):
-        rows = BcapMessageService().unresolved_counts_by_module(
+        rows = ThreadService().unresolved_counts_by_module(
             str(submission_id), request.user
         )
         return Response(ModuleUnresolvedSerializer(rows, many=True).data)
@@ -133,7 +129,7 @@ class BcapMessageContributorsView(APIView):
     permission_classes = [SubmitterOrInternal]
 
     def get(self, request, resource_id):
-        options = BcapMessageService().recipient_options(resource_id, request.user)
+        options = MessageService().recipient_options(resource_id, request.user)
         return Response(ContributorSummarySerializer(options, many=True).data)
 
 
@@ -154,11 +150,11 @@ class BcapMessageDetailView(
         """Narrowed like the thread listing, and gated in the same call: the
         resource_context says whose correspondence this is, not which of it the
         caller is party to."""
-        return BcapMessageService.detail_query(self.kwargs["pk"], self.request.user)
+        return MessageService.detail_query(self.kwargs["pk"], self.request.user)
 
     def update(self, request, *args, **kwargs):
         self.get_object()
-        BcapMessageService().update_thread_state(
+        ThreadService().update_thread_state(
             request.user, self.kwargs["pk"], request.data
         )
         return Response(self.get_serializer(self.get_object()).data)

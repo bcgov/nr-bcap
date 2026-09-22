@@ -99,7 +99,6 @@ export interface MessageThread {
     lastMessageDate: string;
     isResolved: boolean;
     onSide: boolean;
-    viewerIsStaff: boolean;
     resolvedBy: string;
     resolvedDate: string;
     isInternal: boolean;

@@ -129,7 +129,7 @@ const moreItems = computed(() => [
         </span>
         <span
             v-if="messageStore.moduleUnresolvedCount(row.tileid)"
-            class="module-unread-badge"
+            class="module-unresolved-badge"
             :title="`${messageStore.moduleUnresolvedCount(
                 row.tileid,
             )} unresolved message(s)`"
@@ -217,7 +217,7 @@ const moreItems = computed(() => [
     color: #15803d;
 }
 
-.module-unread-badge {
+.module-unresolved-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;

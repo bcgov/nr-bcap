@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatTimestamp } from '@/bcap/util.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 defineProps<{
@@ -12,6 +13,8 @@ defineEmits<{
     (e: 'select-tab', archived: boolean): void;
     (e: 'select-thread', threadId: string): void;
 }>();
+
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -42,8 +45,7 @@ defineEmits<{
                 class="sidebar-item"
                 :class="{
                     active: selectedThreadId === thread.id,
-                    unresolved: !thread.isResolved,
-                    resolved: thread.isResolved,
+                    unresolved: thread.onSide && !thread.isResolved,
                 }"
                 @click="$emit('select-thread', thread.id)"
             >
@@ -56,7 +58,7 @@ defineEmits<{
                         Internal
                     </span>
                     <span
-                        v-if="thread.viewerIsStaff && thread.isResolved"
+                        v-if="userStore.isInternal && thread.isResolved"
                         class="thread-badge thread-resolved"
                     >
                         <i class="fa-solid fa-check"></i>
@@ -197,13 +199,13 @@ defineEmits<{
 }
 
 .thread-internal {
-    background-color: #fef1d8;
-    color: #6c4a00;
+    background-color: var(--bc-internal-bg);
+    color: var(--bc-internal-text);
 }
 
 .thread-resolved {
-    background-color: #e3f1e6;
-    color: #2e6b3a;
+    background-color: var(--bc-resolved-bg);
+    color: var(--bc-resolved-text);
 }
 
 .sidebar-item.active {

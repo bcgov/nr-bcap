@@ -4567,7 +4567,6 @@ export const zThreadRoot = z.object({
     graph_has_different_publication: z.boolean().readonly(),
     last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
     viewer_side: z.string().readonly(),
-    viewer_is_staff: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
         en: z.object({

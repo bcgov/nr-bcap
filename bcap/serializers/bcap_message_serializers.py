@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.message.bcap_message_service import ModuleUnresolved
+from bcap.services.message.thread_service import ModuleUnresolved
 from bcap.views.generated.bcap_message import BcapMessageSerializer
 
 
@@ -54,11 +54,6 @@ class ThreadRootSerializer(BcapMessageSerializer):
         read_only=True,
         help_text="The viewer's side of the thread, author or recipient, whose "
         "resolved_* nodes are theirs; empty when they are on neither.",
-    )
-    viewer_is_staff = serializers.BooleanField(
-        read_only=True,
-        help_text="Staff resolve by hand; an applicant's side resolves as they "
-        "open the thread.",
     )
 
 

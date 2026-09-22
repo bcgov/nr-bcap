@@ -816,20 +816,6 @@ watch(activeModuleId, (id) => {
     white-space: nowrap;
 }
 
-/* Red unresolved pill at the far right of the draft header, by the chevron. */
-.draft-unread-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.2rem 0.6rem;
-    font-size: 11px;
-    font-weight: 700;
-    color: #ffffff;
-    background-color: #d32f2f;
-    border-radius: 999px;
-    white-space: nowrap;
-}
-
 .draft-actions {
     display: flex;
     gap: 1rem;

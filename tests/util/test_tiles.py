@@ -1,10 +1,12 @@
 from types import SimpleNamespace
 
+from django.db.models import Q
 from django.test import SimpleTestCase
 
 from bcap.util.tiles import (
     payload_resource_id,
     referenced_resource_ids,
+    references_any,
     set_payload_node,
 )
 
@@ -54,3 +56,9 @@ class PayloadNodeTests(SimpleTestCase):
         for payload in ({}, {"aliased_data": "junk"}, {"aliased_data": {"group": 1}}):
             with self.subTest(payload=payload):
                 self.assertIsNone(payload_resource_id(payload, "group", "node"))
+
+
+class ReferencesAnyTests(SimpleTestCase):
+    def test_no_ids_matches_nothing(self):
+        # An unscoped Q() would match every tile.
+        self.assertEqual(references_any("node", []), Q(pk__in=[]))

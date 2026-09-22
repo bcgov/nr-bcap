@@ -446,7 +446,6 @@ describe('Permit API', () => {
                     lastMessageDate: '',
                     isResolved: false,
                     onSide: false,
-                    viewerIsStaff: false,
                     resolvedBy: '',
                     resolvedDate: '',
                     isInternal: false,

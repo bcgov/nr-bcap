@@ -6,7 +6,6 @@ from arches.app.models.models import TileModel
 from arches.app.models.tile import Tile
 
 from bcap.permissions.groups import is_internal_user
-from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.contributor.organization_service import OrganizationService
 from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from bcap.util.graph import node_id, nodegroup_id
@@ -73,7 +72,7 @@ class MessageGraph:
     def context_id(cls, message_id):
         """Read the saved context for the edit gate; PATCH bodies omit it."""
         content = cls.content(str(message_id))
-        return resource_instance_id(content.get(cls.node(A.RESOURCE_CONTEXT))) or None
+        return resource_instance_id(content.get(cls.node(A.RESOURCE_CONTEXT)))
 
 
 class MessageViewer:
@@ -82,25 +81,20 @@ class MessageViewer:
     def __init__(self, user):
         self.user = user
         self.staff = is_internal_user(user)
-        self.parties = self.party_ids(user)
-        contributors = ContributorService()
-        self.contributor_id = contributors.username_contributor_id(user.username)
-        # Whether a Contributor is staff (or the Branch), looked up once per id.
-        self.is_staff_party = cache(contributors.contributor_is_internal)
-
-    @staticmethod
-    def party_ids(user):
-        """Contributor ids the user acts as: self, current organizations, and
-        (for staff only) the Branch. Membership alone never grants staff access."""
         contributors = OrganizationService()
-        ids = set(contributors.organization_ids(user.username))
-        ids.add(contributors.username_contributor_id(user.username))
+        self.contributor_id = contributors.username_contributor_id(user.username)
+        # Contributor ids the user acts as: self, current organizations, and (for
+        # staff only) the Branch. Membership alone never grants staff access.
+        parties = {*contributors.organization_ids(user.username), self.contributor_id}
         branch = contributors.archaeology_branch_id()
-        if is_internal_user(user):
-            ids.add(branch)
+        if self.staff:
+            parties.add(branch)
         else:
-            ids.discard(branch)
-        return {str(i) for i in ids - {None}}
+            parties.discard(branch)
+        self.parties = {str(i) for i in parties - {None}}
+        # Whether a Contributor is staff (or the Branch), looked up once per id.
+        # Lives with this viewer (one request), so group changes show next request.
+        self.is_staff_party = cache(contributors.contributor_is_internal)
 
     def side_of(self, author, recipient):
         """The viewer's side of a thread from its root's author and recipient:

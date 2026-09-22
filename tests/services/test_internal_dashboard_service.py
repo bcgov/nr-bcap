@@ -31,7 +31,7 @@ from tests.permit_fixtures import (
     build_permit,
     make_requirement,
 )
-from tests.services.test_bcap_message_service import make_message
+from tests.services.message_fixtures import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 

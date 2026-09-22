@@ -78,7 +78,7 @@ onMounted(() => {
     if (props.isStaff) loadAssignees();
 });
 
-// Requirement details and unread badges fail the same outage; report once.
+// Requirement details and unresolved badges fail the same outage; report once.
 const moduleError = computed(() => state.loadError || messageStore.error);
 
 // The drilled-in row only exists once its panel is open and its requirements

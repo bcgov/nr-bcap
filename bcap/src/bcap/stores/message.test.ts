@@ -25,7 +25,6 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
     lastMessageDate: '',
     isResolved: false,
     onSide: true,
-    viewerIsStaff: true,
     resolvedBy: '',
     resolvedDate: '',
     isInternal: false,

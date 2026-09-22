@@ -7,7 +7,6 @@ from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
 from django.db.models import (
-    BooleanField,
     Case,
     CharField,
     DateTimeField,
@@ -20,9 +19,7 @@ from arches.app.models.models import TileModel
 from arches.app.models.tile import Tile
 from arches_querysets.models import ResourceTileTree
 
-from bcap.permissions.groups import is_internal_user
 from bcap.permissions.permit_access import PermitAccess
-from bcap.services.contributor.contributor_service import ContributorService
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
@@ -42,7 +39,6 @@ from bcap.util.tiles import (
     resource_instance_id,
     resource_instance_value,
 )
-from bcap.util.user import user_log_id
 
 logger = logging.getLogger(__name__)
 
@@ -62,8 +58,14 @@ class ThreadService:
     GATE_ALIASES = (A.RESOURCE_CONTEXT, A.RELATED_SOURCE_MESSAGE)
 
     @classmethod
-    def base_query(cls, user, resource_ids=None, as_representation=True, aliases=None):
-        """Every message the user may see, optionally limited to some resources
+    def base_query(
+        cls,
+        viewer: MessageViewer,
+        resource_ids=None,
+        as_representation=True,
+        aliases=None,
+    ):
+        """Every message the viewer may see, optionally limited to some resources
         and nodes. Staff see all; applicants see only external threads they are
         party to, on permits they or their company filed.
 
@@ -77,19 +79,19 @@ class ThreadService:
                 nodes_for(G.SLUG, [*aliases, *cls.GATE_ALIASES]) if aliases else None
             ),
         ).select_related("graph", "resource_instance_lifecycle_state")
-        if is_internal_user(user):
+        if viewer.staff:
             return queryset
-        reachable = PermitAccess.own_or_company_resource_ids(user)
-        return cls._limit_to_external_threads(queryset, user, reachable)
+        reachable = PermitAccess.own_or_company_resource_ids(viewer.user)
+        return cls._limit_to_external_threads(queryset, viewer, reachable)
 
-    def thread_roots_query(self, resource_id, user, archived=False):
+    def thread_roots_query(self, resource_id, user, archived: bool = False):
         """The threads on a readable resource, newest first, one row per root,
         annotated with the latest message date and the viewer's side. Shows the
         viewer's archived threads or their active ones."""
         PermitAccess.require_view(user, str(resource_id))
         viewer = MessageViewer(user)
         roots = (
-            self.base_query(user).filter(
+            self.base_query(viewer).filter(
                 resource_context__id=str(resource_id),
                 related_source_message__isnull=True,
             )
@@ -111,8 +113,6 @@ class ThreadService:
                 default=Value(""),
                 output_field=CharField(),
             ),
-            # Staff resolve by hand; an applicant's side resolves as they read.
-            viewer_is_staff=Value(viewer.staff, output_field=BooleanField()),
         )
 
     def thread_messages_query(self, thread_id, user):
@@ -120,7 +120,7 @@ class ThreadService:
         resource the thread hangs off."""
         PermitAccess.require_view(user, G.context_id(thread_id))
         return (
-            self.base_query(user).filter(
+            self.base_query(MessageViewer(user)).filter(
                 Q(pk=str(thread_id)) | Q(related_source_message__id=str(thread_id))
             )
             # createdtime breaks ties on a null creation date.
@@ -145,7 +145,7 @@ class ThreadService:
             for module, ids in modules.items()
         ]
 
-    def unresolved_counts_by_context(self, context_ids, username):
+    def unresolved_counts_by_context(self, context_ids, username: str):
         """For each resource, how many of the viewer's active (unarchived)
         threads are still unresolved on the viewer's side."""
         if not context_ids:
@@ -155,7 +155,7 @@ class ThreadService:
             return {}
         viewer = MessageViewer(user)
         roots = self.base_query(
-            user,
+            viewer,
             as_representation=False,
             aliases=[
                 A.MESSAGE_AUTHOR,
@@ -187,15 +187,15 @@ class ThreadService:
         """Apply a PATCH body's "resolved" and "archived" flags, whichever are
         present, after one edit-access check on the parent resource."""
         PermitAccess.require_change(user, G.context_id(message_id))
-        self.set_viewer_resolution(message_id, data, user)
-        self.set_viewer_archived(message_id, data, user.username)
+        viewer = MessageViewer(user)
+        self.set_viewer_resolution(message_id, data, viewer)
+        self.set_viewer_archived(message_id, data, viewer)
 
-    def set_viewer_resolution(self, message_id, data, user):
+    def set_viewer_resolution(self, message_id, data, viewer: MessageViewer):
         """Resolve or reopen the viewer's side of the thread. Does nothing when
         the body has no "resolved" flag; refuses a viewer on neither side."""
         if "resolved" not in data:
             return
-        viewer = MessageViewer(user)
         thread_id = G.thread_id(message_id)
         side = viewer.side_of(*self._root_author_and_recipient(thread_id))
         if side is None:
@@ -205,10 +205,10 @@ class ThreadService:
             {side: self._resolved_now_by(viewer) if data["resolved"] else None},
         )
 
-    def update_resolutions_after_post(self, message_id, poster):
+    def after_post(self, message_id, poster):
         """After a new message: reopen the other side (both sides if the poster
-        is on neither). An applicant's own side resolves too; staff resolve
-        theirs by hand."""
+        is on neither), resolve an applicant poster's own side (staff resolve
+        theirs by hand), and bring the thread back for everyone who archived it."""
         viewer = MessageViewer(poster)
         thread_id = G.thread_id(message_id)
         side = viewer.side_of(*self._root_author_and_recipient(thread_id))
@@ -216,18 +216,22 @@ class ThreadService:
         if side and not viewer.staff:
             resolutions[side] = self._resolved_now_by(viewer)
         self._save_resolutions(thread_id, resolutions)
+        delete_tiles(
+            Tile.objects.filter(
+                nodegroup_id=G.nodegroup(A.ARCHIVED_BY), resourceinstance_id=thread_id
+            )
+        )
 
-    def set_viewer_archived(self, message_id, data, username):
-        """Archive or unarchive the thread for this user's contributor only. Does
-        nothing when the body has no "archived" flag or the user has no
+    def set_viewer_archived(self, message_id, data, viewer: MessageViewer):
+        """Archive or unarchive the thread for the viewer's contributor only. Does
+        nothing when the body has no "archived" flag or the viewer has no
         contributor."""
         if "archived" not in data:
             return
-        contributor_id = ContributorService().username_contributor_id(username)
+        contributor_id = viewer.contributor_id
         if not contributor_id:
             logger.warning(
-                "No Contributor for user %s; archive ignored.",
-                user_log_id(username),
+                "No Contributor for user %s; archive ignored.", viewer.user.id
             )
             return
         thread_id = G.thread_id(message_id)
@@ -242,24 +246,16 @@ class ThreadService:
                 data={G.node(A.ARCHIVED_BY): resource_instance_value(contributor_id)},
             ).save()
 
-    def unarchive_for_everyone(self, message_id):
-        """Clear every viewer's archive of a message's thread, so a new reply
-        brings it back for all. No-op for a new thread."""
-        delete_tiles(
-            Tile.objects.filter(
-                nodegroup_id=G.nodegroup(A.ARCHIVED_BY),
-                resourceinstance_id=G.thread_id(message_id),
-            )
-        )
-
     @staticmethod
-    def _limit_to_external_threads(messages, user, reachable):
+    def _limit_to_external_threads(messages, viewer: MessageViewer, reachable):
         """Narrow messages to external threads on reachable resources whose root
         names the user or their company as author or recipient. A thread is kept
         or dropped whole."""
-        parties = MessageViewer.party_ids(user)
+        parties = viewer.parties
         if not parties:
-            logger.warning("No Contributor for user %s; no messages visible.", user.id)
+            logger.warning(
+                "No Contributor for user %s; no messages visible.", viewer.user.id
+            )
             return messages.none()
         # The allowed ids come from plain tile queries and the tree is narrowed
         # by pk: filtering the tree on its JSON-derived columns makes Postgres
@@ -285,12 +281,12 @@ class ThreadService:
         )
         return messages.filter(Q(pk__in=root_ids) | Q(pk__in=reply_ids))
 
-    def _latest_dates_and_sides(self, resource_id, viewer):
+    def _latest_dates_and_sides(self, resource_id, viewer: MessageViewer):
         """For each thread on the resource: its latest message date, and the
         viewer's side of it."""
         rows = (
             self.base_query(
-                viewer.user,
+                viewer,
                 as_representation=False,
                 aliases=[A.MESSAGE_CREATION_DATE, A.MESSAGE_AUTHOR, A.RECIPIENT],
             )
@@ -312,7 +308,7 @@ class ThreadService:
                 sides[root_id] = viewer.side_of(author_id, recipient_id)
         return latest, sides
 
-    def _filter_by_archive(self, roots, viewer, archived):
+    def _filter_by_archive(self, roots, viewer: MessageViewer, archived: bool):
         """Keep the roots the viewer has archived, or those they haven't."""
         if not viewer.contributor_id:
             return roots.none() if archived else roots
@@ -333,7 +329,7 @@ class ThreadService:
         )
 
     @staticmethod
-    def _resolved_now_by(viewer):
+    def _resolved_now_by(viewer: MessageViewer):
         """A (date, contributor id) resolution stamped now by the viewer."""
         now = parse_iso_or_set_value(datetime.now(timezone.utc).isoformat())
         return now, viewer.contributor_id
@@ -348,16 +344,9 @@ class ThreadService:
         tile = Tile.objects.get(
             resourceinstance_id=thread_id, nodegroup_id=G.nodegroup(A.MESSAGE_AUTHOR)
         )
-        aliases = [
-            alias for side in resolutions for alias in G.RESOLUTION_ALIASES[side]
-        ]
-        nodes = {
-            alias: str(pk)
-            for alias, pk in nodes_for(G.SLUG, aliases).values_list("alias", "pk")
-        }
         changed = False
         for side, resolution in resolutions.items():
-            date_node, by_node = (nodes[alias] for alias in G.RESOLUTION_ALIASES[side])
+            date_node, by_node = map(G.node, G.RESOLUTION_ALIASES[side])
             if not resolution and not tile.data.get(date_node):
                 continue
             resolved_date, resolved_by = resolution or (None, None)

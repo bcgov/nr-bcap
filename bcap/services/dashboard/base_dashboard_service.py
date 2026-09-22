@@ -7,7 +7,7 @@ from bcap.services.dashboard.dashboard_types import (
     HcaPermit,
     ModuleProgress,
 )
-from bcap.services.message.bcap_message_service import BcapMessageService
+from bcap.services.message.thread_service import ThreadService
 from bcap.services.permit_application.permit_application_service import (
     PermitApplicationService,
 )
@@ -105,7 +105,7 @@ class BaseDashboardService(AliasedDataReader):
         contexts = PermitApplicationService().submission_context_ids_for_permits(
             permits, requirements_by_permit
         )
-        counts = BcapMessageService().unresolved_counts_by_context(
+        counts = ThreadService().unresolved_counts_by_context(
             set(chain.from_iterable(contexts.values())), username
         )
         return {

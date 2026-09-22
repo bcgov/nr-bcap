@@ -15,12 +15,7 @@ from tests.services.contributor_fixtures import (
     make_party,
     make_user,
 )
-
-# Preserve helper imports used by existing view and dashboard tests.
-from tests.services.message_fixtures import (
-    make_message as make_message,
-    resolution as resolution,
-)
+from tests.services.message_fixtures import make_message
 
 
 class BcapMessageAuthorTests(TestCase):
