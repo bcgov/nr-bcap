@@ -1781,6 +1781,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteVisit'
           description: ''
+  /bcap/api/user/:
+    get:
+      operationId: api_user_retrieve
+      description: Returns the authenticated user's name, group memberships, and whether
+        they are a superuser.
+      tags:
+      - 'External: user'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+          description: ''
   /bcap/api/workflow_draft:
     get:
       operationId: api_workflow_draft_list_all
@@ -1962,22 +1978,6 @@ paths:
       responses:
         '204':
           description: No response body
-  /bcap/api/user/:
-    get:
-      operationId: user_retrieve
-      description: Returns the authenticated user's name, group memberships, and whether
-        they are a superuser.
-      tags:
-      - 'External: user_profile'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfileResponse'
-          description: ''
 components:
   schemas:
     AddRequirement:
@@ -16023,7 +16023,7 @@ components:
           readOnly: true
       required:
       - node_value
-    UserProfileResponse:
+    UserResponse:
       type: object
       properties:
         username:

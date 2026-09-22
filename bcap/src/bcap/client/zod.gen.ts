@@ -4792,7 +4792,7 @@ export const zPaginatedProcessRequirementList = z.object({
     results: z.array(zProcessRequirement)
 });
 
-export const zUserProfileResponse = z.object({
+export const zUserResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
@@ -8970,7 +8970,7 @@ export const zPaginatedProcessRequirementListWritable = z.object({
     results: z.array(zProcessRequirementWritable)
 });
 
-export const zUserProfileResponseWritable = z.object({
+export const zUserResponseWritable = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
@@ -9383,6 +9383,8 @@ export const zApiSiteVisitRetrievePath = z.object({
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
 
+export const zApiUserRetrieveResponse = zUserResponse;
+
 export const zApiWorkflowDraftListAllQuery = z.object({
     parent: z.uuid().optional()
 });
@@ -9428,5 +9430,3 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 });
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
-
-export const zUserRetrieveResponse = zUserProfileResponse;

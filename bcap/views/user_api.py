@@ -15,7 +15,7 @@ from bcap.permissions.route_guards import SubmitterOrInternal
 
 
 @extend_schema(
-    tags=["External: user_profile"],
+    tags=["External: user"],
     responses=UserResponseSerializer,
     description=(
         "Returns the authenticated user's name, group memberships, and "

@@ -3,7 +3,7 @@ import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
-import type { UserProfile } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -319,7 +319,7 @@ describe('PermitDetails.vue', () => {
             mockMeta.value = { requiresInternal: true };
             useUserStore().state.profile = {
                 is_superuser: true,
-            } as UserProfile;
+            } as UserResponse;
 
             const wrapper = mount(PermitDetails, globalMountOptions);
             await flushPromises();

@@ -2,7 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { createRouter, createMemoryHistory } from 'vue-router';
 import { apiFetchJson } from '@/bcap/api.ts';
 import App from './App.vue';
-import type { UserProfile } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 
 // Partial: the guard checks the real ApiError with instanceof.
 vi.mock('@/bcap/api.ts', async (importOriginal) => ({
@@ -19,7 +19,7 @@ const profile = (isInternal: boolean) =>
         last_name: '',
         groups: isInternal ? { 'Archaeology Branch': 1 } : {},
         is_superuser: false,
-    }) as unknown as UserProfile;
+    }) as unknown as UserResponse;
 
 const routes = [
     {
