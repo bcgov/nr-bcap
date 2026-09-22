@@ -121,21 +121,6 @@ describe('with a submission in the store', () => {
         expect(wrapper.find('.crumb-current').text()).toBe('Investigation');
     });
 
-    it('carries the staff flag back to the permit', async () => {
-        mockQuery.value = { staff: 'true' };
-
-        const wrapper = mountReview();
-        await flushPromises();
-
-        expect(
-            wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
-        ).toEqual({
-            name: 'permitDetails',
-            params: { id: 'permit-1' },
-            query: { staff: 'true' },
-        });
-    });
-
     it('stops the spinner even when the submission fails to load', async () => {
         fetchResourceData.mockRejectedValue(new Error('boom'));
 

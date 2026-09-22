@@ -273,6 +273,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "2.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVE_URLCONF": "bcap.urls_api_documented",
+    # Pinned so operation ids don't shift with whichever urlconf a generation run
+    # enumerates: unset, drf-spectacular estimates the prefix as the common path
+    # of the endpoints it sees, which strips "api" and renames every generated type.
+    "SCHEMA_PATH_PREFIX": "/bcap",
     # The arches-querysets tile schemas are introspected from graph nodes whose
     # order isn't deterministic; order all component properties by the graph node
     # sortorder for stable, meaningful diffs. Keep the default enum hook.

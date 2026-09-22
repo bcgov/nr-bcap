@@ -1,10 +1,5 @@
 # Note: We are using snake_case to be consistent with other arches returns.
-from rest_framework.serializers import (
-    Serializer,
-    CharField,
-    ChoiceField,
-    SerializerMethodField,
-)
+from rest_framework.serializers import ChoiceField
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
 from bcap.services.dashboard.dashboard_types import (
@@ -14,16 +9,6 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
 )
-
-
-class UserProfileResponseSerializer(Serializer):
-    username = CharField()
-    first_name = CharField(allow_blank=True)
-    last_name = CharField(allow_blank=True)
-    groups = SerializerMethodField()
-
-    def get_groups(self, user) -> list[str]:
-        return [group.name for group in user.groups.all()]
 
 
 class InternalDashboardFilterSerializer(DataclassSerializer):

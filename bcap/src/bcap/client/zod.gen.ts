@@ -1500,7 +1500,7 @@ export const zArchaeologicalSiteUnprotectedAreasTile = z.object({
 
 export const zBcapMessageMessageContentAliasedData = z.object({
     is_internal: zBooleanAliasedNodeData.nullish(),
-    message_author: zResourceInstanceAliasedNodeData.nullish(),
+    message_author: zResourceInstanceAliasedNodeData.nullable(),
     message_content: zStringAliasedNodeData.nullable(),
     message_creation_date: zDateAliasedNodeData.nullish(),
     message_subject: zStringAliasedNodeData.nullable(),
@@ -4792,11 +4792,12 @@ export const zPaginatedProcessRequirementList = z.object({
     results: z.array(zProcessRequirement)
 });
 
-export const zUserProfileResponse = z.object({
+export const zUserResponse = z.object({
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    groups: z.array(z.string()).readonly()
+    groups: z.record(z.string(), z.int()).readonly(),
+    is_superuser: z.boolean()
 });
 
 export const zBooleanAliasedNodeDataWritable = z.object({
@@ -5985,7 +5986,7 @@ export const zArchaeologicalSiteUnprotectedAreasTileWritable = z.object({
 
 export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     is_internal: zBooleanAliasedNodeDataWritable.nullish(),
-    message_author: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    message_author: zResourceInstanceAliasedNodeDataWritable.nullable(),
     message_content: zStringAliasedNodeDataWritable.nullable(),
     message_creation_date: zDateAliasedNodeDataWritable.nullish(),
     message_subject: zStringAliasedNodeDataWritable.nullable(),
@@ -8969,10 +8970,11 @@ export const zPaginatedProcessRequirementListWritable = z.object({
     results: z.array(zProcessRequirementWritable)
 });
 
-export const zUserProfileResponseWritable = z.object({
+export const zUserResponseWritable = z.object({
     username: z.string(),
     first_name: z.string(),
-    last_name: z.string()
+    last_name: z.string(),
+    is_superuser: z.boolean()
 });
 
 export const zApiArchaeologicalSiteListQuery = z.object({
@@ -9381,6 +9383,8 @@ export const zApiSiteVisitRetrievePath = z.object({
 
 export const zApiSiteVisitRetrieveResponse = zSiteVisit;
 
+export const zApiUserRetrieveResponse = zUserResponse;
+
 export const zApiWorkflowDraftListAllQuery = z.object({
     parent: z.uuid().optional()
 });
@@ -9426,5 +9430,3 @@ export const zApiWorkflowDraftPartialUpdatePath = z.object({
 });
 
 export const zApiWorkflowDraftPartialUpdateResponse = zDraftRecord;
-
-export const zUserProfileRetrieveResponse = zUserProfileResponse;

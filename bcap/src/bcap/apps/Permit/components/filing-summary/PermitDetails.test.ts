@@ -2,6 +2,8 @@ import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -40,10 +42,14 @@ const mockPush = vi.fn();
 const mockQuery = vi.hoisted(() => ({
     value: {} as Record<string, string>,
 }));
+const mockMeta = vi.hoisted(() => ({
+    value: {} as Record<string, unknown>,
+}));
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
         query: mockQuery.value,
+        meta: mockMeta.value,
     }),
     useRouter: () => ({
         push: mockPush,
@@ -92,6 +98,7 @@ describe('PermitDetails.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockQuery.value = {};
+        mockMeta.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
             mockPermitData as unknown as PermitApplicationResourceAliasedData,
@@ -309,7 +316,10 @@ describe('PermitDetails.vue', () => {
 
         it('gives staff a read-only draft list', async () => {
             twoDrafts();
-            mockQuery.value = { staff: 'true' };
+            mockMeta.value = { requiresInternal: true };
+            useUserStore().state.profile = {
+                is_superuser: true,
+            } as UserResponse;
 
             const wrapper = mount(PermitDetails, globalMountOptions);
             await flushPromises();

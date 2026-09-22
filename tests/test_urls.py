@@ -89,4 +89,4 @@ class UrlRoundTripTests(SimpleTestCase):
 class ArchesUrlsTemplateTests(SimpleTestCase):
     def test_arches_urls_template_renders(self):
         out = render_to_string("arches_urls.htm")
-        assert "api_user_profile" in out
+        assert "api_user" in out

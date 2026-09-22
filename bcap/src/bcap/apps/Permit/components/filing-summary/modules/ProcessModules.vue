@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -78,9 +78,6 @@ onMounted(() => {
     if (props.isStaff) loadAssignees();
 });
 
-// Optional chaining: the component is mounted without a router in tests.
-const staffQuery = computed(() => route?.query?.staff ?? '');
-
 // Requirement details and unread badges fail the same outage; report once.
 const moduleError = computed(() => state.loadError || messageStore.error);
 
@@ -121,8 +118,6 @@ const onViewSubmission = (
         permitId: props.permitId,
         title: row.name,
     });
-    // Carry ?staff through so the review page's breadcrumb returns to the same
-    // staff/external view of the permit.
     router.push({ name: routeNames.moduleReview, query: route?.query ?? {} });
 };
 
@@ -268,7 +263,6 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
                                         :permit-id="permitId"
                                         :is-staff="isStaff"
                                         :application-id="applicationId"
-                                        :staff="staffQuery"
                                         :toggling="ui.togglingRequirement"
                                         :can-view-submission="
                                             !isLoadingRequirements(row)
