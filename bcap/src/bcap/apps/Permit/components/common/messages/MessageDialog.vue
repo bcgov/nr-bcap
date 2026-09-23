@@ -953,8 +953,7 @@ onMounted(() => {
 }
 
 .composer:focus-within {
-    border-color: var(--bc-navy);
-    outline: 1px solid var(--bc-navy);
+    outline: 2px solid var(--bc-navy);
     outline-offset: -2px;
 }
 
