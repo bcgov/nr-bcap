@@ -1,6 +1,4 @@
 import uuid
-from datetime import date, datetime, timedelta, timezone as dt_timezone
-from unittest import mock
 
 from django.test import TestCase
 
@@ -24,7 +22,6 @@ from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.services.contributor_fixtures import (
-    ACTIVE,
     ContributorFixtureMixin,
     make_user,
 )

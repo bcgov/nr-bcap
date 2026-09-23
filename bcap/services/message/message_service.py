@@ -102,8 +102,9 @@ class MessageService:
         root = G.content(thread_id)
 
         # A reply goes to whichever side of the thread the poster isn't on.
-        author, recipient = G.author_and_recipient(root)
-        to = recipient if viewer.side_of(author, recipient) == AUTHOR else author
+        thread = G.root(root)
+        side = viewer.side_of(thread.author, thread.recipient)
+        to = thread.recipient if side == AUTHOR else thread.author
         if to:
             set_payload_node(
                 data, A.MESSAGE_CONTENT, A.RECIPIENT, resource_instance_value(to)

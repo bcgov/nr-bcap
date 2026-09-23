@@ -286,22 +286,19 @@ class ThreadService:
         # by pk: filtering the tree on its JSON-derived columns makes Postgres
         # recompute them for every message, which is what made this slow.
         link_node = G.node(A.THREAD)
-        links = TileModel.objects.filter(
-            nodegroup_id=G.nodegroup(A.THREAD), data__has_key=link_node
-        ).exclude(**{f"data__{link_node}": None})
+        contents = TileModel.objects.filter(nodegroup_id=G.nodegroup(A.MESSAGE_CONTENT))
         root_ids = {
             str(pk)
-            for pk in TileModel.objects.filter(
+            for pk in contents.filter(
                 references_any(G.node(A.MESSAGE_AUTHOR), parties)
                 | references_any(G.node(A.RECIPIENT), parties),
                 references_any(G.node(A.RESOURCE_CONTEXT), reachable),
-                nodegroup_id=G.nodegroup(A.MESSAGE_AUTHOR),
             )
             .exclude(**{f"data__{G.node(A.IS_INTERNAL)}": True})
-            .exclude(resourceinstance_id__in=links.values("resourceinstance_id"))
+            .exclude(**{f"data__{link_node}__0__isnull": False})
             .values_list("resourceinstance_id", flat=True)
         }
-        reply_ids = links.filter(references_any(link_node, root_ids)).values(
+        reply_ids = contents.filter(references_any(link_node, root_ids)).values(
             "resourceinstance_id"
         )
         return messages.filter(Q(pk__in=root_ids) | Q(pk__in=reply_ids))
@@ -329,7 +326,7 @@ class ThreadService:
         the tree: saving the tree runs attachments through the file-list
         datatype, which deletes their stored files."""
         return Tile.objects.get(
-            resourceinstance_id=thread_id, nodegroup_id=G.nodegroup(A.MESSAGE_AUTHOR)
+            resourceinstance_id=thread_id, nodegroup_id=G.nodegroup(A.MESSAGE_CONTENT)
         )
 
     @staticmethod

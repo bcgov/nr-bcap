@@ -52,17 +52,9 @@ class MessageGraph:
     def contents(cls, resource_ids):
         """(resource id, content tile data) for each of these messages."""
         return TileModel.objects.filter(
-            nodegroup_id=cls.nodegroup(A.MESSAGE_AUTHOR),
+            nodegroup_id=cls.nodegroup(A.MESSAGE_CONTENT),
             resourceinstance_id__in=[str(r) for r in resource_ids],
         ).values_list("resourceinstance_id", "data")
-
-    @classmethod
-    def author_and_recipient(cls, content):
-        """The (author id, recipient id) on a message's content tile data."""
-        return (
-            resource_instance_id(content.get(cls.node(A.MESSAGE_AUTHOR))),
-            resource_instance_id(content.get(cls.node(A.RECIPIENT))),
-        )
 
     @classmethod
     def roots(cls, resource_ids):

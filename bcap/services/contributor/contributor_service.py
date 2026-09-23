@@ -3,10 +3,8 @@ from functools import cached_property
 from typing import Self
 
 from django.db import transaction
-from django.db.models import Q, TextField, UUIDField, Value
-from django.db.models.fields.json import KeyTextTransform, KeyTransform
-from django.db.models.functions import Cast, Coalesce
-from django.utils import timezone
+from django.db.models import Q
+from django.db.models.fields.json import KeyTextTransform
 
 from arches.app.models.models import ResourceInstance, ResourceXResource, TileModel
 from arches.app.models.resource import Resource
