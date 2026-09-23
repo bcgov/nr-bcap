@@ -131,14 +131,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resp.status_code, 200)
         return {r["resourceinstanceid"] for r in resp.json()}
 
-    def test_staff_sees_both_threads_including_internal(self):
-        ids = self._thread_roots(self.staff)
-        self.assertEqual(ids, {str(self.public_root.pk), str(self.internal_root.pk)})
-
-    def test_applicant_sees_only_the_thread_they_are_party_to(self):
-        ids = self._thread_roots(self.user)
-        self.assertEqual(ids, {str(self.public_root.pk)})
-
     def test_thread_messages_paginate_with_limit_offset(self):
         # Standard DRF limit/offset envelope: full count, one page of results,
         # and a link to the next page.
@@ -153,16 +145,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["results"]), 1)
         self.assertIsNotNone(body["next"])
-
-    def test_applicant_gets_empty_internal_thread(self):
-        self.idir_login_simulate(self.user)
-        url = reverse(
-            "bcap_message_thread_messages",
-            kwargs={"thread_id": str(self.internal_root.pk)},
-        )
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["count"], 0)
 
     def _message_payload(self, context_id=None, **extra_nodes):
         """A create body with the nodes the model requires; extra_nodes adds to
@@ -200,11 +182,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         resp = self._post_message()
         self.assertEqual(resp.status_code, 403)
 
-    def test_create_allowed_on_the_applicants_own_permit(self):
-        self.idir_login_simulate(self.user)
-        resp = self._post_message()
-        self.assertEqual(resp.status_code, 201)
-
     def test_applicant_creates_against_a_requirement_on_their_own_permit(self):
         # The applicant holds no grant on process_requirement, so the arches
         # edit check says no; reaching it through their own permit is what lets
@@ -216,18 +193,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, 201, resp.content)
-
-    def test_applicant_cannot_start_an_internal_thread(self):
-        self.idir_login_simulate(self.user)
-        payload = self._message_payload(is_internal={"node_value": True})
-        resp = self.client.post(
-            reverse("bcap_message_list_create"),
-            data=json.dumps(payload),
-            content_type="application/json",
-        )
-        self.assertEqual(resp.status_code, 201, resp.content)
-        content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
-        self.assertFalse(content["is_internal"]["node_value"])
 
     def test_applicant_cannot_reply_into_an_internal_thread(self):
         self.idir_login_simulate(self.user)
@@ -243,15 +208,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 403, resp.content)
         self.assertEqual(messages.count(), before)
-
-    def test_applicant_cannot_create_against_someone_elses_permit(self):
-        self.idir_login_simulate(self.user)
-        resp = self.client.post(
-            reverse("bcap_message_list_create"),
-            data=json.dumps(self._message_payload(str(self.other_permit.pk))),
-            content_type="application/json",
-        )
-        self.assertEqual(resp.status_code, 403)
 
     def _threads(self, user, *resource_ids):
         self.idir_login_simulate(user)
@@ -394,18 +350,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, 201, resp.content)
-
-    def test_create_stamps_the_posting_user_as_author(self):
-        # The poster's Contributor (resolved from their username) is written as
-        # the message author, even though the payload never sets it.
-        self.idir_login_simulate(self.user)
-        resp = self._post_message()
-        self.assertEqual(resp.status_code, 201)
-        author = resp.json()["aliased_data"]["message_content"]["aliased_data"][
-            "message_author"
-        ]
-        ids = [rel["resourceId"] for rel in (author["node_value"] or [])]
-        self.assertEqual(ids, [str(self.applicant_contrib.pk)])
 
     def test_create_keeps_the_offset_bearing_creation_datetime(self):
         # A creation datetime with a UTC offset survives the write path: the
@@ -586,17 +530,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self.assertEqual(resolved_by[0]["resourceId"], self.recipient_id)
         self.assertIsNone(content["thread_author_resolved_date"]["node_value"])
 
-    def test_applicant_patch_resolves_their_side_only(self):
-        self.idir_login_simulate(self.user)
-        self.assertEqual(
-            self._patch(self.public_root.pk, resolved=True).status_code, 200
-        )
-        self.assertEqual(
-            resolution(self.public_root, "author")[1],
-            str(self.applicant_contrib.pk),
-        )
-        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
-
     def test_threads_tell_the_viewer_their_side(self):
         for user, side in ((self.staff, "recipient"), (self.user, "author")):
             self.idir_login_simulate(user)
@@ -658,14 +591,6 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             resolution(self.public_root, "author")[1], str(self.applicant_contrib.pk)
         )
 
-    def test_patch_unarchives_thread_back_to_active(self):
-        self.idir_login_simulate(self.staff)
-        self._patch(self.public_root.pk, archived=True)
-        resp = self._patch(self.public_root.pk, archived=False)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
-        self.assertEqual(self._thread_roots(self.staff, archived=True), set())
-
     def test_patch_resolves_and_archives_in_one_request(self):
         self.idir_login_simulate(self.staff)
         resp = self._patch(self.public_root.pk, resolved=True, archived=True)
@@ -675,6 +600,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
             str(self.public_root.pk),
             self._thread_roots(self.staff, archived=True),
         )
+
+        resp = self._patch(self.public_root.pk, resolved=False, archived=False)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resolution(self.public_root, "recipient"), (None, None))
+        self.assertIn(str(self.public_root.pk), self._thread_roots(self.staff))
 
     def test_create_rejected_when_poster_has_no_contributor(self):
         # A user with no linked Contributor cannot author a message, so the

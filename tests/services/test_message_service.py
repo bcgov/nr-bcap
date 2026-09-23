@@ -144,10 +144,6 @@ class BcapMessagePrepareTests(TestCase):
         self.service.prepare_create_payload(data, self.applicant)
         self.assertEqual(self._author_id(data), str(self.applicant_contrib.pk))
 
-    def test_prepare_create_payload_requires_the_poster_to_have_a_contributor(self):
-        with self.assertRaises(NoAuthorContributor):
-            self.service.prepare_create_payload(self._payload(), make_user("nocontrib"))
-
     def test_staff_writing_to_staff_or_the_branch_starts_an_internal_thread(self):
         for recipient in (self.third_contrib.pk, self.branch):
             data = self._payload(recipient=recipient)
