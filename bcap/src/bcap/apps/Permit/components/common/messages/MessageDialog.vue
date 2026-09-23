@@ -548,21 +548,13 @@ onMounted(() => {
                                 {{ activeThread.topic }}
                             </h3>
                             <div class="thread-meta">
-                                <span
-                                    v-if="activeThread.to"
-                                    class="thread-to"
-                                >
-                                    <!-- Someone on neither side sees both parties. -->
-                                    <template v-if="activeThread.onSide">
-                                        With
-                                        <strong>{{ activeThread.to }}</strong>
-                                    </template>
-                                    <template v-else>
-                                        Between
-                                        <strong>
-                                            {{ activeThread.startedBy }}
-                                        </strong>
-                                        and
+                                <span class="thread-to">
+                                    From
+                                    <strong>
+                                        {{ activeThread.startedBy }}
+                                    </strong>
+                                    <template v-if="activeThread.to">
+                                        to
                                         <strong>{{ activeThread.to }}</strong>
                                     </template>
                                 </span>

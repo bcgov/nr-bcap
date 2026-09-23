@@ -505,14 +505,9 @@ describe('Permit API', () => {
             expect(thread.lastMessageDate).toBe('2026-03-05 12:00:00+00:00');
         });
 
-        // The header names the other side: whoever the viewer's reply goes to.
-        it.each([
-            { viewer_side: 'author', to: 'Acme Corp' },
-            { viewer_side: 'recipient', to: 'Jane Doe' },
-            { viewer_side: '', to: 'Acme Corp' },
-        ])(
-            'addresses a $viewer_side viewer to $to',
-            async ({ viewer_side, to }) => {
+        it.each(['author', 'recipient', ''])(
+            'names the original recipient to a %s viewer',
+            async (viewer_side) => {
                 const [thread] = await threadsOn({
                     ...root('t1', 'A question', {
                         recipient: { display_value: 'Acme Corp' },
@@ -520,7 +515,7 @@ describe('Permit API', () => {
                     viewer_side,
                 });
 
-                expect(thread.to).toBe(to);
+                expect(thread.to).toBe('Acme Corp');
             },
         );
 

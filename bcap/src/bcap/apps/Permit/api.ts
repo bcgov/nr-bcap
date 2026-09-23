@@ -591,7 +591,7 @@ const toThread = (root: ThreadRoot): MessageThread => {
         resolvedBy: resolvedBy?.display_value || '',
         resolvedDate: resolvedDate?.node_value || '',
         isInternal: Boolean(content?.is_internal?.node_value),
-        to: side === ThreadSide.Recipient ? author : recipient,
+        to: recipient,
     };
 };
 

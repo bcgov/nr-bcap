@@ -481,10 +481,10 @@ describe('MessageDialog.vue', () => {
     });
 
     it.each([
-        { onSide: true, header: 'With Acme Corp' },
-        { onSide: false, header: 'Between Amy and Acme Corp' },
-    ])('heads the thread with $header', async ({ onSide, header }) => {
-        withThreads([thread({ to: 'Acme Corp', onSide })]);
+        { to: 'Acme Corp', header: 'From Amy to Acme Corp' },
+        { to: '', header: 'From Amy' },
+    ])('heads the thread with $header', async ({ to, header }) => {
+        withThreads([thread({ to })]);
         const wrapper = mountComponent();
         await flushPromises();
         await openThread(wrapper);

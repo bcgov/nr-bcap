@@ -114,7 +114,7 @@ export interface MessageThread {
     resolvedBy: string;
     resolvedDate: string;
     isInternal: boolean;
-    // Who the viewer is talking with: the other side, where their reply goes.
+    // Who the thread was first sent to.
     to: string;
 }
 
