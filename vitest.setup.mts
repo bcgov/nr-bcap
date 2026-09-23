@@ -21,6 +21,7 @@ vi.stubGlobal(
 // so an expected url in a test reads like the one in the browser. Anything not
 // listed falls through to the Proxy below.
 const urls: Record<string, unknown> = {
+    api_process_requirement_list: '/bcap/api/process_requirement',
     api_process_requirements: (id: string) =>
         `/bcap/api/process_requirement/${id}`,
     api_resource: (graphSlug: string, id: string) =>
@@ -38,8 +39,8 @@ const urls: Record<string, unknown> = {
     assignable_groups: '/bcap/api/assignable_groups',
     bcap_message_detail: (messageId: string) =>
         `/bcap/api/bcap_message/${messageId}`,
-    bcap_message_resource_threads: (resourceId: string) =>
-        `/bcap/api/bcap_message/resource/${resourceId}/threads`,
+    bcap_message_list_create: '/bcap/api/bcap_message',
+    bcap_message_threads: '/bcap/api/bcap_message/threads',
     bcap_message_thread_messages: (threadId: string) =>
         `/bcap/api/bcap_message/thread/${threadId}`,
     bcap_message_module_unresolved: (submissionId: string) =>
@@ -76,8 +77,8 @@ beforeAll(() => {
 
     vi.mock('vue3-gettext', () => ({
         useGettext: () => ({
-            $gettext: (text: string) => (text)
-        })
+            $gettext: (text: string) => text,
+        }),
     }));
 
     // The real GenericWidget needs an active pinia and a live

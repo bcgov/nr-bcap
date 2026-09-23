@@ -74,7 +74,8 @@ export const zContributorSummary = z.object({
     name: z.string(),
     email: z.string(),
     type: z.string(),
-    is_proponent: z.boolean().optional()
+    is_proponent: z.boolean().optional(),
+    is_internal: z.boolean().optional()
 });
 
 export const zDateAliasedNodeData = z.object({
@@ -594,27 +595,6 @@ export const zBcapMessageArchivedByTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zBcapMessageArchivedByAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zBcapMessageRelatedSourceMessageAliasedData = z.object({
-    related_source_message: zResourceInstanceAliasedNodeData.nullish()
-});
-
-export const zBcapMessageRelatedSourceMessageTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapMessageRelatedSourceMessageAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -1517,11 +1497,15 @@ export const zBcapMessageMessageContentAliasedData = z.object({
     message_type: zReferenceAliasedNodeDataRequired.nullable(),
     recipient: zResourceInstanceAliasedNodeData.nullable(),
     resource_context: zResourceInstanceAliasedNodeData.nullable(),
-    author_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
-    author_resolved_date: zDateAliasedNodeData.nullish(),
-    recipient_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
-    recipient_resolved_date: zDateAliasedNodeData.nullish(),
-    attachments: zFileListAliasedNodeData.nullish()
+    thread_author_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
+    thread_author_resolved_date: zDateAliasedNodeData.nullish(),
+    thread_participants: zResourceInstanceListAliasedNodeData.nullish(),
+    thread_recipient_resolved_by: zResourceInstanceAliasedNodeData.nullish(),
+    thread_recipient_resolved_date: zDateAliasedNodeData.nullish(),
+    attachments: zFileListAliasedNodeData.nullish(),
+    thread_answered: zBooleanAliasedNodeData.nullish(),
+    thread_last_message_date: zDateAliasedNodeData.nullish(),
+    thread: zResourceInstanceAliasedNodeData.nullish()
 });
 
 export const zBcapMessageMessageContentTile = z.object({
@@ -1543,8 +1527,7 @@ export const zBcapMessageMessageContentTile = z.object({
 
 export const zBcapMessageResourceAliasedData = z.object({
     archived_by: z.array(zBcapMessageArchivedByTile).nullish(),
-    message_content: zBcapMessageMessageContentTile.nullish(),
-    related_source_message: zBcapMessageRelatedSourceMessageTile.nullish()
+    message_content: zBcapMessageMessageContentTile.nullish()
 });
 
 export const zBcapMessage = z.object({
@@ -2399,13 +2382,6 @@ export const zNoticeOfProjectIntent = z.object({
     graph_publication: z.uuid().readonly().nullable(),
     resource_instance_lifecycle_state: z.uuid().readonly(),
     principaluser: z.int().readonly().nullable()
-});
-
-export const zPaginatedBcapMessageList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zBcapMessage)
 });
 
 export const zPaginatedLocalGovernmentList = z.object({
@@ -4561,12 +4537,11 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTile = z.object({
     })).nullish()
 });
 
-export const zThreadRoot = z.object({
+export const zThreadMessage = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedData.optional(),
     graph_has_different_publication: z.boolean().readonly(),
-    last_message_date: z.iso.datetime({ offset: true, local: true }).readonly(),
-    viewer_side: z.string().readonly(),
+    author_is_staff: z.boolean().readonly(),
     name: z.string().readonly().nullable(),
     descriptors: z.object({
         en: z.object({
@@ -4583,11 +4558,33 @@ export const zThreadRoot = z.object({
     principaluser: z.int().readonly().nullable()
 });
 
-export const zPaginatedThreadRootList = z.object({
+export const zPaginatedThreadMessageList = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
-    results: z.array(zThreadRoot)
+    results: z.array(zThreadMessage)
+});
+
+export const zThreadRoot = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    viewer_side: z.string().readonly(),
+    viewer_needs_action: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zUrlAliasedNodeData = z.object({
@@ -5075,27 +5072,6 @@ export const zBcapMessageArchivedByTileWritable = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zBcapMessageArchivedByAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zBcapMessageRelatedSourceMessageAliasedDataWritable = z.object({
-    related_source_message: zResourceInstanceAliasedNodeDataWritable.nullish()
-});
-
-export const zBcapMessageRelatedSourceMessageTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapMessageRelatedSourceMessageAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -5964,11 +5940,15 @@ export const zBcapMessageMessageContentAliasedDataWritable = z.object({
     message_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     recipient: zResourceInstanceAliasedNodeDataWritable.nullable(),
     resource_context: zResourceInstanceAliasedNodeDataWritable.nullable(),
-    author_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    author_resolved_date: zDateAliasedNodeDataWritable.nullish(),
-    recipient_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    recipient_resolved_date: zDateAliasedNodeDataWritable.nullish(),
-    attachments: zFileListAliasedNodeDataWritable.nullish()
+    thread_author_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    thread_author_resolved_date: zDateAliasedNodeDataWritable.nullish(),
+    thread_participants: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    thread_recipient_resolved_by: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    thread_recipient_resolved_date: zDateAliasedNodeDataWritable.nullish(),
+    attachments: zFileListAliasedNodeDataWritable.nullish(),
+    thread_answered: zBooleanAliasedNodeDataWritable.nullish(),
+    thread_last_message_date: zDateAliasedNodeDataWritable.nullish(),
+    thread: zResourceInstanceAliasedNodeDataWritable.nullish()
 });
 
 export const zBcapMessageMessageContentTileWritable = z.object({
@@ -5990,8 +5970,7 @@ export const zBcapMessageMessageContentTileWritable = z.object({
 
 export const zBcapMessageResourceAliasedDataWritable = z.object({
     archived_by: z.array(zBcapMessageArchivedByTileWritable).nullish(),
-    message_content: zBcapMessageMessageContentTileWritable.nullish(),
-    related_source_message: zBcapMessageRelatedSourceMessageTileWritable.nullish()
+    message_content: zBcapMessageMessageContentTileWritable.nullish()
 });
 
 export const zBcapMessageWritable = z.object({
@@ -6776,13 +6755,6 @@ export const zNoticeOfProjectIntentWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zNoticeOfProjectIntentResourceAliasedDataWritable.optional(),
     graph: z.uuid().nullish()
-});
-
-export const zPaginatedBcapMessageListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zBcapMessageWritable)
 });
 
 export const zPaginatedLocalGovernmentListWritable = z.object({
@@ -8789,17 +8761,23 @@ export const zArchaeologicalSiteRemarksAndRestrictedInformationTileWritable = z.
     })).nullish()
 });
 
-export const zThreadRootWritable = z.object({
+export const zThreadMessageWritable = z.object({
     resourceinstanceid: z.uuid().nullish(),
     aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
     graph: z.uuid().nullish()
 });
 
-export const zPaginatedThreadRootListWritable = z.object({
+export const zPaginatedThreadMessageListWritable = z.object({
     count: z.int(),
     next: z.url().nullish(),
     previous: z.url().nullish(),
-    results: z.array(zThreadRootWritable)
+    results: z.array(zThreadMessageWritable)
+});
+
+export const zThreadRootWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zBcapMessageResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
 });
 
 export const zUrlAliasedNodeDataWritable = z.object({
@@ -8977,18 +8955,6 @@ export const zApiBcapMessageResourceContributorsListPath = z.object({
 
 export const zApiBcapMessageResourceContributorsListResponse = z.array(zContributorSummary);
 
-export const zApiBcapMessageResourceThreadsListPath = z.object({
-    resource_id: z.uuid()
-});
-
-export const zApiBcapMessageResourceThreadsListQuery = z.object({
-    archived: z.boolean().optional().default(false),
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiBcapMessageResourceThreadsListResponse = zPaginatedThreadRootList;
-
 export const zApiBcapMessageSubmissionUnresolvedByModuleListPath = z.object({
     submission_id: z.uuid()
 });
@@ -9004,7 +8970,14 @@ export const zApiBcapMessageThreadMessagesListQuery = z.object({
     offset: z.int().optional()
 });
 
-export const zApiBcapMessageThreadMessagesListResponse = zPaginatedBcapMessageList;
+export const zApiBcapMessageThreadMessagesListResponse = zPaginatedThreadMessageList;
+
+export const zApiBcapMessageThreadsListQuery = z.object({
+    archived: z.boolean().optional().default(false),
+    resource_ids: z.array(z.uuid()).min(1).max(200)
+});
+
+export const zApiBcapMessageThreadsListResponse = z.array(zThreadRoot);
 
 export const zApiContributorListQuery = z.object({
     limit: z.int().optional(),

@@ -176,9 +176,9 @@ documented_api_patterns = [
         name="requirement_status",
     ),
     path(
-        "api/bcap_message/resource/<uuid:resource_id>/threads",
+        "api/bcap_message/threads",
         BcapMessageThreadsView.as_view(),
-        name="bcap_message_resource_threads",
+        name="bcap_message_threads",
     ),
     path(
         "api/bcap_message/resource/<uuid:resource_id>/contributors",

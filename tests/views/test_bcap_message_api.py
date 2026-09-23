@@ -123,12 +123,13 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def _thread_roots(self, user, archived=False):
         self.idir_login_simulate(user)
-        url = reverse(
-            "bcap_message_resource_threads", kwargs={"resource_id": self.permit_id}
+        params = {"resource_ids": self.permit_id}
+        resp = self.client.get(
+            reverse("bcap_message_threads"),
+            {**params, "archived": "true"} if archived else params,
         )
-        resp = self.client.get(url, {"archived": "true"} if archived else {})
         self.assertEqual(resp.status_code, 200)
-        return {r["resourceinstanceid"] for r in resp.json()["results"]}
+        return {r["resourceinstanceid"] for r in resp.json()}
 
     def test_staff_sees_both_threads_including_internal(self):
         ids = self._thread_roots(self.staff)
@@ -230,14 +231,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def test_applicant_cannot_reply_into_an_internal_thread(self):
         self.idir_login_simulate(self.user)
-        payload = self._message_payload()
-        payload["aliased_data"]["related_source_message"] = {
-            "aliased_data": {
-                "related_source_message": {
-                    "node_value": [{"resourceId": str(self.internal_root.pk)}]
-                }
-            }
-        }
+        payload = self._message_payload(
+            thread={"node_value": [{"resourceId": str(self.internal_root.pk)}]}
+        )
         messages = ResourceInstance.objects.filter(graph__slug="bcap_message")
         before = messages.count()
         resp = self.client.post(
@@ -257,15 +253,43 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         )
         self.assertEqual(resp.status_code, 403)
 
-    def test_applicant_cannot_read_threads_on_someone_elses_permit(self):
-        self.idir_login_simulate(self.user)
-        resp = self.client.get(
-            reverse(
-                "bcap_message_resource_threads",
-                kwargs={"resource_id": str(self.other_permit.pk)},
-            )
+    def _threads(self, user, *resource_ids):
+        self.idir_login_simulate(user)
+        return self.client.get(
+            reverse("bcap_message_threads"),
+            {"resource_ids": [str(r) for r in resource_ids]},
         )
+
+    def test_applicant_cannot_read_threads_on_someone_elses_permit(self):
+        resp = self._threads(self.user, self.other_permit.pk)
         self.assertEqual(resp.status_code, 403)
+
+    def test_lists_several_resources_threads_in_one_response(self):
+        resp = self._threads(self.staff, self.permit_id, self.requirement.pk)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            {r["resourceinstanceid"] for r in resp.json()},
+            {
+                str(self.public_root.pk),
+                str(self.internal_root.pk),
+                str(self.requirement_message.pk),
+                str(self.internal_requirement_root.pk),
+            },
+        )
+
+    def test_several_resources_keep_the_applicants_visibility_rules(self):
+        resp = self._threads(self.user, self.permit_id, self.requirement.pk)
+        self.assertEqual(
+            {r["resourceinstanceid"] for r in resp.json()},
+            {str(self.public_root.pk), str(self.requirement_message.pk)},
+        )
+
+    def test_refuses_if_any_resource_is_unreadable(self):
+        resp = self._threads(self.user, self.permit_id, self.other_permit.pk)
+        self.assertEqual(resp.status_code, 403)
+
+    def test_needs_at_least_one_resource(self):
+        self.assertEqual(self._threads(self.staff).status_code, 400)
 
     def test_applicant_patches_a_message_filed_on_their_requirement(self):
         # The detail route runs the same gate: the applicant cannot edit a
@@ -353,10 +377,8 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
     def test_applicant_reads_threads_on_a_requirement_of_their_permit(self):
         self.idir_login_simulate(self.user)
         resp = self.client.get(
-            reverse(
-                "bcap_message_resource_threads",
-                kwargs={"resource_id": str(self.requirement.pk)},
-            )
+            reverse("bcap_message_threads"),
+            {"resource_ids": str(self.requirement.pk)},
         )
         self.assertEqual(resp.status_code, 200)
 
@@ -507,13 +529,11 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
 
     def _requirement_threads(self):
         resp = self.client.get(
-            reverse(
-                "bcap_message_resource_threads",
-                kwargs={"resource_id": str(self.requirement.pk)},
-            )
+            reverse("bcap_message_threads"),
+            {"resource_ids": str(self.requirement.pk)},
         )
         self.assertEqual(resp.status_code, 200)
-        return {r["resourceinstanceid"] for r in resp.json()["results"]}
+        return {r["resourceinstanceid"] for r in resp.json()}
 
     def _thread_count(self, thread_id):
         resp = self.client.get(
@@ -561,10 +581,10 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         resp = self._patch(self.public_root.pk, resolved=True)
         self.assertEqual(resp.status_code, 200)
         content = resp.json()["aliased_data"]["message_content"]["aliased_data"]
-        self.assertIsNotNone(content["recipient_resolved_date"]["node_value"])
-        resolved_by = content["recipient_resolved_by"]["node_value"]
+        self.assertIsNotNone(content["thread_recipient_resolved_date"]["node_value"])
+        resolved_by = content["thread_recipient_resolved_by"]["node_value"]
         self.assertEqual(resolved_by[0]["resourceId"], self.recipient_id)
-        self.assertIsNone(content["author_resolved_date"]["node_value"])
+        self.assertIsNone(content["thread_author_resolved_date"]["node_value"])
 
     def test_applicant_patch_resolves_their_side_only(self):
         self.idir_login_simulate(self.user)
@@ -581,12 +601,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         for user, side in ((self.staff, "recipient"), (self.user, "author")):
             self.idir_login_simulate(user)
             resp = self.client.get(
-                reverse(
-                    "bcap_message_resource_threads",
-                    kwargs={"resource_id": self.permit_id},
-                )
+                reverse("bcap_message_threads"), {"resource_ids": self.permit_id}
             )
-            roots = {r["resourceinstanceid"]: r for r in resp.json()["results"]}
+            roots = {r["resourceinstanceid"]: r for r in resp.json()}
             root = roots[str(self.public_root.pk)]
             self.assertEqual(root["viewer_side"], side)
 
@@ -626,14 +643,9 @@ class BcapMessageApiTests(AuthTestHelper, TestCase):
         self._patch(self.public_root.pk, resolved=True)
         self.idir_login_simulate(self.user)
         self._patch(self.public_root.pk, resolved=True)
-        payload = self._message_payload()
-        payload["aliased_data"]["related_source_message"] = {
-            "aliased_data": {
-                "related_source_message": {
-                    "node_value": [{"resourceId": str(self.public_root.pk)}]
-                }
-            }
-        }
+        payload = self._message_payload(
+            thread={"node_value": [{"resourceId": str(self.public_root.pk)}]}
+        )
         resp = self.client.post(
             reverse("bcap_message_list_create"),
             data=json.dumps(payload),

@@ -210,6 +210,7 @@ const moreItems = computed(() => [
                     :resource-id="requirement.resourceId"
                     :context="requirement.name"
                     :context-id="moduleId"
+                    prefetched
                 />
             </span>
             <span

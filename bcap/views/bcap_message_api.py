@@ -18,6 +18,7 @@ from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.serializers.bcap_message_serializers import (
     BcapMessagePatchSerializer,
     ModuleUnresolvedSerializer,
+    ThreadMessageSerializer,
     ThreadRootSerializer,
     ThreadsQuerySerializer,
 )
@@ -35,30 +36,32 @@ from bcap.views.generated.bcap_message import (
 
 @extend_schema(tags=["External: bcap_message"], parameters=[ThreadsQuerySerializer])
 class BcapMessageThreadsView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIView):
-    """GET the threads on a parent resource, one per thread as its root
-    (thread-starting) message, with the standard limit/offset pagination."""
+    """GET the threads on one or more resources, one row per thread as its root
+    message. Unpaginated; each root's resource_context says which resource it
+    belongs to."""
 
     permission_classes = [SubmitterOrInternal]
-    pagination_class = ArchesLimitOffsetPagination
+    pagination_class = None
     serializer_class = ThreadRootSerializer
 
     def get_queryset(self):
         params = ThreadsQuerySerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
         return ThreadService().thread_roots_query(
-            self.kwargs["resource_id"],
+            params.validated_data["resource_ids"],
             self.request.user,
-            archived=params.validated_data.archived,
+            archived=params.validated_data["archived"],
         )
 
 
 @extend_schema(tags=["External: bcap_message"])
 class BcapMessageThreadView(BcapMessageViewMixin, ArchesModelAPIMixin, ListAPIView):
-    """GET one thread's messages (its root and replies), oldest-first, with the
-    standard limit/offset pagination the rest of the API uses."""
+    """GET one thread's messages (its root and replies), newest first, with the
+    standard limit/offset pagination, so the first page is the latest."""
 
     permission_classes = [SubmitterOrInternal]
     pagination_class = ArchesLimitOffsetPagination
+    serializer_class = ThreadMessageSerializer
 
     def get_queryset(self):
         return ThreadService().thread_messages_query(

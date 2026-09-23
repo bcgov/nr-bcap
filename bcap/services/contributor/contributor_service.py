@@ -50,6 +50,7 @@ class ContributorSummary:
     email: str
     type: str
     is_proponent: bool = False
+    is_internal: bool = False
 
     @classmethod
     def from_resource(cls, resource) -> Self:
@@ -176,11 +177,12 @@ class ContributorService(AliasedDataReader):
         )
         return str(pk) if pk else None
 
-    def contributors_for_resource(self, resource_id, with_proponent=False):
+    def contributors_for_resource(self, resource_id, for_staff=False):
         """Pick-list options for a resource: its referenced contributors that
         have a login (ministry assignees included), name-sorted. Falls back to
         the Archaeology Branch when nobody is assigned, so there is always
-        someone to address. with_proponent adds whoever filed the permit."""
+        someone to address. for_staff adds whoever filed the permit and flags
+        the options a staff writer would start an internal thread with."""
         # A requirement resource references nobody; its assignees are on the
         # permit application pointing at it.
         permits = ResourceXResource.objects.filter(
@@ -193,7 +195,7 @@ class ContributorService(AliasedDataReader):
         if not ids:
             ids.add(self.archaeology_branch_id())
         proponents = set()
-        if with_proponent:
+        if for_staff:
             filers = ResourceInstance.objects.filter(
                 pk__in=[resource_id, *permits], principaluser__isnull=False
             ).values_list("principaluser__username", flat=True)
@@ -204,6 +206,7 @@ class ContributorService(AliasedDataReader):
         options = self.by_ids(ids - {None})
         for option in options:
             option.is_proponent = option.id in proponents
+            option.is_internal = for_staff and self.contributor_is_internal(option.id)
         return options
 
     def contributor_username(self, contributor_id):

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatTimestamp } from '@/bcap/util.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
+import { NEW_THREAD_ID } from '@/bcap/types.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 
 defineProps<{
@@ -19,6 +20,14 @@ const userStore = useUserStore();
 
 <template>
     <div class="thread-sidebar">
+        <div
+            class="sidebar-item new-message-item"
+            :class="{ active: selectedThreadId === NEW_THREAD_ID }"
+            @click="$emit('select-thread', NEW_THREAD_ID)"
+        >
+            <i class="fa-solid fa-plus"></i>
+            New Message
+        </div>
         <div class="sidebar-tabs">
             <button
                 type="button"
@@ -45,7 +54,7 @@ const userStore = useUserStore();
                 class="sidebar-item"
                 :class="{
                     active: selectedThreadId === thread.id,
-                    unresolved: thread.onSide && !thread.isResolved,
+                    unresolved: thread.needsAction,
                 }"
                 @click="$emit('select-thread', thread.id)"
             >
@@ -56,6 +65,13 @@ const userStore = useUserStore();
                     >
                         <i class="fa-solid fa-lock"></i>
                         Internal
+                    </span>
+                    <span
+                        v-else-if="userStore.isInternal"
+                        class="thread-badge thread-external"
+                    >
+                        <i class="fa-solid fa-users"></i>
+                        External
                     </span>
                     <span
                         v-if="userStore.isInternal && thread.isResolved"
@@ -82,14 +98,6 @@ const userStore = useUserStore();
                 {{ showArchived ? 'No archived messages.' : 'No messages.' }}
             </div>
         </div>
-
-        <div
-            class="sidebar-item new-message-item"
-            :class="{ active: selectedThreadId === 'new' }"
-            @click="$emit('select-thread', 'new')"
-        >
-            + New Message
-        </div>
     </div>
 </template>
 
@@ -113,17 +121,19 @@ const userStore = useUserStore();
     flex: 1;
     padding: 1.25rem;
     border: none;
+    border-bottom: 3px solid transparent;
     background: none;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: #6c757d;
 }
 
+/* A border, not a box-shadow: the global focus reset strips box-shadows. */
 .sidebar-tab.active {
     color: var(--bc-navy);
     font-weight: 700;
-    box-shadow: inset 0 -3px 0 var(--bc-navy);
+    border-bottom-color: var(--bc-navy);
 }
 
 .thread-list {
@@ -199,13 +209,18 @@ const userStore = useUserStore();
 }
 
 .thread-internal {
-    background-color: var(--bc-internal-bg);
-    color: var(--bc-internal-text);
+    background-color: var(--internal-bg);
+    color: var(--internal-text);
+}
+
+.thread-external {
+    background-color: var(--external-bg);
+    color: var(--external-text);
 }
 
 .thread-resolved {
-    background-color: var(--bc-resolved-bg);
-    color: var(--bc-resolved-text);
+    background-color: var(--resolved-bg);
+    color: var(--resolved-text);
 }
 
 .sidebar-item.active {
@@ -223,16 +238,21 @@ const userStore = useUserStore();
     color: #ffffff;
 }
 
+/* Same top offset, size and type as the thread-header buttons opposite. */
 .new-message-item {
     flex-shrink: 0;
-    margin: 0.75rem;
-    padding: 1.1rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.5rem 1.5rem 0.75rem;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2;
     color: #ffffff;
-    background-color: #003366;
-    border: none;
+    background-color: var(--bc-navy);
+    border: 1px solid var(--bc-navy);
     border-radius: 6px;
 }
 

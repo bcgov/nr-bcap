@@ -1,34 +1,27 @@
 """Serializers for the BCAP message routes. Thin serializers so drf-spectacular
 documents the bodies and the frontend's generated types follow."""
 
-from dataclasses import dataclass
-
 from rest_framework import serializers
 
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from bcap.services.message.thread_service import ModuleUnresolved
+from bcap.services.message.thread_service import ModuleUnresolved, ThreadService
 from bcap.views.generated.bcap_message import BcapMessageSerializer
 
 
-@dataclass
-class ThreadsQuery:
+class ThreadsQuerySerializer(serializers.Serializer):
     """Query params for the threads list."""
 
-    archived: bool = False
-
-
-class ThreadsQuerySerializer(DataclassSerializer):
-    """Documents the params in the spec and coerces archived from the usual
-    truthy strings (true/1) rather than a bare == "true"."""
-
+    resource_ids = serializers.ListField(
+        child=serializers.UUIDField(),
+        min_length=1,
+        max_length=200,
+        help_text="The resources to list threads for, as repeated params.",
+    )
     archived = serializers.BooleanField(
         default=False,
         help_text="Return the viewer's archived threads instead of active ones.",
     )
-
-    class Meta:
-        dataclass = ThreadsQuery
 
 
 class BcapMessagePatchSerializer(serializers.Serializer):
@@ -46,15 +39,29 @@ class BcapMessagePatchSerializer(serializers.Serializer):
 
 
 class ThreadRootSerializer(BcapMessageSerializer):
-    """A thread root plus the thread's latest activity, so the list renders
-    without fetching each thread's messages."""
+    """A thread root plus where the viewer stands on it."""
 
-    last_message_date = serializers.DateTimeField(read_only=True)
     viewer_side = serializers.CharField(
         read_only=True,
         help_text="The viewer's side of the thread, author or recipient, whose "
         "resolved_* nodes are theirs; empty when they are on neither.",
     )
+    viewer_needs_action = serializers.BooleanField(
+        read_only=True,
+        help_text="Whether the thread awaits the viewer: they (or a group of "
+        "theirs) take part, their side is unresolved, and, if they started it, "
+        "someone has replied.",
+    )
+
+
+class ThreadMessageSerializer(BcapMessageSerializer):
+    """A thread message plus whether its author is staff, so the client can mark
+    who spoke for the Archaeology Branch."""
+
+    author_is_staff = serializers.SerializerMethodField()
+
+    def get_author_is_staff(self, message) -> bool:
+        return ThreadService.author_is_staff(message, self.context["request"].user)
 
 
 class ModuleUnresolvedSerializer(DataclassSerializer):

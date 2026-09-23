@@ -50,7 +50,7 @@ class BCAPFileView(FileView):
         # the thread's own rule instead: party to it, and not internal-only.
         if resource.graph.slug == GraphSlugs.BCAP_MESSAGE:
             return ThreadService.base_query(
-                MessageViewer(user),
+                MessageViewer.for_user(user),
                 resource_ids=[str(resource.pk)],
                 as_representation=False,
             ).exists()

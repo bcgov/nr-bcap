@@ -32,33 +32,6 @@
                 },
                 {
                     "active": true,
-                    "cardid": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Related Source Message"
-                    },
-                    "nodegroup_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
-                    "sortorder": null,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
                     "cardid": "1016668d-ebe8-48c7-8a75-b8aedf3f5f10",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -91,7 +64,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
                         "defaultValue": "",
-                        "label": "Author Resolved Date",
+                        "label": "Thread Author Resolved Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -99,7 +72,7 @@
                     },
                     "id": "0fa05bce-9926-493f-93e3-63a5c177f4e6",
                     "label": {
-                        "en": "Author Resolved Date"
+                        "en": "Thread Author Resolved Date"
                     },
                     "node_id": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "sortorder": 5,
@@ -112,14 +85,14 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Author Resolved By",
+                        "label": "Thread Author Resolved By",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "ac344d56-799a-43d4-a294-08f5baebbd25",
                     "label": {
-                        "en": "Author Resolved By"
+                        "en": "Thread Author Resolved By"
                     },
                     "node_id": "df4e3a42-e830-481d-850e-e2e1024f6c49",
                     "sortorder": 5,
@@ -132,7 +105,7 @@
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
                         "defaultValue": "",
-                        "label": "Recipient Resolved Date",
+                        "label": "Thread Recipient Resolved Date",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -140,7 +113,7 @@
                     },
                     "id": "d61ffa67-27e3-4139-b079-6b9766ff6aaf",
                     "label": {
-                        "en": "Recipient Resolved Date"
+                        "en": "Thread Recipient Resolved Date"
                     },
                     "node_id": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
                     "sortorder": 5,
@@ -153,14 +126,14 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Recipient Resolved By",
+                        "label": "Thread Recipient Resolved By",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "16696d65-d9a6-44dc-a674-f7b11a10fc2a",
                     "label": {
-                        "en": "Recipient Resolved By"
+                        "en": "Thread Recipient Resolved By"
                     },
                     "node_id": "b0dfebbd-0538-4bf4-9f88-237983adc621",
                     "sortorder": 5,
@@ -308,6 +281,26 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
+                        "label": "Thread Participants",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "a8ec5b45-3fc6-4ba0-a5c0-f8779757d36b",
+                    "label": {
+                        "en": "Thread Participants"
+                    },
+                    "node_id": "db147791-3123-445a-8f1a-20f7cc100f97",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
                         "label": "Message Author",
                         "placeholder": {
                             "en": ""
@@ -360,21 +353,58 @@
                     "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
-                    "card_id": "afd6fa63-eab3-45c3-aed7-fc14afe23373",
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "defaultValue": false,
+                        "label": "Thread Answered"
+                    },
+                    "id": "f0b39940-85db-4319-97a5-f75d2fdbdef2",
+                    "label": {
+                        "en": "Thread Answered"
+                    },
+                    "node_id": "e2265e25-37ce-41c8-bca7-63ac0fd2140a",
+                    "sortorder": 9,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ",
+                        "defaultValue": "",
+                        "label": "Thread Last Message Date",
+                        "maxDate": false,
+                        "minDate": false,
+                        "placeholder": "Enter date",
+                        "viewMode": "days"
+                    },
+                    "id": "cea0ab9a-42f2-4ddb-b490-b7bc83f94221",
+                    "label": {
+                        "en": "Thread Last Message Date"
+                    },
+                    "node_id": "c189af6a-dcb2-4eac-9cf1-11817a1ab757",
+                    "sortorder": 10,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "59e91e8f-a00c-4388-916a-b3af700ec59c",
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Related Source Message",
+                        "label": "Thread",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "75b5db20-f5bd-464a-9219-ad2fa692093f",
                     "label": {
-                        "en": "Related Source Message"
+                        "en": "Thread"
                     },
                     "node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
-                    "sortorder": 0,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -436,6 +466,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "rangenode_id": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "a702a6e1-05a3-47c8-a90b-3d9478254c4c",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "c189af6a-dcb2-4eac-9cf1-11817a1ab757",
                     "source_identifier_id": null
                 },
                 {
@@ -509,6 +549,16 @@
                     "source_identifier_id": null
                 },
                 {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "091da687-bd23-4f41-9ab1-c1c66c1ef4ce",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "db147791-3123-445a-8f1a-20f7cc100f97",
+                    "source_identifier_id": null
+                },
+                {
                     "edgeid": "dfafd6cf-5506-4fa9-8e63-12f306715cad",
                     "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "rangenode_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
@@ -540,11 +590,21 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "dade15d6-a679-4e08-a91a-3913c4b3f7e5",
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "edgeid": "8b90b814-f0a6-4fc4-8fd4-835459ef67a5",
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "rangenode_id": "e2265e25-37ce-41c8-bca7-63ac0fd2140a",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "edgeid": "51f639cc-3ee1-457b-9d6b-5489b828ffe0",
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "rangenode_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "source_identifier_id": null
                 },
@@ -603,13 +663,6 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "1",
-                    "grouping_node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
-                    "legacygroupid": null,
-                    "nodegroupid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
-                    "parentnodegroup_id": null
-                },
-                {
                     "cardinality": "n",
                     "grouping_node_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
                     "legacygroupid": null,
@@ -642,7 +695,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "author_resolved_date",
+                    "alias": "thread_author_resolved_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
                     },
@@ -657,7 +710,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Author Resolved Date",
+                    "name": "Thread Author Resolved Date",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
@@ -667,7 +720,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "author_resolved_by",
+                    "alias": "thread_author_resolved_by",
                     "config": {
                         "graphs": [
                             {
@@ -689,7 +742,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Author Resolved By",
+                    "name": "Thread Author Resolved By",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "df4e3a42-e830-481d-850e-e2e1024f6c49",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
@@ -699,7 +752,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "recipient_resolved_date",
+                    "alias": "thread_recipient_resolved_date",
                     "config": {
                         "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
                     },
@@ -714,7 +767,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Recipient Resolved Date",
+                    "name": "Thread Recipient Resolved Date",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
@@ -724,7 +777,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "recipient_resolved_by",
+                    "alias": "thread_recipient_resolved_by",
                     "config": {
                         "graphs": [
                             {
@@ -746,7 +799,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Recipient Resolved By",
+                    "name": "Thread Recipient Resolved By",
                     "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "b0dfebbd-0538-4bf4-9f88-237983adc621",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
@@ -913,6 +966,31 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "thread_last_message_date",
+                    "config": {
+                        "dateFormat": "YYYY-MM-DD HH:mm:ssZ"
+                    },
+                    "datatype": "date",
+                    "description": "When the thread's latest message was posted. Set on the thread root only.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Thread Last Message Date",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "c189af6a-dcb2-4eac-9cf1-11817a1ab757",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 10,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "recipient",
                     "config": {
                         "graphs": [
@@ -941,6 +1019,38 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "thread_participants",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": "Who is taking part in the thread: its author, its recipient (a person, company or the Archaeology Branch) and anyone else who has posted. Only they are alerted when their side is unresolved. Set on the thread root only.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Thread Participants",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "db147791-3123-445a-8f1a-20f7cc100f97",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1028,7 +1138,38 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "related_source_message",
+                    "alias": "thread_answered",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": "Whether anyone other than whoever started the thread has replied. Until then the starter is only waiting, so an open side is not theirs to action. Set on the thread root only.",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Thread Answered",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
+                    "nodeid": "e2265e25-37ce-41c8-bca7-63ac0fd2140a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "sortorder": 9,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "thread",
                     "config": {
                         "graphs": [
                             {
@@ -1040,22 +1181,22 @@
                         "searchString": ""
                     },
                     "datatype": "resource-instance",
-                    "description": "Unused. Reserved for future threaded replies.",
+                    "description": "The thread root a reply belongs to. Empty on the root itself.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "fef4e675-e4c8-4bea-9e8a-cb30c3978bef",
                     "hascustomalias": false,
-                    "is_collector": true,
+                    "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Related Source Message",
-                    "nodegroup_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
+                    "name": "Thread",
+                    "nodegroup_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "nodeid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
-                    "sortorder": 0,
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

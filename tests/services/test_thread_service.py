@@ -1,12 +1,12 @@
 """Thread visibility, resolution, archives, dates and unresolved counts."""
 
-from unittest.mock import patch
 from django.test import TestCase
 from rest_framework.exceptions import PermissionDenied
 from arches.app.models.models import ResourceInstance
 from bcap.services.contributor.contributor_service import ContributorService
-from bcap.services.message.message_context import MessageViewer
+from bcap.services.message.message_context import MessageGraph, MessageViewer
 from bcap.services.message.thread_service import ThreadService
+from bcap.util.aliases.bcap_message import BcapMessageAliases as A
 from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import RequirementRow, build_permit, make_requirement
@@ -115,7 +115,7 @@ class BcapMessageVisibilityTests(TestCase):
         )
 
     def _root_ids(self, user):
-        roots = self.service.thread_roots_query(self.permit_id, user)
+        roots = self.service.thread_roots_query([self.permit_id], user)
         return {str(m.pk) for m in roots}
 
     def _thread_ids(self, root, user):
@@ -170,15 +170,31 @@ class BcapMessageVisibilityTests(TestCase):
         ids = self._thread_ids(self.public_root, self.applicant)
         self.assertIn(str(self.stray_internal_reply.pk), ids)
 
-    def test_thread_returns_root_and_replies_oldest_first(self):
+    def test_thread_returns_root_and_replies_newest_first(self):
         ids = self._thread_ids(self.public_root, self.staff)
         self.assertEqual(
             ids,
             [
-                str(self.public_root.pk),
-                str(self.public_reply.pk),
                 str(self.stray_internal_reply.pk),
+                str(self.public_reply.pk),
+                str(self.public_root.pk),
             ],
+        )
+
+    def test_thread_messages_mark_which_authors_are_staff(self):
+        staff_authored = {
+            str(m.pk): self.service.author_is_staff(m, self.applicant)
+            for m in self.service.thread_messages_query(
+                str(self.public_root.pk), self.applicant
+            )
+        }
+        self.assertEqual(
+            staff_authored,
+            {
+                str(self.public_root.pk): False,
+                str(self.public_reply.pk): True,
+                str(self.stray_internal_reply.pk): True,
+            },
         )
 
     def test_external_non_party_sees_nothing_of_internal_thread(self):
@@ -218,7 +234,8 @@ class BcapMessageResolutionTests(TestCase):
     """Each side of a thread resolves for itself, on the root. Here the
     applicant started it, so they are the author side and staff the recipient
     side. Resolving from any message lands on the root and records who did it;
-    a new message reopens the other side and leaves the poster's alone."""
+    a new message reopens the other side, and whoever posts joins the thread's
+    participants unless a group of theirs already is one."""
 
     @classmethod
     def setUpTestData(cls):
@@ -229,9 +246,16 @@ class BcapMessageResolutionTests(TestCase):
         cls.staff, cls.staff_contrib = make_party(
             builder, "resstaff", "Sam", "Staff", internal=True
         )
+        cls.oli, cls.oli_contrib = make_party(
+            builder, "resoli", "Oli", "Other", internal=True
+        )
+        cls.pat, cls.pat_contrib = make_party(
+            builder, "respat", "Pat", "Third", internal=True
+        )
         cls.applicant, cls.applicant_contrib = make_party(
             builder, "resapp", "Amy", "Applicant"
         )
+        cls.branch = ContributorService().archaeology_branch_id()
         cls.permit = builder.make_resource("permit_application")
         cls.root = make_message(
             builder,
@@ -248,11 +272,46 @@ class BcapMessageResolutionTests(TestCase):
             subject="Reply",
             root=cls.root,
         )
+        cls.internal = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.staff_contrib,
+            recipient=cls.oli_contrib,
+            is_internal=True,
+            subject="Between two",
+        )
+        cls.internal_reply = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.pat_contrib,
+            recipient=cls.staff_contrib,
+            is_internal=True,
+            subject="Chiming in",
+            root=cls.internal,
+        )
+        cls.to_branch = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.applicant_contrib,
+            recipient=cls.branch,
+            subject="To the Branch",
+        )
+        cls.branch_reply = make_message(
+            builder,
+            context=cls.permit,
+            author=cls.oli_contrib,
+            recipient=cls.applicant_contrib,
+            subject="Branch answer",
+            root=cls.to_branch,
+        )
 
     def _resolve(self, user, message=None, resolved=True):
         self.service.set_viewer_resolution(
             (message or self.root).pk, {"resolved": resolved}, MessageViewer(user)
         )
+
+    def _participants(self, message):
+        return MessageGraph.root(MessageGraph.content(str(message.pk))).participants
 
     def test_each_party_resolves_only_their_own_side(self):
         for user, contrib, mine, other in (
@@ -286,21 +345,15 @@ class BcapMessageResolutionTests(TestCase):
         )
         self.assertIsNotNone(resolution(self.root, "recipient")[0])
 
-    def test_someone_on_neither_side_cannot_resolve(self):
-        # A third staffer on a staff-to-staff thread is on neither side.
-        builder = FixtureBuilder()
-        oli = make_party(builder, "resoli", "Oli", "Other", internal=True)[1]
-        pat = make_party(builder, "respat", "Pat", "Third", internal=True)[0]
-        internal = make_message(
-            builder,
-            context=self.permit,
-            author=self.staff_contrib,
-            recipient=oli,
-            is_internal=True,
-            subject="Between two",
+    def test_any_staff_can_resolve_the_staff_side_for_a_colleague(self):
+        self._resolve(self.oli)
+        self.assertEqual(
+            resolution(self.root, "recipient")[1], str(self.oli_contrib.pk)
         )
+
+    def test_someone_on_neither_side_cannot_resolve(self):
         with self.assertRaises(PermissionDenied):
-            self._resolve(pat, internal)
+            self._resolve(self.pat, self.internal)
 
     def test_posting_reopens_the_other_side_and_leaves_the_posters(self):
         self._resolve(self.applicant)
@@ -323,10 +376,32 @@ class BcapMessageResolutionTests(TestCase):
         )
         self.assertEqual(resolution(self.root, "recipient"), (None, None))
 
-    def test_reopening_an_open_side_writes_nothing(self):
-        with patch("bcap.services.message.thread_service.Tile.save") as save:
-            self._resolve(self.staff, resolved=False)
-        save.assert_not_called()
+    def test_staff_starting_a_thread_leave_both_sides_open(self):
+        self.service.after_post(self.internal.pk, self.staff)
+        self.assertEqual(resolution(self.internal, "author"), (None, None))
+        self.assertEqual(resolution(self.internal, "recipient"), (None, None))
+
+    def test_a_third_staffer_who_posts_joins_on_the_recipient_side(self):
+        self.service.after_post(self.internal_reply.pk, self.pat)
+        self.assertEqual(
+            self._participants(self.internal),
+            {
+                str(c.pk)
+                for c in (self.staff_contrib, self.oli_contrib, self.pat_contrib)
+            },
+        )
+        self.assertEqual(resolution(self.internal, "author"), (None, None))
+        self._resolve(self.pat, self.internal)
+        self.assertEqual(
+            resolution(self.internal, "recipient")[1], str(self.pat_contrib.pk)
+        )
+
+    def test_staff_answering_for_the_branch_do_not_join_on_their_own(self):
+        self.service.after_post(self.branch_reply.pk, self.oli)
+        self.assertEqual(
+            self._participants(self.to_branch),
+            {str(self.applicant_contrib.pk), str(self.branch)},
+        )
 
 
 class BcapMessageSideTests(TestCase):
@@ -420,7 +495,9 @@ class BcapMessageUnresolvedCountTests(TestCase):
         cls.staff, staff_contrib = make_party(
             builder, "countstaff", "Sam", "Staff", internal=True
         )
-        make_party(builder, "otherstaff", "Oli", "Other", internal=True)
+        cls.other_staff, other_staff_contrib = make_party(
+            builder, "otherstaff", "Oli", "Other", internal=True
+        )
         branch = ContributorService().archaeology_branch_id()
         cls.permit = build_permit(builder, "Counted App", organization=cls.acme)
         cls.other_permit = build_permit(builder, "Other App", organization=cls.acme)
@@ -463,10 +540,23 @@ class BcapMessageUnresolvedCountTests(TestCase):
             subject="resolved",
         )
         from_staff("to the company", recipient=cls.acme)
-        from_staff("internal", recipient=branch, is_internal=True)
+        cls.internal = from_staff("internal", recipient=branch, is_internal=True)
         from_staff("elsewhere", context=cls.other_permit)
         # The applicant asked, no answer yet.
         cls.question = post(cls.applicant, applicant_contrib, staff_contrib, "question")
+        # Another staff member follows up on Sam's question, on its own permit.
+        cls.followed_up_permit = build_permit(
+            builder, "Followed Up App", organization=cls.acme
+        )
+        followed_up = from_staff("followed up", context=cls.followed_up_permit)
+        post(
+            cls.other_staff,
+            other_staff_contrib,
+            applicant_contrib,
+            "follow-up",
+            context=cls.followed_up_permit,
+            root=followed_up,
+        )
 
     def _count(self, username, *contexts):
         return self.service.unresolved_counts_by_context(
@@ -485,25 +575,26 @@ class BcapMessageUnresolvedCountTests(TestCase):
             self._count("colleague", self.permit), {str(self.permit.pk): 1}
         )
 
-    def test_staff_count_their_open_threads_sent_ones_included(self):
-        # Answered (reopened by the reply), asked, to the company, their own
-        # internal note and the applicant's question.
+    def test_staff_count_only_threads_awaiting_them(self):
+        # The answered thread (reopened by the reply) and the applicant's
+        # question. What they started and nobody has answered stays open on
+        # their side, but only awaits a reply, so it is not theirs to action.
         self.assertEqual(
-            self._count("countstaff", self.permit), {str(self.permit.pk): 5}
+            self._count("countstaff", self.permit), {str(self.permit.pk): 2}
         )
 
-    def test_other_staff_count_the_internal_note_as_its_recipients(self):
+    def test_other_staff_count_only_the_note_to_the_branch(self):
+        # The applicant's threads are with Sam, not the Branch, so not Oli's.
         self.assertEqual(
-            self._count("otherstaff", self.permit), {str(self.permit.pk): 5}
+            self._count("otherstaff", self.permit), {str(self.permit.pk): 1}
         )
 
     def test_resolving_clears_the_alert_for_that_side_only(self):
-        for thread in (self.answered, self.asked):
-            self.service.set_viewer_resolution(
-                thread.pk, {"resolved": True}, MessageViewer(self.staff)
-            )
+        self.service.set_viewer_resolution(
+            self.answered.pk, {"resolved": True}, MessageViewer(self.staff)
+        )
         self.assertEqual(
-            self._count("countstaff", self.permit), {str(self.permit.pk): 3}
+            self._count("countstaff", self.permit), {str(self.permit.pk): 1}
         )
         self.assertEqual(self._count("reader", self.permit), {str(self.permit.pk): 2})
 
@@ -511,7 +602,7 @@ class BcapMessageUnresolvedCountTests(TestCase):
         def sides(user):
             return {
                 str(root.pk): root.viewer_side
-                for root in self.service.thread_roots_query(str(self.permit.pk), user)
+                for root in self.service.thread_roots_query([self.permit.pk], user)
             }
 
         staff, applicant = sides(self.staff), sides(self.applicant)
@@ -520,13 +611,37 @@ class BcapMessageUnresolvedCountTests(TestCase):
         self.assertEqual(applicant[str(self.asked.pk)], "recipient")
         self.assertEqual(applicant[str(self.question.pk)], "author")
 
+    def test_thread_roots_tell_each_viewer_what_awaits_them(self):
+        def awaiting(user):
+            return {
+                str(root.pk): root.viewer_needs_action
+                for root in self.service.thread_roots_query([self.permit.pk], user)
+            }
+
+        oli, sam = awaiting(self.other_staff), awaiting(self.staff)
+        # Oli is not on Sam's thread with the applicant, but the Branch is on
+        # the note Sam sent it.
+        self.assertFalse(oli[str(self.asked.pk)])
+        self.assertTrue(oli[str(self.internal.pk)])
+        # Sam started both; only the one the applicant answered awaits him.
+        self.assertFalse(sam[str(self.asked.pk)])
+        self.assertTrue(sam[str(self.answered.pk)])
+
+    def test_a_follow_up_from_the_starters_side_is_not_an_answer(self):
+        self.assertEqual(self._count("countstaff", self.followed_up_permit), {})
+        self.assertEqual(self._count("otherstaff", self.followed_up_permit), {})
+        self.assertEqual(
+            self._count("reader", self.followed_up_permit),
+            {str(self.followed_up_permit.pk): 1},
+        )
+
     def test_an_archived_thread_stops_counting_for_that_viewer_only(self):
         self.service.set_viewer_archived(
             self.asked.pk, {"archived": True}, MessageViewer(self.applicant)
         )
         self.assertEqual(self._count("reader", self.permit), {str(self.permit.pk): 1})
         self.assertEqual(
-            self._count("countstaff", self.permit), {str(self.permit.pk): 5}
+            self._count("countstaff", self.permit), {str(self.permit.pk): 2}
         )
 
     def test_no_contexts_or_an_unknown_user_counts_nothing(self):
@@ -580,7 +695,9 @@ class BcapMessageArchiveTests(TestCase):
         )
 
     def _root_ids(self, user, archived):
-        roots = self.service.thread_roots_query(self.permit_id, user, archived=archived)
+        roots = self.service.thread_roots_query(
+            [self.permit_id], user, archived=archived
+        )
         return {str(m.pk) for m in roots}
 
     def test_archive_is_per_viewer(self):
@@ -660,8 +777,8 @@ class BcapMessageArchiveTests(TestCase):
 
 
 class BcapMessageThreadDateTests(TestCase):
-    """thread_roots_query annotates each root with its thread's latest message date,
-    rolled up from the root and its replies, independent of the viewer."""
+    """A new message dates its thread's root, and the thread list sorts by that
+    date."""
 
     @classmethod
     def setUpTestData(cls):
@@ -682,12 +799,12 @@ class BcapMessageThreadDateTests(TestCase):
             subject="root",
             created="2026-01-01",
         )
-        make_message(
+        cls.reply = make_message(
             builder,
             context=cls.permit,
             recipient=recipient,
             subject="reply",
-            created="2026-01-05",
+            created="2026-03-05",
             root=cls.thread,
         )
         cls.lone = make_message(
@@ -698,13 +815,22 @@ class BcapMessageThreadDateTests(TestCase):
             created="2026-02-01",
         )
 
-    def test_last_message_date_is_the_threads_latest(self):
-        dates = {
-            str(root.pk): root.last_message_date
-            for root in self.service.thread_roots_query(self.permit_id, self.staff)
-        }
-        self.assertEqual(dates[str(self.thread.pk)].date().isoformat(), "2026-01-05")
-        self.assertEqual(dates[str(self.lone.pk)].date().isoformat(), "2026-02-01")
+    def _root_ids(self):
+        return [
+            str(root.pk)
+            for root in self.service.thread_roots_query([self.permit_id], self.staff)
+        ]
+
+    def test_a_reply_moves_its_thread_to_the_top(self):
+        self.assertEqual(self._root_ids(), [str(self.lone.pk), str(self.thread.pk)])
+
+        self.service.after_post(self.reply.pk, self.staff)
+
+        stored = MessageGraph.content(self.thread.pk)[
+            MessageGraph.node(A.THREAD_LAST_MESSAGE_DATE)
+        ]
+        self.assertTrue(stored.startswith("2026-03-05"))
+        self.assertEqual(self._root_ids(), [str(self.thread.pk), str(self.lone.pk)])
 
 
 class BcapMessageModuleUnresolvedTests(TestCase):

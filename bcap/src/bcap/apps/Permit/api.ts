@@ -8,6 +8,7 @@ import type {
     DraftNode,
     FormattedMessage,
     NewBcapMessage,
+    RecipientOption,
     WorkflowDraft,
 } from '@/bcap/types.ts';
 export type { DashboardStatus };
@@ -33,6 +34,7 @@ import type {
     PermitApplicationProcessModuleTileWritable,
     ProcessRequirement,
     ModuleUnresolved,
+    ThreadMessage,
     ThreadRoot,
 } from '@/bcap/client/types.gen.ts';
 import {
@@ -238,15 +240,12 @@ export const submitModule = async (
 
 export const fetchRequirementDetails = async (
     ids: string[],
-): Promise<Record<string, ProcessRequirement>> => {
-    const entries = await Promise.all(
-        ids.map(async (id): Promise<[string, ProcessRequirement]> => {
-            // The graph-scoped route: the one an applicant may read through.
-            const url = arches.urls.api_process_requirements(id);
-            return [id, await apiFetchJson<ProcessRequirement>(url)];
-        }),
+): Promise<ProcessRequirement[]> => {
+    if (!ids.length) return [];
+    const { results } = await apiFetchJson<{ results: ProcessRequirement[] }>(
+        `${arches.urls.api_process_requirement_list}?resource_ids=${ids.join(',')}`,
     );
-    return Object.fromEntries(entries);
+    return results;
 };
 
 export const fetchPermitDetails = async (
@@ -487,19 +486,12 @@ export const createBcapMessage = async ({
                 recipient: recipientId
                     ? { node_value: [{ resourceId: recipientId }] }
                     : null,
+                thread: threadId
+                    ? { node_value: [{ resourceId: threadId }] }
+                    : null,
             },
         },
     };
-
-    if (threadId) {
-        aliasedData.related_source_message = {
-            aliased_data: {
-                related_source_message: {
-                    node_value: [{ resourceId: threadId }],
-                },
-            },
-        };
-    }
 
     if (files?.length) {
         aliasedData.message_content!.aliased_data!.attachments = {
@@ -529,68 +521,78 @@ export const createBcapMessage = async ({
     });
 };
 
-const patchThread = async (messageId: string, body: PatchedBcapMessagePatch) =>
+// Archive is the viewer's own; resolve is their side's, for everyone on it.
+export const patchThread = async (
+    messageId: string,
+    body: PatchedBcapMessagePatch,
+) =>
     apiFetch(arches.urls.bcap_message_detail(messageId), {
         method: HttpMethod.Patch,
         body,
     });
 
-// Archive is the viewer's own; resolve is the thread's, for everyone on it.
-export const setThreadArchived = async (messageId: string, archived: boolean) =>
-    patchThread(messageId, { archived });
-
-export const setThreadResolved = async (messageId: string, resolved: boolean) =>
-    patchThread(messageId, { resolved });
-
-// One root per thread; it carries the thread's resolution and internal flag.
-export const getThreadsForResource = async (
-    resourceId: string,
+// The resources' threads, newest first and grouped by resource; a resource with
+// no threads gets an empty list.
+export const getThreadsForResources = async (
+    resourceIds: string[],
     archived = false,
-): Promise<MessageThread[]> => {
-    const { results = [] } = await apiFetchJson<{ results: ThreadRoot[] }>(
-        `${arches.urls.bcap_message_resource_threads(resourceId)}?archived=${archived}`,
+): Promise<Map<string, MessageThread[]>> => {
+    const params = new URLSearchParams([
+        ...resourceIds.map((id) => ['resource_ids', id]),
+        ['archived', String(archived)],
+    ]);
+    const roots = await apiFetchJson<ThreadRoot[]>(
+        `${arches.urls.bcap_message_threads}?${params}`,
     );
-
-    // Newest-first from the backend; keep that order.
-    return results.map((root) => {
+    const byResource = new Map(
+        resourceIds.map((id) => [id, [] as MessageThread[]]),
+    );
+    for (const root of roots) {
         const content = root.aliased_data?.message_content?.aliased_data;
-        const subject = content?.message_subject;
-        // Older threads carry the type inside the subject text and have no
-        // message_type of their own, so an absent type just drops the prefix.
-        const subjectText =
-            subject?.display_value || subject?.node_value?.en?.value || '';
-        const typeLabel = content?.message_type?.display_value || '';
-        // Each side resolves for itself; show the viewer their own side's. A
-        // viewer on neither side has nothing to resolve.
-        const side = root.viewer_side;
-        const [resolvedDate, resolvedBy] =
-            side === ThreadSide.Author
-                ? [content?.author_resolved_date, content?.author_resolved_by]
-                : side === ThreadSide.Recipient
-                  ? [
-                        content?.recipient_resolved_date,
-                        content?.recipient_resolved_by,
-                    ]
-                  : [undefined, undefined];
-        return {
-            id: root.resourceinstanceid ?? '',
-            topic:
-                [typeLabel, subjectText].filter(Boolean).join(' - ') ||
-                'General Question',
-            startedBy: content?.message_author?.display_value || 'Unknown',
-            // The threads endpoint annotates the whole thread's latest date;
-            // fall back to the root's own date if it is ever absent.
-            lastMessageDate:
-                root.last_message_date ||
-                content?.message_creation_date?.node_value ||
-                '',
-            isResolved: Boolean(resolvedDate?.node_value),
-            onSide: Boolean(side),
-            resolvedBy: resolvedBy?.display_value || '',
-            resolvedDate: resolvedDate?.node_value || '',
-            isInternal: Boolean(content?.is_internal?.node_value),
-        };
-    });
+        const context = content?.resource_context?.node_value?.[0]?.resourceId;
+        byResource.get(context ?? '')?.push(toThread(root));
+    }
+    return byResource;
+};
+
+const toThread = (root: ThreadRoot): MessageThread => {
+    const content = root.aliased_data?.message_content?.aliased_data;
+    const subject = content?.message_subject;
+    // Older threads carry the type inside the subject text and have no
+    // message_type of their own, so an absent type just drops the prefix.
+    const subjectText =
+        subject?.display_value || subject?.node_value?.en?.value || '';
+    const typeLabel = content?.message_type?.display_value || '';
+    const side = root.viewer_side;
+    const author = content?.message_author?.display_value || 'Unknown';
+    const recipient = content?.recipient?.display_value || '';
+    // The viewer's own side's resolution; none when on neither side.
+    const [resolvedDate, resolvedBy] =
+        {
+            [ThreadSide.Author]: [
+                content?.thread_author_resolved_date,
+                content?.thread_author_resolved_by,
+            ] as const,
+            [ThreadSide.Recipient]: [
+                content?.thread_recipient_resolved_date,
+                content?.thread_recipient_resolved_by,
+            ] as const,
+        }[side as ThreadSide] ?? [];
+    return {
+        id: root.resourceinstanceid ?? '',
+        topic:
+            [typeLabel, subjectText].filter(Boolean).join(' - ') ||
+            'General Question',
+        startedBy: author,
+        lastMessageDate: content?.thread_last_message_date?.node_value || '',
+        isResolved: Boolean(resolvedDate?.node_value),
+        onSide: Boolean(side),
+        needsAction: Boolean(root.viewer_needs_action),
+        resolvedBy: resolvedBy?.display_value || '',
+        resolvedDate: resolvedDate?.node_value || '',
+        isInternal: Boolean(content?.is_internal?.node_value),
+        to: side === ThreadSide.Recipient ? author : recipient,
+    };
 };
 
 export const getSubmissionModulesUnresolvedCounts = async (
@@ -601,20 +603,34 @@ export const getSubmissionModulesUnresolvedCounts = async (
     );
 };
 
-// One thread's messages, oldest-first.
+export const MESSAGE_PAGE_SIZE = 50;
+
+// One page of a thread's messages, counting back from the newest: offset 0 is
+// the latest page. Returned oldest-first for display.
 export const getMessagesForThread = async (
     threadId: string,
-): Promise<FormattedMessage[]> => {
-    const { results = [] } = await apiFetchJson<{ results: BcapMessage[] }>(
-        arches.urls.bcap_message_thread_messages(threadId),
+    offset = 0,
+): Promise<{ messages: FormattedMessage[]; hasMore: boolean }> => {
+    const { results, count } = await apiFetchJson<{
+        results: ThreadMessage[];
+        count: number;
+    }>(
+        `${arches.urls.bcap_message_thread_messages(threadId)}?limit=${MESSAGE_PAGE_SIZE}&offset=${offset}`,
     );
+    return {
+        messages: formatMessages(results),
+        hasMore: offset + results.length < count,
+    };
+};
 
-    return results
+const formatMessages = (results: ThreadMessage[]): FormattedMessage[] =>
+    results
         .map((message) => {
             const content = message.aliased_data?.message_content?.aliased_data;
             return {
                 id: message.resourceinstanceid ?? '',
                 author: content?.message_author?.display_value || 'Unknown',
+                authorIsStaff: Boolean(message.author_is_staff),
                 text:
                     content?.message_content?.node_value?.en?.value ||
                     content?.message_content?.display_value ||
@@ -630,19 +646,17 @@ export const getMessagesForThread = async (
                     })),
             };
         })
-        .filter((message) => message.text)
         .sort((a, b) => a.date.localeCompare(b.date))
         .map((message) => ({
             ...message,
             date: formatTimestamp(message.date),
         }));
-};
 
 // The contributors you can address a message to for a resource: its
 // login-linked contributors (ministry assignees included), from the backend.
 export const getContributorsForResources = async (
     resourceId: string,
-): Promise<Array<{ label: string; value: string }>> => {
+): Promise<RecipientOption[]> => {
     const data = await apiFetchJson<ContributorSummary[]>(
         arches.urls.bcap_message_resource_contributors(resourceId),
     );
@@ -652,5 +666,6 @@ export const getContributorsForResources = async (
             (item.name || 'Unknown Contributor') +
             (item.is_proponent ? ' (Proponent)' : ''),
         value: item.id,
+        isInternal: Boolean(item.is_internal),
     }));
 };

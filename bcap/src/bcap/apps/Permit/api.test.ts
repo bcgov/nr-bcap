@@ -14,10 +14,10 @@ import {
     submitApplication,
     submitModule,
     deleteDraft,
-    getThreadsForResource,
+    getThreadsForResources,
     getMessagesForThread,
-    setThreadArchived,
-    setThreadResolved,
+    patchThread,
+    createBcapMessage,
     getSubmissionModulesUnresolvedCounts,
 } from './api';
 import { GraphSlug } from './graphSlug.ts';
@@ -213,15 +213,19 @@ describe('Permit API', () => {
     });
 
     describe('getContributorsForResources', () => {
-        it('labels the proponent so staff can tell them apart', async () => {
+        it('labels the proponent and flags internal recipients', async () => {
             apiFetchJson.mockResolvedValue([
                 { id: 'c-1', name: 'Applicant, Amy', is_proponent: true },
-                { id: 'c-2', name: 'Staff, Sam', is_proponent: false },
+                { id: 'c-2', name: 'Staff, Sam', is_internal: true },
             ]);
 
             expect(await getContributorsForResources('permit-1')).toEqual([
-                { label: 'Applicant, Amy (Proponent)', value: 'c-1' },
-                { label: 'Staff, Sam', value: 'c-2' },
+                {
+                    label: 'Applicant, Amy (Proponent)',
+                    value: 'c-1',
+                    isInternal: false,
+                },
+                { label: 'Staff, Sam', value: 'c-2', isInternal: true },
             ]);
         });
     });
@@ -241,21 +245,33 @@ describe('Permit API', () => {
     });
 
     describe('fetchRequirementDetails', () => {
-        it('reads each requirement from the graph route, not the generic one', async () => {
+        it('reads them all in one call on the graph route, not the generic one', async () => {
             // The generic resource route answers to the graph policy, which has
             // nothing for an applicant; this one lets their permit decide.
-            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'req-1' });
-
-            const result = await fetchRequirementDetails(['req-1']);
-
-            expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/process_requirement/req-1',
-            );
-            expect(result).toEqual({
-                'req-1': { resourceinstanceid: 'req-1' },
+            apiFetchJson.mockResolvedValue({
+                results: [
+                    { resourceinstanceid: 'req-1' },
+                    { resourceinstanceid: 'req-2' },
+                ],
             });
+
+            const result = await fetchRequirementDetails(['req-1', 'req-2']);
+
+            expect(apiFetchJson).toHaveBeenCalledTimes(1);
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/process_requirement?resource_ids=req-1,req-2',
+            );
+            expect(result).toEqual([
+                { resourceinstanceid: 'req-1' },
+                { resourceinstanceid: 'req-2' },
+            ]);
         });
 
+        // Without ids the route would list every requirement.
+        it('asks for nothing when given no ids', async () => {
+            expect(await fetchRequirementDetails([])).toEqual([]);
+            expect(apiFetchJson).not.toHaveBeenCalled();
+        });
         it('throws when a requirement fails to load, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('403'));
 
@@ -410,7 +426,10 @@ describe('Permit API', () => {
         });
     });
 
-    describe('getThreadsForResource', () => {
+    describe('getThreadsForResources', () => {
+        const on = (resourceId: string) => ({
+            resource_context: { node_value: [{ resourceId }] },
+        });
         const root = (
             id: string,
             subject: string,
@@ -420,6 +439,7 @@ describe('Permit API', () => {
             aliased_data: {
                 message_content: {
                     aliased_data: {
+                        ...on('res-1'),
                         message_subject: { display_value: subject },
                         message_author: { display_value: 'Jane Doe' },
                         ...extra,
@@ -427,17 +447,35 @@ describe('Permit API', () => {
                 },
             },
         });
+        const threadsOn = async (...roots: object[]) => {
+            apiFetchJson.mockResolvedValue(roots);
+            return (await getThreadsForResources(['res-1'])).get('res-1')!;
+        };
 
-        it('builds thread stubs from roots without fetching messages', async () => {
-            apiFetchJson.mockResolvedValue({
-                results: [root('t1', 'A question')],
-            });
+        it('lists several resources in one request, grouped by resource', async () => {
+            apiFetchJson.mockResolvedValue([
+                root('t1', 'A', on('r-1')),
+                root('t2', 'B', on('r-2')),
+            ]);
 
-            const threads = await getThreadsForResource('res-1');
+            const byResource = await getThreadsForResources([
+                'r-1',
+                'r-2',
+                'r-3',
+            ]);
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/bcap_message/resource/res-1/threads?archived=false',
+                '/bcap/api/bcap_message/threads?resource_ids=r-1&resource_ids=r-2&resource_ids=r-3&archived=false',
             );
+            expect(byResource.get('r-1')?.map((t) => t.id)).toEqual(['t1']);
+            expect(byResource.get('r-2')?.map((t) => t.id)).toEqual(['t2']);
+            // Asked for but threadless: empty rather than missing.
+            expect(byResource.get('r-3')).toEqual([]);
+        });
+
+        it('builds thread stubs from roots without fetching messages', async () => {
+            const threads = await threadsOn(root('t1', 'A question'));
+
             expect(threads).toEqual([
                 {
                     id: 't1',
@@ -446,32 +484,63 @@ describe('Permit API', () => {
                     lastMessageDate: '',
                     isResolved: false,
                     onSide: false,
+                    needsAction: false,
                     resolvedBy: '',
                     resolvedDate: '',
                     isInternal: false,
+                    to: '',
                 },
             ]);
         });
+
+        it("dates a thread by the root's latest message", async () => {
+            const [thread] = await threadsOn(
+                root('t1', 'A question', {
+                    thread_last_message_date: {
+                        node_value: '2026-03-05 12:00:00+00:00',
+                    },
+                }),
+            );
+
+            expect(thread.lastMessageDate).toBe('2026-03-05 12:00:00+00:00');
+        });
+
+        // The header names the other side: whoever the viewer's reply goes to.
+        it.each([
+            { viewer_side: 'author', to: 'Acme Corp' },
+            { viewer_side: 'recipient', to: 'Jane Doe' },
+            { viewer_side: '', to: 'Acme Corp' },
+        ])(
+            'addresses a $viewer_side viewer to $to',
+            async ({ viewer_side, to }) => {
+                const [thread] = await threadsOn({
+                    ...root('t1', 'A question', {
+                        recipient: { display_value: 'Acme Corp' },
+                    }),
+                    viewer_side,
+                });
+
+                expect(thread.to).toBe(to);
+            },
+        );
 
         // The author side resolved, the recipient side has not: each viewer
         // sees their own side's.
         const resolvedByAuthor = (viewerSide: string) => ({
             ...root('t1', 'Closed', {
-                author_resolved_date: {
+                thread_author_resolved_date: {
                     node_value: '2026-02-01 12:00:00+00:00',
                 },
-                author_resolved_by: { display_value: 'Sam Staff' },
+                thread_author_resolved_by: { display_value: 'Sam Staff' },
                 is_internal: { node_value: true },
             }),
             viewer_side: viewerSide,
         });
 
         it('shows the recipient their own side, still open', async () => {
-            apiFetchJson.mockResolvedValue({
-                results: [resolvedByAuthor(ThreadSide.Recipient)],
-            });
-
-            const [thread] = await getThreadsForResource('res-1');
+            const [thread] = await threadsOn(
+                resolvedByAuthor(ThreadSide.Recipient),
+            );
 
             expect(thread).toMatchObject({
                 onSide: true,
@@ -481,21 +550,15 @@ describe('Permit API', () => {
         });
 
         it('leaves a viewer on neither side nothing to resolve', async () => {
-            apiFetchJson.mockResolvedValue({
-                results: [resolvedByAuthor('')],
-            });
-
-            const [thread] = await getThreadsForResource('res-1');
+            const [thread] = await threadsOn(resolvedByAuthor(''));
 
             expect(thread).toMatchObject({ onSide: false, isResolved: false });
         });
 
         it("reads the viewer's side's resolution and the internal flag", async () => {
-            apiFetchJson.mockResolvedValue({
-                results: [resolvedByAuthor(ThreadSide.Author)],
-            });
-
-            const [thread] = await getThreadsForResource('res-1');
+            const [thread] = await threadsOn(
+                resolvedByAuthor(ThreadSide.Author),
+            );
 
             expect(thread).toMatchObject({
                 isResolved: true,
@@ -505,27 +568,41 @@ describe('Permit API', () => {
             });
         });
 
-        it('requests the archived list when asked', async () => {
-            apiFetchJson.mockResolvedValue({ results: [] });
+        // The server decides what awaits the viewer, so a thread they started
+        // and nobody has answered is open but not flagged.
+        it.each([true, false])(
+            'takes needsAction from the server (%s)',
+            async (awaits) => {
+                const [thread] = await threadsOn({
+                    ...root('t1', 'Started'),
+                    viewer_side: ThreadSide.Author,
+                    viewer_needs_action: awaits,
+                });
 
-            await getThreadsForResource('res-1', true);
+                expect(thread).toMatchObject({
+                    isResolved: false,
+                    needsAction: awaits,
+                });
+            },
+        );
+
+        it('requests the archived list when asked', async () => {
+            apiFetchJson.mockResolvedValue([]);
+
+            await getThreadsForResources(['res-1'], true);
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/bcap_message/resource/res-1/threads?archived=true',
+                '/bcap/api/bcap_message/threads?resource_ids=res-1&archived=true',
             );
         });
 
         it('treats a root without those nodes as open and shared', async () => {
-            apiFetchJson.mockResolvedValue({
-                results: [
-                    {
-                        resourceinstanceid: 't2',
-                        aliased_data: { message_content: { aliased_data: {} } },
-                    },
-                ],
+            const [thread] = await threadsOn({
+                resourceinstanceid: 't2',
+                aliased_data: {
+                    message_content: { aliased_data: on('res-1') },
+                },
             });
-
-            const [thread] = await getThreadsForResource('res-1');
 
             expect(thread.isResolved).toBe(false);
             expect(thread.isInternal).toBe(false);
@@ -553,8 +630,10 @@ describe('Permit API', () => {
             author: string,
             text: string,
             date: string,
+            authorIsStaff = false,
         ) => ({
             resourceinstanceid: id,
+            author_is_staff: authorIsStaff,
             aliased_data: {
                 message_content: {
                     aliased_data: {
@@ -568,43 +647,81 @@ describe('Permit API', () => {
             },
         });
 
-        it('returns messages oldest-first and drops empty ones', async () => {
+        it('returns the latest page oldest-first', async () => {
             apiFetchJson.mockResolvedValue({
                 results: [
-                    message('m2', 'Sam', 'Later', '2026-01-02T00:00:00Z'),
+                    message('m2', 'Sam', 'Later', '2026-01-02T00:00:00Z', true),
                     message('m1', 'Amy', 'Earlier', '2026-01-01T00:00:00Z'),
-                    message('m3', 'Amy', '', '2026-01-03T00:00:00Z'),
                 ],
+                count: 2,
             });
 
-            const messages = await getMessagesForThread('t1');
+            const { messages, hasMore } = await getMessagesForThread('t1');
 
             expect(apiFetchJson).toHaveBeenCalledWith(
-                '/bcap/api/bcap_message/thread/t1',
+                '/bcap/api/bcap_message/thread/t1?limit=50&offset=0',
             );
+            expect(hasMore).toBe(false);
             expect(messages.map((m) => m.id)).toEqual(['m1', 'm2']);
             expect(messages[0]).toMatchObject({
                 author: 'Amy',
                 text: 'Earlier',
             });
-            expect(messages[1]).toMatchObject({ author: 'Sam', text: 'Later' });
+            expect(messages[0].authorIsStaff).toBe(false);
+            expect(messages[1]).toMatchObject({
+                author: 'Sam',
+                authorIsStaff: true,
+                text: 'Later',
+            });
+        });
+
+        it('asks for the page before and says whether more remain', async () => {
+            apiFetchJson.mockResolvedValue({
+                results: [message('m1', 'Amy', 'hi', '2026-01-01T00:00:00Z')],
+                count: 120,
+            });
+
+            const { hasMore } = await getMessagesForThread('t1', 50);
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/bcap_message/thread/t1?limit=50&offset=50',
+            );
+            expect(hasMore).toBe(true);
         });
     });
 
-    it.each([
-        { setter: setThreadArchived, flag: 'archived', value: true },
-        { setter: setThreadResolved, flag: 'resolved', value: false },
-    ])(
-        'PATCHes the message with the $flag flag',
-        async ({ setter, flag, value }) => {
-            apiFetch.mockResolvedValue(okResponse({}));
+    it('files a reply under its thread, inside the message content', async () => {
+        apiFetchJson.mockResolvedValue({});
 
-            await setter('m1', value);
+        await createBcapMessage({
+            messageText: 'hi',
+            recipientId: '',
+            resourceId: 'res-1',
+            threadId: 't1',
+        });
 
-            expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
-                method: 'PATCH',
-                body: { [flag]: value },
-            });
-        },
-    );
+        expect(apiFetchJson).toHaveBeenCalledWith('/bcap/api/bcap_message', {
+            method: 'POST',
+            body: {
+                aliased_data: {
+                    message_content: {
+                        aliased_data: expect.objectContaining({
+                            thread: { node_value: [{ resourceId: 't1' }] },
+                        }),
+                    },
+                },
+            },
+        });
+    });
+
+    it('PATCHes the thread change onto the message', async () => {
+        apiFetch.mockResolvedValue(okResponse({}));
+
+        await patchThread('m1', { resolved: false });
+
+        expect(apiFetch).toHaveBeenCalledWith('/bcap/api/bcap_message/m1', {
+            method: 'PATCH',
+            body: { resolved: false },
+        });
+    });
 });

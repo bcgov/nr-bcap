@@ -2,12 +2,14 @@
 // the union of what the row-building and component tests read; a caller that
 // ignores a field just leaves it at its default.
 export const requirementDetail = (opts: {
+    id: string;
     name?: string;
     type?: string;
     satisfied?: boolean;
     internal?: boolean;
     host?: string;
 }) => ({
+    resourceinstanceid: opts.id,
     aliased_data: {
         requirement_identification: {
             aliased_data: {

@@ -12,7 +12,7 @@ let rows: typeof import('./moduleRows.ts');
 beforeEach(async () => {
     vi.resetModules();
     fetchRequirementDetails.mockReset();
-    fetchRequirementDetails.mockResolvedValue({});
+    fetchRequirementDetails.mockResolvedValue([]);
     rows = await import('./moduleRows.ts');
 });
 
@@ -184,15 +184,16 @@ describe('hydrateRows', () => {
         );
 
     it('fetches the uncached ids and fills the rows in place', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({
+        fetchRequirementDetails.mockResolvedValue([
+            detail({
+                id: 'r-1',
                 name: 'Real Name',
                 type: 'Checklist',
                 satisfied: true,
                 internal: true,
                 host: 'host-1',
             }),
-        });
+        ]);
         const row = rowWith('t-1', 'r-1');
         const requirement = row.requirements[0];
 
@@ -214,9 +215,9 @@ describe('hydrateRows', () => {
     });
 
     it('asks for each id once and stops asking once it is cached', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({ name: 'One' }),
-        });
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', name: 'One' }),
+        ]);
         const first = rowWith('t-1', 'r-1');
         const second = rowWith('t-2', 'r-1');
 
@@ -227,7 +228,7 @@ describe('hydrateRows', () => {
     });
 
     it('leaves a requirement the fetch did not return alone', async () => {
-        fetchRequirementDetails.mockResolvedValue({});
+        fetchRequirementDetails.mockResolvedValue([]);
         const row = rowWith('t-1', 'r-1');
 
         await rows.hydrateRows([row]);
@@ -255,9 +256,9 @@ describe('rowsNeedingDetails', () => {
 
 describe('cacheSatisfied', () => {
     it('keeps the cache in step so a rebuilt row seeds the new status', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({ name: 'Alpha', satisfied: false }),
-        });
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', name: 'Alpha', satisfied: false }),
+        ]);
         const tile = moduleTile({
             tileid: 't-1',
             requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],
@@ -272,9 +273,9 @@ describe('cacheSatisfied', () => {
 
 describe('clearRequirementCache', () => {
     it('drops what was cached, so the next permit refetches', async () => {
-        fetchRequirementDetails.mockResolvedValue({
-            'r-1': detail({ name: 'Alpha', satisfied: true }),
-        });
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', name: 'Alpha', satisfied: true }),
+        ]);
         const tile = moduleTile({
             tileid: 't-1',
             requirements: [{ name: 'A', resourceId: 'r-1', order: 1 }],

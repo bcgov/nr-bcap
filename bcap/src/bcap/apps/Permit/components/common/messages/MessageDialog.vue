@@ -15,6 +15,8 @@ import MessageAttachmentsField from '@/bcap/apps/Permit/components/common/messag
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type { ReferenceAliasedNodeDataWritable } from '@/bcap/client/types.gen.ts';
+import { NEW_THREAD_ID } from '@/bcap/types.ts';
+import type { RecipientOption } from '@/bcap/types.ts';
 import { inlineMessage } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
 
@@ -28,6 +30,8 @@ const props = defineProps<{
     context?: string;
     // The resource's own id (e.g. a module id), appended to the title.
     contextId?: string;
+    // The host has just loaded this resource's threads, so skip it on mount.
+    prefetched?: boolean;
 }>();
 
 const messageStore = useMessageStore();
@@ -42,17 +46,19 @@ const state = reactive({
     isArchiving: false,
     isResolving: false,
     selectedRecipient: '',
-    recipients: [] as Array<{ label: string; value: string }>,
+    recipients: [] as RecipientOption[],
     isLoadingRecipients: false,
     isLoadingMessages: false,
     selectedTopic: '',
     selectedTopicValue: [] as ReferenceAliasedNodeDataWritable['node_value'],
-    selectedThreadId: 'new',
+    selectedThreadId: NEW_THREAD_ID,
     files: [] as File[],
     error: '',
     // Shown beside the Send button, where the user is looking, until they
     // change the attachments, switch threads or try again.
     sendError: '',
+    // Reply box height set by dragging its handle; 0 keeps the default.
+    composerHeight: 0,
 });
 
 watch(
@@ -91,6 +97,15 @@ const activeThread = computed(
 
 const isReplyMode = computed(() => activeThread.value !== null);
 
+const selectedRecipient = computed(() =>
+    state.recipients.find((r) => r.value === state.selectedRecipient),
+);
+
+const sendModifier = /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘' : 'Ctrl';
+
+const recipientIcon = (option?: RecipientOption) =>
+    option?.isInternal ? 'fa-solid fa-lock' : 'fa-solid fa-users';
+
 const canSend = computed(
     () =>
         !!state.messageText &&
@@ -102,7 +117,7 @@ const canSend = computed(
 
 const showTab = async (archived: boolean) => {
     state.showArchived = archived;
-    state.selectedThreadId = 'new';
+    state.selectedThreadId = NEW_THREAD_ID;
     messageStore.openMessages = [];
     await messageStore.load(props.resourceId, archived);
 };
@@ -125,20 +140,10 @@ const loadRecipients = async () => {
 };
 
 const openDialog = () => {
-    state.selectedThreadId = 'new';
+    state.selectedThreadId = NEW_THREAD_ID;
     state.visible = true;
     loadRecipients();
     messageStore.load(props.resourceId, state.showArchived);
-};
-
-const closeDialog = () => {
-    state.visible = false;
-    state.messageText = '';
-    state.subjectText = '';
-    state.selectedTopic = '';
-    state.selectedTopicValue = [];
-    state.files = [];
-    messageStore.openMessages = [];
 };
 
 const selectThread = async (threadId: string) => {
@@ -156,7 +161,11 @@ const selectThread = async (threadId: string) => {
         }
         // For now an applicant resolves their side just by reading it.
         if (!userStore.isInternal && thread.onSide && !thread.isResolved) {
-            await messageStore.setResolved(threadId, true, props.resourceId);
+            await messageStore.updateThread(
+                threadId,
+                { resolved: true },
+                props.resourceId,
+            );
         }
     }
 
@@ -165,6 +174,33 @@ const selectThread = async (threadId: string) => {
         messageInput.value.$el.focus({ preventScroll: true });
     }
 };
+
+const COMPOSER_MIN = 80;
+const COMPOSER_MAX = 480;
+const setComposerHeight = (px: number) => {
+    state.composerHeight = Math.min(COMPOSER_MAX, Math.max(COMPOSER_MIN, px));
+};
+
+// Dragging the handle up grows the reply box and shrinks the history above.
+const startComposerResize = (event: PointerEvent) => {
+    const startY = event.clientY;
+    const startHeight = messageInput.value?.$el.offsetHeight ?? COMPOSER_MIN;
+    const onMove = (move: PointerEvent) =>
+        setComposerHeight(startHeight + startY - move.clientY);
+    const onUp = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+};
+
+const nudgeComposer = (px: number) =>
+    setComposerHeight(
+        (state.composerHeight ||
+            messageInput.value?.$el.offsetHeight ||
+            COMPOSER_MIN) + px,
+    );
 
 const submitMessage = async () => {
     if (!canSend.value) return;
@@ -179,7 +215,7 @@ const submitMessage = async () => {
 
         const subject = state.subjectText.trim();
 
-        await messageStore.send({
+        const created = await messageStore.send({
             messageText: state.messageText,
             recipientId: state.selectedRecipient,
             resourceId: props.resourceId,
@@ -191,7 +227,17 @@ const submitMessage = async () => {
             files: state.files,
         });
 
-        closeDialog();
+        const threadId = targetThreadId ?? created?.resourceinstanceid;
+        state.messageText = '';
+        state.subjectText = '';
+        state.selectedTopic = '';
+        state.selectedTopicValue = [];
+        state.files = [];
+        if (threadId) {
+            state.showArchived = false;
+            state.selectedThreadId = threadId;
+            await messageStore.loadThreadMessages(threadId);
+        }
     } catch (error) {
         state.sendError = inlineMessage(error);
     } finally {
@@ -206,12 +252,12 @@ const toggleArchived = async () => {
     const threadId = activeThread.value.id;
     state.isArchiving = true;
     try {
-        await messageStore.setArchived(
+        await messageStore.updateThread(
             threadId,
-            !state.showArchived,
+            { archived: !state.showArchived },
             props.resourceId,
         );
-        state.selectedThreadId = 'new';
+        state.selectedThreadId = NEW_THREAD_ID;
     } finally {
         state.isArchiving = false;
     }
@@ -222,9 +268,9 @@ const toggleResolved = async () => {
     if (!activeThread.value) return;
     state.isResolving = true;
     try {
-        await messageStore.setResolved(
+        await messageStore.updateThread(
             activeThread.value.id,
-            !activeThread.value.isResolved,
+            { resolved: !activeThread.value.isResolved },
             props.resourceId,
         );
     } finally {
@@ -234,7 +280,8 @@ const toggleResolved = async () => {
 
 onMounted(() => {
     // To show the counts.
-    messageStore.load(props.resourceId, state.showArchived);
+    if (!props.prefetched)
+        messageStore.load(props.resourceId, state.showArchived);
 });
 </script>
 
@@ -306,6 +353,9 @@ onMounted(() => {
                     v-if="!isReplyMode"
                     class="new-question-view"
                 >
+                    <div class="thread-header">
+                        <h3 class="thread-title">New message</h3>
+                    </div>
                     <div class="field-row">
                         <div class="field-col">
                             <label class="field-label">
@@ -326,16 +376,6 @@ onMounted(() => {
                                 placeholder="Select Recipient"
                                 append-to="body"
                                 class="w-full"
-                                :pt="{
-                                    root: {
-                                        style: {
-                                            height: '3.5rem',
-                                            alignItems: 'center',
-                                            borderRadius: '6px',
-                                        },
-                                    },
-                                    item: { style: { padding: '1rem' } },
-                                }"
                             >
                                 <template #value="slotProps">
                                     <div
@@ -345,32 +385,42 @@ onMounted(() => {
                                         "
                                         class="dropdown-value-template"
                                     >
-                                        <i class="fa-regular fa-envelope"></i>
+                                        <i
+                                            v-if="userStore.isInternal"
+                                            :class="
+                                                recipientIcon(selectedRecipient)
+                                            "
+                                        ></i>
                                         <span>
-                                            {{
-                                                state.recipients.find(
-                                                    (r) =>
-                                                        r.value ===
-                                                        slotProps.value,
-                                                )?.label
-                                            }}
+                                            {{ selectedRecipient?.label }}
                                         </span>
                                     </div>
                                     <span
                                         v-else
-                                        style="
-                                            font-size: 1.25rem;
-                                            color: #6c757d;
-                                        "
+                                        class="recipient-placeholder"
                                     >
                                         {{ slotProps.placeholder }}
                                     </span>
                                 </template>
                                 <template #option="slotProps">
                                     <div class="dropdown-value-template">
-                                        <i class="fa-regular fa-envelope"></i>
+                                        <i
+                                            v-if="userStore.isInternal"
+                                            :class="
+                                                recipientIcon(slotProps.option)
+                                            "
+                                        ></i>
                                         <span>
                                             {{ slotProps.option.label }}
+                                            <template
+                                                v-if="userStore.isInternal"
+                                            >
+                                                {{
+                                                    slotProps.option.isInternal
+                                                        ? '(Internal)'
+                                                        : '(External)'
+                                                }}
+                                            </template>
                                         </span>
                                     </div>
                                 </template>
@@ -398,6 +448,28 @@ onMounted(() => {
                         </div>
                     </div>
 
+                    <!-- Staff only: an applicant's threads are always external. -->
+                    <div
+                        v-if="userStore.isInternal && selectedRecipient"
+                        class="internal-note"
+                        :class="
+                            selectedRecipient.isInternal
+                                ? 'is-internal'
+                                : 'is-external'
+                        "
+                    >
+                        <i :class="recipientIcon(selectedRecipient)"></i>
+                        <span v-if="selectedRecipient.isInternal">
+                            <strong>Internal thread.</strong>
+                            Only staff can see this conversation. The applicant
+                            will not be notified.
+                        </span>
+                        <span v-else>
+                            <strong>External thread.</strong>
+                            This conversation is shared with the applicant.
+                        </span>
+                    </div>
+
                     <div class="field-block">
                         <label class="field-label">
                             Subject
@@ -416,45 +488,50 @@ onMounted(() => {
                         />
                     </div>
 
-                    <div class="field-block textarea-wrapper">
-                        <label class="field-label">
-                            Message
-                            <span
-                                class="field-required"
-                                aria-hidden="true"
-                            >
-                                *
-                            </span>
-                        </label>
+                    <label class="field-label">
+                        Message
+                        <span
+                            class="field-required"
+                            aria-hidden="true"
+                        >
+                            *
+                        </span>
+                    </label>
+                    <div class="composer">
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"
                             maxlength="4000"
                             placeholder="Type your message…"
-                            class="full-width-textarea"
+                            class="composer-input new-message-input"
+                            @keydown.ctrl.enter.prevent="submitMessage"
+                            @keydown.meta.enter.prevent="submitMessage"
                         />
+                        <div class="composer-footer">
+                            <MessageAttachmentsField
+                                v-model:files="state.files"
+                                :reset-key="state.selectedThreadId"
+                            />
+                            <span class="send-hint">
+                                <kbd>{{ sendModifier }}</kbd>
+                                +
+                                <kbd>Enter</kbd>
+                            </span>
+                            <Button
+                                label="Send"
+                                class="send-btn"
+                                :loading="state.isSubmitting"
+                                :disabled="!canSend"
+                                @click="submitMessage"
+                            />
+                        </div>
                     </div>
-
-                    <MessageAttachmentsField
-                        v-model:files="state.files"
-                        :reset-key="state.selectedThreadId"
+                    <InlineError
+                        v-if="state.sendError"
+                        title="Your message could not be sent."
+                        :detail="state.sendError"
+                        class="send-error"
                     />
-
-                    <div class="action-footer">
-                        <InlineError
-                            v-if="state.sendError"
-                            title="Your message could not be sent."
-                            :detail="state.sendError"
-                            class="send-error"
-                        />
-                        <Button
-                            label="Send"
-                            class="send-btn"
-                            :loading="state.isSubmitting"
-                            :disabled="!canSend"
-                            @click="submitMessage"
-                        />
-                    </div>
                 </div>
 
                 <!-- REPLY VIEW -->
@@ -462,35 +539,116 @@ onMounted(() => {
                     v-else
                     class="reply-view"
                 >
-                    <!-- Staff only: an applicant sees neither kind nor resolution. -->
                     <div
-                        v-if="userStore.isInternal && activeThread"
-                        class="thread-status"
+                        v-if="activeThread"
+                        class="thread-header"
                     >
-                        <span
-                            v-if="activeThread.isInternal"
-                            class="thread-tag internal-tag"
-                        >
-                            <i class="fa-solid fa-lock"></i>
-                            Internal (staff only)
-                        </span>
-                        <span
-                            v-else
-                            class="thread-tag external-tag"
-                        >
-                            <i class="fa-solid fa-users"></i>
-                            External (shared with applicant)
-                        </span>
-                        <span
-                            v-if="activeThread.isResolved"
-                            class="thread-tag resolved-tag"
-                        >
-                            <i class="fa-solid fa-check"></i>
-                            Resolved
-                            <template v-if="activeThread?.resolvedBy">
-                                by {{ activeThread.resolvedBy }}
+                        <div class="thread-status">
+                            <h3 class="thread-title">
+                                {{ activeThread.topic }}
+                            </h3>
+                            <div class="thread-meta">
+                                <span
+                                    v-if="activeThread.to"
+                                    class="thread-to"
+                                >
+                                    <!-- Someone on neither side sees both parties. -->
+                                    <template v-if="activeThread.onSide">
+                                        With
+                                        <strong>{{ activeThread.to }}</strong>
+                                    </template>
+                                    <template v-else>
+                                        Between
+                                        <strong>
+                                            {{ activeThread.startedBy }}
+                                        </strong>
+                                        and
+                                        <strong>{{ activeThread.to }}</strong>
+                                    </template>
+                                </span>
+                                <!-- Staff only: an applicant sees neither kind nor resolution. -->
+                                <div
+                                    v-if="userStore.isInternal"
+                                    class="thread-tags"
+                                >
+                                    <span
+                                        v-if="activeThread.isInternal"
+                                        class="thread-tag internal-tag"
+                                    >
+                                        <i class="fa-solid fa-lock"></i>
+                                        Internal · staff only
+                                    </span>
+                                    <span
+                                        v-else
+                                        class="thread-tag external-tag"
+                                    >
+                                        <i class="fa-solid fa-users"></i>
+                                        External · shared with applicant
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="thread-actions">
+                            <!-- Archive sits left so the resolve button never moves. -->
+                            <Button
+                                v-if="
+                                    state.showArchived ||
+                                    activeThread?.isResolved ||
+                                    !activeThread?.onSide
+                                "
+                                :label="
+                                    state.showArchived ? 'Unarchive' : 'Archive'
+                                "
+                                :icon="
+                                    state.showArchived
+                                        ? 'fa-solid fa-box-open'
+                                        : 'fa-solid fa-box-archive'
+                                "
+                                class="resolve-btn archive-btn"
+                                :loading="state.isArchiving"
+                                @click="toggleArchived"
+                            />
+                            <template
+                                v-if="
+                                    !state.showArchived &&
+                                    userStore.isInternal &&
+                                    activeThread?.onSide
+                                "
+                            >
+                                <Button
+                                    :label="
+                                        activeThread?.isResolved
+                                            ? 'Reopen'
+                                            : 'Mark as resolved'
+                                    "
+                                    :icon="
+                                        activeThread?.isResolved
+                                            ? 'fa-solid fa-rotate-left'
+                                            : 'fa-solid fa-check'
+                                    "
+                                    class="resolve-btn"
+                                    :class="{
+                                        'is-primary': !activeThread?.isResolved,
+                                    }"
+                                    :loading="state.isResolving"
+                                    @click="toggleResolved"
+                                />
                             </template>
-                            <template v-if="activeThread?.resolvedDate">
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="userStore.isInternal && activeThread?.isResolved"
+                        class="resolved-banner"
+                    >
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>
+                            Resolved
+                            <template v-if="activeThread.resolvedBy">
+                                by
+                                <strong>{{ activeThread.resolvedBy }}</strong>
+                            </template>
+                            <template v-if="activeThread.resolvedDate">
                                 on
                                 {{ formatTimestamp(activeThread.resolvedDate) }}
                             </template>
@@ -498,76 +656,66 @@ onMounted(() => {
                     </div>
 
                     <MessageHistory
-                        :messages="messageStore.openMessages"
-                        :is-loading="state.isLoadingMessages"
+                        :thread-id="state.selectedThreadId"
+                        :is-loading="
+                            state.isLoadingMessages || state.isSubmitting
+                        "
                     />
 
-                    <div class="field-container textarea-wrapper">
-                        <label class="field-label">
-                            Write a Reply:
-                            <span
-                                class="field-required"
-                                aria-hidden="true"
-                            >
-                                *
-                            </span>
-                        </label>
+                    <div
+                        class="composer-resizer"
+                        role="separator"
+                        aria-orientation="horizontal"
+                        aria-label="Resize the reply box"
+                        tabindex="0"
+                        @pointerdown.prevent="startComposerResize"
+                        @keydown.up.prevent="nudgeComposer(20)"
+                        @keydown.down.prevent="nudgeComposer(-20)"
+                    >
+                        <span class="composer-grip"></span>
+                    </div>
+
+                    <div class="composer reply-composer">
                         <Textarea
                             ref="messageInput"
                             v-model="state.messageText"
                             rows="4"
-                            class="full-width-textarea"
+                            placeholder="Write a reply…"
+                            aria-label="Write a reply"
+                            class="composer-input"
+                            :style="
+                                state.composerHeight
+                                    ? { height: `${state.composerHeight}px` }
+                                    : undefined
+                            "
+                            @keydown.ctrl.enter.prevent="submitMessage"
+                            @keydown.meta.enter.prevent="submitMessage"
                         />
+                        <div class="composer-footer">
+                            <MessageAttachmentsField
+                                v-model:files="state.files"
+                                :reset-key="state.selectedThreadId"
+                            />
+                            <span class="send-hint">
+                                <kbd>{{ sendModifier }}</kbd>
+                                +
+                                <kbd>Enter</kbd>
+                            </span>
+                            <Button
+                                label="Send"
+                                class="send-btn"
+                                :loading="state.isSubmitting"
+                                :disabled="!canSend"
+                                @click="submitMessage"
+                            />
+                        </div>
                     </div>
-
-                    <MessageAttachmentsField
-                        v-model:files="state.files"
-                        :reset-key="state.selectedThreadId"
+                    <InlineError
+                        v-if="state.sendError"
+                        title="Your message could not be sent."
+                        :detail="state.sendError"
+                        class="send-error"
                     />
-
-                    <div class="action-footer">
-                        <InlineError
-                            v-if="state.sendError"
-                            title="Your message could not be sent."
-                            :detail="state.sendError"
-                            class="send-error"
-                        />
-                        <Button
-                            v-if="
-                                !state.showArchived &&
-                                userStore.isInternal &&
-                                activeThread?.onSide
-                            "
-                            :label="
-                                activeThread?.isResolved
-                                    ? 'Mark as Unresolved'
-                                    : 'Mark as Resolved'
-                            "
-                            class="resolve-btn resolved-btn"
-                            :loading="state.isResolving"
-                            @click="toggleResolved"
-                        />
-                        <Button
-                            v-if="
-                                state.showArchived ||
-                                activeThread?.isResolved ||
-                                !activeThread?.onSide
-                            "
-                            :label="
-                                state.showArchived ? 'Unarchive' : 'Archive'
-                            "
-                            class="resolve-btn archive-btn"
-                            :loading="state.isArchiving"
-                            @click="toggleArchived"
-                        />
-                        <Button
-                            label="Send"
-                            class="send-btn"
-                            :loading="state.isSubmitting"
-                            :disabled="!canSend"
-                            @click="submitMessage"
-                        />
-                    </div>
                 </div>
             </div>
         </div>
@@ -663,7 +811,7 @@ onMounted(() => {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.message-dialog-content {
+.p-dialog.message-dialog .message-dialog-content {
     padding: 0;
     overflow: hidden;
     display: flex;
@@ -684,7 +832,7 @@ onMounted(() => {
     background-color: var(--bc-panel);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevent internal elements from breaking layout */
+    overflow: hidden;
 }
 
 .new-question-view,
@@ -693,6 +841,7 @@ onMounted(() => {
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
+    padding-bottom: 1.25rem;
 }
 
 .field-container {
@@ -721,12 +870,29 @@ onMounted(() => {
     border-radius: 6px;
 }
 
+.field-col .p-select-label {
+    font-size: 1.25rem;
+    line-height: 1.4;
+}
+
+.field-col .p-select-dropdown,
+.field-col .p-treeselect-dropdown {
+    color: var(--bc-muted) !important;
+}
+
+.field-col .p-select.p-focus,
+.field-col .p-select:focus-within,
+.field-col .p-treeselect.p-focus,
+.field-col .p-treeselect:focus-within {
+    border-color: var(--bc-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
 .type-widget label {
     display: none !important;
 }
 
-/* The message-type widget is a PrimeVue TreeSelect; match the Recipient
-   dropdown's height, radius and font so the two columns line up. */
 .type-widget .p-treeselect {
     width: 100%;
     height: 3.5rem !important;
@@ -769,31 +935,6 @@ onMounted(() => {
     color: #9aa2ab;
 }
 
-.new-question-view .textarea-wrapper {
-    margin-top: 0;
-    flex: 0 0 auto;
-}
-
-.new-question-view .textarea-wrapper .full-width-textarea {
-    min-height: 12rem;
-    resize: vertical;
-}
-
-.reply-view .full-width-textarea {
-    min-height: 9rem;
-    resize: vertical;
-}
-
-.reply-view .textarea-wrapper {
-    margin-top: 0;
-}
-
-.textarea-wrapper {
-    display: flex;
-    flex-direction: column;
-    margin-top: auto; /* Pushes to bottom */
-}
-
 .field-label {
     display: block;
     margin-bottom: 0.5rem;
@@ -802,32 +943,113 @@ onMounted(() => {
     font-weight: 600;
 }
 
-.full-width-textarea {
-    width: 100% !important;
-    box-sizing: border-box;
-    border-radius: 6px;
-    border-color: #ced4da;
-    font-size: 1.25rem;
-}
-
-.action-footer {
+.composer {
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    /* auto pushes it to the bottom when content is short; sticky keeps it in
-       view when the compose area scrolls. */
-    margin-top: auto;
-    position: sticky;
-    bottom: 0;
-    padding: 0.75rem 0;
-    background-color: var(--bc-panel);
-    flex-wrap: wrap;
+    flex-direction: column;
+    flex: 0 0 auto;
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
 }
 
-/* Its own line above the buttons, so it rides along with the sticky footer. */
-.send-error {
-    flex-basis: 100%;
+.composer:focus-within {
+    border-color: var(--bc-navy);
+    outline: 1px solid var(--bc-navy);
+    outline-offset: -2px;
+}
+
+.composer .composer-input:focus,
+.composer .composer-input:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.composer .composer-input {
+    width: 100%;
+    min-height: 9rem;
+    resize: vertical;
+    font-size: 1.25rem;
+    border: none !important;
+    border-radius: 6px 6px 0 0;
+    box-shadow: none !important;
+}
+
+.new-question-view .composer {
+    flex: 1 1 auto;
+    min-height: 18rem;
+}
+
+.composer .new-message-input {
+    flex: 1 1 auto;
+    min-height: 12rem;
+    resize: none;
+}
+
+.reply-composer {
+    margin-top: auto;
+}
+
+.reply-composer .composer-input {
+    resize: none;
+}
+
+.composer-resizer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    cursor: row-resize;
+    touch-action: none;
+}
+
+.composer-grip {
+    width: 4rem;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #cbd5e1;
+}
+
+.composer-resizer:hover .composer-grip,
+.composer-resizer:focus-visible .composer-grip {
+    background-color: var(--bc-muted);
+}
+
+.send-hint {
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    color: var(--bc-muted);
+}
+
+.composer-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    border-radius: 0 0 6px 6px;
+    background: #fafbfc;
+}
+
+.composer-footer .attachments-field {
+    flex: 1;
+    min-width: 0;
     margin: 0;
+}
+
+.composer-footer .attachments-field > .field-label {
+    display: none;
+}
+
+.composer-footer .attachments-field .attachments-widget .upload-container {
+    justify-content: flex-start;
+    padding: 0.4rem 0.25rem;
+    border: none;
+    background: transparent;
+}
+
+.send-error {
+    margin: 0.75rem 0 0;
 }
 
 .dialog-error {
@@ -836,26 +1058,37 @@ onMounted(() => {
 
 .send-btn,
 .resolve-btn {
-    padding: 0.8rem 1.8rem;
-    border-radius: 4px;
-    font-size: 1.25rem;
-    font-weight: 700;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
-.send-btn {
+.send-hint {
     margin-left: auto;
 }
 
-/* PrimeVue's label span carries its own weight/size, so set it on the label. */
+.send-hint kbd {
+    padding: 0.1rem 0.5rem;
+    border: 1px solid #c8ccd1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-family: inherit;
+    font-size: 1.05rem;
+    color: #333;
+}
+
 .send-btn .p-button-label,
 .resolve-btn .p-button-label {
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.2;
 }
 
 .send-btn {
     background-color: var(--bc-navy);
-    border: 2px solid var(--bc-navy);
+    border: 1px solid var(--bc-navy);
     color: #ffffff;
 }
 
@@ -866,7 +1099,7 @@ onMounted(() => {
 
 .resolve-btn {
     background-color: #ffffff;
-    border: 2px solid var(--bc-navy);
+    border: 1px solid var(--bc-navy);
     color: var(--bc-navy);
 }
 
@@ -874,10 +1107,67 @@ onMounted(() => {
     background-color: var(--bc-selected);
 }
 
+.resolve-btn.is-primary {
+    background-color: var(--bc-navy);
+    color: #ffffff;
+}
+
+.resolve-btn.is-primary:hover {
+    background-color: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}
+
+.thread-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .thread-status {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.thread-title {
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--bc-navy);
+    overflow-wrap: anywhere;
+}
+
+.thread-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.thread-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.thread-actions {
+    display: flex;
+    align-items: center;
     gap: 0.75rem;
-    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.thread-to {
+    font-size: 1.3rem;
+    color: var(--bc-muted);
+}
+
+.thread-to strong {
+    color: var(--bc-text);
 }
 
 .thread-tag {
@@ -891,29 +1181,88 @@ onMounted(() => {
 }
 
 .internal-tag {
-    background-color: var(--bc-internal-bg);
-    color: var(--bc-internal-text);
+    background-color: var(--internal-bg);
+    color: var(--internal-text);
 }
 
 .external-tag {
-    background-color: #e3ecf7;
-    color: #1f4a7a;
+    background-color: var(--external-bg);
+    color: var(--external-text);
 }
 
-.resolved-tag {
-    background-color: var(--bc-resolved-bg);
-    color: var(--bc-resolved-text);
+.resolved-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    background-color: #f3faf4;
+    border: 1px solid #b7dcbf;
+    border-radius: 6px;
+    font-size: 1.25rem;
+    color: var(--bc-text);
+}
+
+.resolved-banner i {
+    font-size: 1.9rem;
+    color: var(--resolved-text);
+}
+
+.internal-note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid;
+    border-radius: 6px;
+    font-size: 1.25rem;
+    color: var(--bc-text);
+}
+
+.internal-note i {
+    font-size: 1.4rem;
+}
+
+.internal-note.is-internal {
+    background-color: var(--internal-bg);
+    border-color: #f5d48f;
+}
+
+.internal-note.is-internal i {
+    color: var(--internal-text);
+}
+
+.internal-note.is-external {
+    background-color: #f1f7fd;
+    border-color: #b9d3ef;
+}
+
+.internal-note.is-external i {
+    color: var(--external-text);
+}
+
+.recipient-placeholder {
+    color: var(--bc-muted);
 }
 
 .dropdown-value-template {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1.25rem;
-    color: #495057;
+    gap: 0.5rem;
 }
 
 .dropdown-value-template i {
-    font-size: 1.3rem;
+    width: 1.25em;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.dropdown-value-template .fa-lock {
+    color: var(--internal-text);
+}
+
+.dropdown-value-template .fa-users {
+    color: var(--external-text);
 }
 </style>

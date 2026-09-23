@@ -184,9 +184,8 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
                 .filter((id) => id && !detailCache.has(id)),
         ),
     ];
-    const details = await fetchRequirementDetails(ids);
-    for (const [id, detail] of Object.entries(details)) {
-        detailCache.set(id, {
+    for (const detail of await fetchRequirementDetails(ids)) {
+        detailCache.set(detail.resourceinstanceid ?? '', {
             name: requirementName(detail),
             type: requirementType(detail),
             satisfied: requirementSatisfied(detail),

@@ -34,7 +34,7 @@ class MessageService:
         read returns 403 rather than an empty result."""
         PermitAccess.require_view(user, G.context_id(message_id))
         return ThreadService.base_query(
-            MessageViewer(user), resource_ids=[str(message_id)]
+            MessageViewer.for_user(user), resource_ids=[str(message_id)]
         )
 
     def recipient_options(self, resource_id, user):
@@ -42,16 +42,22 @@ class MessageService:
         get the proponent."""
         PermitAccess.require_view(user, str(resource_id))
         return ContributorService().contributors_for_resource(
-            str(resource_id), with_proponent=is_internal_user(user)
+            str(resource_id), for_staff=is_internal_user(user)
         )
 
     def prepare_create_payload(self, data, user):
         """Ready a POST body for saving: stamp the author, clear any client-sent
         resolutions, take the thread's fields for a reply or decide internal for
         a new thread, then require change access to the parent resource."""
-        viewer = MessageViewer(user)
+        viewer = MessageViewer.for_user(user)
         self.stamp_author(data, viewer)
-        for alias in (*G.RESOLUTION_ALIASES[AUTHOR], *G.RESOLUTION_ALIASES[RECIPIENT]):
+        for alias in (
+            *G.RESOLUTION_ALIASES[AUTHOR],
+            *G.RESOLUTION_ALIASES[RECIPIENT],
+            A.THREAD_PARTICIPANTS,
+            A.THREAD_ANSWERED,
+            A.THREAD_LAST_MESSAGE_DATE,
+        ):
             set_payload_node(data, A.MESSAGE_CONTENT, alias, None)
         if not self.inherit_thread_fields(data, viewer):
             set_payload_node(
@@ -82,9 +88,7 @@ class MessageService:
         """For a reply: require the thread be visible, point the link at its
         root, address the root's other side and copy the root's subject, type and
         internal flag. Returns False when the payload starts a new thread."""
-        thread_id = payload_resource_id(
-            data, A.RELATED_SOURCE_MESSAGE, A.RELATED_SOURCE_MESSAGE
-        )
+        thread_id = payload_resource_id(data, A.MESSAGE_CONTENT, A.THREAD)
         if not thread_id:
             return False
         thread_id = G.thread_id(thread_id)
@@ -93,10 +97,7 @@ class MessageService:
         ).exists():
             raise PermissionDenied("You cannot reply to this thread.")
         set_payload_node(
-            data,
-            A.RELATED_SOURCE_MESSAGE,
-            A.RELATED_SOURCE_MESSAGE,
-            resource_instance_value(thread_id),
+            data, A.MESSAGE_CONTENT, A.THREAD, resource_instance_value(thread_id)
         )
         root = G.content(thread_id)
 

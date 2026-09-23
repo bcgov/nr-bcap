@@ -3,23 +3,25 @@ import MessageDialog from './MessageDialog.vue';
 import {
     createBcapMessage,
     getContributorsForResources,
-    getThreadsForResource,
     getMessagesForThread,
-    setThreadArchived,
-    setThreadResolved,
+    patchThread,
 } from '@/bcap/apps/Permit/api.ts';
 import { ApiError } from '@/bcap/api.ts';
 import type { MessageThread } from '@/bcap/types.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
 import type { UserResponse } from '@/bcap/client/types.gen.ts';
 
+// One resource's list, which the batched fetch hands back under that id.
+const { resourceThreads } = vi.hoisted(() => ({ resourceThreads: vi.fn() }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     createBcapMessage: vi.fn(),
     getContributorsForResources: vi.fn(),
-    getThreadsForResource: vi.fn(),
+    getThreadsForResources: vi.fn(
+        async (ids: string[], archived = false) =>
+            new Map([[ids[0], await resourceThreads(ids[0], archived)]]),
+    ),
     getMessagesForThread: vi.fn(),
-    setThreadArchived: vi.fn(),
-    setThreadResolved: vi.fn(),
+    patchThread: vi.fn(),
 }));
 
 const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
@@ -29,9 +31,11 @@ const thread = (over: Partial<MessageThread> = {}): MessageThread => ({
     lastMessageDate: '',
     isResolved: false,
     onSide: true,
+    needsAction: !over.isResolved,
     resolvedBy: '',
     resolvedDate: '',
     isInternal: false,
+    to: 'Sam Staff',
     ...over,
 });
 
@@ -42,11 +46,14 @@ describe('MessageDialog.vue', () => {
         useUserStore().state.profile = { is_superuser: true } as UserResponse;
 
         vi.mocked(getContributorsForResources).mockResolvedValue([
-            { label: 'John Doe', value: 'user-1' },
-            { label: 'Jane Smith', value: 'user-2' },
+            { label: 'John Doe', value: 'user-1', isInternal: false },
+            { label: 'Jane Smith', value: 'user-2', isInternal: true },
         ]);
-        vi.mocked(getThreadsForResource).mockResolvedValue([]);
-        vi.mocked(getMessagesForThread).mockResolvedValue([]);
+        vi.mocked(resourceThreads).mockResolvedValue([]);
+        vi.mocked(getMessagesForThread).mockResolvedValue({
+            messages: [],
+            hasMore: false,
+        });
     });
 
     // node_value carries reference objects, not labels, so a topic that reads
@@ -64,7 +71,7 @@ describe('MessageDialog.vue', () => {
         active: MessageThread[],
         archived: MessageThread[] = [],
     ) => {
-        vi.mocked(getThreadsForResource).mockImplementation(
+        vi.mocked(resourceThreads).mockImplementation(
             (_resourceId: string, isArchived?: boolean) =>
                 Promise.resolve(isArchived ? archived : active),
         );
@@ -76,7 +83,7 @@ describe('MessageDialog.vue', () => {
     const openThread = async (wrapper: ReturnType<typeof mount>) => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
-        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await wrapper.findAll('.thread-list .sidebar-item')[0].trigger('click');
         await flushPromises();
     };
 
@@ -99,6 +106,7 @@ describe('MessageDialog.vue', () => {
                         template:
                             '<button class="mock-button" @click="$emit(\'click\')"><slot>{{ label }}</slot></button>',
                         props: ['label', 'loading'],
+                        emits: ['click'],
                     },
                     Textarea: {
                         template:
@@ -136,11 +144,42 @@ describe('MessageDialog.vue', () => {
         const wrapper = mountComponent();
         await flushPromises();
 
-        expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
+        expect(resourceThreads).toHaveBeenCalledWith('permit-999', false);
 
         const triggerBtn = wrapper.findAll('.mock-button')[0];
         expect(triggerBtn.text()).toContain('Messages');
         expect(wrapper.find('.message-badge').exists()).toBe(false);
+    });
+
+    it('tells staff whether the picked recipient makes the thread internal', async () => {
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        // user-1 is external, user-2 internal (see the mocked recipients).
+        expect(wrapper.find('.internal-note').text()).toBe(
+            'External thread. This conversation is shared with the applicant.',
+        );
+
+        (
+            wrapper.vm as unknown as { state: { selectedRecipient: string } }
+        ).state.selectedRecipient = 'user-2';
+        await flushPromises();
+
+        expect(wrapper.find('.internal-note').text()).toBe(
+            'Internal thread. Only staff can see this conversation. The applicant will not be notified.',
+        );
+    });
+
+    it('shows an applicant no internal/external note', async () => {
+        useUserStore().state.profile = null;
+        const wrapper = mountComponent();
+        await flushPromises();
+        await wrapper.findAll('.mock-button')[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('.internal-note').exists()).toBe(false);
     });
 
     it('loads threads on mount so the unresolved count is ready before the dialog opens', async () => {
@@ -155,7 +194,7 @@ describe('MessageDialog.vue', () => {
 
         // No dialog open yet: the fetch and the badge both come from mount.
         expect(wrapper.find('.mock-dialog').exists()).toBe(false);
-        expect(getThreadsForResource).toHaveBeenCalledWith('permit-999', false);
+        expect(resourceThreads).toHaveBeenCalledWith('permit-999', false);
         expect(wrapper.find('.message-badge').text()).toBe('2');
     });
 
@@ -185,15 +224,19 @@ describe('MessageDialog.vue', () => {
     it('displays existing messages in the thread when a sidebar thread is selected (Reply mode)', async () => {
         withThreads([thread({ id: 'thread-555' })]);
         // Messages are fetched for the open thread, not carried on the list.
-        vi.mocked(getMessagesForThread).mockResolvedValue([
-            {
-                id: 'msg-1',
-                author: 'Jane',
-                text: 'Please fix this',
-                date: 'Oct 1',
-                attachments: [],
-            },
-        ]);
+        vi.mocked(getMessagesForThread).mockResolvedValue({
+            messages: [
+                {
+                    id: 'msg-1',
+                    author: 'Jane',
+                    authorIsStaff: false,
+                    text: 'Please fix this',
+                    date: 'Oct 1',
+                    attachments: [],
+                },
+            ],
+            hasMore: false,
+        });
 
         const wrapper = mountComponent();
         await flushPromises();
@@ -201,7 +244,7 @@ describe('MessageDialog.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await wrapper.findAll('.thread-list .sidebar-item')[0].trigger('click');
         await flushPromises();
 
         const history = wrapper.find('.message-thread');
@@ -246,13 +289,33 @@ describe('MessageDialog.vue', () => {
 
         // The store fetches this resource's threads on mount, again when the
         // dialog opens, and once more after the send.
-        expect(vi.mocked(getThreadsForResource).mock.calls).toEqual([
+        expect(vi.mocked(resourceThreads).mock.calls).toEqual([
             ['permit-999', false],
             ['permit-999', false],
             ['permit-999', false],
         ]);
 
-        expect(wrapper.find('.mock-dialog').exists()).toBe(false);
+        // Sending leaves the dialog open; the X closes it.
+        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
+    });
+
+    it('shows a sent reply in its thread and stays open', async () => {
+        vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-r' });
+        withThreads([thread({ id: 'thread-9' })]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+        vi.mocked(getMessagesForThread).mockClear();
+
+        await wrapper.find('textarea').setValue('Thanks!');
+        await button(wrapper, 'Send')?.trigger('click');
+        await flushPromises();
+
+        expect(getMessagesForThread).toHaveBeenCalledWith('thread-9', 0);
+        expect(
+            (wrapper.find('textarea').element as HTMLTextAreaElement).value,
+        ).toBe('');
+        expect(wrapper.find('.mock-dialog').exists()).toBe(true);
     });
 
     it('shows the server message and stays open when a send fails', async () => {
@@ -286,7 +349,7 @@ describe('MessageDialog.vue', () => {
     // to the one slot at the top.
     it('shows a failed thread load in the slot at the top', async () => {
         vi.spyOn(console, 'error').mockImplementation(() => {});
-        vi.mocked(getThreadsForResource).mockRejectedValue(new Error('boom'));
+        vi.mocked(resourceThreads).mockRejectedValue(new Error('boom'));
 
         const wrapper = mountComponent();
         await flushPromises();
@@ -328,12 +391,14 @@ describe('MessageDialog.vue', () => {
         await flushPromises();
         await openThread(reopened);
 
-        const tag = reopened.find('.resolved-tag').text();
-        expect(tag).toContain('by Sam');
-        expect(tag).toContain('2026');
-        await button(reopened, 'Mark as Unresolved')?.trigger('click');
+        const banner = reopened.find('.resolved-banner').text();
+        expect(banner).toContain('by Sam');
+        expect(banner).toContain('2026');
+        await button(reopened, 'Reopen')?.trigger('click');
         await flushPromises();
-        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', false);
+        expect(patchThread).toHaveBeenCalledWith('thread-1', {
+            resolved: false,
+        });
     });
 
     it('only offers Archive once the thread is resolved', async () => {
@@ -356,18 +421,23 @@ describe('MessageDialog.vue', () => {
 
         await button(wrapper, 'Archive')?.trigger('click');
         await flushPromises();
-        expect(setThreadArchived).toHaveBeenCalledWith('active-1', true);
-        expect(setThreadResolved).not.toHaveBeenCalled();
+        expect(patchThread).toHaveBeenCalledWith('active-1', {
+            archived: true,
+        });
+        expect(patchThread).not.toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ resolved: expect.anything() }),
+        );
 
         await wrapper.findAll('.sidebar-tab')[1].trigger('click');
         await flushPromises();
-        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await wrapper.findAll('.thread-list .sidebar-item')[0].trigger('click');
         await flushPromises();
         // An archived thread has to come back before it can be unresolved.
-        expect(button(wrapper, 'Mark as Unresolved')).toBeUndefined();
+        expect(button(wrapper, 'Reopen')).toBeUndefined();
         await button(wrapper, 'Unarchive')?.trigger('click');
         await flushPromises();
-        expect(setThreadArchived).toHaveBeenCalledWith('arch-1', false);
+        expect(patchThread).toHaveBeenCalledWith('arch-1', { archived: false });
     });
 
     it.each([
@@ -393,7 +463,7 @@ describe('MessageDialog.vue', () => {
 
             expect(wrapper.find(shown).text()).toContain(label);
             expect(wrapper.find(hidden).exists()).toBe(false);
-            expect(wrapper.find('.resolved-tag').exists()).toBe(false);
+            expect(wrapper.find('.resolved-banner').exists()).toBe(false);
         },
     );
 
@@ -404,8 +474,22 @@ describe('MessageDialog.vue', () => {
         await flushPromises();
         await openThread(wrapper);
 
-        expect(setThreadResolved).toHaveBeenCalledWith('thread-1', true);
-        expect(button(wrapper, 'Mark as Resolved')).toBeUndefined();
+        expect(patchThread).toHaveBeenCalledWith('thread-1', {
+            resolved: true,
+        });
+        expect(button(wrapper, 'Mark as resolved')).toBeUndefined();
+    });
+
+    it.each([
+        { onSide: true, header: 'With Acme Corp' },
+        { onSide: false, header: 'Between Amy and Acme Corp' },
+    ])('heads the thread with $header', async ({ onSide, header }) => {
+        withThreads([thread({ to: 'Acme Corp', onSide })]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        expect(wrapper.find('.thread-to').text()).toBe(header);
     });
 
     it('shows an applicant no thread status tags', async () => {
@@ -420,8 +504,11 @@ describe('MessageDialog.vue', () => {
         await flushPromises();
         await openThread(wrapper);
 
-        expect(wrapper.find('.thread-status').exists()).toBe(false);
-        expect(setThreadResolved).not.toHaveBeenCalled();
+        expect(wrapper.find('.thread-tag').exists()).toBe(false);
+        expect(patchThread).not.toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ resolved: expect.anything() }),
+        );
     });
 
     it('offers no Resolve to a viewer on neither side', async () => {
@@ -430,7 +517,7 @@ describe('MessageDialog.vue', () => {
         await flushPromises();
         await openThread(wrapper);
 
-        expect(button(wrapper, 'Mark as Resolved')).toBeUndefined();
+        expect(button(wrapper, 'Mark as resolved')).toBeUndefined();
         expect(button(wrapper, 'Archive')).toBeDefined();
     });
 
@@ -524,6 +611,43 @@ describe('MessageDialog.vue', () => {
         );
     });
 
+    it.each([{ ctrlKey: true }, { metaKey: true }])(
+        'sends a reply with Ctrl/Cmd+Enter (%o)',
+        async (modifier) => {
+            vi.mocked(createBcapMessage).mockResolvedValue({ id: 'msg-key' });
+            withThreads([thread({ id: 'thread-key' })]);
+            const wrapper = mountComponent();
+            await flushPromises();
+            await openThread(wrapper);
+
+            const box = wrapper.find('textarea');
+            await box.setValue('Quick reply.');
+            await box.trigger('keydown', { key: 'Enter', ...modifier });
+            await flushPromises();
+
+            expect(createBcapMessage).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    messageText: 'Quick reply.',
+                    threadId: 'thread-key',
+                }),
+            );
+        },
+    );
+
+    it('does not send an empty reply with Ctrl+Enter', async () => {
+        withThreads([thread()]);
+        const wrapper = mountComponent();
+        await flushPromises();
+        await openThread(wrapper);
+
+        await wrapper
+            .find('textarea')
+            .trigger('keydown', { key: 'Enter', ctrlKey: true });
+        await flushPromises();
+
+        expect(createBcapMessage).not.toHaveBeenCalled();
+    });
+
     it('submits a REPLY to an existing thread successfully', async () => {
         vi.mocked(createBcapMessage).mockResolvedValue({
             id: 'msg-reply',
@@ -540,7 +664,7 @@ describe('MessageDialog.vue', () => {
         await wrapper.findAll('.mock-button')[0].trigger('click');
         await flushPromises();
 
-        await wrapper.findAll('.sidebar-item')[0].trigger('click');
+        await wrapper.findAll('.thread-list .sidebar-item')[0].trigger('click');
         await flushPromises();
 
         await wrapper.find('textarea').setValue('This is my reply.');

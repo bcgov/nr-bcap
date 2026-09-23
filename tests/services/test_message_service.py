@@ -112,18 +112,11 @@ class BcapMessagePrepareTests(TestCase):
         if message_type is not None:
             content[A.MESSAGE_TYPE] = {"node_value": message_type}
         if resolved_date is not None:
-            content[A.AUTHOR_RESOLVED_DATE] = {"node_value": resolved_date}
-            content[A.RECIPIENT_RESOLVED_DATE] = {"node_value": resolved_date}
-        data = {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
+            content[A.THREAD_AUTHOR_RESOLVED_DATE] = {"node_value": resolved_date}
+            content[A.THREAD_RECIPIENT_RESOLVED_DATE] = {"node_value": resolved_date}
         if thread is not None:
-            data["aliased_data"][A.RELATED_SOURCE_MESSAGE] = {
-                "aliased_data": {
-                    A.RELATED_SOURCE_MESSAGE: {
-                        "node_value": [{"resourceId": str(thread.pk)}]
-                    }
-                }
-            }
-        return data
+            content[A.THREAD] = {"node_value": [{"resourceId": str(thread.pk)}]}
+        return {"aliased_data": {A.MESSAGE_CONTENT: {"aliased_data": content}}}
 
     def _content(self, data):
         return data["aliased_data"][A.MESSAGE_CONTENT]["aliased_data"]
@@ -144,9 +137,7 @@ class BcapMessagePrepareTests(TestCase):
         return self._content(data)[A.IS_INTERNAL]["node_value"]
 
     def _thread(self, data):
-        return data["aliased_data"][A.RELATED_SOURCE_MESSAGE]["aliased_data"][
-            A.RELATED_SOURCE_MESSAGE
-        ]["node_value"][0]["resourceId"]
+        return self._content(data)[A.THREAD]["node_value"][0]["resourceId"]
 
     def test_author_is_the_posting_user(self):
         data = self._payload()
@@ -179,14 +170,26 @@ class BcapMessagePrepareTests(TestCase):
         self.service.prepare_create_payload(data, self.staff)
         self.assertIs(self._is_internal(data), False)
 
-    def test_a_create_cannot_set_the_resolution(self):
+    def test_a_create_cannot_set_the_threads_state(self):
         data = self._payload(resolved_date="2026-01-01T00:00:00Z")
+        self._content(data).update(
+            {
+                A.THREAD_PARTICIPANTS: {
+                    "node_value": [{"resourceId": str(self.applicant_contrib.pk)}]
+                },
+                A.THREAD_ANSWERED: {"node_value": True},
+                A.THREAD_LAST_MESSAGE_DATE: {"node_value": "2026-01-01T00:00:00Z"},
+            }
+        )
         self.service.prepare_create_payload(data, self.applicant)
         for alias in (
-            A.AUTHOR_RESOLVED_DATE,
-            A.AUTHOR_RESOLVED_BY,
-            A.RECIPIENT_RESOLVED_DATE,
-            A.RECIPIENT_RESOLVED_BY,
+            A.THREAD_AUTHOR_RESOLVED_DATE,
+            A.THREAD_AUTHOR_RESOLVED_BY,
+            A.THREAD_RECIPIENT_RESOLVED_DATE,
+            A.THREAD_RECIPIENT_RESOLVED_BY,
+            A.THREAD_PARTICIPANTS,
+            A.THREAD_ANSWERED,
+            A.THREAD_LAST_MESSAGE_DATE,
         ):
             self.assertIsNone(self._content(data)[alias]["node_value"])
 

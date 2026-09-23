@@ -44,15 +44,13 @@ def make_message(
             A.RECIPIENT: recipient,
             A.RESOURCE_CONTEXT: context,
             A.IS_INTERNAL: is_internal,
-            A.AUTHOR_RESOLVED_DATE: _datetime(resolved_date),
-            A.RECIPIENT_RESOLVED_DATE: _datetime(resolved_date),
+            A.THREAD_AUTHOR_RESOLVED_DATE: _datetime(resolved_date),
+            A.THREAD_RECIPIENT_RESOLVED_DATE: _datetime(resolved_date),
             A.MESSAGE_CREATION_DATE: _datetime(created),
+            A.THREAD: root,
+            A.THREAD_LAST_MESSAGE_DATE: None if root else _datetime(created),
         },
     )
-    if root is not None:
-        builder.append_blank_tile_for_group(
-            message, A.RELATED_SOURCE_MESSAGE, {A.RELATED_SOURCE_MESSAGE: root}
-        )
     message.save(**builder.save_kwargs)
     builder.claim(message)
     return message

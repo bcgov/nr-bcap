@@ -20,10 +20,12 @@
     --bc-panel: #f3f4f6;
     --bc-selected: #e6eef5;
     --bc-text: #222222;
-    --bc-internal-bg: #fef1d8;
-    --bc-internal-text: #6c4a00;
-    --bc-resolved-bg: #e3f1e6;
-    --bc-resolved-text: #2e6b3a;
+    --internal-bg: #fef1d8;
+    --internal-text: #6c4a00;
+    --external-bg: #e3ecf7;
+    --external-text: #1f4a7a;
+    --resolved-bg: #e3f1e6;
+    --resolved-text: #2e6b3a;
 }
 
 /* ---------------------------------------------------------------------------

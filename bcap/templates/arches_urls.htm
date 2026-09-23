@@ -14,6 +14,7 @@
      unlinked_contributors="{% url 'unlinked_contributors' %}"
      assignable_contributors="{% url 'assignable_contributors' %}"
      assignable_groups="{% url 'assignable_groups' %}"
+     api_process_requirement_list="{% url 'api_process_requirement_list' %}"
      api_process_requirements='(resource_id) => {return "{% url "api_process_requirement" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource='(graph_slug, resource_id) => {return "{% url "api-resource" "----p1" "00000000-0000-0000-0000-000000000000"%}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_resource_list='(graph_slug) => {return "{% url "arches_querysets:api-resources" "----p1"%}".replace("----p1", graph_slug)}'
@@ -30,7 +31,7 @@
      requirement_checklist='(requirement_id) => {return "{% url "requirement_checklist" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", requirement_id)}'
      requirement_status='(requirement_id) => {return "{% url "requirement_status" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", requirement_id)}'
      bcap_message_list_create="{% url 'bcap_message_list_create' %}"
-     bcap_message_resource_threads='(resource_id) => {return "{% url "bcap_message_resource_threads" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
+     bcap_message_threads="{% url 'bcap_message_threads' %}"
      bcap_message_resource_contributors='(resource_id) => {return "{% url "bcap_message_resource_contributors" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      bcap_message_module_unresolved='(submission_id) => {return "{% url "bcap_message_module_unresolved" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", submission_id)}'
      bcap_message_thread_messages='(thread_id) => {return "{% url "bcap_message_thread_messages" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", thread_id)}'

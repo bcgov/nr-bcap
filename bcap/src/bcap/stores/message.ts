@@ -4,10 +4,10 @@ import {
     createBcapMessage,
     getMessagesForThread,
     getSubmissionModulesUnresolvedCounts,
-    getThreadsForResource,
-    setThreadArchived,
-    setThreadResolved,
+    getThreadsForResources,
+    patchThread,
 } from '@/bcap/apps/Permit/api.ts';
+import type { PatchedBcapMessagePatch } from '@/bcap/client/types.gen.ts';
 import { inlineMessage } from '@/bcap/notify.ts';
 import type {
     MessageThread,
@@ -15,36 +15,48 @@ import type {
     NewBcapMessage,
 } from '@/bcap/types.ts';
 
-// Threads cached per resource, active and archived kept in their own maps, so the
-// dialogs on a permit page share one fetch per resource. Each dialog scopes to its
+// Each resource's latest thread lists, active and archived in their own maps, so
+// the dialogs and badges on a permit page share them. Each dialog scopes to its
 // own resource id; there is no cross-resource filtering.
 export const useMessageStore = defineStore('bcapMessages', () => {
     const active = reactive(new Map<string, MessageThread[]>());
     const archived = reactive(new Map<string, MessageThread[]>());
-    const inFlight = new Map<string, Promise<MessageThread[]>>();
     const moduleUnresolved = reactive(new Map<string, number>());
     const openMessages = ref<FormattedMessage[]>([]);
+    const hasEarlierMessages = ref(false);
     // An empty thread list is indistinguishable from a failed one, so the
     // dialog reads this to say which it is. One slot: the dialog shows a single
     // error, and whichever load failed last is the one worth reading.
     const error = ref('');
-
-    const cacheFor = (isArchived: boolean) => (isArchived ? archived : active);
-
-    function threadsFor(
-        resourceId: string,
-        isArchived = false,
-    ): MessageThread[] {
-        return cacheFor(isArchived).get(resourceId) ?? [];
-    }
-
-    function unresolvedCount(resourceId: string): number {
-        return threadsFor(resourceId).filter(
-            (thread) => thread.onSide && !thread.isResolved,
-        ).length;
-    }
-
     let moduleSubmissionId = '';
+
+    const listsFor = (isArchived: boolean) => (isArchived ? archived : active);
+
+    const threadsFor = (resourceId: string, isArchived = false) =>
+        listsFor(isArchived).get(resourceId) ?? [];
+
+    const unresolvedCount = (resourceId: string) =>
+        threadsFor(resourceId).filter((thread) => thread.needsAction).length;
+
+    const moduleUnresolvedCount = (moduleTileId: string) =>
+        moduleUnresolved.get(moduleTileId) ?? 0;
+
+    async function load(ids: string | string[], isArchived = false) {
+        const resourceIds = [ids].flat();
+        if (!resourceIds.length) return;
+        const lists = listsFor(isArchived);
+        try {
+            const byResource = await getThreadsForResources(
+                resourceIds,
+                isArchived,
+            );
+            for (const [id, threads] of byResource) lists.set(id, threads);
+            error.value = '';
+        } catch (failure) {
+            error.value = `Messages could not be loaded. ${inlineMessage(failure)}`;
+            for (const id of resourceIds) lists.set(id, []);
+        }
+    }
 
     async function loadModuleUnresolved(submissionId: string) {
         moduleSubmissionId = submissionId;
@@ -63,96 +75,67 @@ export const useMessageStore = defineStore('bcapMessages', () => {
         if (moduleSubmissionId) await loadModuleUnresolved(moduleSubmissionId);
     };
 
-    const moduleUnresolvedCount = (moduleTileId: string): number =>
-        moduleUnresolved.get(moduleTileId) ?? 0;
-
-    async function load(resourceId: string, isArchived = false) {
-        const key = `${resourceId}:${isArchived}`;
-        // Dialogs mount together; share the in-flight fetch instead of racing.
-        let pending = inFlight.get(key);
-        if (!pending) {
-            pending = getThreadsForResource(resourceId, isArchived);
-            inFlight.set(key, pending);
-        }
-        try {
-            cacheFor(isArchived).set(resourceId, await pending);
-            error.value = '';
-        } catch (failure) {
-            error.value = `Messages could not be loaded. ${inlineMessage(failure)}`;
-            cacheFor(isArchived).set(resourceId, []);
-        } finally {
-            inFlight.delete(key);
-        }
-    }
-
-    async function send(message: NewBcapMessage) {
-        await createBcapMessage(message);
-        await load(message.resourceId);
-    }
-
-    const reloadBoth = (resourceId: string) =>
-        Promise.all([load(resourceId), load(resourceId, true)]);
-
-    async function updateThread(
-        call: () => Promise<unknown>,
-        failureTitle: string,
-        resourceId: string,
-    ) {
-        try {
-            await call();
-        } catch (failure) {
-            error.value = `${failureTitle} ${inlineMessage(failure)}`;
-            return;
-        }
-        await reloadBoth(resourceId);
-    }
-
-    const setArchived = (
-        threadId: string,
-        archived: boolean,
-        resourceId: string,
-    ) =>
-        updateThread(
-            () => setThreadArchived(threadId, archived),
-            'This thread could not be archived.',
-            resourceId,
-        );
-
-    const setResolved = (
-        threadId: string,
-        resolved: boolean,
-        resourceId: string,
-    ) =>
-        updateThread(
-            () => setThreadResolved(threadId, resolved),
-            'This thread could not be updated.',
-            resourceId,
-        );
-
-    // Fetch a thread's messages into openMessages, clearing first so the open
-    // thread shows a loading gap rather than the previous thread's messages.
+    // Open a thread on its latest page, clearing first so it shows a loading gap
+    // rather than the previous thread's messages.
     async function loadThreadMessages(threadId: string) {
         openMessages.value = [];
+        await loadEarlierMessages(threadId);
+    }
+
+    async function loadEarlierMessages(threadId: string) {
         error.value = '';
         try {
-            openMessages.value = await getMessagesForThread(threadId);
+            const page = await getMessagesForThread(
+                threadId,
+                openMessages.value.length,
+            );
+            // Messages posted since the last page push this one back, so it can
+            // repeat ones already shown; skip those.
+            const shown = new Set(openMessages.value.map((m) => m.id));
+            openMessages.value = [
+                ...page.messages.filter((m) => !shown.has(m.id)),
+                ...openMessages.value,
+            ];
+            hasEarlierMessages.value = page.hasMore;
         } catch (failure) {
             error.value = `This conversation could not be loaded. ${inlineMessage(failure)}`;
         }
     }
 
+    async function send(message: NewBcapMessage) {
+        const created = await createBcapMessage(message);
+        await load(message.resourceId);
+        return created;
+    }
+
+    // Archive or resolve a thread, then reload both of the resource's lists.
+    async function updateThread(
+        threadId: string,
+        change: PatchedBcapMessagePatch,
+        resourceId: string,
+    ) {
+        try {
+            await patchThread(threadId, change);
+        } catch (failure) {
+            error.value = `This thread could not be updated. ${inlineMessage(failure)}`;
+            return;
+        }
+        await Promise.all([load(resourceId), load(resourceId, true)]);
+    }
+
     return {
+        openMessages,
+        hasEarlierMessages,
+        error,
         threadsFor,
         unresolvedCount,
+        moduleUnresolvedCount,
+        load,
         loadModuleUnresolved,
         reloadModuleUnresolved,
-        moduleUnresolvedCount,
-        openMessages,
-        error,
-        load,
-        send,
-        setArchived,
-        setResolved,
         loadThreadMessages,
+        loadEarlierMessages,
+        send,
+        updateThread,
     };
 });

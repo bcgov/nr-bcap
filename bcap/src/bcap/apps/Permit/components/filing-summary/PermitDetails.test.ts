@@ -12,12 +12,11 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     deleteDraft: vi.fn(),
     // Imported by the MessageDialog child; without them its error handlers log
     // "Error loading threads/recipients".
-    getThreadsForResource: vi.fn(() => Promise.resolve([])),
+    getThreadsForResources: vi.fn(() => Promise.resolve(new Map())),
     getContributorsForResources: vi.fn(() => Promise.resolve([])),
     // Pulled in by the message store the dialog uses.
     createBcapMessage: vi.fn(),
-    setThreadArchived: vi.fn(),
-    setThreadResolved: vi.fn(),
+    patchThread: vi.fn(),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
