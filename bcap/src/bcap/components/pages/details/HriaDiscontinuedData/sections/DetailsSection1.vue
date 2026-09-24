@@ -5,14 +5,15 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type {
-    BiogeographyTile,
-    HriaDiscontinuedDataSchema,
-} from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+    HriaDiscontinuedData,
+    HriaDiscontinuedDataBiogeographyTile,
+} from '@/bcap/client/types.gen.ts';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: HriaDiscontinuedDataSchema | undefined;
+        data: HriaDiscontinuedData | undefined;
         forceCollapsed?: boolean;
         languageCode?: string;
         loading?: boolean;
@@ -109,7 +110,7 @@ const siteDimensionsTableData = computed(() => {
     if (!dims) {
         return [];
     }
-    return [dims];
+    return [dims] as unknown as AliasedTileDataWithAudit[];
 });
 
 const hasBiogeography = computed(() => {
@@ -123,7 +124,7 @@ const hasBiogeography = computed(() => {
         return bio.length > 0;
     }
 
-    const singleBio = bio as BiogeographyTile;
+    const singleBio = bio as HriaDiscontinuedDataBiogeographyTile;
     const data = singleBio.aliased_data;
 
     if (!data) {
@@ -173,36 +174,44 @@ const hasSiteBoundaryAnnotations = computed(() => {
     return annotations && annotations.length > 0;
 });
 
-const chronologyTableData = computed(() => currentData.value?.chronology ?? []);
+const chronologyTableData = computed(
+    () =>
+        (currentData.value?.chronology ??
+            []) as unknown as AliasedTileDataWithAudit[],
+);
 
 const jurisdictionTenureTableData = computed(
-    () => currentData.value?.hria_jursidiction_and_tenure ?? [],
+    () =>
+        (currentData.value?.hria_jursidiction_and_tenure ??
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const otherMapsTableData = computed(() => {
     const maps = currentData.value?.other_maps;
     if (!maps) {
-        return [];
+        return [] as AliasedTileDataWithAudit[];
     }
     if (Array.isArray(maps)) {
-        return maps;
+        return maps as unknown as AliasedTileDataWithAudit[];
     }
-    return [maps];
+    return [maps] as unknown as AliasedTileDataWithAudit[];
 });
 
 const siteBoundaryAnnotationsTableData = computed(
-    () => currentData.value?.site_boundary_annotations ?? [],
+    () =>
+        (currentData.value?.site_boundary_annotations ??
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const biogeographyTableData = computed(() => {
     const bio = currentData.value?.biogeography;
     if (!bio) {
-        return [];
+        return [] as AliasedTileDataWithAudit[];
     }
     if (Array.isArray(bio)) {
-        return bio;
+        return bio as unknown as AliasedTileDataWithAudit[];
     }
-    return [bio];
+    return [bio] as unknown as AliasedTileDataWithAudit[];
 });
 </script>
 

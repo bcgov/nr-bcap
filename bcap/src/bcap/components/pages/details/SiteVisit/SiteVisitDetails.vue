@@ -16,8 +16,10 @@ import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVis
 import Section7 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -44,10 +46,10 @@ const {
     data: current,
     loading,
     error: visitError,
-} = useResourceData<SiteVisitSchema>('site_visit', resourceId);
+} = useResourceData<SiteVisit>('site_visit', resourceId);
 
 const { data: hriaData, error: hriaError } =
-    useRelatedResourceData<HriaDiscontinuedDataSchema>(
+    useRelatedResourceData<HriaDiscontinuedData>(
         'hria_discontinued_data',
         resourceId,
         true,
@@ -92,7 +94,9 @@ const loadError = computed(() => visitError.value || hriaError.value);
         />
         <Section4
             :data="current || undefined"
-            :hria-data="(hriaData as HriaDiscontinuedDataSchema) || undefined"
+            :hria-data="
+                (hriaData as HriaDiscontinuedData | undefined) || undefined
+            "
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
         />

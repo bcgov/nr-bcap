@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
@@ -10,15 +10,15 @@ import type { ColumnDefinition } from '@/bcgov_arches_common/components/Standard
 import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 import type {
-    AncestralRemainsTile,
-    RestrictedAncestralRemainsRemarkTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+    ArchaeologicalSiteAncestralRemainsTile,
+    ArchaeologicalSiteRestrictedAncestralRemainsRemarkTile,
+    SiteVisit,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: AncestralRemainsTile | undefined;
-        siteVisitData?: SiteVisitSchema[];
+        data: ArchaeologicalSiteAncestralRemainsTile | undefined;
+        siteVisitData?: SiteVisit[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -40,7 +40,7 @@ const siteVisitAncestralRemainsData = computed(() => {
     props.siteVisitData.forEach((sv) => {
         const remainsRows = sv.aliased_data?.ancestral_remains ?? [];
         remainsRows.forEach((tile) => {
-            remains.push(tile);
+            remains.push(tile as unknown as AliasedTileData);
         });
     });
     return remains;
@@ -63,7 +63,7 @@ const siteVisitAncestralRemainsColumns = computed<ColumnDefinition[]>(() => [
 ]);
 
 const restrictedRemainsDataRaw = computed(
-    (): RestrictedAncestralRemainsRemarkTile[] => {
+    (): ArchaeologicalSiteRestrictedAncestralRemainsRemarkTile[] => {
         const remark =
             props.data?.aliased_data?.restricted_ancestral_remains_remark;
         if (!remark) return [];
@@ -73,7 +73,7 @@ const restrictedRemainsDataRaw = computed(
 );
 
 const { processedData: restrictedRemainsTableData } = useTileEditLog(
-    restrictedRemainsDataRaw,
+    restrictedRemainsDataRaw as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 

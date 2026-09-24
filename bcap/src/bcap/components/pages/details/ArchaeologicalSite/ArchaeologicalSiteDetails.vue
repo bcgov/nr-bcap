@@ -17,11 +17,12 @@ import Section7 from '@/bcap/components/pages/details/ArchaeologicalSite/section
 import Section8 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue';
 import Section9 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { PublicationSchema } from '@/bcap/schema/PublicationSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    ArchaeologicalSite,
+    SiteVisit,
+    Publication,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 import DataTable from 'primevue/datatable';
 
 const props = withDefaults(
@@ -49,25 +50,25 @@ const {
     data: currentData,
     loading: siteDataLoading,
     error: siteError,
-} = useResourceData<ArchaeologySiteSchema>('archaeological_site', resourceId);
+} = useResourceData<ArchaeologicalSite>('archaeological_site', resourceId);
 
 const {
     data: siteVisitData,
     loading: siteVisitDataLoading,
     error: siteVisitError,
-} = useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
+} = useRelatedResourceData<SiteVisit>('site_visit', resourceId);
 
 const {
     data: publicationData,
     loading: publicationDataLoading,
     error: publicationError,
-} = useRelatedResourceData<PublicationSchema>('publication', resourceId);
+} = useRelatedResourceData<Publication>('publication', resourceId);
 
 const {
     data: childSiteData,
     loading: childSiteDataLoading,
     error: childSiteError,
-} = useRelatedResourceData<ArchaeologySiteSchema>(
+} = useRelatedResourceData<ArchaeologicalSite>(
     'archaeological_site',
     resourceId,
 );
@@ -76,7 +77,7 @@ const {
     data: hriaDiscontinuedData,
     loading: hriaDataLoading,
     error: hriaError,
-} = useRelatedResourceData<HriaDiscontinuedDataSchema>(
+} = useRelatedResourceData<HriaDiscontinuedData>(
     'hria_discontinued_data',
     resourceId,
     true,
@@ -101,23 +102,23 @@ watch(currentData, () => {
 });
 
 const typedCurrentData = computed(
-    () => currentData.value as ArchaeologySiteSchema | undefined,
+    () => currentData.value as ArchaeologicalSite | undefined,
 );
 
 const typedSiteVisitData = computed(
-    () => (siteVisitData.value || []) as SiteVisitSchema[],
+    () => (siteVisitData.value || []) as SiteVisit[],
 );
 
 const typedChildSiteData = computed(
-    () => childSiteData.value as ArchaeologySiteSchema[] | undefined,
+    () => childSiteData.value as ArchaeologicalSite[] | undefined,
 );
 
 const typedHriaData = computed(
-    () => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined,
+    () => hriaDiscontinuedData.value as HriaDiscontinuedData | undefined,
 );
 
 const typedPublicationData = computed(
-    () => publicationData.value as PublicationSchema[] | undefined,
+    () => publicationData.value as Publication[] | undefined,
 );
 </script>
 
@@ -164,8 +165,8 @@ const typedPublicationData = computed(
         />
         <Section4
             :data="
-                (typedCurrentData?.aliased_data?.heritage_site_location?.[0]
-                    ?.aliased_data as unknown as SiteLocationTile) || undefined
+                typedCurrentData?.aliased_data?.heritage_site_location?.[0]
+                    ?.aliased_data ?? undefined
             "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
@@ -175,7 +176,7 @@ const typedPublicationData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section5
-            :data="typedCurrentData?.aliased_data?.site_boundary"
+            :data="typedCurrentData?.aliased_data?.site_boundary ?? undefined"
             :hria-data="typedHriaData"
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
@@ -183,7 +184,9 @@ const typedPublicationData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section6
-            :data="typedCurrentData?.aliased_data?.archaeological_data"
+            :data="
+                typedCurrentData?.aliased_data?.archaeological_data ?? undefined
+            "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
@@ -192,7 +195,9 @@ const typedPublicationData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section7
-            :data="typedCurrentData?.aliased_data?.ancestral_remains"
+            :data="
+                typedCurrentData?.aliased_data?.ancestral_remains ?? undefined
+            "
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading || siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
@@ -202,7 +207,7 @@ const typedPublicationData = computed(
         <Section8
             :data="
                 typedCurrentData?.aliased_data
-                    ?.remarks_and_restricted_information
+                    ?.remarks_and_restricted_information ?? undefined
             "
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
@@ -211,7 +216,9 @@ const typedPublicationData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section9
-            :data="typedCurrentData?.aliased_data?.related_documents"
+            :data="
+                typedCurrentData?.aliased_data?.related_documents ?? undefined
+            "
             :hria-data="typedHriaData"
             :publication-data="typedPublicationData"
             :loading="

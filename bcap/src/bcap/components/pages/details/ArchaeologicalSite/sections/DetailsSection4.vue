@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
@@ -16,15 +16,17 @@ import type {
     AliasedTileData,
 } from '@/arches_vue_components/types.ts';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
-import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    ArchaeologicalSiteHeritageSiteLocationAliasedData,
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteLocationTile | undefined;
-        siteVisitData: SiteVisitSchema[];
-        hriaData: HriaDiscontinuedDataSchema | undefined;
+        data: ArchaeologicalSiteHeritageSiteLocationAliasedData | undefined;
+        siteVisitData: SiteVisit[];
+        hriaData: HriaDiscontinuedData | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -43,17 +45,23 @@ const props = withDefaults(
 const locationAndAccess = computed(() => {
     if (!props.siteVisitData?.length) return [];
 
-    return props.siteVisitData
-        .map((visit) => ({
-            location:
-                visit.aliased_data?.site_visit_location?.aliased_data
-                    ?.location_and_access,
-            visitName: visit.descriptors?.en?.name,
-        }))
-        .filter(
-            (item) =>
-                item.location && !isEmpty(item.location as AliasedNodeData),
-        );
+    return props.siteVisitData.flatMap((visit) => {
+        const locations = visit.aliased_data?.site_visit_location;
+        if (!Array.isArray(locations)) return [];
+        return locations
+            .map((loc) => ({
+                location: loc.aliased_data?.location_and_access,
+                accuracyRemarks: loc.aliased_data?.accuracy_remarks,
+                visitName: visit.descriptors?.en?.name,
+            }))
+            .filter(
+                (item) =>
+                    (item.location &&
+                        !isEmpty(item.location as AliasedNodeData)) ||
+                    (item.accuracyRemarks &&
+                        !isEmpty(item.accuracyRemarks as AliasedNodeData)),
+            );
+    });
 });
 
 const biogeographyColumns = [
@@ -322,8 +330,8 @@ const hasGisElevation = computed(() => {
     const elev = props.data?.elevation?.aliased_data;
     return (
         elev &&
-        (!isEmpty(elev.gis_lower_elevation) ||
-            !isEmpty(elev.gis_upper_elevation))
+        (!isEmpty(elev.gis_lower_elevation as AliasedNodeData) ||
+            !isEmpty(elev.gis_upper_elevation as AliasedNodeData))
     );
 });
 
@@ -372,7 +380,7 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
 );
 
 const { processedData: elevationCommentsTableData } = useTileEditLog(
-    elevationCommentsData,
+    elevationCommentsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 </script>
@@ -590,8 +598,9 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             <StandardDataTable
                                 v-if="hasDiscontinuedTenure"
                                 :table-data="
-                                    props.hriaData?.aliased_data
-                                        ?.hria_jursidiction_and_tenure ?? []
+                                    (props.hriaData?.aliased_data
+                                        ?.hria_jursidiction_and_tenure ??
+                                        []) as unknown as AliasedTileDataWithAudit[]
                                 "
                                 :column-definitions="discontinuedTenureColumns"
                                 :initial-sort-field-index="4"
@@ -617,17 +626,44 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             v-for="(item, index) in locationAndAccess"
                             :key="index"
                         >
-                            <dt>
-                                {{ item.visitName || `Visit ${index + 1}` }} -
-                                Location and Access
-                            </dt>
-                            <dd>
-                                {{
-                                    getDisplayValue(
-                                        item.location as AliasedNodeData,
+                            <template
+                                v-if="
+                                    item.location &&
+                                    !isEmpty(item.location as AliasedNodeData)
+                                "
+                            >
+                                <dt>
+                                    {{ item.visitName || `Visit ${index + 1}` }}
+                                    - Location and Access
+                                </dt>
+                                <dd
+                                    v-html="
+                                        getDisplayValue(
+                                            item.location as AliasedNodeData,
+                                        )
+                                    "
+                                />
+                            </template>
+                            <template
+                                v-if="
+                                    item.accuracyRemarks &&
+                                    !isEmpty(
+                                        item.accuracyRemarks as AliasedNodeData,
                                     )
-                                }}
-                            </dd>
+                                "
+                            >
+                                <dt>
+                                    {{ item.visitName || `Visit ${index + 1}` }}
+                                    - Accuracy Remarks
+                                </dt>
+                                <dd
+                                    v-html="
+                                        getDisplayValue(
+                                            item.accuracyRemarks as AliasedNodeData,
+                                        )
+                                    "
+                                />
+                            </template>
                         </template>
                     </dl>
                     <EmptyState
@@ -767,7 +803,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -778,7 +814,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -786,7 +822,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             getDisplayValue(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         }}
                                     </dd>
@@ -796,7 +832,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -807,7 +843,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -815,7 +851,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             getDisplayValue(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         }}
                                     </dd>

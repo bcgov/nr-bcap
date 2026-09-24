@@ -13,7 +13,7 @@ import {
 } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
@@ -21,7 +21,7 @@ import type {
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         sectionTitle?: string;
         loading?: boolean;
         visible?: boolean;
@@ -37,7 +37,9 @@ const props = withDefaults(
     },
 );
 
-const details = computed(() => props.data?.aliased_data?.site_visit_details);
+const details = computed(
+    () => props.data?.aliased_data?.site_visit_details ?? undefined,
+);
 const teamTile = computed(() => details.value?.aliased_data?.site_visit_team);
 const teamMembers = computed(
     () => teamTile.value?.aliased_data?.team_member || [],
@@ -49,7 +51,9 @@ const siteFormAuthorsField = computed(() => {
 
 const associatedPermitIds = computed(() => {
     const permitField = details.value?.aliased_data?.associated_permit;
-    return (permitField?.details ?? []).map((detail) => detail.resource_id);
+    return (permitField?.details ?? [])
+        .map((detail) => detail.resource_id)
+        .filter((id): id is string => id !== null);
 });
 
 const { data: permitData, error: permitError } = useResourceList<
@@ -63,7 +67,7 @@ const permitDetails = computed(() => {
 });
 
 const { processedData: teamMembersTableData } = useTileEditLog(
-    teamMembers,
+    teamMembers as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
     toRef(props, 'editLogData'),
 );
 
@@ -73,7 +77,7 @@ const { processedData: permitDetailsTableData } = useTileEditLog(
 );
 
 const { processedData: siteVisitDetailsData } = useSingleTileEditLog(
-    details,
+    details as unknown as Ref<AliasedTileData | undefined>,
     toRef(props, 'editLogData'),
 );
 
