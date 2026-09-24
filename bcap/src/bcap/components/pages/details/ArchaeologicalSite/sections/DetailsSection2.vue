@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import InlineError from '@/bcap/components/InlineError.vue';
@@ -183,21 +183,18 @@ const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
     error: decisionError,
-} = useHierarchicalData(
-    decisionData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
-    {
-        sourceField: 'site_decision',
-        hierarchicalFields: ['site_decision', 'decision_criteria'],
-        flatFields: [
-            'decision_date',
-            'decision_made_by',
-            'decision_description',
-            'decision_registration_status',
-            'recommendation_date',
-            'recommended_by',
-        ],
-    },
-);
+} = useHierarchicalData(decisionData as Ref<AliasedTileData[]>, {
+    sourceField: 'site_decision',
+    hierarchicalFields: ['site_decision', 'decision_criteria'],
+    flatFields: [
+        'decision_date',
+        'decision_made_by',
+        'decision_description',
+        'decision_registration_status',
+        'recommendation_date',
+        'recommended_by',
+    ],
+});
 
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
@@ -238,26 +235,22 @@ const siteAlertDataRaw = computed(() => {
 });
 
 const { processedData: authorityTableData } = useTileEditLog(
-    authorityData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
+    authorityData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: siteNamesTableData } = useTileEditLog(
-    siteNamesData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
+    siteNamesData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: temporaryNumbersTableData } = useTileEditLog(
-    temporaryNumbersData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    temporaryNumbersData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: alertTableData } = useTileEditLog(
-    siteAlertDataRaw as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    siteAlertDataRaw as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
@@ -380,9 +380,7 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
 );
 
 const { processedData: elevationCommentsTableData } = useTileEditLog(
-    elevationCommentsData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    elevationCommentsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 </script>

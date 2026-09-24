@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue } from '@/bcap/util.ts';
@@ -239,44 +239,32 @@ const restrictedDocumentsExpanded = computed(() => {
 });
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
-    generalRemarksData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    generalRemarksData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: hcaContraventionsTableData } = useTileEditLog(
-    hcaContraventionsData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    hcaContraventionsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: convictionsTableData } = useTileEditLog(
-    convictionsData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    convictionsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedInfoData } = useTileEditLog(
-    restrictedInfoDataRaw as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    restrictedInfoDataRaw as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: contraventionDocumentsProcessed } = useTileEditLog(
-    contraventionDocumentsExpanded as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    contraventionDocumentsExpanded as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedDocumentsProcessed } = useTileEditLog(
-    restrictedDocumentsExpanded as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    restrictedDocumentsExpanded as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 

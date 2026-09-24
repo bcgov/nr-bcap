@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import InlineError from '@/bcap/components/InlineError.vue';
@@ -142,18 +142,15 @@ const {
     processedData: typologyTableData,
     isProcessing,
     error: typologyError,
-} = useHierarchicalData(
-    typologyData as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
-    {
-        sourceField: 'typology_class',
-        hierarchicalFields: [
-            'typology_class',
-            'site_type',
-            'site_subtype',
-            'typology_descriptor',
-        ],
-    },
-);
+} = useHierarchicalData(typologyData as Ref<AliasedTileData[]>, {
+    sourceField: 'typology_class',
+    hierarchicalFields: [
+        'typology_class',
+        'site_type',
+        'site_subtype',
+        'typology_descriptor',
+    ],
+});
 
 const typologyRemarksData = computed(() => {
     if (!currentData.value?.site_typology) return [];
@@ -176,9 +173,7 @@ const typologyRemarksData = computed(() => {
 });
 
 const { processedData: typologyRemarksTableData } = useTileEditLog(
-    typologyRemarksData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    typologyRemarksData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 

@@ -1,9 +1,8 @@
 import { mount } from '@vue/test-utils';
 
-vi.mock(
-    '@/bcgov_arches_common/composables/useMapFrameAutoCentre.ts',
-    () => ({ useMapFrameAutoCentre: () => undefined }),
-);
+vi.mock('@/bcgov_arches_common/composables/useMapFrameAutoCentre.ts', () => ({
+    useMapFrameAutoCentre: () => undefined,
+}));
 
 vi.mock(
     '@/bcgov_arches_common/widgets/SimpleMapWidget/SimpleMapWidget.vue',

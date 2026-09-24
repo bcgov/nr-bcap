@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
@@ -42,9 +42,7 @@ const currentSiteBoundaryData = computed(() => {
 });
 
 const { processedData: siteBoundaryWithAudit } = useTileEditLog(
-    currentSiteBoundaryData as unknown as ReturnType<
-        typeof computed<AliasedTileData[]>
-    >,
+    currentSiteBoundaryData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 

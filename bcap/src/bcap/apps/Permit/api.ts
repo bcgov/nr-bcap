@@ -476,7 +476,6 @@ export const createBcapMessage = async ({
                 resource_context: {
                     node_value: [{ resourceId }],
                 },
-                message_author: null,
                 message_subject: topic
                     ? { node_value: localized(topic) }
                     : null,
@@ -644,7 +643,6 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
                 aliased_data: {
                     message_author: null,
                     message_content: null,
-                    message_author: null,
                     resource_context: null,
                     message_subject: null,
                     message_type: null,
