@@ -219,8 +219,9 @@ class ThreadService:
         """After a new message: date the thread by it, add the poster to the
         thread's participants unless they or a group of theirs already are, mark
         it answered if they are not on the starter's side, reopen the other
-        side, resolve an applicant poster's own side (staff resolve theirs by
-        hand), and bring the thread back for everyone who archived it."""
+        side, resolve an applicant poster's own side (a staff poster's reopens,
+        and staff resolve it by hand), and bring the thread back for everyone
+        who archived it."""
         viewer = MessageViewer.for_user(poster)
         thread_id = G.thread_id(message_id)
         tile = self._root_tile(thread_id)
@@ -236,7 +237,7 @@ class ThreadService:
         side = viewer.thread_side(root)
         if side != AUTHOR:
             tile.data[G.node(A.THREAD_ANSWERED)] = True
-        resolutions = {each: None for each in (AUTHOR, RECIPIENT) if each != side}
+        resolutions = {AUTHOR: None, RECIPIENT: None}
         if not viewer.staff:
             resolutions[side] = self._resolved_now_by(viewer)
         self._apply_resolutions(tile, resolutions)

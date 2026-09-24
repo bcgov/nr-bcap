@@ -355,14 +355,12 @@ class BcapMessageResolutionTests(TestCase):
         with self.assertRaises(PermissionDenied):
             self._resolve(self.pat, self.internal)
 
-    def test_posting_reopens_the_other_side_and_leaves_the_posters(self):
+    def test_staff_posting_reopens_both_sides(self):
         self._resolve(self.applicant)
         self._resolve(self.staff)
         self.service.after_post(self.reply.pk, self.staff)
         self.assertEqual(resolution(self.root, "author"), (None, None))
-        self.assertEqual(
-            resolution(self.root, "recipient")[1], str(self.staff_contrib.pk)
-        )
+        self.assertEqual(resolution(self.root, "recipient"), (None, None))
 
     def test_staff_posting_leaves_their_side_open(self):
         self.service.after_post(self.reply.pk, self.staff)
@@ -476,7 +474,7 @@ class BcapMessageUnresolvedCountTests(TestCase):
     """unresolved_counts_by_context counts, per resource, the viewer's visible,
     unarchived threads still open on their side. Each message is posted the way
     the create view does: it reopens the other side, and an applicant's own
-    side resolves as they send while staff resolve by hand. Roots only, so a
+    side resolves as they send while staff's reopens. Roots only, so a
     thread counts once."""
 
     @classmethod
