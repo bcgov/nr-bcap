@@ -6,7 +6,7 @@ import 'primeicons/primeicons.css';
 import Section1 from '@/bcap/components/pages/details/Repository/sections/DetailsSection1.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { RepositorySchema } from '@/bcap/schema/RepositorySchema.ts';
+import type { Repository } from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -21,7 +21,7 @@ const props = withDefaults(
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
-const { data: current, loading } = useResourceData<RepositorySchema>(
+const { data: current, loading } = useResourceData<Repository>(
     'repository',
     resourceId,
 );

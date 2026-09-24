@@ -641,8 +641,8 @@ export const markMessageAsRead = async (messageId: string): Promise<void> => {
         aliased_data: {
             message_content: {
                 aliased_data: {
-                    message_content: null,
                     message_author: null,
+                    message_content: null,
                     resource_context: null,
                     message_subject: null,
                     message_type: null,
