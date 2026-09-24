@@ -92,13 +92,10 @@ describe('checklist links', () => {
         );
     });
 
-    it('appends the permit, and the staff flag only when truthy', () => {
+    it('appends the permit', () => {
         // Assumes the href already carries a query.
-        expect(rows.withPermitContext('/x?a=1', 'permit-1', '')).toBe(
+        expect(rows.withPermitContext('/x?a=1', 'permit-1')).toBe(
             '/x?a=1&permit=permit-1',
-        );
-        expect(rows.withPermitContext('/x?a=1', 'permit-1', '1')).toBe(
-            '/x?a=1&permit=permit-1&staff=1',
         );
     });
 });

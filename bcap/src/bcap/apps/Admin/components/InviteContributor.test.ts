@@ -20,6 +20,7 @@ vi.mock('primevue/usetoast', () => ({
 }));
 
 import InviteContributor from './InviteContributor.vue';
+import { ApiError } from '@/bcap/api.ts';
 
 // Minimal v-model-capable stand-ins for the PrimeVue widgets so state can be
 // driven via $emit and the Button's disabled attribute can be read.
@@ -77,6 +78,7 @@ const setGroups = (w: ReturnType<typeof mountInvite>, groups: string[]) =>
 
 beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     getUnlinkedContributors.mockResolvedValue([]);
     getAssignableGroups.mockResolvedValue(['Submitter', 'Permit Decider']);
 });
@@ -89,11 +91,14 @@ describe('on mount', () => {
         expect(getAssignableGroups).toHaveBeenCalled();
     });
 
-    it('shows an inline error when loading fails', async () => {
+    it('shows an inline error, not the raw text, when loading fails', async () => {
         getAssignableGroups.mockRejectedValue(new Error('Boom'));
         const wrapper = mountInvite();
         await flushPromises();
-        expect(wrapper.find('.error-msg').text()).toBe('Boom');
+        const error = wrapper.find('.inline-error').text();
+        expect(error).toContain('The invite form could not be loaded.');
+        expect(error).toContain('Please try again');
+        expect(error).not.toContain('Boom');
     });
 });
 
@@ -153,7 +158,7 @@ describe('submit', () => {
 
     it('shows the error message inline, not as a toast', async () => {
         issueRegistrationLink.mockRejectedValue(
-            new Error('Enter a valid email address.'),
+            new ApiError('Enter a valid email address.', 400),
         );
         const wrapper = mountInvite();
         await flushPromises();
@@ -163,9 +168,9 @@ describe('submit', () => {
         await wrapper.find('button').trigger('click');
         await flushPromises();
 
-        expect(wrapper.find('.error-msg').text()).toBe(
-            'Enter a valid email address.',
-        );
+        const error = wrapper.find('.inline-error').text();
+        expect(error).toContain('The signup link could not be generated.');
+        expect(error).toContain('Enter a valid email address.');
         expect(toastAdd).not.toHaveBeenCalled();
     });
 });

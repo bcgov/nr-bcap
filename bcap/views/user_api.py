@@ -1,33 +1,26 @@
 """User-profile API endpoint.
 
-Same thin view → serializer layering and drf-spectacular self-documentation
-as the dashboard API (see ``bcap.views.dashboard_api`` for the full rationale).
+The response comes from bcgov_arches_common; the route's gate and its OpenAPI
+entry are BCAP's, since the shared package carries no drf-spectacular.
 """
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
 from drf_spectacular.utils import extend_schema
 
-from arches.app.models import models
+from bcgov_arches_common.views.api.user import (
+    UserResponseSerializer,
+    UserView,
+)
 
-from bcap.serializers.dashboard_serializers import UserProfileResponseSerializer
+from bcap.permissions.route_guards import SubmitterOrInternal
 
 
-class UserProfile(APIView):
-    authentication_classes = [SessionAuthentication]
-
-    @extend_schema(
-        tags=["External: user_profile"],
-        responses=UserProfileResponseSerializer,
-        description=(
-            "Returns the authenticated user's profile, group "
-            "memberships, and linked Contributor resource id."
-        ),
-    )
-    def get(self, request):
-        user_profile = models.User.objects.get(id=request.user.pk)
-        serializer = UserProfileResponseSerializer(
-            user_profile, context={"request": request}
-        )
-        return Response(serializer.data)
+@extend_schema(
+    tags=["External: user"],
+    responses=UserResponseSerializer,
+    description=(
+        "Returns the authenticated user's name, group memberships, and "
+        "whether they are a superuser."
+    ),
+)
+class BCAPUserView(UserView):
+    permission_classes = [SubmitterOrInternal]

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import {
     useResourceData,
     useRelatedResourceData,
@@ -45,27 +46,51 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: currentData, loading: siteDataLoading } =
-    useResourceData<ArchaeologicalSite>('archaeological_site', resourceId);
+const {
+    data: currentData,
+    loading: siteDataLoading,
+    error: siteError,
+} = useResourceData<ArchaeologicalSite>('archaeological_site', resourceId);
 
-const { data: siteVisitData, loading: siteVisitDataLoading } =
-    useRelatedResourceData<SiteVisit>('site_visit', resourceId);
+const {
+    data: siteVisitData,
+    loading: siteVisitDataLoading,
+    error: siteVisitError,
+} = useRelatedResourceData<SiteVisit>('site_visit', resourceId);
 
-const { data: publicationData, loading: publicationDataLoading } =
-    useRelatedResourceData<Publication>('publication', resourceId);
+const {
+    data: publicationData,
+    loading: publicationDataLoading,
+    error: publicationError,
+} = useRelatedResourceData<Publication>('publication', resourceId);
 
-const { data: childSiteData, loading: childSiteDataLoading } =
-    useRelatedResourceData<ArchaeologicalSite>(
-        'archaeological_site',
-        resourceId,
-    );
+const {
+    data: childSiteData,
+    loading: childSiteDataLoading,
+    error: childSiteError,
+} = useRelatedResourceData<ArchaeologicalSite>(
+    'archaeological_site',
+    resourceId,
+);
 
-const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
-    useRelatedResourceData<HriaDiscontinuedData>(
-        'hria_discontinued_data',
-        resourceId,
-        true,
-    );
+const {
+    data: hriaDiscontinuedData,
+    loading: hriaDataLoading,
+    error: hriaError,
+} = useRelatedResourceData<HriaDiscontinuedData>(
+    'hria_discontinued_data',
+    resourceId,
+    true,
+);
+
+const loadError = computed(
+    () =>
+        siteError.value ||
+        siteVisitError.value ||
+        publicationError.value ||
+        childSiteError.value ||
+        hriaError.value,
+);
 
 watch(currentData, () => {
     if (currentData.value) {
@@ -107,6 +132,11 @@ const typedPublicationData = computed(
     </div>
 
     <div class="container">
+        <InlineError
+            v-if="loadError"
+            title="Some of this record could not be loaded."
+            :detail="loadError"
+        />
         <Section1
             :data="typedCurrentData"
             :loading="siteDataLoading"

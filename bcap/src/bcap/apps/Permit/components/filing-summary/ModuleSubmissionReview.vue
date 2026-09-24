@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { reactive, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { reactive, onMounted, computed, type Component } from 'vue';
+import { useRouter } from 'vue-router';
 import Panel from 'primevue/panel';
 import ProgressSpinner from 'primevue/progressspinner';
-import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import { fetchResourceData } from '@/bcap/apps/Permit/api.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
@@ -11,22 +10,34 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadcrumbs.vue';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import DocumentSubmissionReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue';
+import InvestigationReview from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
+import GenericReview from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 const router = useRouter();
-const route = useRoute();
 const headerStore = usePermitHeaderStore();
 const nav = headerStore.state.review;
 const title = nav?.title || 'Submission';
 
-const crumbs = computed(() =>
-    permitCrumbs(nav?.permitId, route.query.staff, title),
-);
+const ActiveReviewComponent = computed(() => {
+    const componentMap: Record<string, Component> = {
+        [GraphSlug.DocumentSubmission]: DocumentSubmissionReview,
+        [GraphSlug.Investigation]: InvestigationReview,
+    };
+    return componentMap[nav?.graph ?? ''] ?? GenericReview;
+});
+
+const crumbs = computed(() => permitCrumbs(nav?.permitId, title));
 
 // Set by the permit view; loaded here only if this page was opened cold.
 const header = computed(() => headerStore.state.header);
 
 const state = reactive({
     loading: true,
+    loadError: '',
     data: null as ArchesDraftData | null,
 });
 
@@ -40,7 +51,8 @@ onMounted(async () => {
         headerStore.load(nav.permitId);
         state.data = await fetchResourceData(nav.graph, nav.resourceId);
     } catch (error) {
-        console.error('Failed to load submission:', error);
+        // The slot has its own title, so the detail is just what the server said.
+        state.loadError = inlineMessage(error);
     } finally {
         state.loading = false;
     }
@@ -68,7 +80,15 @@ onMounted(async () => {
                 >
                     <ProgressSpinner />
                 </div>
-                <Step99_Review
+
+                <InlineError
+                    v-else-if="state.loadError"
+                    title="This submission could not be loaded."
+                    :detail="state.loadError"
+                />
+
+                <component
+                    :is="ActiveReviewComponent"
                     v-else
                     :is-submitted-view="true"
                     :resource-data="state.data"

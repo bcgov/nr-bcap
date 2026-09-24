@@ -2,6 +2,7 @@
 import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import type { ApiHcaPermitListResponse } from '@/bcap/client/types.gen.ts';
@@ -55,10 +56,9 @@ const associatedPermitIds = computed(() => {
         .filter((id): id is string => id !== null);
 });
 
-const { data: permitData } = useResourceList<Ref<ApiHcaPermitListResponse>>(
-    'hca_permit',
-    associatedPermitIds,
-);
+const { data: permitData, error: permitError } = useResourceList<
+    Ref<ApiHcaPermitListResponse>
+>('hca_permit', associatedPermitIds);
 
 const permitDetails = computed(() => {
     return (permitData?.value?.results.map(
@@ -189,7 +189,13 @@ const permitDetailsColumns = computed(() => [
                             :column-definitions="siteVisitDetailsColumns"
                             :table-data="siteVisitDetailsTableData"
                         />
+                        <InlineError
+                            v-if="permitError"
+                            title="The associated permits could not be loaded."
+                            :detail="permitError"
+                        />
                         <StandardDataTable
+                            v-else
                             :column-definitions="permitDetailsColumns"
                             :table-data="permitDetailsTableData"
                         />

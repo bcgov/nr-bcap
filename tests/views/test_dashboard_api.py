@@ -1,6 +1,8 @@
+from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from bcap.permissions.groups import Groups
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
@@ -44,6 +46,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
         graph = build_permit_graph()
@@ -182,7 +185,8 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual(card["id"], str(self.mine.pk))
         self.assertFalse(card["is_draft"])
         self.assertEqual(card["status"], "Permit Active")
-        self.assertEqual(card["created_by_name"], "testuser")
+        # Blank rather than the username: a login identifier is not a name.
+        self.assertEqual(card["created_by_name"], "Unknown")
         self.assertEqual(card["project_name"], "My App")
         self.assertRegex(card["application_number"], r"^APP-\d+$")
         self.assertEqual(card["submission_type"], "Site Visit")

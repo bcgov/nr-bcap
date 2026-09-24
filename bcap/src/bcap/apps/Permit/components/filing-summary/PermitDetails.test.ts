@@ -2,6 +2,8 @@ import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
 import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
+import type { UserResponse } from '@/bcap/client/types.gen.ts';
 import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
@@ -40,10 +42,14 @@ const mockPush = vi.fn();
 const mockQuery = vi.hoisted(() => ({
     value: {} as Record<string, string>,
 }));
+const mockMeta = vi.hoisted(() => ({
+    value: {} as Record<string, unknown>,
+}));
 vi.mock('vue-router', () => ({
     useRoute: () => ({
         params: { id: 'mock-permit-123' },
         query: mockQuery.value,
+        meta: mockMeta.value,
     }),
     useRouter: () => ({
         push: mockPush,
@@ -92,6 +98,7 @@ describe('PermitDetails.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockQuery.value = {};
+        mockMeta.value = {};
 
         vi.mocked(fetchPermitDetails).mockResolvedValue(
             mockPermitData as unknown as PermitApplicationResourceAliasedData,
@@ -169,9 +176,9 @@ describe('PermitDetails.vue', () => {
         expect(fetchDrafts).toHaveBeenCalledWith('mock-permit-123');
 
         const vm = wrapper.vm as unknown as {
-            state: { investigationDrafts: unknown[] };
+            state: { permitDrafts: unknown[] };
         };
-        expect(vm.state.investigationDrafts).toHaveLength(1);
+        expect(vm.state.permitDrafts).toHaveLength(1);
     });
 
     it('switches the content when a different module is selected', async () => {
@@ -309,7 +316,10 @@ describe('PermitDetails.vue', () => {
 
         it('gives staff a read-only draft list', async () => {
             twoDrafts();
-            mockQuery.value = { staff: 'true' };
+            mockMeta.value = { requiresInternal: true };
+            useUserStore().state.profile = {
+                is_superuser: true,
+            } as UserResponse;
 
             const wrapper = mount(PermitDetails, globalMountOptions);
             await flushPromises();
@@ -318,6 +328,34 @@ describe('PermitDetails.vue', () => {
                 'View draft',
             );
             expect(wrapper.find('.draft-delete').exists()).toBe(false);
+        });
+    });
+
+    // The permit and its drafts load in parallel into one error slot.
+    describe('load failures', () => {
+        it('reports a failed draft list', async () => {
+            vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            expect(wrapper.find('.inline-error').text()).toContain(
+                'Your drafts could not be loaded.',
+            );
+        });
+
+        it('keeps the permit message when both fail', async () => {
+            vi.mocked(fetchPermitDetails).mockRejectedValue(new Error('boom'));
+            vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
+
+            const wrapper = mount(PermitDetails, globalMountOptions);
+            await flushPromises();
+
+            const errors = wrapper.findAll('.inline-error');
+            expect(errors).toHaveLength(1);
+            // One outage, and the permit is the headline; the drafts message
+            // would otherwise land on top of it.
+            expect(errors[0].text()).not.toContain('Your drafts');
         });
     });
 });

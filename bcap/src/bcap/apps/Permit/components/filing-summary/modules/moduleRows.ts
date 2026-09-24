@@ -4,7 +4,6 @@ import type {
     ProcessRequirement,
     PermitApplicationProcessModuleTile,
 } from '@/bcap/client/types.gen.ts';
-import type { QueryParam } from '@/bcap/types.ts';
 
 export interface RequirementItem {
     name: string;
@@ -54,13 +53,10 @@ export const checklistHref = (id: string): string =>
 export const editChecklistHref = (id: string): string =>
     `${arches.urls.plugin('internal-permit-dashboard')}/EditChecklist?id=${id}`;
 
-// The checklist pages open in their own tab, so they need the permit (and the
-// staff flag) on the URL to breadcrumb back to it.
-export const withPermitContext = (
-    href: string,
-    permitId: string,
-    staff: QueryParam,
-): string => `${href}&permit=${permitId}${staff ? `&staff=${staff}` : ''}`;
+// The checklist pages open in their own tab, so they need the permit on the URL
+// to breadcrumb back to it.
+export const withPermitContext = (href: string, permitId: string): string =>
+    `${href}&permit=${permitId}`;
 
 const hrefFor = (type: string, id: string): string => {
     if (!id) return '';

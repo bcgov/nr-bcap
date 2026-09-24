@@ -61,6 +61,13 @@ SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
+# ClamAV virus scanning of uploads
+CLAMAV_ENABLED = (
+    str(get_env_variable("CLAMAV_ENABLED", is_optional=True)).lower() == "true"
+)
+CLAMAV_HOST = get_env_variable("CLAMAV_HOST", is_optional=True)
+CLAMAV_PORT = get_env_variable("CLAMAV_PORT", is_optional=True) or 3310
+
 FILE_TYPE_CHECKING = "lenient"
 FILE_TYPES = [
     "csv",
@@ -218,6 +225,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "django_hosts",
     "arches",
     "arches.app.models",
@@ -250,6 +258,13 @@ INSTALLED_APPS += (
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "bcap.views.exception_handler.bcap_exception_handler",
+    "DEFAULT_PERMISSION_CLASSES": ["bcap.permissions.route_guards.Internal"],
+    # Session cookies only. DRF's own default adds BasicAuthentication, which
+    # would accept a password on every API route.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication"
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -258,6 +273,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "2.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVE_URLCONF": "bcap.urls_api_documented",
+    # Pinned so operation ids don't shift with whichever urlconf a generation run
+    # enumerates: unset, drf-spectacular estimates the prefix as the common path
+    # of the endpoints it sees, which strips "api" and renames every generated type.
+    "SCHEMA_PATH_PREFIX": "/bcap",
     # The arches-querysets tile schemas are introspected from graph nodes whose
     # order isn't deterministic; order all component properties by the graph node
     # sortorder for stable, meaningful diffs. Keep the default enum hook.
@@ -327,6 +346,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
+    "bcap.permissions.applicant_gate.ArchesDefaultDenyApplicantGate",
     # "silk.middleware.SilkyMiddleware",
 ]
 
@@ -528,21 +548,10 @@ AUTHLIB_OAUTH_CLIENTS = {
 
 REGISTRATION_LINK_TTL_DAYS = 7
 
-# Role groups an admin can grant an invited user. External applicants always
-# get just the Submitter group.
-SELF_MANAGE_ROLE_GROUPS = [
-    "Permit Reviewer",
-    "Permit Decider",
-    "Inventory Reviewer",
-    "Inventory Manager",
-    "Submitter",
-]
-EXTERNAL_APPLICANT_GROUP = "Submitter"
+PERMISSION_FRAMEWORK = "bcap_arches_permission_framework.BcapArchesPermissionFramework"
 
-# Default-allow, minus the provisional-edit path: a signed-in user's tile saves
-# are authoritative without putting them in Resource Reviewer.
-# We will make this default-deny in the future.
-PERMISSION_FRAMEWORK = "bcap_permission_framework.BcapPermissionFramework"
+
+from bcap.permissions.permission_settings import PERMISSION_DEFAULTS  # noqa: E402
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
@@ -571,12 +580,24 @@ else:
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  #<-- Only need to uncomment this for testing without an actual email server
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST = "apps.smtp.gov.bc.ca"
-EMAIL_HOST_USER = "BCHistoricPlacesRegister@gov.bc.ca"
 # EMAIL_HOST_PASSWORD = 'xxxxxxx'
 # EMAIL_PORT = 587
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Read by Django 6 / Arches 8.2 On upgrade, drop EMAIL_* below and above.
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "apps.smtp.gov.bc.ca",
+            "username": "BCHistoricPlacesRegister@gov.bc.ca",
+        },
+    }
+}
+
+EMAIL_HOST = MAILERS["default"]["OPTIONS"]["host"]
+EMAIL_HOST_USER = MAILERS["default"]["OPTIONS"]["username"]
+
+DEFAULT_FROM_EMAIL = MAILERS["default"]["OPTIONS"]["username"]
 
 CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME")
 CELERY_BROKER_URL = get_env_variable(
@@ -639,7 +660,6 @@ RENDERERS = [
     },
 ]
 
-# By setting RESTRICT_MEDIA_ACCESS to True, media file requests outside of Arches will checked against nodegroup permissions.
 RESTRICT_MEDIA_ACCESS = True
 
 # By setting RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER to True, if the user is attempting
@@ -725,7 +745,7 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "bcap.services.virus_scan_service.ScanningStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",

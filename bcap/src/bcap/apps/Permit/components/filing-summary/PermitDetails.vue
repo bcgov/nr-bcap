@@ -14,8 +14,12 @@ import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
 import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    PermitApplicationResourceAliasedData,
+    StringAliasedNodeData,
+} from '@/bcap/client/types.gen.ts';
 import {
     fetchPermitDetails,
     fetchDrafts,
@@ -29,35 +33,44 @@ import {
     permitModules as permitModuleCatalogue,
     modulesForFilingType,
 } from '../dashboard/permitModules.ts';
-import MessageDialog from '../common/messages/MessageDialog.vue';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
-import { useMessageStore } from '@/bcap/stores/message.ts';
-
-const messageStore = useMessageStore();
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 const headerStore = usePermitHeaderStore();
 
+const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
-// Staff view: enables the module reorder/add/remove controls. Set as ?staff on
-// the URL when a staff member opens the permit.
-// We will fix this when roles and permissions are done correctly.
+// Staff view: enables the module reorder/add/remove controls.
+// Staff reaching a permit through /submissions/ get the applicant view.
 const isStaff = computed(
-    () => String(route.query.staff).toLowerCase() === 'true',
+    () => Boolean(route.meta.requiresInternal) && userStore.isInternal,
 );
 
+type PermitDraft =
+    DraftOf<GraphSlug.Investigation> | DraftOf<GraphSlug.DocumentSubmission>;
+
 // A draft resumes into its own module's workflow, chosen by its graph slug.
-const draftRouteName = (draft: DraftOf<GraphSlug.Investigation>): string =>
+const draftRouteName = (draft: PermitDraft): string =>
     permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
         ?.routeName || routeNames.investigationModule;
 
-const draftTitle = (draft: DraftOf<GraphSlug.Investigation>) => {
-    const ident = draft.data?.investigation_identification?.aliased_data
-        ?.investigation_identification as
-        | { node_value?: { en?: { value?: string } }; en?: { value?: string } }
-        | undefined;
-    const name = ident?.node_value?.en?.value ?? ident?.en?.value;
-    return name ? `Investigation - ${name}` : 'Untitled Investigation';
+const draftTitle = (draft: PermitDraft) => {
+    if (draft.graph_slug === GraphSlug.DocumentSubmission) {
+        return 'Document Submission Draft';
+    }
+
+    if (draft.graph_slug === GraphSlug.Investigation) {
+        const ident = draft.data?.investigation_identification?.aliased_data
+            ?.investigation_identification as StringAliasedNodeData | undefined;
+
+        const name = ident?.node_value?.en?.value || ident?.display_value;
+
+        return name ? `Investigation - ${name}` : 'Untitled Investigation';
+    }
+
+    return 'Untitled Draft';
 };
 
 interface PermitHeaderData {
@@ -75,6 +88,7 @@ interface ModuleResponse {
 // Loaded permit view state, grouped so the async loaders update one object.
 const state = reactive({
     isLoading: true,
+    loadError: '',
     permitData: {
         projectName: 'Loading...',
         applicationNumber: '...',
@@ -85,7 +99,7 @@ const state = reactive({
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
     rawPermitData: null as PermitApplicationResourceAliasedData | null,
-    investigationDrafts: [] as DraftOf<GraphSlug.Investigation>[],
+    permitDrafts: [] as PermitDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
 });
@@ -141,6 +155,7 @@ const getModuleStatus = (moduleId: string) => {
 };
 
 const loadPermitDetails = async () => {
+    state.loadError = '';
     try {
         const aliased = await fetchPermitDetails(permitId.value);
         if (!aliased) return;
@@ -177,8 +192,7 @@ const loadPermitDetails = async () => {
             },
         };
     } catch (error) {
-        console.error('Failed to load permit details:', error);
-        state.permitData.projectName = 'Failed to load project data';
+        state.loadError = inlineMessage(error);
     } finally {
         state.isLoading = false;
     }
@@ -198,22 +212,31 @@ const {
     state: deleteState,
     open: confirmDelete,
     confirm: performDelete,
-} = useConfirmAction<DraftOf<GraphSlug.Investigation>>(async (draft) => {
-    await deleteDraft(GraphSlug.Investigation, draft.id);
+} = useConfirmAction<PermitDraft>(async (draft) => {
+    await deleteDraft(draft.graph_slug, draft.id);
     await loadDraftsForPermitApp();
 });
 
 // This needs to be more generic in the future
 const loadDraftsForPermitApp = async () => {
-    const drafts = await fetchDrafts(permitId.value);
-    state.investigationDrafts = drafts.filter(
-        isDraftOf(GraphSlug.Investigation),
-    );
-    // Load each draft's threads up front so its header can badge unread without
-    // the dialog being opened. Drafts are few, so a fetch each is fine.
-    for (const draft of state.investigationDrafts) {
-        if (draft.id) messageStore.load(draft.id);
+    let drafts;
+    try {
+        drafts = await fetchDrafts(permitId.value);
+    } catch (error) {
+        // The permit load reports the same outage; don't overwrite its message.
+        // The slot's title names the permit, so this one says what it was.
+        if (!state.loadError) {
+            state.loadError = `Your drafts could not be loaded. ${inlineMessage(error)}`;
+        }
+        return;
     }
+
+    const isInv = isDraftOf(GraphSlug.Investigation);
+    const isDoc = isDraftOf(GraphSlug.DocumentSubmission);
+
+    state.permitDrafts = drafts.filter(
+        (d): d is PermitDraft => isInv(d) || isDoc(d),
+    );
 };
 
 onMounted(() => {
@@ -251,6 +274,13 @@ watch(activeModuleId, (id) => {
         >
             <ProgressSpinner />
         </div>
+
+        <InlineError
+            v-else-if="state.loadError"
+            title="This permit could not be loaded."
+            :detail="state.loadError"
+            class="permit-error"
+        />
 
         <div
             v-else
@@ -356,7 +386,7 @@ watch(activeModuleId, (id) => {
                         class="investigation-lists"
                     >
                         <section
-                            v-if="state.investigationDrafts.length > 0"
+                            v-if="state.permitDrafts.length > 0"
                             class="draft-modules"
                         >
                             <h2 class="list-heading">Draft modules</h2>
@@ -366,7 +396,7 @@ watch(activeModuleId, (id) => {
                                 class="draft-accordion"
                             >
                                 <AccordionPanel
-                                    v-for="draft in state.investigationDrafts"
+                                    v-for="draft in state.permitDrafts"
                                     :key="draft.id"
                                     :value="draft.id"
                                     class="draft-panel"
@@ -385,26 +415,6 @@ watch(activeModuleId, (id) => {
                                                     formatDate(
                                                         draft.updated ||
                                                             draft.created,
-                                                    )
-                                                }}
-                                            </span>
-                                            <span
-                                                v-if="
-                                                    messageStore.unreadCount(
-                                                        draft.id,
-                                                    )
-                                                "
-                                                class="draft-unread-badge"
-                                                :title="`${messageStore.unreadCount(
-                                                    draft.id,
-                                                )} unread message(s)`"
-                                            >
-                                                <i
-                                                    class="fa-solid fa-comment-dots"
-                                                ></i>
-                                                {{
-                                                    messageStore.unreadCount(
-                                                        draft.id,
                                                     )
                                                 }}
                                             </span>
@@ -441,14 +451,6 @@ watch(activeModuleId, (id) => {
                                                 icon="fa-solid fa-trash"
                                                 label="Remove"
                                                 @click="confirmDelete(draft)"
-                                            />
-                                            <MessageDialog
-                                                :application-id="
-                                                    state.permitData
-                                                        .applicationNumber
-                                                "
-                                                :resource-id="draft.id"
-                                                :context="draftTitle(draft)"
                                             />
                                         </div>
                                     </AccordionContent>
@@ -502,6 +504,10 @@ watch(activeModuleId, (id) => {
     justify-content: center;
     align-items: center;
     min-height: 60vh;
+}
+
+.permit-error {
+    margin: 2rem;
 }
 
 /* Header. PrimeVue wraps this in its own padded, bordered bar; that is stripped

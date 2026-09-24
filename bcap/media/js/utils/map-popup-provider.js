@@ -100,8 +100,6 @@ const popupDataProvider = {
     ],
 
     isFeatureClickable: function (feature, map) {
-        // console.log('bcap.isFeatureClickable()');
-        // console.log(`Context: ${map.context}`);
         if (
             (map.context === 'resource-editor' &&
                 feature.sourceLayer ===

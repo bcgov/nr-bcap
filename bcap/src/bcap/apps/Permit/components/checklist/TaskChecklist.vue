@@ -12,12 +12,16 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 
 const route = useRoute();
 const idFromUrl = route.query.id;
 const isLoading = ref(true);
 const isSaving = ref(false);
 const errorMessage = ref('');
+// Saving reports beside the Save button rather than replacing the checklist.
+const saveError = ref('');
 
 const requirementData = ref<ProcessRequirement | null>(null);
 
@@ -32,11 +36,7 @@ const requirementName = computed(
 );
 
 const crumbs = computed(() =>
-    permitCrumbs(
-        route.query.permit,
-        route.query.staff,
-        requirementName.value || 'Checklist',
-    ),
+    permitCrumbs(route.query.permit, requirementName.value || 'Checklist'),
 );
 
 const backLink = computed(() => crumbs.value[0]?.to ?? '');
@@ -105,8 +105,7 @@ const loadData = async () => {
         );
         markPristine();
     } catch (error) {
-        console.error('Failed to load sub-requirements:', error);
-        errorMessage.value = 'Failed to load checklist data. Please try again.';
+        errorMessage.value = inlineMessage(error);
     } finally {
         isLoading.value = false;
     }
@@ -152,6 +151,7 @@ const saveChanges = async () => {
     if (!requirementData.value || isSaving.value) return;
     applyDerivedDates();
     isSaving.value = true;
+    saveError.value = '';
     const body = { aliased_data: requirementData.value.aliased_data };
     // Soft-validate against the writable schema: warn on a mismatch, never block.
     const validation = zPatchedProcessRequirement.safeParse(body);
@@ -168,7 +168,7 @@ const saveChanges = async () => {
         );
         markPristine();
     } catch (error) {
-        console.error('Save error:', error);
+        saveError.value = inlineMessage(error);
     } finally {
         isSaving.value = false;
     }
@@ -216,12 +216,11 @@ const saveChanges = async () => {
             <p>Loading checklist...</p>
         </div>
 
-        <div
+        <InlineError
             v-else-if="errorMessage"
-            class="status-state error"
-        >
-            <p>{{ errorMessage }}</p>
-        </div>
+            title="The checklist could not be loaded."
+            :detail="errorMessage"
+        />
 
         <div
             v-else
@@ -365,6 +364,12 @@ const saveChanges = async () => {
                 :disabled="isSaving"
                 @click="undoChanges"
             />
+            <InlineError
+                v-if="saveError"
+                title="Your changes could not be saved."
+                :detail="saveError"
+                class="save-error"
+            />
             <Button
                 type="button"
                 class="action-btn save-btn"
@@ -437,6 +442,13 @@ const saveChanges = async () => {
     justify-content: flex-end;
     gap: 0.75rem;
     margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Its own line above the buttons, which stay right-aligned. */
+.save-error {
+    flex-basis: 100%;
+    margin: 0;
 }
 
 .action-btn {
@@ -636,10 +648,5 @@ const saveChanges = async () => {
     color: #6b7280;
     font-size: 1.25rem;
     font-style: italic;
-}
-
-.status-state.error {
-    color: #b91c1c;
-    font-style: normal;
 }
 </style>

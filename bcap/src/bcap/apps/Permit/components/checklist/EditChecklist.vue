@@ -4,7 +4,9 @@ import { useRoute } from 'vue-router';
 import arches from 'arches';
 import Button from 'primevue/button';
 import { apiFetchJson } from '@/bcap/api.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
 import { saveChecklist } from '@/bcap/apps/Permit/api.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { readString } from '@/bcap/util.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
@@ -21,7 +23,6 @@ const isEditing = computed(() => !!processId.value);
 const crumbs = computed(() =>
     permitCrumbs(
         route.query.permit,
-        route.query.staff,
         state.requirementTitle || 'Edit Checklist',
     ),
 );
@@ -50,6 +51,8 @@ const state = reactive({
     isLoading: false,
     isSaving: false,
     saveMessage: '',
+    error: '',
+    loadFailed: false,
     requirementTitle: '',
     steps: [blankStep()] as StepItem[],
 });
@@ -79,6 +82,7 @@ const canSave = computed(
 const loadRequirement = async (withSpinner = true) => {
     if (!isEditing.value) return;
     if (withSpinner) state.isLoading = true;
+    state.loadFailed = false;
     try {
         const url = arches.urls.api_resource(
             GraphSlug.ProcessRequirement,
@@ -110,8 +114,8 @@ const loadRequirement = async (withSpinner = true) => {
             resequence();
         }
     } catch (error) {
-        console.error('Error loading process requirement:', error);
-        state.saveMessage = 'Error loading existing checklist data.';
+        state.error = `The checklist could not be loaded. ${inlineMessage(error)}`;
+        state.loadFailed = true;
     } finally {
         if (withSpinner) state.isLoading = false;
     }
@@ -141,6 +145,7 @@ const saveRequirements = async () => {
     if (!processId.value || !canSave.value) return;
     state.isSaving = true;
     state.saveMessage = '';
+    state.error = '';
     try {
         await saveChecklist(
             processId.value,
@@ -156,8 +161,7 @@ const saveRequirements = async () => {
         await loadRequirement(false);
         state.saveMessage = 'Checklist updated successfully!';
     } catch (error) {
-        console.error('Save error:', error);
-        state.saveMessage = 'Error saving checklist.';
+        state.error = `The checklist could not be saved. ${inlineMessage(error)}`;
     } finally {
         state.isSaving = false;
         setTimeout(() => {
@@ -190,8 +194,14 @@ const saveRequirements = async () => {
             />
         </div>
 
+        <InlineError
+            v-if="state.error"
+            title="Something went wrong."
+            :detail="state.error"
+        />
+
         <p
-            v-if="missingStepName"
+            v-if="missingStepName && !state.loadFailed"
             class="validation-hint"
         >
             Give every step a title before saving.
@@ -200,7 +210,6 @@ const saveRequirements = async () => {
         <div
             v-if="state.saveMessage"
             class="status-state"
-            :class="{ error: state.saveMessage.includes('Error') }"
         >
             <p>{{ state.saveMessage }}</p>
         </div>
@@ -212,7 +221,7 @@ const saveRequirements = async () => {
             <p>Loading requirement data...</p>
         </div>
 
-        <div v-else>
+        <div v-else-if="!state.loadFailed">
             <div class="main-settings">
                 <input
                     v-model="state.requirementTitle"
@@ -533,10 +542,5 @@ const saveRequirements = async () => {
     border-radius: 6px;
     background-color: #dcfce3;
     color: #166534;
-}
-
-.status-state.error {
-    background-color: #fee2e2;
-    color: #b91c1c;
 }
 </style>

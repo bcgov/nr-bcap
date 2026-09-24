@@ -19,6 +19,17 @@ vi.mock('@/bcap/apps/Permit/Modules/Step99_Review.vue', () => ({
     },
 }));
 
+vi.mock(
+    '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue',
+    () => ({
+        default: {
+            name: 'DocumentSubmissionReview',
+            props: ['isSubmittedView', 'resourceData'],
+            template: '<div class="mock-document-review" />',
+        },
+    }),
+);
+
 const mockQuery = vi.hoisted(() => ({ value: {} as Record<string, string> }));
 const replace = vi.fn();
 vi.mock('vue-router', () => ({
@@ -83,6 +94,22 @@ describe('with a submission in the store', () => {
         expect(review.props('isSubmittedView')).toBe(true);
     });
 
+    it('shows a document submission with the review its stepper uses', async () => {
+        usePermitHeaderStore().setReview({
+            ...REVIEW,
+            graph: 'document_submission',
+        });
+
+        const wrapper = mountReview();
+        await flushPromises();
+
+        const review = wrapper.findComponent({
+            name: 'DocumentSubmissionReview',
+        });
+        expect(review.props('resourceData')).toEqual({ some: 'data' });
+        expect(wrapper.find('.mock-review').exists()).toBe(false);
+    });
+
     it('titles the page and crumbs back to the permit it belongs to', async () => {
         const wrapper = mountReview();
         await flushPromises();
@@ -92,21 +119,6 @@ describe('with a submission in the store', () => {
         );
         expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
         expect(wrapper.find('.crumb-current').text()).toBe('Investigation');
-    });
-
-    it('carries the staff flag back to the permit', async () => {
-        mockQuery.value = { staff: 'true' };
-
-        const wrapper = mountReview();
-        await flushPromises();
-
-        expect(
-            wrapper.findComponent({ name: 'RouterLinkStub' }).props('to'),
-        ).toEqual({
-            name: 'permitDetails',
-            params: { id: 'permit-1' },
-            query: { staff: 'true' },
-        });
     });
 
     it('stops the spinner even when the submission fails to load', async () => {

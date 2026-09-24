@@ -7,6 +7,7 @@ import {
     fetchDraftCards,
     fetchMyProjects,
     fetchAssignableContributors,
+    fetchRequirementDetails,
     patchProcessRequirement,
     setRequirementAssignee,
     submitApplication,
@@ -81,13 +82,10 @@ describe('Permit API', () => {
             );
         });
 
-        it('returns nothing when the request fails', async () => {
+        it('throws when the request fails, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('Server Error'));
 
-            const result = await fetchDrafts();
-
-            expect(result).toEqual([]);
-            expect(console.error).toHaveBeenCalled();
+            await expect(fetchDrafts()).rejects.toThrow('Server Error');
         });
     });
 
@@ -225,6 +223,31 @@ describe('Permit API', () => {
         });
     });
 
+    describe('fetchRequirementDetails', () => {
+        it('reads each requirement from the graph route, not the generic one', async () => {
+            // The generic resource route answers to the graph policy, which has
+            // nothing for an applicant; this one lets their permit decide.
+            apiFetchJson.mockResolvedValue({ resourceinstanceid: 'req-1' });
+
+            const result = await fetchRequirementDetails(['req-1']);
+
+            expect(apiFetchJson).toHaveBeenCalledWith(
+                '/bcap/api/process_requirement/req-1',
+            );
+            expect(result).toEqual({
+                'req-1': { resourceinstanceid: 'req-1' },
+            });
+        });
+
+        it('throws when a requirement fails to load, for the page to report inline', async () => {
+            apiFetchJson.mockRejectedValue(new Error('403'));
+
+            await expect(fetchRequirementDetails(['req-1'])).rejects.toThrow(
+                '403',
+            );
+        });
+    });
+
     describe('fetchMyProjects', () => {
         it('returns the page results', async () => {
             apiFetchJson.mockResolvedValue({ results: [{ id: 'proj-1' }] });
@@ -240,10 +263,9 @@ describe('Permit API', () => {
             expect(await fetchMyProjects()).toEqual([]);
         });
 
-        it('returns empty array on error', async () => {
+        it('throws on error, for the page to report inline', async () => {
             apiFetchJson.mockRejectedValue(new Error('Forbidden'));
-            const result = await fetchMyProjects();
-            expect(result).toEqual([]);
+            await expect(fetchMyProjects()).rejects.toThrow('Forbidden');
         });
     });
 
@@ -298,7 +320,7 @@ describe('Permit API', () => {
             expect(apiFetch).not.toHaveBeenCalled();
         });
 
-        it('re-throws and logs when the POST fails', async () => {
+        it('re-throws when the POST fails, for the page to report inline', async () => {
             const failure = new Error('POST investigation failed');
             apiFetchJson.mockRejectedValue(failure);
 
@@ -310,10 +332,8 @@ describe('Permit API', () => {
                     {} as never,
                 ),
             ).rejects.toThrow('POST investigation failed');
-            expect(console.error).toHaveBeenCalledWith(
-                'Module submission API failed:',
-                failure,
-            );
+            // The draft is only deleted once the module has landed.
+            expect(apiFetch).not.toHaveBeenCalled();
         });
     });
 
@@ -360,17 +380,16 @@ describe('Permit API', () => {
             expect(result).toEqual(finalResource);
         });
 
-        it('re-throws and logs when a request fails', async () => {
-            const failure = new Error('POST .../create failed (400)');
-            apiFetchJson.mockRejectedValue(failure);
+        it('re-throws when a request fails, for the page to report inline', async () => {
+            apiFetchJson.mockRejectedValue(
+                new Error('POST .../create failed (400)'),
+            );
 
             await expect(submitApplication('draft-123', {})).rejects.toThrow(
                 'POST .../create failed (400)',
             );
-            expect(console.error).toHaveBeenCalledWith(
-                'Submission API failed:',
-                failure,
-            );
+            // The draft survives a failed submission.
+            expect(apiFetch).not.toHaveBeenCalled();
         });
     });
 

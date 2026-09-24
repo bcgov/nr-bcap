@@ -12,6 +12,7 @@ vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
         name: 'GenericReviewSummary',
         props: ['fields'],
         template: '<div />',
+        type: 'text',
     },
 }));
 
@@ -37,6 +38,7 @@ describe('Step99_Review.vue (shared)', () => {
                 label: 'Investigation Identification',
                 value: 'sdfgfsgsg',
                 nodeAlias: 'investigation_identification',
+                type: 'text',
             },
         ]);
     });
@@ -61,6 +63,7 @@ describe('Step99_Review.vue (shared)', () => {
                 label: 'Director Name',
                 value: 'Ada',
                 nodeAlias: 'director_name',
+                type: 'text',
             },
         ]);
     });
@@ -83,10 +86,47 @@ describe('Step99_Review.vue (shared)', () => {
         const vm = wrapper.vm as unknown as ReviewVm;
 
         expect(vm.reviewFields).toEqual([
-            { label: 'B', value: 'from-resource', nodeAlias: 'b' },
+            {
+                label: 'B',
+                value: 'from-resource',
+                nodeAlias: 'b',
+                type: 'text',
+            },
         ]);
         expect(wrapper.find('.review-intro').text()).toContain(
             'successfully submitted',
         );
     });
+});
+
+it('detects HTML content and assigns the html type', () => {
+    useDraftStore().loadDraft('d1', {
+        report_details: {
+            aliased_data: {
+                report_recommendations: {
+                    display_value: '<p>Rich text formatting</p>',
+                },
+                standard_notes: {
+                    display_value: 'Just regular plain text',
+                },
+            },
+        },
+    } as never);
+
+    const vm = shallowMount(Step99_Review).vm as unknown as ReviewVm;
+
+    expect(vm.reviewFields).toEqual([
+        {
+            label: 'Report Recommendations',
+            value: '<p>Rich text formatting</p>',
+            nodeAlias: 'report_recommendations',
+            type: 'html',
+        },
+        {
+            label: 'Standard Notes',
+            value: 'Just regular plain text',
+            nodeAlias: 'standard_notes',
+            type: 'text',
+        },
+    ]);
 });

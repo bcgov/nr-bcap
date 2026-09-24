@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
@@ -20,6 +20,7 @@ import type { PermitApplicationProcessModuleTile } from '@/bcap/client/types.gen
 import { useMessageStore } from '@/bcap/stores/message.ts';
 import ModulePanelHeader from '@/bcap/apps/Permit/components/filing-summary/modules/ModulePanelHeader.vue';
 import RequirementRow from '@/bcap/apps/Permit/components/filing-summary/modules/RequirementRow.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import {
     STATUS_ICON,
     type ModuleRow,
@@ -77,8 +78,8 @@ onMounted(() => {
     if (props.isStaff) loadAssignees();
 });
 
-// Optional chaining: the component is mounted without a router in tests.
-const staffQuery = computed(() => route?.query?.staff ?? '');
+// Requirement details and unread badges fail the same outage; report once.
+const moduleError = computed(() => state.loadError || messageStore.error);
 
 // The drilled-in row only exists once its panel is open and its requirements
 // have hydrated. Post-flush so the row is in the DOM, and the watcher stops
@@ -117,8 +118,6 @@ const onViewSubmission = (
         permitId: props.permitId,
         title: row.name,
     });
-    // Carry ?staff through so the review page's breadcrumb returns to the same
-    // staff/external view of the permit.
     router.push({ name: routeNames.moduleReview, query: route?.query ?? {} });
 };
 
@@ -153,6 +152,11 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
                 Complete
             </span>
         </div>
+        <InlineError
+            v-if="moduleError"
+            title="Some module details could not be loaded."
+            :detail="moduleError"
+        />
         <Accordion
             v-model:value="ui.openPanels"
             multiple
@@ -259,7 +263,6 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
                                         :permit-id="permitId"
                                         :is-staff="isStaff"
                                         :application-id="applicationId"
-                                        :staff="staffQuery"
                                         :toggling="ui.togglingRequirement"
                                         :can-view-submission="
                                             !isLoadingRequirements(row)

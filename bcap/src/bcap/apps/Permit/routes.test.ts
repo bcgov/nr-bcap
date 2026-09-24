@@ -4,7 +4,7 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(14);
+        expect(routes).toHaveLength(15);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
             'EditChecklist',
@@ -14,6 +14,7 @@ describe('Permit routes', () => {
             'documentSubmission',
             'inspectionModule',
             'internal-root',
+            'internalPermitDetails',
             'investigationModule',
             'methodsModule',
             'moduleReview',
@@ -47,20 +48,29 @@ describe('Permit routes', () => {
         }
     });
 
-    it('marks the externally-facing routes as auth-required and nav-visible', () => {
+    it('marks the externally-facing routes nav-visible', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(byName['root'].meta).toEqual({
-            shouldShowNavigation: true,
-            requiresAuthentication: true,
-        });
+        expect(byName['root'].meta).toEqual({ shouldShowNavigation: true });
         expect(byName['baseModule'].meta).toEqual({
             shouldShowNavigation: true,
-            requiresAuthentication: true,
         });
-        // Internal dashboard routes carry no nav/auth meta.
-        expect(byName['internal-root'].meta).toBeUndefined();
-        expect(byName['Checklist'].meta).toBeUndefined();
+    });
+
+    it('restricts the internal dashboard and its checklists to staff', () => {
+        const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
+        const staffOnly = routes
+            .filter((route) => route.meta?.requiresInternal)
+            .map((route) => route.name)
+            .sort();
+
+        expect(staffOnly).toEqual([
+            'Checklist',
+            'EditChecklist',
+            'internal-root',
+            'internalPermitDetails',
+        ]);
+        expect(byName['root'].meta?.requiresInternal).toBeUndefined();
     });
 
     it('maps friendly route-name aliases to the registered names', () => {

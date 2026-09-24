@@ -42,6 +42,8 @@ const siteVisitAuditDataLoad = ref(false);
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
+// The details component below fetches the same resource and reports a failure
+// itself, so nothing is read from these loaders here but the data.
 const { data: resourceData } = useResourceData<
     ArchaeologicalSiteType | SiteVisitType
 >(props.data.graph_slug, resourceId);
