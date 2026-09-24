@@ -35,7 +35,7 @@ from arches_querysets.rest_framework.generic_views import ArchesResourceDetailVi
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.serializers import ArchesResourceSerializer
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
-from arches_controlled_lists.models import ListItem
+from arches_controlled_lists.models import ListItem, ListItemValue
 from oauth2_provider.views.generic import ProtectedResourceView
 import re
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import InlineError from '@/bcap/components/InlineError.vue';
@@ -7,19 +7,25 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
-import type { ArchaeologicalDataTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { EditLogData } from '@/bcgov_arches_common/types.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    ArchaeologicalSiteArchaeologicalDataTile,
+    ArchaeologicalSiteArchaeologicalDataAliasedData,
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
+import type {
+    EditLogData,
+    AliasedTileDataWithAudit,
+} from '@/bcgov_arches_common/types.ts';
 import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import { isAliasedNodeData } from '@/bcap/util.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: ArchaeologicalDataTile | undefined;
-        siteVisitData?: SiteVisitSchema[];
-        hriaData?: HriaDiscontinuedDataSchema;
+        data: ArchaeologicalSiteArchaeologicalDataTile | undefined;
+        siteVisitData?: SiteVisit[];
+        hriaData?: HriaDiscontinuedData;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -36,11 +42,11 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<ArchaeologicalDataTile | undefined>(
-    (): ArchaeologicalDataTile | undefined => {
-        return props.data?.aliased_data as ArchaeologicalDataTile | undefined;
-    },
-);
+const currentData = computed<
+    ArchaeologicalSiteArchaeologicalDataAliasedData | undefined
+>((): ArchaeologicalSiteArchaeologicalDataAliasedData | undefined => {
+    return props.data?.aliased_data;
+});
 
 const typologyColumns = [
     { field: 'typology_class', label: 'Class' },
@@ -128,13 +134,15 @@ const disturbColumns = [
     },
 ];
 
-const typologyData = computed(() => currentData.value?.site_typology);
+const typologyData = computed(
+    () => currentData.value?.site_typology ?? undefined,
+);
 
 const {
     processedData: typologyTableData,
     isProcessing,
     error: typologyError,
-} = useHierarchicalData(typologyData, {
+} = useHierarchicalData(typologyData as Ref<AliasedTileData[]>, {
     sourceField: 'typology_class',
     hierarchicalFields: [
         'typology_class',
@@ -165,7 +173,7 @@ const typologyRemarksData = computed(() => {
 });
 
 const { processedData: typologyRemarksTableData } = useTileEditLog(
-    typologyRemarksData,
+    typologyRemarksData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
@@ -175,7 +183,7 @@ const featuresData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const featureRows = arch?.archaeological_feature || [];
         featureRows.forEach((feature) => {
-            features.push(feature);
+            features.push(feature as unknown as AliasedTileData);
         });
     });
     return features;
@@ -187,7 +195,7 @@ const materialsData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const materialRows = arch?.cultural_material || [];
         materialRows.forEach((material) => {
-            materials.push(material);
+            materials.push(material as unknown as AliasedTileData);
         });
     });
     return materials;
@@ -199,7 +207,7 @@ const stratigraphyData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const stratRows = arch?.stratigraphy || [];
         stratRows.forEach((s) => {
-            strat.push(s);
+            strat.push(s as unknown as AliasedTileData);
         });
     });
     return strat;
@@ -211,7 +219,7 @@ const culturesData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const cultureRows = arch?.archaeological_culture || [];
         cultureRows.forEach((culture) => {
-            cultures.push(culture);
+            cultures.push(culture as unknown as AliasedTileData);
         });
     });
     return cultures;
@@ -223,14 +231,15 @@ const chronologiesData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const chronologyRows = arch?.chronology || [];
         chronologyRows.forEach((chronology) => {
-            chronologies.push(chronology);
+            chronologies.push(chronology as unknown as AliasedTileData);
         });
     });
     return chronologies;
 });
 
 const hriaChronologiesData = computed(() => {
-    return props.hriaData?.aliased_data?.chronology || [];
+    return (props.hriaData?.aliased_data?.chronology ||
+        []) as unknown as AliasedTileDataWithAudit[];
 });
 
 const disturbancesData = computed(() => {
@@ -239,7 +248,7 @@ const disturbancesData = computed(() => {
         const arch = visit.aliased_data?.archaeological_data?.aliased_data;
         const disturbRows = arch?.site_disturbance || [];
         disturbRows.forEach((disturb) => {
-            disturbances.push(disturb);
+            disturbances.push(disturb as unknown as AliasedTileData);
         });
     });
     return disturbances;
