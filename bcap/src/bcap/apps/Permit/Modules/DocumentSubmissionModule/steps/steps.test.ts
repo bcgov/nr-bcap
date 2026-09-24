@@ -64,6 +64,7 @@ storeContainer.state = mockStoreState;
 
 const globalMountOptions = {
     global: {
+        provide: { cardComponents: ref([]) },
         stubs: {
             FieldSet: { template: '<div><slot/></div>' },
             Fieldset: { template: '<div><slot/></div>' },

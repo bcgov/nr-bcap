@@ -1,6 +1,7 @@
 import {
     formatDateTime,
     formatFileSize,
+    formatTimestamp,
     getDisplayValue,
     initials,
     isEmpty,
@@ -30,6 +31,15 @@ describe('formatDateTime', () => {
         // Both en-CA and en-US locales yield "Invalid Date" for invalid Date objects.
         expect(out).toMatch(/^Invalid Date, /);
         expect(out!.toLowerCase()).toContain('invalid date');
+    });
+});
+
+describe('formatTimestamp', () => {
+    it('shows Pacific time whatever zone the browser is in', () => {
+        // 16:31 UTC is 9:31 in the morning, Pacific daylight time.
+        const out = formatTimestamp('2026-09-18T16:31:00Z');
+        expect(out).toContain('09:31');
+        expect(out).toContain('PDT');
     });
 });
 

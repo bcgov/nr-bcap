@@ -107,6 +107,28 @@ const removeFile = (index: number) => {
     background: transparent;
 }
 
+/* The extra class outranks the widget's scoped styles. */
+.attachments-field .attachments-widget .upload-container {
+    flex-direction: row;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-width: 1px;
+    border-radius: 6px;
+}
+
+.attachments-field .attachments-widget .upload-icon {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.attachments-field .attachments-widget .upload-title {
+    display: none;
+}
+
+.attachments-field .attachments-widget .upload-subtitle {
+    font-size: 1.15rem;
+}
+
 .staged-attachments {
     list-style: none;
     margin: 0.6rem 0 0;

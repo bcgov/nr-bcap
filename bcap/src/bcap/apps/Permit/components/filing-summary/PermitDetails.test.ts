@@ -12,12 +12,11 @@ vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     deleteDraft: vi.fn(),
     // Imported by the MessageDialog child; without them its error handlers log
     // "Error loading threads/recipients".
-    getThreadsForResource: vi.fn(() => Promise.resolve([])),
+    getThreadsForResources: vi.fn(() => Promise.resolve(new Map())),
     getContributorsForResources: vi.fn(() => Promise.resolve([])),
     // Pulled in by the message store the dialog uses.
     createBcapMessage: vi.fn(),
-    markMessageAsRead: vi.fn(),
-    setThreadArchived: vi.fn(),
+    patchThread: vi.fn(),
 }));
 
 vi.mock('@/bcap/apps/Permit/Modules/ReviewSummary.vue', () => ({
@@ -334,6 +333,7 @@ describe('PermitDetails.vue', () => {
     // The permit and its drafts load in parallel into one error slot.
     describe('load failures', () => {
         it('reports a failed draft list', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
 
             const wrapper = mount(PermitDetails, globalMountOptions);
@@ -345,6 +345,7 @@ describe('PermitDetails.vue', () => {
         });
 
         it('keeps the permit message when both fail', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => {});
             vi.mocked(fetchPermitDetails).mockRejectedValue(new Error('boom'));
             vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
 

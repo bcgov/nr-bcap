@@ -74,11 +74,25 @@ const dnd = useDragReorder();
 const messageStore = useMessageStore();
 const headerStore = usePermitHeaderStore();
 onMounted(() => {
-    messageStore.loadModuleUnread(props.permitId);
+    messageStore.loadModuleUnresolved(props.permitId);
     if (props.isStaff) loadAssignees();
 });
 
-// Requirement details and unread badges fail the same outage; report once.
+const openRequirementIds = computed(() =>
+    state.rows
+        .filter((row) => ui.openPanels.includes(row.tileid))
+        .flatMap((row) => row.requirements.map((r) => r.resourceId))
+        .filter(Boolean),
+);
+// Only the newly shown requirements; the rest are already loaded.
+watch(
+    openRequirementIds,
+    (ids, before = []) =>
+        messageStore.load(ids.filter((id) => !before.includes(id))),
+    { immediate: true },
+);
+
+// Requirement details and unresolved badges fail the same outage; report once.
 const moduleError = computed(() => state.loadError || messageStore.error);
 
 // The drilled-in row only exists once its panel is open and its requirements
@@ -188,8 +202,7 @@ const archesResourceId = (row: ModuleRow, index: number): string =>
                     />
                 </AccordionHeader>
                 <AccordionContent>
-                    <!-- Mounted only while expanded: each requirement row opens
-                         a messages dialog that fetches on mount. -->
+                    <!-- Mounted only while expanded. -->
                     <template v-if="ui.openPanels.includes(row.tileid)">
                         <!-- The Submission Resource (first) carries the Project
                          Summary above its requirements. -->

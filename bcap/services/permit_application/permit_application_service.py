@@ -44,7 +44,7 @@ class PermitApplicationService:
         self._requirements = requirement_service or ProcessRequirementService(request)
 
     def submission_context_ids_for_permits(self, permits, requirements_by_permit=None):
-        """Map each permit to the resource ids its unread counts span (the permit,
+        """Map each permit to the resource ids its unresolved counts span (the permit,
         its requirements, and their submission hosts); pass known requirement ids
         to skip a query."""
         permit_ids = [str(permit.pk) for permit in permits]

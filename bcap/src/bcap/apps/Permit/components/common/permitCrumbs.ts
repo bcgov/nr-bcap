@@ -7,13 +7,14 @@ import type { QueryParam } from '@/bcap/types.ts';
 export const permitCrumbs = (
     permitId: QueryParam,
     current: string,
+    summaryRoute: string = routeNames.permitDetails,
 ): Crumb[] => {
     if (!permitId) return [];
     return [
         {
             label: 'Project Summary',
             to: {
-                name: routeNames.permitDetails,
+                name: summaryRoute,
                 params: { id: String(permitId) },
             },
         },

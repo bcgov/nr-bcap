@@ -73,6 +73,13 @@ export interface NewBcapMessage {
     files?: File[];
 }
 
+export interface RecipientOption {
+    label: string;
+    value: string;
+    // Staff writing to this recipient start an internal (staff only) thread.
+    isInternal: boolean;
+}
+
 export interface MessageAttachment {
     name: string;
     url: string;
@@ -82,10 +89,17 @@ export interface MessageAttachment {
 export interface FormattedMessage {
     id: string;
     author: string;
+    authorIsStaff: boolean;
     text: string;
     date: string;
-    isUnread: boolean;
     attachments: MessageAttachment[];
+}
+
+export const NEW_THREAD_ID = 'new';
+
+export enum ThreadSide {
+    Author = 'author',
+    Recipient = 'recipient',
 }
 
 export interface MessageThread {
@@ -93,9 +107,15 @@ export interface MessageThread {
     topic: string;
     startedBy: string;
     lastMessageDate: string;
-    hasUnread: boolean;
-    unreadCount: number;
-    isResolved?: boolean;
+    isResolved: boolean;
+    onSide: boolean;
+    // The thread awaits the viewer; whoever started it waits on a reply first.
+    needsAction: boolean;
+    resolvedBy: string;
+    resolvedDate: string;
+    isInternal: boolean;
+    // Who the thread was first sent to.
+    to: string;
 }
 
 export interface DetailsData {

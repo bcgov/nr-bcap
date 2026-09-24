@@ -58,6 +58,7 @@ describe('getProcessRequirementData', () => {
     });
 
     it("throws the server's message on error", async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(404, 'Not Found', '{"detail": "Permit not found"}'),
@@ -69,6 +70,7 @@ describe('getProcessRequirementData', () => {
     });
 
     it('throws a generic message when the body is empty', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(500, 'Internal Server Error', ''),
@@ -103,6 +105,7 @@ describe('getInternalDashboardData', () => {
     });
 
     it('returns empty array when results is not an array', async () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
         vi.stubGlobal('fetch', mockFetchOk({ results: 'not-an-array' }));
 
         const result = await getInternalDashboardData();
@@ -111,6 +114,7 @@ describe('getInternalDashboardData', () => {
     });
 
     it('throws on HTTP error, for the page to report inline', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal('fetch', mockFetchError(500, 'Internal Server Error'));
 
         await expect(getInternalDashboardData()).rejects.toThrow();

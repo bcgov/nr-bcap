@@ -3,8 +3,11 @@ hydrating an aliased tile tree."""
 
 from collections import defaultdict
 
+from django.db.models import Q
+
 from arches.app.models.models import ResourceXResource, TileModel
 
+from bcap.util.aliased_data import AliasedDataReader
 from bcap.util.bcap_aliases import ALIASED_DATA, RESOURCE_ID
 
 
@@ -16,6 +19,27 @@ def group_data(payload, group):
         .setdefault(group, {})
         .setdefault(ALIASED_DATA, {})
     )
+
+
+def set_payload_node(payload, group, alias, node_value):
+    """Write a node value into a payload group, creating the path."""
+    group_data(payload, group)[alias] = {"node_value": node_value}
+
+
+def payload_resource_id(payload, group, alias):
+    """The resource id a payload's resource node points at, or None. Accepts a
+    list or one bare reference, and a malformed body reads as absent."""
+    node_value = AliasedDataReader._group_node_value(payload, group, alias)
+    if isinstance(node_value, list):
+        node_value = node_value[0] if node_value else {}
+    return (node_value or {}).get(RESOURCE_ID)
+
+
+def delete_tiles(tiles):
+    """Delete one at a time through the proxy, so each deindexes and lands in the
+    edit log. A queryset delete would do neither."""
+    for tile in tiles:
+        tile.delete()
 
 
 def resource_instance_value(resource_id):
@@ -66,3 +90,13 @@ def all_referenced_resource_ids(*resourceinstance_ids):
             from_resource_id__in=resourceinstance_ids
         ).values_list("to_resource_id", flat=True)
     }
+
+
+def references_any(node, resource_ids):
+    """Tiles whose resource-instance node points at any of these resources, by
+    containment so the tiledata index is used. Matches nothing when empty."""
+    references = [
+        Q(**{f"data__{node}__contains": [{RESOURCE_ID: str(resource_id)}]})
+        for resource_id in resource_ids
+    ]
+    return Q(*references, _connector=Q.OR) if references else Q(pk__in=[])

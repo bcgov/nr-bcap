@@ -185,6 +185,7 @@ describe('edit mode (route id present)', () => {
     });
 
     it('shows an error message when the load fails', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         mockFetchJson.mockRejectedValue(new Error('boom'));
         const wrapper = mount(EditChecklist);
         await flushPromises();

@@ -1,8 +1,8 @@
 import uuid
-from datetime import date, datetime, timedelta, timezone as dt_timezone
-from unittest import mock
 
 from django.test import TestCase
+
+from arches.app.models.models import ResourceInstance
 
 from bcap.services.contributor.contributor_service import (
     ContributorSummary,
@@ -21,7 +21,10 @@ from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
 
 from tests.controlled_list_fixtures import ControlledListFixtures
-from tests.services.contributor_fixtures import ACTIVE, ContributorFixtureMixin
+from tests.services.contributor_fixtures import (
+    ContributorFixtureMixin,
+    make_user,
+)
 
 
 class ContributorServiceTest(ContributorFixtureMixin, TestCase):
@@ -268,6 +271,11 @@ class ContributorsForResourceTests(TestCase):
         cls.permit = permit
         cls.req = req
         cls.plain = builder.make_resource("permit_application")
+        # The bystander filed the permit: offered only to staff.
+        cls.proponent = make_user("bea")
+        ResourceInstance.objects.filter(pk=permit.pk).update(
+            principaluser=cls.proponent
+        )
 
     def _ids(self, resource):
         return {c.id for c in self.service.contributors_for_resource(str(resource.pk))}
@@ -303,3 +311,60 @@ class ContributorsForResourceTests(TestCase):
 
     def test_assigned_resource_does_not_get_the_branch(self):
         self.assertNotIn(self.service.archaeology_branch_id(), self._ids(self.permit))
+        self.assertNotIn(
+            self.service.archaeology_branch_id(), self._for_staff(self.permit)
+        )
+
+    def _for_staff(self, resource):
+        return {
+            c.id
+            for c in self.service.contributors_for_resource(
+                str(resource.pk), for_staff=True
+            )
+        }
+
+    def test_staff_are_offered_the_proponent(self):
+        self.assertIn(str(self.bystander.pk), self._for_staff(self.permit))
+
+    def test_only_the_proponent_is_marked(self):
+        rows = self.service.contributors_for_resource(
+            str(self.permit.pk), for_staff=True
+        )
+        self.assertEqual(
+            {r.id for r in rows if r.is_proponent}, {str(self.bystander.pk)}
+        )
+
+    def test_staff_see_which_options_start_an_internal_thread(self):
+        ResourceInstance.objects.filter(pk=self.plain.pk).update(
+            principaluser=self.proponent
+        )
+        rows = self.service.contributors_for_resource(
+            str(self.plain.pk), for_staff=True
+        )
+        self.assertEqual(
+            {r.id for r in rows if r.is_internal},
+            {self.service.archaeology_branch_id()},
+        )
+        applicant_rows = self.service.contributors_for_resource(str(self.plain.pk))
+        self.assertFalse(any(r.is_internal for r in applicant_rows))
+
+    def test_staff_are_offered_the_proponent_of_a_requirements_permit(self):
+        self.assertIn(str(self.bystander.pk), self._for_staff(self.req))
+
+    def test_applicants_are_not_offered_the_proponent(self):
+        self.assertNotIn(str(self.bystander.pk), self._ids(self.permit))
+        self.assertNotIn(str(self.bystander.pk), self._ids(self.req))
+
+    def test_a_permit_with_no_proponent_adds_nobody(self):
+        self.assertEqual(
+            self._for_staff(self.plain), {self.service.archaeology_branch_id()}
+        )
+
+    def test_the_proponent_alone_still_gets_the_branch(self):
+        ResourceInstance.objects.filter(pk=self.plain.pk).update(
+            principaluser=self.proponent
+        )
+        self.assertEqual(
+            self._for_staff(self.plain),
+            {str(self.bystander.pk), self.service.archaeology_branch_id()},
+        )

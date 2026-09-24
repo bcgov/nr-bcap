@@ -164,7 +164,9 @@ const tabDrafts = computed(() =>
 
 const filteredDrafts = computed(() => {
     const drafts = ui.messagesOnly
-        ? tabDrafts.value.filter((draft) => (draft.unread_messages || 0) > 0)
+        ? tabDrafts.value.filter(
+              (draft) => (draft.unresolved_messages || 0) > 0,
+          )
         : tabDrafts.value;
     if (!ui.searchQuery) return drafts;
     const lowerQuery = ui.searchQuery.toLowerCase();
@@ -181,7 +183,7 @@ const tabProjects = computed(() =>
 const filteredProjects = computed(() => {
     const projects = ui.messagesOnly
         ? tabProjects.value.filter(
-              (project) => (project.unread_messages || 0) > 0,
+              (project) => (project.unresolved_messages || 0) > 0,
           )
         : tabProjects.value;
     if (!ui.searchQuery) return projects;
@@ -264,7 +266,7 @@ const openResourceReport = (resourceId: string) => {
                 :tabs="dashboardTabs"
                 :last-updated="ui.lastUpdated"
                 :sort-options="sortOptions"
-                messages-only-label="Unread messages only"
+                messages-only-label="Unresolved messages only"
                 :shown="isLoading ? 0 : shownCards.length"
                 :total="isLoading ? 0 : totalCards.length"
                 @refresh="loadDashboardData"
@@ -325,7 +327,9 @@ const openResourceReport = (resourceId: string) => {
                                 :footer-date="formatDate(project.created_date)"
                                 :footer-name="project.created_by_name"
                                 :urgency="project.urgency || 0"
-                                :unread-messages="project.unread_messages || 0"
+                                :unread-messages="
+                                    project.unresolved_messages || 0
+                                "
                                 :search-query="ui.searchQuery"
                                 @click="openResourceReport(project.id)"
                             />
@@ -386,7 +390,7 @@ const openResourceReport = (resourceId: string) => {
                                     ]"
                                     :urgency="draft.urgency || 0"
                                     :unread-messages="
-                                        draft.unread_messages || 0
+                                        draft.unresolved_messages || 0
                                     "
                                     :footer-date="
                                         formatDate(draft.created_date)
@@ -598,7 +602,6 @@ const openResourceReport = (resourceId: string) => {
 
 .text-muted {
     color: #6c757d;
-    font-style: italic;
     padding: 1rem 0;
 }
 

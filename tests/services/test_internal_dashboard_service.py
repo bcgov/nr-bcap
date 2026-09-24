@@ -25,13 +25,13 @@ from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
-from tests.services.contributor_fixtures import make_contributor
+from tests.services.contributor_fixtures import make_contributor, make_party
 from tests.permit_fixtures import (
     RequirementRow,
     build_permit,
     make_requirement,
 )
-from tests.services.test_bcap_message_service import make_message
+from tests.services.message_fixtures import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
@@ -170,7 +170,7 @@ def build_minimal_permit(builder, name, satisfied=False, submitted=True):
 def build_permit_with_investigation(builder, name):
     """A dashboard-visible permit whose outstanding requirement's
     submission_data points at an Investigation host -- the linkage the
-    unread-message roll-up follows. Returns the permit, the host resource, and
+    unresolved-thread roll-up follows. Returns the permit, the host resource, and
     the requirement."""
     host = builder.make_resource(GraphSlugs.INVESTIGATION)
     requirement = make_requirement(builder, name)
@@ -608,8 +608,8 @@ class RequirementsByIdTests(TestCase):
         self.assertEqual(self._by_id([str(satisfied.pk)]), {})
 
 
-class DashboardUnreadRollupTests(TestCase):
-    """The unread-message roll-up: a permit's card count spans messages on the
+class DashboardUnresolvedRollupTests(TestCase):
+    """The unresolved-thread roll-up: a permit's card count spans threads on the
     permit and on the host resources its process requirements' submission_data
     points at (its related investigation/alteration/inspection)."""
 
@@ -642,11 +642,11 @@ class DashboardUnreadRollupTests(TestCase):
         contexts = PermitApplicationService().submission_context_ids_for_permits([bare])
         self.assertEqual(contexts, {str(bare.pk): {str(bare.pk), str(requirement.pk)}})
 
-    def test_card_count_rolls_up_messages_on_the_permit_and_the_host(self):
+    def test_card_count_rolls_up_threads_on_the_permit_and_the_host(self):
         builder = FixtureBuilder()
-        reader = make_contributor(builder, "Reader", "Ray", bcap_username="roller")
-        # One unread on the permit, one on its submission host, and one already
-        # read that must not count.
+        _, reader = make_party(builder, "roller", "Ray", "Reader", internal=True)
+        # One open thread on the permit, its requirement and its submission
+        # host, and one resolved that must not count.
         make_message(builder, context=self.permit, recipient=reader, subject="p")
         make_message(builder, context=self.host, recipient=reader, subject="h")
         make_message(builder, context=self.requirement, recipient=reader, subject="req")
@@ -654,11 +654,11 @@ class DashboardUnreadRollupTests(TestCase):
             builder,
             context=self.host,
             recipient=reader,
-            read_date="2026-02-01",
-            subject="read",
+            resolved_date="2026-02-01",
+            subject="resolved",
         )
 
         page = self.service.get_cards(DashboardFilter(), "roller")
 
         card = next(c for c in page.results if c.id == self.permit_id)
-        self.assertEqual(card.unread_messages, 3)
+        self.assertEqual(card.unresolved_messages, 3)

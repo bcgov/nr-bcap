@@ -56,6 +56,7 @@ describe('getUnlinkedContributors', () => {
 
 describe('issueRegistrationLink error flattening', () => {
     it('surfaces a DRF { detail } message', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(
@@ -71,6 +72,7 @@ describe('issueRegistrationLink error flattening', () => {
     });
 
     it('flattens nested field errors instead of dumping JSON', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal(
             'fetch',
             mockFetchError(
@@ -90,6 +92,7 @@ describe('issueRegistrationLink error flattening', () => {
     });
 
     it('never shows a body that is not JSON', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
         vi.stubGlobal('fetch', mockFetchError(500, 'Server Error', 'boom'));
 
         await expect(issueRegistrationLink({ groups: [] })).rejects.toThrow(

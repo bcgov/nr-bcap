@@ -29,8 +29,10 @@ const api = vi.hoisted(() => ({
     setRequirementSatisfied: vi.fn(),
     setRequirementAssignee: vi.fn(),
     fetchAssignableContributors: vi.fn().mockResolvedValue([]),
-    // The message store badges unread counts per module on mount.
-    getSubmissionModulesUnreadCounts: vi.fn().mockResolvedValue([]),
+    // The message store badges unresolved counts per module on mount, and
+    // loads each opened module's requirement threads alongside their details.
+    getSubmissionModulesUnresolvedCounts: vi.fn().mockResolvedValue([]),
+    getThreadsForResources: vi.fn().mockResolvedValue(new Map()),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => api);
 
@@ -116,7 +118,7 @@ beforeEach(() => {
     routerMock.query = {};
     routerMock.push.mockReset();
     Object.values(api).forEach((fn) => fn.mockReset());
-    api.fetchRequirementDetails.mockResolvedValue({});
+    api.fetchRequirementDetails.mockResolvedValue([]);
     api.removeModuleAndRequirements.mockResolvedValue(undefined);
     api.addBlankRequirement.mockResolvedValue(undefined);
     api.removeRequirement.mockResolvedValue(undefined);
@@ -127,7 +129,8 @@ beforeEach(() => {
     // The reset above drops the hoisted default; without a list the staff
     // assignee control renders nothing and takes its requirement row with it.
     api.fetchAssignableContributors.mockResolvedValue([]);
-    api.getSubmissionModulesUnreadCounts.mockResolvedValue([]);
+    api.getSubmissionModulesUnresolvedCounts.mockResolvedValue([]);
+    api.getThreadsForResources.mockResolvedValue(new Map());
     sessionStorage.clear();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -203,9 +206,13 @@ describe('ProcessModules rendering', () => {
 
 describe('ProcessModules requirement detail loading', () => {
     it('fetches details for referenced requirements and links checklists', async () => {
-        api.fetchRequirementDetails.mockResolvedValue({
-            'r-1': requirementDetail({ type: 'Checklist', satisfied: true }),
-        });
+        api.fetchRequirementDetails.mockResolvedValue([
+            requirementDetail({
+                id: 'r-1',
+                type: 'Checklist',
+                satisfied: true,
+            }),
+        ]);
         const wrapper = mountModules({
             modules: [
                 moduleTile({
@@ -236,7 +243,57 @@ describe('ProcessModules requirement detail loading', () => {
         expect(wrapper.find('.requirement-status').text()).toBe('Complete');
     });
 
-    // Requirement details and unread badges share one slot above the accordion.
+    it("loads the requirements' threads in one call without waiting on their details", async () => {
+        api.fetchRequirementDetails.mockReturnValue(new Promise(() => {}));
+        mountModules({
+            modules: [
+                moduleTile({
+                    name: 'Mod',
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-1', order: 1 },
+                    ],
+                }),
+            ],
+        });
+        await flushPromises();
+
+        expect(api.getThreadsForResources).toHaveBeenCalledWith(['r-1'], false);
+    });
+
+    it('opening another module loads only its own threads', async () => {
+        const wrapper = mountModules({
+            modules: [
+                moduleTile({
+                    tileid: 'a',
+                    name: 'Mod A',
+                    order: 1,
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-1', order: 1 },
+                    ],
+                }),
+                moduleTile({
+                    tileid: 'b',
+                    name: 'Mod B',
+                    order: 2,
+                    requirements: [
+                        { name: 'Req', resourceId: 'r-2', order: 1 },
+                    ],
+                }),
+            ],
+        });
+        await flushPromises();
+        const vm = wrapper.vm as unknown as { ui: { openPanels: string[] } };
+
+        vm.ui.openPanels = ['a', 'b'];
+        await flushPromises();
+
+        expect(api.getThreadsForResources.mock.calls).toEqual([
+            [['r-1'], false],
+            [['r-2'], false],
+        ]);
+    });
+
+    // Requirement details and unresolved badges share one slot above the accordion.
     it('reports a failed detail load in the one error slot', async () => {
         api.fetchRequirementDetails.mockRejectedValue(new Error('boom'));
         const wrapper = mountModules({
@@ -257,8 +314,8 @@ describe('ProcessModules requirement detail loading', () => {
         );
     });
 
-    it('reports a failed unread count in that same slot', async () => {
-        api.getSubmissionModulesUnreadCounts.mockRejectedValue(
+    it('reports a failed unresolved count in that same slot', async () => {
+        api.getSubmissionModulesUnresolvedCounts.mockRejectedValue(
             new Error('boom'),
         );
         const wrapper = mountModules({
@@ -268,7 +325,7 @@ describe('ProcessModules requirement detail loading', () => {
 
         expect(wrapper.findAll('.inline-error')).toHaveLength(1);
         expect(wrapper.find('.inline-error').text()).toContain(
-            'Unread message counts could not be loaded.',
+            'Unresolved message counts could not be loaded.',
         );
     });
 
@@ -287,10 +344,10 @@ describe('ProcessModules requirement detail loading', () => {
     });
 
     it('shows internal requirements to applicants too', async () => {
-        api.fetchRequirementDetails.mockResolvedValue({
-            'r-pub': requirementDetail({ internal: false }),
-            'r-int': requirementDetail({ internal: true }),
-        });
+        api.fetchRequirementDetails.mockResolvedValue([
+            requirementDetail({ id: 'r-pub', internal: false }),
+            requirementDetail({ id: 'r-int', internal: true }),
+        ]);
         const wrapper = mountModules({
             modules: [
                 moduleTile({
@@ -311,10 +368,10 @@ describe('ProcessModules requirement detail loading', () => {
     });
 
     it('shows internal requirements to staff', async () => {
-        api.fetchRequirementDetails.mockResolvedValue({
-            'r-pub2': requirementDetail({ internal: false }),
-            'r-int2': requirementDetail({ internal: true }),
-        });
+        api.fetchRequirementDetails.mockResolvedValue([
+            requirementDetail({ id: 'r-pub2', internal: false }),
+            requirementDetail({ id: 'r-int2', internal: true }),
+        ]);
         const wrapper = mountModules({
             modules: [
                 moduleTile({

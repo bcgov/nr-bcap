@@ -193,6 +193,63 @@ describe('field mapping (data shows up right)', () => {
     });
 });
 
+describe('unresolved messages', () => {
+    it('badges a card with its unresolved message count', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ unresolved_messages: 4 }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
+            4,
+        );
+    });
+
+    it('reads a card without the field as having none', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard()]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
+            0,
+        );
+    });
+
+    it('labels the filter for unresolved messages', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(
+            wrapper
+                .findComponent({ name: 'SortingBar' })
+                .props('messagesOnlyLabel'),
+        ).toBe('Unresolved messages only');
+    });
+
+    it('keeps only cards with unresolved messages when filtered', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'quiet', project_name: 'Quiet' }),
+            makeCard({
+                id: 'waiting',
+                project_name: 'Waiting',
+                unresolved_messages: 1,
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:messagesOnly', true);
+
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((card) => card.props('bodyTitle')),
+        ).toEqual(['Waiting']);
+    });
+});
+
 describe('default "my_projects" filter', () => {
     it('renders every card the backend returns (filtering is server-side)', async () => {
         getInternalDashboardData.mockResolvedValue([

@@ -60,7 +60,7 @@ function makeProject(overrides: Record<string, unknown> = {}) {
         permit_number: 'PN-9',
         urgency: 5,
         priority_level: 'High',
-        unread_messages: 0,
+        unresolved_messages: 0,
         module_progress: {
             current_module: 'Permit Review',
             completed: 1,
@@ -84,7 +84,7 @@ function makeDraft(overrides: Record<string, unknown> = {}) {
         created_by_name: 'Test User',
         created_date: '2026-03-01T00:00:00Z',
         updated_date: '2026-03-02T00:00:00Z',
-        unread_messages: 0,
+        unresolved_messages: 0,
         ...overrides,
     };
 }
@@ -325,13 +325,38 @@ describe('drafts', () => {
         );
     });
 
-    it('shows the unread message count on a draft card', async () => {
-        fetchDraftCards.mockResolvedValue([makeDraft({ unread_messages: 3 })]);
+    it('shows the unresolved message count on a draft card', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({ unresolved_messages: 3 }),
+        ]);
         const wrapper = await mountDashboard();
 
         expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
             3,
         );
+    });
+
+    it('filters drafts to those with unresolved messages', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({ id: 'draft-1', project_name: 'Open' }),
+            makeDraft({
+                id: 'draft-2',
+                project_name: 'Waiting',
+                unresolved_messages: 2,
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+
+        const bar = wrapper.findComponent({ name: 'SortingBar' });
+        expect(bar.props('messagesOnlyLabel')).toBe('Unresolved messages only');
+        bar.vm.$emit('update:messagesOnly', true);
+        await flushPromises();
+
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((card) => card.props('bodyTitle')),
+        ).toEqual(['Waiting']);
     });
 
     it('names and resumes a module draft through its own workflow', async () => {

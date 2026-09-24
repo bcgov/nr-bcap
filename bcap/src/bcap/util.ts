@@ -24,6 +24,8 @@ export const formatTimestamp = (iso: string | null | undefined): string =>
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        timeZone: 'America/Vancouver',
+        timeZoneName: 'short',
     });
 
 // Avatar initials. Names are stored "Last, First", so the parts are reversed to

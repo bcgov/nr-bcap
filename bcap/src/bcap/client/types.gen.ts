@@ -1672,11 +1672,24 @@ export type BcapMessageMessageContentAliasedData = {
     message_type: ReferenceAliasedNodeDataRequired | null;
     recipient: ResourceInstanceAliasedNodeData | null;
     resource_context: ResourceInstanceAliasedNodeData | null;
+    thread_author_resolved_by?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter date
      */
-    message_read_date?: DateAliasedNodeData | null;
+    thread_author_resolved_date?: DateAliasedNodeData | null;
+    thread_participants?: ResourceInstanceListAliasedNodeData | null;
+    thread_recipient_resolved_by?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    thread_recipient_resolved_date?: DateAliasedNodeData | null;
     attachments?: FileListAliasedNodeData | null;
+    thread_answered?: BooleanAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    thread_last_message_date?: DateAliasedNodeData | null;
+    thread?: ResourceInstanceAliasedNodeData | null;
 };
 
 export type BcapMessageMessageContentTile = {
@@ -1700,35 +1713,9 @@ export type BcapMessageMessageContentTile = {
     } | null;
 };
 
-export type BcapMessageRelatedSourceMessageAliasedData = {
-    related_source_message?: ResourceInstanceAliasedNodeData | null;
-};
-
-export type BcapMessageRelatedSourceMessageTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: BcapMessageRelatedSourceMessageAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type BcapMessageResourceAliasedData = {
     archived_by?: Array<BcapMessageArchivedByTile> | null;
     message_content?: BcapMessageMessageContentTile | null;
-    related_source_message?: BcapMessageRelatedSourceMessageTile | null;
 };
 
 export type BooleanAliasedNodeData = {
@@ -1799,6 +1786,8 @@ export type ContributorSummary = {
     name: string;
     email: string;
     type: string;
+    is_proponent?: boolean;
+    is_internal?: boolean;
 };
 
 export type ContributorAssociatedOrganizationAliasedData = {
@@ -2210,9 +2199,9 @@ export type ExternalDashboardCard = {
      */
     priority_level?: string;
     /**
-     * Count of the application's BCAP messages not yet read for the user or group.
+     * Count of the application's unresolved BCAP message threads the user can see.
      */
-    unread_messages?: number;
+    unresolved_messages?: number;
     module_progress?: ModuleProgress;
 };
 
@@ -3269,9 +3258,9 @@ export type InternalDashboardCard = {
      */
     priority_level?: string;
     /**
-     * Count of the permit's BCAP messages not yet read for the user or group.
+     * Count of the permit's unresolved BCAP message threads the user can see.
      */
-    unread_messages?: number;
+    unresolved_messages?: number;
     module_progress?: ModuleProgress;
 };
 
@@ -4141,9 +4130,9 @@ export type ModuleProgress = {
     total?: number;
 };
 
-export type ModuleUnread = {
+export type ModuleUnresolved = {
     module_id: string;
-    unread_count: number;
+    unresolved_count: number;
 };
 
 /**
@@ -4539,35 +4528,19 @@ export type PaginatedThreadMessageList = {
     results: Array<ThreadMessage>;
 };
 
-export type PaginatedThreadRootList = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<ThreadRoot>;
-};
-
+/**
+ * PATCH body schema: commands on the message's thread rather than node
+ * edits, since both land on the thread root, not on the message.
+ */
 export type PatchedBcapMessagePatch = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedData;
-    readonly graph_has_different_publication?: boolean;
     /**
      * Toggle the caller's personal archive of the thread.
      */
     archived?: boolean;
-    readonly name?: string | null;
-    readonly descriptors?: {
-        en?: {
-            name?: string;
-            description?: string;
-            map_popup?: string;
-        };
-    } | null;
-    readonly legacyid?: string | null;
-    readonly createdtime?: string;
-    graph?: string | null;
-    readonly graph_publication?: string | null;
-    readonly resource_instance_lifecycle_state?: string;
-    readonly principaluser?: number | null;
+    /**
+     * Resolve or reopen the thread for everyone party to it.
+     */
+    resolved?: boolean;
 };
 
 /**
@@ -7295,7 +7268,7 @@ export type ThreadMessage = {
     resourceinstanceid?: string | null;
     aliased_data?: BcapMessageResourceAliasedData;
     readonly graph_has_different_publication: boolean;
-    readonly is_unread: boolean;
+    readonly author_is_staff: boolean;
     readonly name: string | null;
     readonly descriptors: {
         en?: {
@@ -7316,8 +7289,14 @@ export type ThreadRoot = {
     resourceinstanceid?: string | null;
     aliased_data?: BcapMessageResourceAliasedData;
     readonly graph_has_different_publication: boolean;
-    readonly unread_count: number;
-    readonly last_message_date: string;
+    /**
+     * The viewer's side of the thread, author or recipient, whose resolved_* nodes are theirs; empty when they are on neither.
+     */
+    readonly viewer_side: string;
+    /**
+     * Whether the thread awaits the viewer: they (or a group of theirs) take part, their side is unresolved, and, if they started it, someone has replied.
+     */
+    readonly viewer_needs_action: boolean;
     readonly name: string | null;
     readonly descriptors: {
         en?: {
@@ -8956,11 +8935,24 @@ export type BcapMessageMessageContentAliasedDataWritable = {
     message_type: ReferenceAliasedNodeDataRequiredWritable | null;
     recipient: ResourceInstanceAliasedNodeDataWritable | null;
     resource_context: ResourceInstanceAliasedNodeDataWritable | null;
+    thread_author_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
-    message_read_date?: DateAliasedNodeDataWritable | null;
+    thread_author_resolved_date?: DateAliasedNodeDataWritable | null;
+    thread_participants?: ResourceInstanceListAliasedNodeDataWritable | null;
+    thread_recipient_resolved_by?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    thread_recipient_resolved_date?: DateAliasedNodeDataWritable | null;
     attachments?: FileListAliasedNodeDataWritable | null;
+    thread_answered?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    thread_last_message_date?: DateAliasedNodeDataWritable | null;
+    thread?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type BcapMessageMessageContentTileWritable = {
@@ -8984,35 +8976,9 @@ export type BcapMessageMessageContentTileWritable = {
     } | null;
 };
 
-export type BcapMessageRelatedSourceMessageAliasedDataWritable = {
-    related_source_message?: ResourceInstanceAliasedNodeDataWritable | null;
-};
-
-export type BcapMessageRelatedSourceMessageTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: BcapMessageRelatedSourceMessageAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type BcapMessageResourceAliasedDataWritable = {
     archived_by?: Array<BcapMessageArchivedByTileWritable> | null;
     message_content?: BcapMessageMessageContentTileWritable | null;
-    related_source_message?: BcapMessageRelatedSourceMessageTileWritable | null;
 };
 
 export type BooleanAliasedNodeDataWritable = {
@@ -11338,23 +11304,6 @@ export type PaginatedThreadMessageListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<ThreadMessageWritable>;
-};
-
-export type PaginatedThreadRootListWritable = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<ThreadRootWritable>;
-};
-
-export type PatchedBcapMessagePatchWritable = {
-    resourceinstanceid?: string | null;
-    aliased_data?: BcapMessageResourceAliasedDataWritable;
-    /**
-     * Toggle the caller's personal archive of the thread.
-     */
-    archived?: boolean;
-    graph?: string | null;
 };
 
 /**
@@ -13923,7 +13872,7 @@ export type ApiBcapMessageRetrieveResponse =
     ApiBcapMessageRetrieveResponses[keyof ApiBcapMessageRetrieveResponses];
 
 export type ApiBcapMessagePartialUpdateData = {
-    body?: PatchedBcapMessagePatchWritable;
+    body?: PatchedBcapMessagePatch;
     path: {
         id: string;
     };
@@ -13954,50 +13903,21 @@ export type ApiBcapMessageResourceContributorsListResponses = {
 export type ApiBcapMessageResourceContributorsListResponse =
     ApiBcapMessageResourceContributorsListResponses[keyof ApiBcapMessageResourceContributorsListResponses];
 
-export type ApiBcapMessageResourceThreadsListData = {
-    body?: never;
-    path: {
-        resource_id: string;
-    };
-    query?: {
-        /**
-         * Return the viewer's archived threads instead of active ones.
-         */
-        archived?: boolean;
-        /**
-         * Number of results to return per page.
-         */
-        limit?: number;
-        /**
-         * The initial index from which to return the results.
-         */
-        offset?: number;
-    };
-    url: '/bcap/api/bcap_message/resource/{resource_id}/threads';
-};
-
-export type ApiBcapMessageResourceThreadsListResponses = {
-    200: PaginatedThreadRootList;
-};
-
-export type ApiBcapMessageResourceThreadsListResponse =
-    ApiBcapMessageResourceThreadsListResponses[keyof ApiBcapMessageResourceThreadsListResponses];
-
-export type ApiBcapMessageSubmissionUnreadByModuleListData = {
+export type ApiBcapMessageSubmissionUnresolvedByModuleListData = {
     body?: never;
     path: {
         submission_id: string;
     };
     query?: never;
-    url: '/bcap/api/bcap_message/submission/{submission_id}/unread-by-module';
+    url: '/bcap/api/bcap_message/submission/{submission_id}/unresolved-by-module';
 };
 
-export type ApiBcapMessageSubmissionUnreadByModuleListResponses = {
-    200: Array<ModuleUnread>;
+export type ApiBcapMessageSubmissionUnresolvedByModuleListResponses = {
+    200: Array<ModuleUnresolved>;
 };
 
-export type ApiBcapMessageSubmissionUnreadByModuleListResponse =
-    ApiBcapMessageSubmissionUnreadByModuleListResponses[keyof ApiBcapMessageSubmissionUnreadByModuleListResponses];
+export type ApiBcapMessageSubmissionUnresolvedByModuleListResponse =
+    ApiBcapMessageSubmissionUnresolvedByModuleListResponses[keyof ApiBcapMessageSubmissionUnresolvedByModuleListResponses];
 
 export type ApiBcapMessageThreadMessagesListData = {
     body?: never;
@@ -14023,6 +13943,29 @@ export type ApiBcapMessageThreadMessagesListResponses = {
 
 export type ApiBcapMessageThreadMessagesListResponse =
     ApiBcapMessageThreadMessagesListResponses[keyof ApiBcapMessageThreadMessagesListResponses];
+
+export type ApiBcapMessageThreadsListData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Return the viewer's archived threads instead of active ones.
+         */
+        archived?: boolean;
+        /**
+         * The resources to list threads for, as repeated params.
+         */
+        resource_ids: Array<string>;
+    };
+    url: '/bcap/api/bcap_message/threads';
+};
+
+export type ApiBcapMessageThreadsListResponses = {
+    200: Array<ThreadRoot>;
+};
+
+export type ApiBcapMessageThreadsListResponse =
+    ApiBcapMessageThreadsListResponses[keyof ApiBcapMessageThreadsListResponses];
 
 export type ApiContributorListData = {
     body?: never;

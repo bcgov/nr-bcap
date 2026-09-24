@@ -115,9 +115,8 @@ paths:
       description: |-
         GET or PATCH a single message, gated on the resource_context rather than
         owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
-        sets the read date (message_read_date in the body) and/or the caller's
-        personal archive of the thread (a top-level "archived" boolean), whichever
-        the body carries.
+        resolves or reopens the thread for everyone ("resolved") and/or toggles the
+        caller's personal archive of it ("archived"), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -141,9 +140,8 @@ paths:
       description: |-
         GET or PATCH a single message, gated on the resource_context rather than
         owner-scoped: reading it needs read access, PATCH needs edit access. PATCH
-        sets the read date (message_read_date in the body) and/or the caller's
-        personal archive of the thread (a top-level "archived" boolean), whichever
-        the body carries.
+        resolves or reopens the thread for everyone ("resolved") and/or toggles the
+        caller's personal archive of it ("archived"), whichever the body carries.
       parameters:
       - in: path
         name: id
@@ -178,7 +176,9 @@ paths:
       operationId: api_bcap_message_resource_contributors_list
       description: |-
         GET the contributors you can address a message to for a resource: the
-        login-linked contributors referenced on it plus its ministry assignees.
+        login-linked contributors referenced on it and its ministry assignees, or
+        the Archaeology Branch when there are none; staff also get whoever filed
+        the permit.
       parameters:
       - in: path
         name: resource_id
@@ -199,54 +199,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/ContributorSummary'
           description: ''
-  /bcap/api/bcap_message/resource/{resource_id}/threads:
+  /bcap/api/bcap_message/submission/{submission_id}/unresolved-by-module:
     get:
-      operationId: api_bcap_message_resource_threads_list
+      operationId: api_bcap_message_submission_unresolved_by_module_list
       description: |-
-        GET the threads on a parent resource, one per thread as its root
-        (thread-starting) message, with the standard limit/offset pagination.
-      parameters:
-      - in: query
-        name: archived
-        schema:
-          type: boolean
-          default: false
-        description: Return the viewer's archived threads instead of active ones.
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - in: path
-        name: resource_id
-        schema:
-          type: string
-          format: uuid
-        required: true
-      tags:
-      - 'External: bcap_message'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedThreadRootList'
-          description: ''
-  /bcap/api/bcap_message/submission/{submission_id}/unread-by-module:
-    get:
-      operationId: api_bcap_message_submission_unread_by_module_list
-      description: |-
-        GET the viewer's unread count per process_module of a submission, so the
-        module list badges unread without loading each module's threads.
+        GET the viewer's unresolved thread count per process_module of a
+        submission, so the module list badges them without loading each module's
+        threads.
       parameters:
       - in: path
         name: submission_id
@@ -265,14 +224,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ModuleUnread'
+                  $ref: '#/components/schemas/ModuleUnresolved'
           description: ''
   /bcap/api/bcap_message/thread/{thread_id}/messages:
     get:
       operationId: api_bcap_message_thread_messages_list
       description: |-
-        GET one thread's messages (its root and replies), oldest-first, with the
-        standard limit/offset pagination the rest of the API uses.
+        GET one thread's messages (its root and replies), newest first, with the
+        standard limit/offset pagination, so the first page is the latest.
       parameters:
       - name: limit
         required: false
@@ -302,6 +261,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedThreadMessageList'
+          description: ''
+  /bcap/api/bcap_message/threads:
+    get:
+      operationId: api_bcap_message_threads_list
+      description: |-
+        GET the threads on one or more resources, one row per thread as its root
+        message. Unpaginated; each root's resource_context says which resource it
+        belongs to.
+      parameters:
+      - in: query
+        name: archived
+        schema:
+          type: boolean
+          default: false
+        description: Return the viewer's archived threads instead of active ones.
+      - in: query
+        name: resource_ids
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 200
+          minItems: 1
+        description: The resources to list threads for, as repeated params.
+        required: true
+      tags:
+      - 'External: bcap_message'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ThreadRoot'
           description: ''
   /bcap/api/contributor:
     get:
@@ -5548,7 +5545,24 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        message_read_date:
+        thread_author_resolved_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        thread_author_resolved_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        thread_participants:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        thread_recipient_resolved_by:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        thread_recipient_resolved_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
@@ -5556,6 +5570,19 @@ components:
         attachments:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        thread_answered:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        thread_last_message_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        thread:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
       required:
       - message_author
@@ -5612,61 +5639,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Bcap_Message_Related_Source_Message_Aliased_Data:
-      type: object
-      properties:
-        related_source_message:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-    Bcap_Message_Related_Source_Message_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Related_Source_Message_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Bcap_Message_Resource_Aliased_Data:
       type: object
       properties:
@@ -5678,10 +5650,6 @@ components:
         message_content:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
-          nullable: true
-        related_source_message:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Message_Related_Source_Message_Tile'
           nullable: true
     BooleanAliasedNodeData:
       type: object
@@ -5850,6 +5818,10 @@ components:
           type: string
         type:
           type: string
+        is_proponent:
+          type: boolean
+        is_internal:
+          type: boolean
       required:
       - email
       - id
@@ -6578,10 +6550,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
-        unread_messages:
+        unresolved_messages:
           type: integer
-          description: Count of the application's BCAP messages not yet read for the
-            user or group.
+          description: Count of the application's unresolved BCAP message threads
+            the user can see.
         module_progress:
           $ref: '#/components/schemas/ModuleProgress'
       required:
@@ -8608,10 +8580,10 @@ components:
         priority_level:
           type: string
           description: Permit application's priority level (reference label).
-        unread_messages:
+        unresolved_messages:
           type: integer
-          description: Count of the permit's BCAP messages not yet read for the user
-            or group.
+          description: Count of the permit's unresolved BCAP message threads the user
+            can see.
         module_progress:
           $ref: '#/components/schemas/ModuleProgress'
       required:
@@ -10380,16 +10352,16 @@ components:
         total:
           type: integer
           description: How many modules the permit has.
-    ModuleUnread:
+    ModuleUnresolved:
       type: object
       properties:
         module_id:
           type: string
-        unread_count:
+        unresolved_count:
           type: integer
       required:
       - module_id
-      - unread_count
+      - unresolved_count
     NewContributor:
       type: object
       description: |-
@@ -11343,87 +11315,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ThreadMessage'
-    PaginatedThreadRootList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/ThreadRoot'
     PatchedBcapMessagePatch:
       type: object
+      description: |-
+        PATCH body schema: commands on the message's thread rather than node
+        edits, since both land on the thread root, not on the message.
       properties:
-        resourceinstanceid:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Message_Resource_Aliased_Data'
-        graph_has_different_publication:
-          type: boolean
-          readOnly: true
         archived:
           type: boolean
           description: Toggle the caller's personal archive of the thread.
-        name:
-          type: string
-          readOnly: true
-          nullable: true
-        descriptors:
-          type: object
-          readOnly: true
-          nullable: true
-          properties:
-            en:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-                map_popup:
-                  type: string
-        legacyid:
-          type: string
-          readOnly: true
-          nullable: true
-        createdtime:
-          type: string
-          format: date-time
-          readOnly: true
-        graph:
-          type: string
-          format: uuid
-          nullable: true
-        graph_publication:
-          type: string
-          format: uuid
-          readOnly: true
-          nullable: true
-        resource_instance_lifecycle_state:
-          type: string
-          format: uuid
-          readOnly: true
-        principaluser:
-          type: integer
-          readOnly: true
-          nullable: true
+        resolved:
+          type: boolean
+          description: Resolve or reopen the thread for everyone party to it.
     PatchedChecklistPatch:
       type: object
       description: |-
@@ -17242,7 +17145,7 @@ components:
         graph_has_different_publication:
           type: boolean
           readOnly: true
-        is_unread:
+        author_is_staff:
           type: boolean
           readOnly: true
         name:
@@ -17289,11 +17192,11 @@ components:
           readOnly: true
           nullable: true
       required:
+      - author_is_staff
       - createdtime
       - descriptors
       - graph_has_different_publication
       - graph_publication
-      - is_unread
       - legacyid
       - name
       - principaluser
@@ -17310,13 +17213,17 @@ components:
         graph_has_different_publication:
           type: boolean
           readOnly: true
-        unread_count:
-          type: integer
-          readOnly: true
-        last_message_date:
+        viewer_side:
           type: string
-          format: date-time
           readOnly: true
+          description: The viewer's side of the thread, author or recipient, whose
+            resolved_* nodes are theirs; empty when they are on neither.
+        viewer_needs_action:
+          type: boolean
+          readOnly: true
+          description: 'Whether the thread awaits the viewer: they (or a group of
+            theirs) take part, their side is unresolved, and, if they started it,
+            someone has replied.'
         name:
           type: string
           readOnly: true
@@ -17365,12 +17272,12 @@ components:
       - descriptors
       - graph_has_different_publication
       - graph_publication
-      - last_message_date
       - legacyid
       - name
       - principaluser
       - resource_instance_lifecycle_state
-      - unread_count
+      - viewer_needs_action
+      - viewer_side
     UrlAliasedNodeData:
       type: object
       properties:

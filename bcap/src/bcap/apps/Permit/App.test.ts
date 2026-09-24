@@ -71,6 +71,7 @@ describe('route guard', () => {
         // The endpoint refuses anyone not signed in, so this is the signed-out
         // path. The landing route is the one a guard is easiest to miss.
         mockFetchJson.mockRejectedValue(new Error('403'));
+        vi.spyOn(console, 'error').mockImplementation(() => {});
 
         const { wrapper } = await mountApp();
 

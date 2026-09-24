@@ -74,7 +74,7 @@ LOGGING["loggers"]["django.request"] = {
     "propagate": True,
 }
 
-LOGGING["loggers"]["bcap.services.message.bcap_message_service"] = {
+LOGGING["loggers"]["bcap.services.message.thread_service"] = {
     "level": "ERROR",
     "propagate": True,
 }

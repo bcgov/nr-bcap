@@ -199,7 +199,8 @@ DATABASES = {
     "default": {
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": True,
-        "CONN_MAX_AGE": 0,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "HOST": get_env_variable("PGHOST"),
         "NAME": get_env_variable("PGDBNAME"),

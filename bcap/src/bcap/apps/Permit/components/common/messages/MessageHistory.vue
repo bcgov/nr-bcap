@@ -1,15 +1,43 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { downloadFile, formatFileSize } from '@/bcap/util.ts';
-import type { FormattedMessage } from '@/bcap/types.ts';
+import { useMessageStore } from '@/bcap/stores/message.ts';
 
-defineProps<{
-    messages: FormattedMessage[];
+const props = defineProps<{
+    threadId: string;
     isLoading: boolean;
 }>();
+
+const messageStore = useMessageStore();
+const thread = ref<HTMLElement | null>(null);
+const isLoadingEarlier = ref(false);
+
+const loadEarlier = async () => {
+    isLoadingEarlier.value = true;
+    try {
+        await messageStore.loadEarlierMessages(props.threadId);
+    } finally {
+        isLoadingEarlier.value = false;
+    }
+};
+
+// Open on the latest message. Messages arrive while the spinner still shows, so
+// also scroll once it clears. Earlier pages leave the newest alone, so they
+// don't pull the view down.
+watch(
+    [() => messageStore.openMessages.at(-1)?.id, () => props.isLoading],
+    () => {
+        if (thread.value) thread.value.scrollTop = thread.value.scrollHeight;
+    },
+    { flush: 'post' },
+);
 </script>
 
 <template>
-    <div class="message-thread">
+    <div
+        ref="thread"
+        class="message-thread"
+    >
         <div
             v-if="isLoading"
             class="messages-loading"
@@ -18,13 +46,34 @@ defineProps<{
             Loading messages…
         </div>
         <template v-else>
+            <button
+                v-if="messageStore.hasEarlierMessages"
+                type="button"
+                class="load-earlier"
+                :disabled="isLoadingEarlier"
+                @click="loadEarlier"
+            >
+                <i
+                    v-if="isLoadingEarlier"
+                    class="fa-solid fa-spinner fa-spin"
+                ></i>
+                Show earlier messages
+            </button>
             <div
-                v-for="(msg, index) in messages"
-                :key="index"
+                v-for="msg in messageStore.openMessages"
+                :key="msg.id"
                 class="historical-message"
             >
                 <div class="message-header">
-                    <strong>{{ msg.author }}:</strong>
+                    <span class="message-author">
+                        <strong>{{ msg.author }}</strong>
+                        <span
+                            v-if="msg.authorIsStaff"
+                            class="staff-chip"
+                        >
+                            Archaeology Branch
+                        </span>
+                    </span>
                     <span
                         v-if="msg.date"
                         class="message-date"
@@ -73,7 +122,6 @@ defineProps<{
     flex: 1 1 auto;
     min-height: 10rem;
     overflow-y: auto;
-    margin-bottom: 1.5rem;
     padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
@@ -89,35 +137,68 @@ defineProps<{
     color: #6c757d;
 }
 
+.load-earlier {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto 1rem;
+    padding: 0.4rem 1rem;
+    border: none;
+    background: none;
+    color: var(--bc-navy);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.load-earlier:hover:not(:disabled) {
+    text-decoration: underline;
+}
+
 .historical-message {
-    margin-bottom: 1rem;
+    padding: 1rem 0.25rem;
     color: #333;
-    padding-bottom: 1rem;
+}
+
+.historical-message:first-child {
+    padding-top: 0;
+}
+
+.historical-message:last-child {
+    padding-bottom: 0;
+}
+
+.historical-message + .historical-message {
+    border-top: 1px solid #e5e7eb;
 }
 
 .message-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.5rem;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
 }
 
 .historical-message strong {
-    color: #000;
-    font-weight: 600;
+    color: var(--bc-text);
+    font-weight: 700;
     margin: 0;
     font-size: 1.3rem;
 }
 
 .message-date {
+    flex-shrink: 0;
     font-size: 1.1rem;
-    color: #6c757d;
+    color: var(--bc-muted);
 }
 
 .historical-message p {
     margin: 0;
-    line-height: 1.5;
-    font-size: 1.25rem;
+    line-height: 1.55;
+    font-size: 1.3rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .message-attachments {
@@ -170,5 +251,19 @@ defineProps<{
     flex-shrink: 0;
     color: #6c757d;
     font-size: 0.95em;
+}
+.message-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.staff-chip {
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #334155;
+    background-color: #eef1f4;
 }
 </style>
