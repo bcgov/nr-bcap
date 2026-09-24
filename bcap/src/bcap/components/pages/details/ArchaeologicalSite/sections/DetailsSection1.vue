@@ -56,6 +56,7 @@ const siteBoundaryNode = computed<
 <template>
     <div
         ref="mapBoxes"
+        class="centered-map"
         style="--map-max-width: 100%"
     >
         <Map
@@ -108,3 +109,18 @@ const siteBoundaryNode = computed<
     </DetailsSection>
     <!--    <Toast />-->
 </template>
+<style scoped>
+/* Drag the corner to resize; the widget sizes off these vars, so they follow
+   the box instead of its 750x500 defaults. */
+.centered-map {
+    resize: both;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    height: 50rem;
+    min-height: 10rem;
+    --map-width: 100%;
+    --map-max-width: 100%;
+    --map-max-height: 100%;
+}
+</style>
