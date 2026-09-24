@@ -15,6 +15,8 @@ import type {
     ArchaeologicalSiteSiteBoundaryTile,
 } from '@/bcap/client/types.gen.ts';
 
+import { useMapFrameAutoCentre } from '@/bcgov_arches_common/composables/useMapFrameAutoCentre.ts';
+
 const props = withDefaults(
     defineProps<{
         data: ArchaeologicalSite | undefined;
@@ -28,6 +30,8 @@ const props = withDefaults(
         forceCollapsed: undefined,
     },
 );
+
+useMapFrameAutoCentre('mapBoxes', { showCentroidMarker: false });
 
 const siteBoundary = computed<ArchaeologicalSiteSiteBoundaryTile | undefined>(
     (): ArchaeologicalSiteSiteBoundaryTile | undefined => {
@@ -50,7 +54,10 @@ const siteBoundaryNode = computed<
 </script>
 
 <template>
-    <div style="--map-max-width: 100%">
+    <div
+        ref="mapBoxes"
+        style="--map-max-width: 100%"
+    >
         <Map
             graph-slug="archaeological_site"
             node-alias="site_boundary"
