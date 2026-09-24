@@ -10,6 +10,7 @@ import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadc
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 import type { ProcessRequirement } from '@/bcap/client/types.gen.ts';
 import { zPatchedProcessRequirement } from '@/bcap/client/zod.gen.ts';
 import { inlineMessage } from '@/bcap/notify.ts';
@@ -36,7 +37,11 @@ const requirementName = computed(
 );
 
 const crumbs = computed(() =>
-    permitCrumbs(route.query.permit, requirementName.value || 'Checklist'),
+    permitCrumbs(
+        route.query.permit,
+        requirementName.value || 'Checklist',
+        routeNames.internalPermitDetails,
+    ),
 );
 
 const backLink = computed(() => crumbs.value[0]?.to ?? '');

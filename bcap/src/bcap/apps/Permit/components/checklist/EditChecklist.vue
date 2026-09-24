@@ -15,6 +15,7 @@ import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadc
 import PermitHeaderBand from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
 
 const route = useRoute();
 const processId = computed(() => route.query.id as string | undefined);
@@ -24,6 +25,7 @@ const crumbs = computed(() =>
     permitCrumbs(
         route.query.permit,
         state.requirementTitle || 'Edit Checklist',
+        routeNames.internalPermitDetails,
     ),
 );
 

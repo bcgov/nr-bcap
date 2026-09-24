@@ -49,4 +49,16 @@ describe('permitCrumbs', () => {
         });
         expect(current).toEqual({ label: 'Checklist' });
     });
+
+    it('links to the given summary route', () => {
+        const [summary] = permitCrumbs(
+            'permit-1',
+            'Checklist',
+            'internalPermitDetails',
+        );
+        expect(summary.to).toEqual({
+            name: 'internalPermitDetails',
+            params: { id: 'permit-1' },
+        });
+    });
 });
