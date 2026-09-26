@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef, type Ref } from 'vue';
+import { computed, toRef, type Ref, watchEffect } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
@@ -8,7 +8,10 @@ import type {
     AliasedTileDataWithAudit,
     EditLogData,
 } from '@/bcgov_arches_common/types.ts';
-import type { AliasedTileData } from '@/arches_vue_components/types.ts';
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 import type {
     PublicationPublicationDetailsTile,
@@ -16,17 +19,21 @@ import type {
     PublicationAuthorsTile,
     ArchaeologicalSiteRelatedDocumentsTile,
     ArchaeologicalSiteRelatedDocumentsAliasedData,
+    SiteVisit,
 } from '@/bcap/client/types.gen.ts';
 import type { HriaDiscontinuedData } from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
+import { isEmpty } from '@/bcap/util.ts';
 
 const props = withDefaults(
     defineProps<{
         data: ArchaeologicalSiteRelatedDocumentsTile | undefined;
+        siteVisitData: SiteVisit[];
         hriaData?: HriaDiscontinuedData;
         publicationData?: Publication[] | undefined;
+        siteVisitPublicationData?: Publication[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -41,6 +48,7 @@ const props = withDefaults(
         showAuditFields: false,
         hriaData: undefined,
         publicationData: undefined,
+        siteVisitPublicationData: undefined,
     },
 );
 
@@ -51,14 +59,37 @@ const currentData = computed<
 });
 
 const relatedDocumentsData = computed(() => {
+    let documents: AliasedTileData[] = [];
+
+    if (props.siteVisitData?.length) {
+        const siteVisitDocuments = props.siteVisitData.flatMap(
+            (visit) =>
+                visit?.aliased_data?.related_documents?.aliased_data
+                    ?.related_site_documents ?? [],
+        );
+        documents = expandDocumentRows(
+            siteVisitDocuments as unknown as AliasedTileData[],
+            'related_documents',
+        );
+    }
+
     const docs = currentData.value?.related_site_documents;
-    if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
-    return expandDocumentRows(
-        docsArray as unknown as AliasedTileData[],
-        'related_site_documents',
-    );
+    if (docs) {
+        const docsArray = Array.isArray(docs) ? docs : [docs];
+        documents = [
+            ...documents,
+            ...expandDocumentRows(
+                docsArray as unknown as AliasedTileData[],
+                'related_site_documents',
+            ),
+        ];
+    }
+    return documents;
 });
+
+watchEffect(() =>
+    console.log('relatedDocumentsData', relatedDocumentsData.value.length),
+);
 
 type PublicationDetailsTileWithAuthors = AliasedTileDataWithAudit &
     PublicationPublicationDetailsTile & {
@@ -66,9 +97,28 @@ type PublicationDetailsTileWithAuthors = AliasedTileDataWithAudit &
             authors: PublicationAuthorsTile[] | undefined;
         };
     };
+
 const publicationReferencesData = computed<PublicationDetailsTileWithAuthors[]>(
     () => {
-        return (props.publicationData ?? []).map((publication) => {
+        let publications: Publication[] = [];
+
+        if (props.siteVisitPublicationData?.length) {
+            publications = [...props.siteVisitPublicationData];
+        }
+
+        if (props.publicationData?.length) {
+            const seenIds = new Set(
+                publications.map((p) => p.resourceinstanceid),
+            );
+            publications = [
+                ...publications,
+                ...props.publicationData.filter(
+                    (p) => !seenIds.has(p.resourceinstanceid),
+                ),
+            ];
+        }
+
+        return publications.map((publication) => {
             let data = publication.aliased_data
                 ?.publication_details as PublicationDetailsTileWithAuthors;
             data.aliased_data.authors =
@@ -175,7 +225,24 @@ const hasRelatedDocuments = computed(() => {
     return relatedDocumentsData.value && relatedDocumentsData.value.length > 0;
 });
 
-const siteImagesData = computed(() => currentData.value?.site_images || []);
+const siteImagesData = computed(() => {
+    let images: AliasedTileData[] = [];
+
+    if (props.siteVisitData?.length) {
+        images = props.siteVisitData.flatMap(
+            (visit) =>
+                visit?.aliased_data?.related_documents?.aliased_data
+                    ?.site_images ?? [],
+        ) as unknown as AliasedTileData[];
+    }
+
+    const asSiteImages = currentData.value?.site_images;
+    if (asSiteImages?.length) {
+        images = [...images, ...(asSiteImages as unknown as AliasedTileData[])];
+    }
+
+    return images;
+});
 
 const { processedData: siteImagesTableData } = useTileEditLog(
     siteImagesData as Ref<AliasedTileData[]>,

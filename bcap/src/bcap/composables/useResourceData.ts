@@ -89,50 +89,49 @@ export function useResourceList<T>(
     };
 }
 
-export function useRelatedResourceData<T>(
+export function useRelatedResourceData<
+    T extends { resourceinstanceid?: string | null },
+>(
     resourceType: string,
-    resourceId: Ref<string | undefined>,
+    resourceId: Ref<string | string[] | undefined>,
     getFirst: boolean = false,
 ) {
-    const cache = ref<Record<string, T[] | T | null>>({});
     const current = ref<T[] | T | null>(null);
     const loading = ref(true);
     const error = ref('');
 
     watchEffect(async () => {
         const id = resourceId.value;
+        const ids = Array.isArray(id) ? id : id ? [id] : [];
 
-        if (!id) {
+        if (ids.length === 0) {
             loading.value = false;
             return;
         }
 
-        if (!(id in cache.value)) {
-            loading.value = true;
-            error.value = '';
+        loading.value = true;
+        error.value = '';
 
-            try {
-                const data = await getRelatedResourceData(resourceType, id);
-                const result = getFirst && data.length > 0 ? data[0] : data;
-                cache.value[id] = result as T[] | T;
-                current.value = cache.value[id];
-            } catch (err) {
-                error.value = inlineMessage(err);
-                cache.value[id] = null;
-                current.value = null;
-            } finally {
-                loading.value = false;
-            }
-        } else {
-            current.value = cache.value[id];
+        try {
+            const results = await Promise.all(
+                ids.map((i) => getRelatedResourceData(resourceType, i)),
+            );
+            const flat = results.flat() as unknown as T[];
+            const seen = new Set<string>();
+            const deduped = flat.filter((item) => {
+                const itemId = item.resourceinstanceid;
+                if (!itemId || seen.has(itemId)) return false;
+                seen.add(itemId);
+                return true;
+            });
+            current.value = getFirst ? (deduped[0] ?? null) : deduped;
+        } catch (err) {
+            error.value = inlineMessage(err);
+            current.value = null;
+        } finally {
             loading.value = false;
         }
     });
 
-    return {
-        data: current,
-        loading,
-        error,
-        cache,
-    };
+    return { data: current, loading, error };
 }

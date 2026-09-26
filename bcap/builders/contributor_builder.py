@@ -17,6 +17,7 @@ class ContributorSpec:
     contributor_type: object
     first_name: object  # None for an organization
     name: object
+    email: str = ""  # contact email
     bcap_username: object = None  # maps the contributor to a BCAP user
     associated_organization: object = None  # the organization it belongs to
     inactive: object = None  # the inactive flag on the contributor tile
@@ -39,6 +40,9 @@ class ContributorBuilder(ResourceBuilder):
                 ),
                 aliases.CONTRIBUTOR_NAME: self.localized(spec.name),
                 aliases.CONTRIBUTOR_TYPE: spec.contributor_type,
+                aliases.CONTACT_EMAIL: (
+                    self.localized(spec.email) if spec.email else None
+                ),
                 aliases.BCAP_USERNAME: spec.bcap_username,
                 aliases.INACTIVE: spec.inactive,
             },

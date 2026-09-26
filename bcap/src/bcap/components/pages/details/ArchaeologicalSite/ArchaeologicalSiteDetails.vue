@@ -88,6 +88,7 @@ const loadError = computed(
         siteError.value ||
         siteVisitError.value ||
         publicationError.value ||
+        siteVisitPublicationError.value ||
         childSiteError.value ||
         hriaError.value,
 );
@@ -119,6 +120,22 @@ const typedHriaData = computed(
 
 const typedPublicationData = computed(
     () => publicationData.value as Publication[] | undefined,
+);
+
+const siteVisitIds = computed(() =>
+    typedSiteVisitData.value
+        .map((v) => v.resourceinstanceid)
+        .filter((id): id is string => !!id),
+);
+
+const {
+    data: siteVisitPublicationData,
+    loading: siteVisitPublicationLoading,
+    error: siteVisitPublicationError,
+} = useRelatedResourceData<Publication>('publication', siteVisitIds);
+
+const typedSiteVisitPublicationData = computed(
+    () => siteVisitPublicationData.value as Publication[] | undefined,
 );
 </script>
 
@@ -219,10 +236,15 @@ const typedPublicationData = computed(
             :data="
                 typedCurrentData?.aliased_data?.related_documents ?? undefined
             "
+            :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :publication-data="typedPublicationData"
+            :site-visit-publication-data="typedSiteVisitPublicationData"
             :loading="
-                siteDataLoading || hriaDataLoading || publicationDataLoading
+                siteDataLoading ||
+                hriaDataLoading ||
+                publicationDataLoading ||
+                siteVisitPublicationLoading
             "
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
