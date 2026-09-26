@@ -64,17 +64,17 @@ SELECT
     r.identification_and_registration -> 'site_alert' ->> 'alert_branch_contact' AS alert_branch_contact_id,
     arches_util.resource_name(arches_util.to_uuid(r.identification_and_registration -> 'site_alert' ->> 'alert_entered_by')) AS alert_entered_by,
     r.identification_and_registration -> 'site_alert' ->> 'alert_entered_by' AS alert_entered_by_id,
-    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_registration_status', 'label', ' | ', '; ') AS decision_registration_status,
-    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_registration_status', 'list_item_id', ' | ', '; ') AS decision_registration_status_ids,
-    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_date', ' | ') AS decision_date,
-    arches_util.deep_res_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by,
-    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by_ids,
-    arches_util.deep_res_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommended_by', ' | ') AS recommended_by,
-    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommended_by', ' | ') AS recommended_by_ids,
-    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommendation_date', ' | ') AS recommendation_date,
-    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_description', ' | ') AS decision_description,
-    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'site_decision', 'label', ' | ', '; ') AS site_decision,
-    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'site_decision', 'list_item_id', ' | ', '; ') AS site_decision_ids,
+    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'decision_registration_status', 'label', ' | ', '; ') AS decision_registration_status,
+    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'decision_registration_status', 'list_item_id', ' | ', '; ') AS decision_registration_status_ids,
+    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_date', ' | ') AS decision_date,
+    arches_util.deep_res_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by,
+    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by_ids,
+    arches_util.deep_res_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommended_by', ' | ') AS recommended_by,
+    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommended_by', ' | ') AS recommended_by_ids,
+    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommendation_date', ' | ') AS recommendation_date,
+    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_description', ' | ') AS decision_description,
+    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'site_decision', 'label', ' | ', '; ') AS site_decision,
+    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'site_decision', 'list_item_id', ' | ', '; ') AS site_decision_ids,
     jsonb_array_length(arches_util.as_array(r.identification_and_registration -> 'site_decision')) AS site_decision_count,
     arches_util.deep_csv(r.identification_and_registration -> 'site_names', '{}'::text[], 'name', ' | ') AS name,
     arches_util.deep_res_csv(r.identification_and_registration -> 'site_names', '{}'::text[], 'assigned_or_reported_by', ' | ') AS assigned_or_reported_by,
@@ -141,7 +141,15 @@ SELECT
     arches_util.deep_res_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', ' | ', '; ') AS publication_reference,
     arches_util.deep_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', NULL, ' | ', '; ') AS publication_reference_ids,
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'publication_reference')) AS publication_reference_count
-FROM archaeological_site.mv_resource r;
+FROM archaeological_site.mv_resource r
+LEFT JOIN LATERAL (
+    SELECT (
+        SELECT jsonb_build_array(elem)
+        FROM jsonb_array_elements(arches_util.as_array(r.identification_and_registration -> 'site_decision')) AS elem
+        ORDER BY (elem ->> 'decision_date')::date DESC NULLS LAST
+        LIMIT 1
+    ) AS latest_site_decision
+) latest_sd ON true;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON archaeological_site.mv_resource_flat (resourceinstanceid);
 CREATE INDEX mv_resource_flat_site_boundary_gix ON archaeological_site.mv_resource_flat USING GIST (site_boundary_geom);
