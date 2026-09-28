@@ -277,6 +277,35 @@
                 },
                 {
                     "active": true,
+                    "cardid": "7fdcf8bf-e2ea-4454-b9c1-fe932e71d677",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": {
+                        "en": "A project engagement (formal or informal) that has occurred or is required to satisfy the permit application.\nThis may turn into a 1:1 resource-instance-list if we don't need to store any metadata about the linked Project Engagement in this model"
+                    },
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Project Engagement"
+                    },
+                    "nodegroup_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "918189f9-4f66-49f5-a93e-031170d17a76",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -376,7 +405,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "First Nations Consultation"
+                        "en": "Project Engagement"
                     },
                     "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "sortorder": 2,
@@ -724,26 +753,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
-                        "label": "Owning Organization",
-                        "placeholder": {
-                            "en": ""
-                        }
-                    },
-                    "id": "d814b48e-18f2-44ef-b8fa-3dba3244f24e",
-                    "label": {
-                        "en": "Owning Organization"
-                    },
-                    "node_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
-                    "sortorder": 6,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
@@ -1235,6 +1244,26 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Owning Organization",
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "d814b48e-18f2-44ef-b8fa-3dba3244f24e",
+                    "label": {
+                        "en": "Owning Organization"
+                    },
+                    "node_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
                     "card_id": "371f55ab-7d98-4f78-a52a-b5a211e9513b",
                     "config": {
                         "defaultValue": null,
@@ -1703,12 +1732,32 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
+                    "edgeid": "5ce1fc0b-6f8f-4a9d-b3bd-77ce3b7033d6",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "32d22a38-3ebb-4874-8df5-7f706cc01198",
                     "edgeid": "61ad5b6a-dfff-4519-81e5-3ac8688503b0",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "rangenode_id": "42e822bc-dea7-465b-a1f3-27d1732e9393",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
+                    "edgeid": "635d33f7-362d-4787-8e8e-1e3f5f8306f4",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "rangenode_id": "196c4d71-5a0b-4290-909b-2b7fa6eda487",
                     "source_identifier_id": null
                 },
                 {
@@ -1954,16 +2003,6 @@
                 {
                     "description": null,
                     "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
-                    "edgeid": "de0aa35b-6eee-472a-84f9-66d3afae1f13",
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "rangenode_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
                     "edgeid": "d86d04c5-2975-412d-baa3-a6737b4756cd",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                     "name": null,
@@ -1979,6 +2018,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "352971ee-46bd-4fbe-b227-c824c887f7ce",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "edgeid": "de0aa35b-6eee-472a-84f9-66d3afae1f13",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "rangenode_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
                     "source_identifier_id": null
                 },
                 {
@@ -2222,6 +2271,13 @@
                     "legacygroupid": null,
                     "nodegroupid": "f780b695-0897-41fc-89c6-2cd753574ea5",
                     "parentnodegroup_id": "b2efb04e-02f7-4daf-b4fc-83512e63fb54"
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "legacygroupid": null,
+                    "nodegroupid": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "parentnodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033"
                 }
             ],
             "nodes": [
@@ -2348,6 +2404,38 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "owning_organization",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "Organization whose members can see this application",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Owning Organization",
+                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "nodeid": "17da504c-184c-43f4-9e5d-486ccd31cce2",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "has_concurrent_permits",
                     "config": {
                         "falseLabel": {
@@ -2374,6 +2462,42 @@
                     "nodeid": "18c710fd-548f-4d49-afb5-be4dedea7ae0",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "fn_boundary_intersections",
+                    "config": {
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "name": "Contributor",
+                                "relationshipCollection": "00000000-0000-0000-0000-000000000005",
+                                "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
+                                "useOntologyRelationship": false
+                            }
+                        ],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance-list",
+                    "description": "List of FN groups that have geographic boundaries that cross with the project footprint.\nNeed to figure out how to deal with BCAP isn't the source of truth for the FN information. Maybe we need a separate resource model to hold FN data?",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "FN Boundary Intersections",
+                    "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
+                    "nodeid": "196c4d71-5a0b-4290-909b-2b7fa6eda487",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -2826,38 +2950,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "owning_organization",
-                    "config": {
-                        "graphs": [
-                            {
-                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
-                                "name": "Contributor"
-                            }
-                        ],
-                        "searchDsl": "",
-                        "searchString": ""
-                    },
-                    "datatype": "resource-instance",
-                    "description": "Organization whose members can see this application",
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Owning Organization",
-                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
-                    "nodeid": "17da504c-184c-43f4-9e5d-486ccd31cce2",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "sortorder": 6,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "project_name",
                     "config": {},
                     "datatype": "string",
@@ -3176,7 +3268,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "first_nations_consultation",
+                    "alias": "project_engagement",
                     "config": {},
                     "datatype": "semantic",
                     "description": null,
@@ -3189,7 +3281,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "First Nations Consultation",
+                    "name": "Project Engagement",
                     "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "nodeid": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
@@ -3932,7 +4024,7 @@
                     "alias": "fn_reference_information",
                     "config": {},
                     "datatype": "semantic",
-                    "description": null,
+                    "description": "This may go away in favour of data in the Project Engagement resource model.",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -4066,15 +4158,42 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "project_engagement_n1",
+                    "config": {
+                        "graphs": [],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": "A project engagement (formal or informal) that has occurred or is required to satisfy the permit application.\nThis may turn into a 1:1 resource-instance-list if we don't need to store any metadata about the linked Project Engagement in this model",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Project Engagement",
+                    "nodegroup_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "nodeid": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Updates to process requirement structure",
-                "publicationid": "519e136c-9aa0-4ede-8c72-bb47c1e07d06",
-                "published_time": "2026-07-13T14:04:41.440"
+                "notes": "Link the Project Engagement resource model, add placeholder for boundaries that intersect the project boundary.",
+                "publicationid": "b52f4c8c-ea70-4706-b2ba-d8e31cd50223",
+                "published_time": "2026-09-27T19:16:38.480"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
