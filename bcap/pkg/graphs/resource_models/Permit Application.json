@@ -405,7 +405,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Project Engagement"
+                        "en": "Project Engagements"
                     },
                     "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "sortorder": 2,
@@ -3268,7 +3268,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "project_engagement",
+                    "alias": "project_engagements",
                     "config": {},
                     "datatype": "semantic",
                     "description": null,
@@ -3281,7 +3281,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Project Engagement",
+                    "name": "Project Engagements",
                     "nodegroup_id": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "nodeid": "8f8aeb8c-f8c8-4db4-8f04-32aacc5c9033",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
@@ -4191,9 +4191,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Link the Project Engagement resource model, add placeholder for boundaries that intersect the project boundary.",
-                "publicationid": "b52f4c8c-ea70-4706-b2ba-d8e31cd50223",
-                "published_time": "2026-09-27T19:16:38.480"
+                "notes": "Fix duplicate node name causing relational view problems",
+                "publicationid": "20f94c05-d92b-48f5-94aa-555010514079",
+                "published_time": "2026-09-28T10:34:07.035"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
