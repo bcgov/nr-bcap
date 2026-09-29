@@ -137,7 +137,9 @@ def _regen_graph_ids(models):
 
     pattern = r"class GraphIds:.*?(?=\n\nclass |\Z)"
     if re.search(pattern, content, re.DOTALL):
-        new_content = re.sub(pattern, class_block.rstrip("\n"), content, flags=re.DOTALL)
+        new_content = re.sub(
+            pattern, class_block.rstrip("\n"), content, flags=re.DOTALL
+        )
     else:
         new_content = content.rstrip("\n") + "\n\n\n" + class_block
 
