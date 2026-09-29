@@ -8,10 +8,7 @@ import type {
     AliasedTileDataWithAudit,
     EditLogData,
 } from '@/bcgov_arches_common/types.ts';
-import type {
-    AliasedNodeData,
-    AliasedTileData,
-} from '@/arches_vue_components/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 import type {
     PublicationPublicationDetailsTile,
@@ -25,7 +22,6 @@ import type { HriaDiscontinuedData } from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
-import { isEmpty } from '@/bcap/util.ts';
 
 const props = withDefaults(
     defineProps<{
