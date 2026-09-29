@@ -26,10 +26,13 @@ import argparse
 import glob
 import json
 import os
+import re
+import subprocess
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALIAS_DIR = os.path.join(REPO_ROOT, "bcap", "util", "aliases")
+BCAP_ALIASES_PATH = os.path.join(REPO_ROOT, "bcap", "util", "bcap_aliases.py")
 GRAPHS_DIR = os.path.join(REPO_ROOT, "bcap", "pkg", "graphs")
 
 
@@ -109,6 +112,47 @@ _ACRONYMS = {"hca": "HCA"}
 
 def _snake_to_camel(snake_str):
     return "".join(_ACRONYMS.get(word, word.title()) for word in snake_str.split("_"))
+
+
+def _regen_graph_ids(models):
+    """Regenerate the GraphIds class in bcap_aliases.py from the database.
+
+    Queries all graphs with a slug and writes ``SLUG = "uuid"`` constants.
+    Replaces an existing ``class GraphIds:`` block in-place, or appends one.
+    """
+    graphs = list(
+        models.Graph.objects.exclude(slug__isnull=True)
+        .exclude(slug="")
+        .values("slug", "graphid")
+        .order_by("slug")
+    )
+
+    lines = ["class GraphIds:\n"]
+    for graph in graphs:
+        lines.append(f'    {graph["slug"].upper()} = "{graph["graphid"]}"\n')
+    class_block = "".join(lines)
+
+    with open(BCAP_ALIASES_PATH) as f:
+        content = f.read()
+
+    pattern = r"class GraphIds:.*?(?=\n\nclass |\Z)"
+    if re.search(pattern, content, re.DOTALL):
+        new_content = re.sub(pattern, class_block.rstrip("\n"), content, flags=re.DOTALL)
+    else:
+        new_content = content.rstrip("\n") + "\n\n\n" + class_block
+
+    with open(BCAP_ALIASES_PATH, "w") as f:
+        f.write(new_content)
+
+    print(f"GraphIds -> {BCAP_ALIASES_PATH} ({len(graphs)} graphs)")
+
+
+def _run_black(paths):
+    """Run black on the given file paths, if black is available."""
+    try:
+        subprocess.run(["black"] + paths, check=True)
+    except FileNotFoundError:
+        print("WARNING: black not found on PATH; skipping formatting")
 
 
 def _write_alias_class(alias_file, classname, nodes):
@@ -228,6 +272,7 @@ def main():
 
     from arches.app.models import models
 
+    _regen_graph_ids(models)
     orphan_nodegroups = _orphan_nodegroups(models)
 
     # Regenerate alias files that already exist, plus any --new slugs.
@@ -244,12 +289,15 @@ def main():
     )
     json_aliases = _json_aliases_by_slug()
     all_drift = []
+    written_files = [BCAP_ALIASES_PATH]
     for slug in existing:
         if slug in slugs_present:
             drift_nodes = _create_alias_file(models, slug, json_aliases)
             all_drift.extend((slug, node) for node in drift_nodes)
+            written_files.append(os.path.join(ALIAS_DIR, slug + ".py"))
         else:
             print(f"SKIP {slug}: no graph with that slug in the DB")
+    _run_black(written_files)
     _print_drift_fix(all_drift, orphan_nodegroups, args.settings)
 
 
