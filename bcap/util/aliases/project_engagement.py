@@ -57,6 +57,7 @@ class ProjectEngagementGroupAliases(AbstractAliases):
     DELIVERY_ATTEMPT_INCLUDED_DOCUMENT = "delivery_attempt_included_document"
     DOCUMENT_DELIVERY_BUNDLE = "document_delivery_bundle"
     DOCUMENT_DELIVERY_BUNDLE_N1 = "document_delivery_bundle_n1"
+    ENGAGEMENT = "engagement"
     ENGAGEMENT_DETAILS = "engagement_details"
     ENGAGEMENT_DOCUMENT = "engagement_document"
     ENGAGEMENT_PARTICIPANT = "engagement_participant"
