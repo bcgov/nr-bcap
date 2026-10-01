@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-"""Regenerate the node-alias files in bcap/util/aliases from the database.
+"""
+Management command: regen_python_aliases
+
+Regenerates the node-alias files in bcap/util/aliases from the database.
 
 For each graph that already has an alias file, writes one
 ``<GraphSlug>Aliases`` class with an ``ALIAS = "alias"`` constant per
@@ -9,68 +11,61 @@ added automatically.
 DB nodes absent from the package graph JSON (drift) are still written to the
 alias file, but reported with a snippet to delete them from the DB.
 
-Existing files are always regenerated; pass --new to also create files for
-graphs that don't have one yet (e.g. newly imported resource models).
+Also regenerates the ``GraphIds`` class in bcap/util/bcap_aliases.py.
 
-Runs standalone (it bootstraps Django itself). Target either the local dev
-database or the runner-created test database (test_<name>, e.g. with --keepdb):
-
-    python3 tools/regen_aliases.py                              # dev DB (default)
-    python3 tools/regen_aliases.py --target test               # test_<name> DB
-    python3 tools/regen_aliases.py --new investigation         # add a new graph
-
-Idea given from: Brett Ferguson
+    manage.py regen_python_aliases                     # dev DB (default)
+    manage.py regen_python_aliases --target test       # test_<name> DB (--keepdb)
+    manage.py regen_python_aliases --new investigation # add a new graph
 """
 
-import argparse
 import glob
 import json
 import os
 import re
 import subprocess
-import sys
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ALIAS_DIR = os.path.join(REPO_ROOT, "bcap", "util", "aliases")
-BCAP_ALIASES_PATH = os.path.join(REPO_ROOT, "bcap", "util", "bcap_aliases.py")
-GRAPHS_DIR = os.path.join(REPO_ROOT, "bcap", "pkg", "graphs")
+from django.core.management.base import BaseCommand
 
+from arches.app.models import models as arches_models
 
-def _bootstrap_django(settings_module, target):
-    """Put the repo on the path and initialize Django so the ORM is usable
-    without manage.py. For the test target, point the default connection at the
-    test database (the one the test runner builds, e.g. under --keepdb)."""
-    if REPO_ROOT not in sys.path:
-        sys.path.insert(0, REPO_ROOT)
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
-
-    import django
-
-    django.setup()
-
-    if target == "test":
-        from django.conf import settings
-        from django.db import connections
-
-        default = settings.DATABASES["default"]
-        test_name = (default.get("TEST") or {}).get("NAME") or f"test_{default['NAME']}"
-        default["NAME"] = test_name
-        # Drop any connection opened against the dev name so the new name takes.
-        connections["default"].close()
-        print(f"targeting test database: {test_name}")
+# Paths are resolved relative to this file:
+# commands/ -> management/ -> bcap/ -> nr-bcap/
+_REPO_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
+_ALIAS_DIR = os.path.join(_REPO_ROOT, "bcap", "util", "aliases")
+_BCAP_ALIASES_PATH = os.path.join(_REPO_ROOT, "bcap", "util", "bcap_aliases.py")
+_GRAPHS_DIR = os.path.join(_REPO_ROOT, "bcap", "pkg", "graphs")
 
 
-def _orphan_nodegroups(models):
+def _switch_to_test_db():
+    """Point the default DB connection at the test database.
+
+    Useful when the test runner was run with --keepdb and you want regen_python_aliases
+    to read the same schema that tests see.
+    """
+    from django.conf import settings
+    from django.db import connections
+
+    default = settings.DATABASES["default"]
+    test_name = (default.get("TEST") or {}).get("NAME") or f"test_{default['NAME']}"
+    default["NAME"] = test_name
+    connections["default"].close()
+    print(f"targeting test database: {test_name}")
+
+
+def _orphan_nodegroups():
     """Nodegroups with no nodes and no tiles -- safe to delete.
 
     A deleted node can orphan its nodegroup, whose cards then break graph
     imports. One with no nodes may still own tiles (resource data) that deletion
-    would cascade away, so any with tiles are reported but not offered."""
+    would cascade away, so any with tiles are reported but not offered.
+    """
     orphans = []
-    for ng in models.NodeGroup.objects.all():
-        if models.Node.objects.filter(nodegroup_id=ng.nodegroupid).exists():
+    for ng in arches_models.NodeGroup.objects.all():
+        if arches_models.Node.objects.filter(nodegroup_id=ng.nodegroupid).exists():
             continue
-        tile_count = models.TileModel.objects.filter(
+        tile_count = arches_models.TileModel.objects.filter(
             nodegroup_id=ng.nodegroupid
         ).count()
         if tile_count:
@@ -87,7 +82,7 @@ def _orphan_nodegroups(models):
 def _json_aliases_by_slug():
     """Map each graph slug to the set of node aliases in its package JSON."""
     by_slug = {}
-    for path in glob.glob(os.path.join(GRAPHS_DIR, "**", "*.json"), recursive=True):
+    for path in glob.glob(os.path.join(_GRAPHS_DIR, "**", "*.json"), recursive=True):
         try:
             with open(path) as graph_file:
                 doc = json.load(graph_file)
@@ -114,14 +109,14 @@ def _snake_to_camel(snake_str):
     return "".join(_ACRONYMS.get(word, word.title()) for word in snake_str.split("_"))
 
 
-def _regen_graph_ids(models):
+def _regen_graph_ids():
     """Regenerate the GraphIds class in bcap_aliases.py from the database.
 
     Queries all graphs with a slug and writes ``SLUG = "uuid"`` constants.
     Replaces an existing ``class GraphIds:`` block in-place, or appends one.
     """
     graphs = list(
-        models.Graph.objects.exclude(slug__isnull=True)
+        arches_models.Graph.objects.exclude(slug__isnull=True)
         .exclude(slug="")
         .filter(source_identifier__isnull=True)
         .filter(isresource=True)
@@ -134,7 +129,7 @@ def _regen_graph_ids(models):
         lines.append(f'    {graph["slug"].upper()} = "{graph["graphid"]}"\n')
     class_block = "".join(lines)
 
-    with open(BCAP_ALIASES_PATH) as f:
+    with open(_BCAP_ALIASES_PATH) as f:
         content = f.read()
 
     pattern = r"class GraphIds:.*?(?=\n\nclass |\Z)"
@@ -145,10 +140,10 @@ def _regen_graph_ids(models):
     else:
         new_content = content.rstrip("\n") + "\n\n\n" + class_block
 
-    with open(BCAP_ALIASES_PATH, "w") as f:
+    with open(_BCAP_ALIASES_PATH, "w") as f:
         f.write(new_content)
 
-    print(f"GraphIds -> {BCAP_ALIASES_PATH} ({len(graphs)} graphs)")
+    print(f"GraphIds -> {_BCAP_ALIASES_PATH} ({len(graphs)} graphs)")
 
 
 def _run_black(paths):
@@ -170,9 +165,9 @@ def _write_alias_class(alias_file, classname, nodes):
     )
 
 
-def _create_alias_file(models, slug, json_aliases):
+def _create_alias_file(slug, json_aliases):
     nodes = (
-        models.Node.objects.filter(graph__slug=slug)
+        arches_models.Node.objects.filter(graph__slug=slug)
         .filter(graph__source_identifier__isnull=True)
         .exclude(alias__isnull=True)
         .prefetch_related("graph")
@@ -202,7 +197,7 @@ def _create_alias_file(models, slug, json_aliases):
         n for n in nodes if n.datatype == "semantic" and n.pk == n.nodegroup_id
     ]
 
-    filename = os.path.join(ALIAS_DIR, slug + ".py")
+    filename = os.path.join(_ALIAS_DIR, slug + ".py")
     base = _snake_to_camel(slug)
     print(
         f"{slug} -> {filename} "
@@ -216,11 +211,12 @@ def _create_alias_file(models, slug, json_aliases):
     return drift_nodes
 
 
-def _print_drift_fix(drift_nodes, orphan_nodegroups, settings_module):
+def _print_drift_fix(drift_nodes, orphan_nodegroups):
     """Print a self-contained snippet that deletes the drift nodes and orphan
     nodegroups (with their dangling cards). Review before running."""
     if not drift_nodes and not orphan_nodegroups:
         return
+    settings_module = os.environ.get("DJANGO_SETTINGS_MODULE", "bcap.settings")
     print("\n" + "=" * 72)
     print(
         f"DRIFT FIX: {len(drift_nodes)} node(s) not in any graph JSON, "
@@ -249,62 +245,55 @@ def _print_drift_fix(drift_nodes, orphan_nodegroups, settings_module):
     print("=" * 72)
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument(
-        "--target",
-        choices=["dev", "test"],
-        default="dev",
-        help="Which database to read: the local dev DB or the test DB (default: dev)",
-    )
-    parser.add_argument(
-        "--settings",
-        default=os.environ.get("DJANGO_SETTINGS_MODULE", "bcap.settings"),
-        help="Django settings module (default: bcap.settings)",
-    )
-    parser.add_argument(
-        "--new",
-        nargs="+",
-        default=[],
-        metavar="SLUG",
-        help="Also create alias files for these graph slugs (new graphs that "
-        "don't have a file yet)",
-    )
-    args = parser.parse_args()
-    _bootstrap_django(args.settings, args.target)
+class Command(BaseCommand):
+    help = __doc__
 
-    from arches.app.models import models
-
-    _regen_graph_ids(models)
-    orphan_nodegroups = _orphan_nodegroups(models)
-
-    # Regenerate alias files that already exist, plus any --new slugs.
-    existing = sorted(
-        set(
-            f[:-3]
-            for f in os.listdir(ALIAS_DIR)
-            if f.endswith(".py") and f != "__init__.py"
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--target",
+            choices=["dev", "test"],
+            default="dev",
+            help="Which database to read: the local dev DB or the test DB (default: dev)",
         )
-        | set(args.new)
-    )
-    slugs_present = set(
-        models.Graph.objects.filter(slug__in=existing).values_list("slug", flat=True)
-    )
-    json_aliases = _json_aliases_by_slug()
-    all_drift = []
-    written_files = [BCAP_ALIASES_PATH]
-    for slug in existing:
-        if slug in slugs_present:
-            drift_nodes = _create_alias_file(models, slug, json_aliases)
-            all_drift.extend((slug, node) for node in drift_nodes)
-            written_files.append(os.path.join(ALIAS_DIR, slug + ".py"))
-        else:
-            print(f"SKIP {slug}: no graph with that slug in the DB")
-    _run_black(written_files)
-    _print_drift_fix(all_drift, orphan_nodegroups, args.settings)
+        parser.add_argument(
+            "--new",
+            nargs="+",
+            default=[],
+            metavar="SLUG",
+            help="Also create alias files for these graph slugs (new graphs that "
+            "don't have a file yet)",
+        )
 
+    def handle(self, *args, **options):
+        if options["target"] == "test":
+            _switch_to_test_db()
 
-if __name__ == "__main__":
-    main()
+        _regen_graph_ids()
+        orphan_nodegroups = _orphan_nodegroups()
+
+        # Regenerate alias files that already exist, plus any --new slugs.
+        existing = sorted(
+            set(
+                f[:-3]
+                for f in os.listdir(_ALIAS_DIR)
+                if f.endswith(".py") and f != "__init__.py"
+            )
+            | set(options["new"])
+        )
+        slugs_present = set(
+            arches_models.Graph.objects.filter(slug__in=existing).values_list(
+                "slug", flat=True
+            )
+        )
+        json_aliases = _json_aliases_by_slug()
+        all_drift = []
+        written_files = [_BCAP_ALIASES_PATH]
+        for slug in existing:
+            if slug in slugs_present:
+                drift_nodes = _create_alias_file(slug, json_aliases)
+                all_drift.extend((slug, node) for node in drift_nodes)
+                written_files.append(os.path.join(_ALIAS_DIR, slug + ".py"))
+            else:
+                print(f"SKIP {slug}: no graph with that slug in the DB")
+        _run_black(written_files)
+        _print_drift_fix(all_drift, orphan_nodegroups)
