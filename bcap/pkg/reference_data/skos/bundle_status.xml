@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/9eaafd0b-d3d8-5e4e-ab58-d100da070a3e">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/9eaafd0b-d3d8-5e4e-ab58-d100da070a3e</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Draft</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc">
+        <dcterms:title>Bundle Status</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/816b5676-1144-5afc-8cc7-aa3afa1aa5f2">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/816b5676-1144-5afc-8cc7-aa3afa1aa5f2</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Ready for Delivery</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/e4025e9c-928b-53d5-8e41-22442e194b14">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/e4025e9c-928b-53d5-8e41-22442e194b14</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Delivery in Progress</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/dcb48626-7ce7-5322-8d60-28fa845fa5e3">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/dcb48626-7ce7-5322-8d60-28fa845fa5e3</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Delivered</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/a45dc8b4-7a13-5dc6-80bd-e2b1181042f2">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/a45dc8b4-7a13-5dc6-80bd-e2b1181042f2</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Delivery Failed</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/3dd09766-76e6-57e5-b9cd-d3f6df8d4630">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/3dd09766-76e6-57e5-b9cd-d3f6df8d4630</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Cancelled</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

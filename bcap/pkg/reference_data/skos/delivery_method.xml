@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/10a5eba2-3fc8-59b2-a703-59659f71558a">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/10a5eba2-3fc8-59b2-a703-59659f71558a</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Email</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44">
+        <dcterms:title>Delivery Method</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/a016a09d-4e8d-557d-8fa6-15ad72285a90">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/a016a09d-4e8d-557d-8fa6-15ad72285a90</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Third-party Portal</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/f68a9459-c93f-562d-a2a6-9d38df2e214a">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/f68a9459-c93f-562d-a2a6-9d38df2e214a</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Secure File Transfer</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/adcb9340-65e5-59fa-a9a9-c9ba54056072">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/adcb9340-65e5-59fa-a9a9-c9ba54056072</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Postal Mail</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/c1431132-8d0c-5d76-a22a-452f69c95893">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/c1431132-8d0c-5d76-a22a-452f69c95893</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Courier</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/01b4dd47-b9c6-5609-81f7-15e6851ef815">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/01b4dd47-b9c6-5609-81f7-15e6851ef815</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Hand Delivery</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/6bbfcc50-b35b-5b87-a57b-dc711b5e26f0">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/6bbfcc50-b35b-5b87-a57b-dc711b5e26f0</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/761507cf-6f9b-52a0-9b7c-bcdc719bec44"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

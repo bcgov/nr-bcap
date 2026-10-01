@@ -1360,7 +1360,7 @@
                 {
                     "alias": "bundle_intended_delivery_method",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "761507cf-6f9b-52a0-9b7c-bcdc719bec44",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -1503,7 +1503,7 @@
                 {
                     "alias": "participant_type",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2229,7 +2229,7 @@
                 {
                     "alias": "engagement_type",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "6e85db26-7cc7-5b86-9531-81950835156d",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2498,7 +2498,7 @@
                 {
                     "alias": "engagement_status",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "99a3bf8d-3e68-5f82-af38-34f6959b6ac6",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2524,7 +2524,7 @@
                 {
                     "alias": "document_type",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "ab4fead3-022d-5af9-8955-4ee4e4ccaf0c",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2573,7 +2573,7 @@
                 {
                     "alias": "participant_role",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "22643975-8422-520a-b152-71f0fb6fcad1",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2599,7 +2599,7 @@
                 {
                     "alias": "bundle_status",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "af9ca3cb-c15e-5a87-b3a3-36c11c28c8dc",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2625,7 +2625,7 @@
                 {
                     "alias": "delivery_attempt_method",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "761507cf-6f9b-52a0-9b7c-bcdc719bec44",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -2722,7 +2722,7 @@
                 {
                     "alias": "delivery_attempt_outcome",
                     "config": {
-                        "controlledList": "0b4ecdf1-044d-5ef2-8b95-fa3c7365ef76",
+                        "controlledList": "03b62be2-5f40-51e0-a9da-fd9667d00d3d",
                         "multiValue": false
                     },
                     "datatype": "reference",
