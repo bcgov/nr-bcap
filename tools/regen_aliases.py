@@ -123,6 +123,8 @@ def _regen_graph_ids(models):
     graphs = list(
         models.Graph.objects.exclude(slug__isnull=True)
         .exclude(slug="")
+        .filter(source_identifier__isnull=True)
+        .filter(isresource=True)
         .values("slug", "graphid")
         .order_by("slug")
     )
@@ -171,6 +173,7 @@ def _write_alias_class(alias_file, classname, nodes):
 def _create_alias_file(models, slug, json_aliases):
     nodes = (
         models.Node.objects.filter(graph__slug=slug)
+        .filter(graph__source_identifier__isnull=True)
         .exclude(alias__isnull=True)
         .prefetch_related("graph")
         .order_by("graph__slug", "alias")
