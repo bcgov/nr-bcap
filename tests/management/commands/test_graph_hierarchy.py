@@ -70,7 +70,9 @@ def _run(slug, *, show_semantic=False, graph_obj=None, nodes=(), edges=()):
         else:
             mock_gm.objects.filter.return_value.get.return_value = graph_obj
 
-        mock_node_cls.objects.filter.return_value.select_related.return_value = list(nodes)
+        mock_node_cls.objects.filter.return_value.select_related.return_value = list(
+            nodes
+        )
         mock_edge_cls.objects.filter.return_value.only.return_value = list(edges)
 
         call_command("graph_hierarchy", slug, **kwargs)
@@ -243,7 +245,9 @@ class TestCardinality(SimpleTestCase):
     def test_collector_node_marked_with_asterisk(self):
         root_id = _uuid()
         # nodegroup_id == nodeid → collector
-        node = _make_node(root_id, "collector_node", nodegroup_id=root_id, istopnode=True)
+        node = _make_node(
+            root_id, "collector_node", nodegroup_id=root_id, istopnode=True
+        )
         out, _ = _run("g", graph_obj=self.graph, nodes=[node])
         lines = [l for l in out.splitlines() if "collector_node" in l]
         self.assertTrue(lines)
@@ -282,8 +286,12 @@ class TestCardinality(SimpleTestCase):
         root_id = _uuid()
         child_id = _uuid()
         # Nodegroup cardinality is n, but child is not the collector
-        root = _make_node(root_id, "the_root", nodegroup_id=root_id, istopnode=True, cardinality="n")
-        child = _make_node(child_id, "child_field", nodegroup_id=root_id, cardinality="n")
+        root = _make_node(
+            root_id, "the_root", nodegroup_id=root_id, istopnode=True, cardinality="n"
+        )
+        child = _make_node(
+            child_id, "child_field", nodegroup_id=root_id, cardinality="n"
+        )
         out, _ = _run(
             "g",
             graph_obj=self.graph,

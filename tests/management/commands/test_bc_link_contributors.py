@@ -19,7 +19,14 @@ _MODULE = "bcap.management.commands.bc_link_contributors"
 # ---------------------------------------------------------------------------
 
 
-def _make_user(first="Alice", last="Smith", email="alice@example.com", username="asmith", *, arch_branch=False):
+def _make_user(
+    first="Alice",
+    last="Smith",
+    email="alice@example.com",
+    username="asmith",
+    *,
+    arch_branch=False,
+):
     """Build a mock Django User."""
     user = MagicMock()
     user.first_name = first
@@ -37,7 +44,7 @@ def _make_tile(contributor_id="contrib-uuid", username_value=None, email_value=N
     tile.pk = "tile-pk"
     # data dict keyed by node UUIDs; all node_id() calls are mocked to "node-id"
     tile.data = {
-        "node-id": username_value,   # username node
+        "node-id": username_value,  # username node
         "email-node-id": email_value,
     }
     return tile
@@ -67,7 +74,9 @@ def _mock_command(
         patch(f"{_MODULE}.bulk_index") as mock_bulk_index,
         patch(f"{_MODULE}.localized_string", return_value=None),
         patch(f"{_MODULE}.localized", return_value={"en": {"value": "x"}}),
-        patch(f"{_MODULE}.resource_instance_value", return_value={"resourceId": org_id}),
+        patch(
+            f"{_MODULE}.resource_instance_value", return_value={"resourceId": org_id}
+        ),
         patch(f"{_MODULE}.ContributorSpec") as mock_spec_cls,
     ):
         # node_id / nodegroup_id return predictable strings
@@ -191,7 +200,9 @@ class TestUnmatchedUsers(SimpleTestCase):
         mocks["builder"].make_contributor.assert_called_once()
 
     def test_contributor_spec_receives_user_data(self):
-        user = _make_user(first="Bob", last="Jones", email="bob@example.com", username="bjones")
+        user = _make_user(
+            first="Bob", last="Jones", email="bob@example.com", username="bjones"
+        )
         _, mocks = _run(users=[user], matched_tile=None)
         spec_call_kwargs = mocks["spec_cls"].call_args.kwargs
         self.assertEqual(spec_call_kwargs.get("first_name"), "Bob")
