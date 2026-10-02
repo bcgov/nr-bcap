@@ -302,6 +302,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "9d9b69c4-316e-4d64-b374-59f8befd2280",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": "{\"en\": \"\"}",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Proposed Unprotected Area"
+                    },
+                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "9eb5c3db-3087-4582-96d8-3584b060e908",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -1166,6 +1193,25 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Proposed Unprotected Site Area Criteria",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "47b1d665-0f9b-4755-aa17-02a26dabd956",
+                    "label": {
+                        "en": "Proposed Unprotected Site Area Criteria"
+                    },
+                    "node_id": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
@@ -1661,6 +1707,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Proposed Unprotected Site Area Rationale",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "88cc2766-fa24-438d-a965-7f126127245c",
+                    "label": {
+                        "en": "Proposed Unprotected Site Area Rationale"
+                    },
+                    "node_id": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
@@ -2406,6 +2480,54 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
+                    "config": {
+                        "basemap": "British Columbia Roads",
+                        "bearing": 0,
+                        "centerX": -125.2111215300115,
+                        "centerY": 54.5952920093056,
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Proposed Unprotected Area",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": 10
+                    },
+                    "id": "f2a94df5-ba1d-4d44-b5b3-5c8439d3044d",
+                    "label": {
+                        "en": "Proposed Unprotected Area"
+                    },
+                    "node_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
                     "config": {
                         "defaultResourceInstance": [],
@@ -2625,6 +2747,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
                     "rangenode_id": "55f5927c-8279-4864-ba1d-2f288ca46fcf",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "edgeid": "141683df-1093-41ed-ad7c-96e64905f060",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
                     "source_identifier_id": null
                 },
                 {
@@ -3025,6 +3157,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "9bd92cab-7995-4940-9547-073e2eb505ac",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
+                    "edgeid": "7d323c2d-8f43-47a2-b389-cf2a0d59225e",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
+                    "rangenode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
                     "source_identifier_id": null
                 },
                 {
@@ -3469,6 +3611,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "edgeid": "f61fc95c-2dcb-4cfa-a2d4-dac84d4940ec",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "rangenode_id": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "fab4ba5a-1408-11f0-9e93-0242ac170007",
                     "edgeid": "fab4d36e-1408-11f0-9e93-0242ac170007",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3639,6 +3791,13 @@
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
                 },
                 {
+                    "cardinality": "n",
+                    "grouping_node_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "legacygroupid": null,
+                    "nodegroupid": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
+                },
+                {
                     "cardinality": "1",
                     "grouping_node_id": "77789d46-61ab-11f0-be7c-3a7a4e6803c5",
                     "legacygroupid": null,
@@ -3724,6 +3883,32 @@
                 }
             ],
             "nodes": [
+                {
+                    "alias": "proposed_unprotected_site_area_criteria",
+                    "config": {
+                        "controlledList": "327629f1-e46a-4fb2-9298-43f153081a41",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Site Area Criteria",
+                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "nodeid": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
                 {
                     "alias": "site_visit_team",
                     "config": {
@@ -4240,6 +4425,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "proposed_unprotected_site_area_rationale",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Site Area Rationale",
+                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "nodeid": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "affiliation",
                     "config": {
                         "graphs": [
@@ -4405,7 +4613,7 @@
                     "nodeid": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4819,6 +5027,52 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
                     "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "proposed_unprotected_area",
+                    "config": {
+                        "addToMap": false,
+                        "advancedStyle": "",
+                        "advancedStyling": false,
+                        "clusterDistance": 20,
+                        "clusterMaxZoom": 5,
+                        "clusterMinPoints": 3,
+                        "fillColor": "rgba(130, 130, 130, 0.5)",
+                        "haloRadius": 4,
+                        "haloWeight": 4,
+                        "layerActivated": true,
+                        "layerIcon": "",
+                        "layerLegend": "",
+                        "layerName": "",
+                        "lineColor": "rgba(130, 130, 130, 0.7)",
+                        "lineHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "outlineColor": "rgba(200, 200, 200, 0.7)",
+                        "outlineWeight": 2,
+                        "pointColor": "rgba(130, 130, 130, 0.7)",
+                        "pointHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "radius": 2,
+                        "simplification": 0.3,
+                        "weight": 2
+                    },
+                    "datatype": "geojson-feature-collection",
+                    "description": "{\"en\": \"\"}",
+                    "exportable": true,
+                    "fieldname": "unprotarea",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Area",
+                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "nodeid": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D35_Area",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6382,9 +6636,9 @@
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Add Site Visit boundary types",
-                "publicationid": "f6b8553f-ddcd-4d65-9019-596cbd24940e",
-                "published_time": "2026-06-29T15:20:32.508"
+                "notes": "Add Proposed Unprotected Area section",
+                "publicationid": "6a2a932b-c2cd-4409-b068-b5ee4bbd45cc",
+                "published_time": "2026-10-02T13:45:04.976"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6486,7 +6740,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "fatal: not a git repository (or any of the parent directories): .git",
+        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
         "os version": "6.12.76-linuxkit"
     }
