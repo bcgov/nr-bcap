@@ -1476,7 +1476,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4i_is_time-span_of",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "delivery_attempt_date",
@@ -1570,7 +1570,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P76_has_contact_point",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_participant",
@@ -1593,7 +1593,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P15_was_influenced_by",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_period",
@@ -1616,7 +1616,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 5,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "new_resource_model",
@@ -1662,7 +1662,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "participant_portal_url",
@@ -1685,7 +1685,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P76_has_contact_point",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "bundle_required_delivery_date",
@@ -1733,7 +1733,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_type",
@@ -1759,7 +1759,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "other_participant",
@@ -1782,7 +1782,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "intended_recipient",
@@ -1860,7 +1860,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "document_file",
@@ -1887,7 +1887,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
                     "sortorder": 5,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_start_date",
@@ -1912,7 +1912,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4i_is_time-span_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "bundle_identifier",
@@ -2002,7 +2002,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 4,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "attempt_recipient_contributor_reference",
@@ -2133,7 +2133,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "included_document_identifier_snapshot",
@@ -2179,7 +2179,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P102_has_title",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "recipient_phone_number",
@@ -2225,7 +2225,7 @@
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
                     "sortorder": 3,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "participant_notes",
@@ -2248,7 +2248,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 4,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_outcome_summary",
@@ -2271,7 +2271,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
                     "sortorder": 4,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_details",
@@ -2294,7 +2294,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P15_was_influenced_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "recipient_contact_information",
@@ -2363,7 +2363,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P15_was_influenced_by",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "delivery_attempt_confirmation_files",
@@ -2531,7 +2531,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 2,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "3b9ad273-95c0-41e7-9b6b-f8adbba3d14b"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "engagement_status",
@@ -2557,7 +2557,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "delivery_attempt_method",
@@ -2609,7 +2609,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 1,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "bundle_status",
@@ -2658,7 +2658,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P76_has_contact_point",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "delivery_attempt_recipient",
@@ -2753,7 +2753,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "1ac6195a-3933-4515-9144-f6a5feb0e1b5"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "bundle_intended_delivery_method",
@@ -2825,7 +2825,7 @@
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
-                    "sourcebranchpublication_id": "d33c64a5-c129-4ebb-9b1a-3b8ccadabcdb"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "delivery_attempt_identifier",
