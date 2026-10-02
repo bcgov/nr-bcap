@@ -56,6 +56,7 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
     _name_node_aliases = [aliases.BORDEN_NUMBER]
     _sig_event_nodes = [
         aliases.DECISION_REGISTRATION_STATUS,
+        aliases.DECISION_DATE,
         aliases.TYPOLOGY_CLASS,
     ]
     # Real node aliases only: the base looks every one of these up on the graph.
@@ -84,6 +85,25 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
     def get_map_popup_descriptor(self, resource, config, context):
         return self._descriptor_for(self._popup_node_aliases, resource, config)
 
+    def _get_latest_registration_status(self, resource):
+        date_node_id = str(self._nodes[aliases.DECISION_DATE].nodeid)
+        latest = (
+            models.TileModel.objects.filter(
+                nodegroup_id=self._nodes[
+                    aliases.DECISION_REGISTRATION_STATUS
+                ].nodegroup_id,
+                resourceinstance_id=resource,
+            )
+            .order_by(f"-data__{date_node_id}")
+            .first()
+        )
+        return (
+            self._get_value_from_node(
+                aliases.DECISION_REGISTRATION_STATUS, data_tile=latest
+            )
+            or None
+        )
+
     def _descriptor_for(self, alias_order, resource, config):
         """Card and popup share one body. Not the base's get_values_in_order:
         the registration status is relabelled, and the typology block is
@@ -92,14 +112,15 @@ class BCAPSiteDescriptors(AbstractPrimaryDescriptors):
 
         try:
             for alias in alias_order:
-                value = self._get_value_from_node(alias, resource)
+                if alias == aliases.DECISION_REGISTRATION_STATUS:
+                    label = "Registration Status"
+                    value = self._get_latest_registration_status(resource)
+                else:
+                    value = self._get_value_from_node(alias, resource)
+                    label = self._nodes[alias].name
+
                 if not value:
                     continue
-                label = (
-                    "Registration Status"
-                    if alias == aliases.DECISION_REGISTRATION_STATUS
-                    else self._nodes[alias].name
-                )
                 formatted = self._format_value(
                     label, value, config, alias in self._html_nodes
                 )
