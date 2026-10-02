@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/11315c7c-dbc1-58f7-af99-c1942c64d18f">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/11315c7c-dbc1-58f7-af99-c1942c64d18f</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Individual</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1">
+        <dcterms:title>Participant Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/a09562aa-a275-5766-83c6-c198bc04b925">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/a09562aa-a275-5766-83c6-c198bc04b925</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">First Nation</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/0612b846-2198-5a82-a987-a2f43518e138">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/0612b846-2198-5a82-a987-a2f43518e138</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Tribal Council</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/2fcd24a4-1a2d-5586-9a8c-36c2d17f2983">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/2fcd24a4-1a2d-5586-9a8c-36c2d17f2983</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Indigenous Organization</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/aea7dcdf-c8c2-5a4a-9d19-c10cb27e9480">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/aea7dcdf-c8c2-5a4a-9d19-c10cb27e9480</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Business or Organization</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/972fcb43-c0db-5564-aa70-01f2bfc0e6c9">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/972fcb43-c0db-5564-aa70-01f2bfc0e6c9</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Government Body</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/2981b5b0-12d5-58b7-9f2b-418a4333f311">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/2981b5b0-12d5-58b7-9f2b-418a4333f311</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Consultant</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/242a40e6-1264-5dc5-9ea8-f4c16fe017cf">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/242a40e6-1264-5dc5-9ea8-f4c16fe017cf</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/f2b21b81-ef1a-589b-bc0b-ab8b5faccdb1"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

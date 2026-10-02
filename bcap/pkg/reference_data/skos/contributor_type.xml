@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:arches="https://localhost/"
+>
+  <skos:Concept rdf:about="https://localhost/8c4e2933-a97a-5f47-89e7-78d1d8aaad81">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81">
+        <dcterms:title>Contributor Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Individual</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/8c4e2933-a97a-5f47-89e7-78d1d8aaad81</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/fd2053d3-c010-519a-97e5-52f3c7b508e2">
+    <skos:inScheme rdf:resource="https://localhost/6a2bcd73-f98f-5d3f-bec5-e2c9566d2d81"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/fd2053d3-c010-519a-97e5-52f3c7b508e2</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Organization</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

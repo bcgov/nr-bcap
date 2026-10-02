@@ -12,7 +12,7 @@ assembled from thirty near-identical dicts.
 from django.utils.functional import lazy
 
 from bcap.permissions.groups import Groups, group_id
-from bcap.util.graph_ids import GraphIds
+from bcap.util.bcap_aliases import GraphIds
 
 GroupId = lazy(group_id, int)
 
@@ -56,6 +56,7 @@ PERMISSION_DEFAULTS = {
     GraphIds.LEGISLATIVE_ACT: grants(STAFF),
     GraphIds.LOCAL_GOVERNMENT: grants(STAFF),
     GraphIds.LG_PERSON: grants(STAFF),
+    GraphIds.PROJECT_ENGAGEMENT: grants(STAFF),
     GraphIds.PROJECT_SANDBOX: grants(STAFF),
     GraphIds.HRIA_DISCONTINUED_DATA: grants(STAFF),
     GraphIds.PUBLICATION: grants(STAFF),

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/477dab54-2f36-52ea-884a-412a0516b9e1">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/477dab54-2f36-52ea-884a-412a0516b9e1</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Pre-engagement Document</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c">
+        <dcterms:title>Document Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/8e9fad96-6fa7-52d2-95c0-a862131d9591">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/8e9fad96-6fa7-52d2-95c0-a862131d9591</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Proof of Engagement</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/0378bc98-f4a9-5941-836f-492f42693aa8">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/0378bc98-f4a9-5941-836f-492f42693aa8</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Letter of Support</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/8fe69af0-5bca-59c6-8490-6fdc71a19af6">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/8fe69af0-5bca-59c6-8490-6fdc71a19af6</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Community Information</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/2852fe61-bfde-5a26-8842-2c3e51dc46a1">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/2852fe61-bfde-5a26-8842-2c3e51dc46a1</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Correspondence</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/0d21ebd5-e345-541b-b9da-c125e32bac5a">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/0d21ebd5-e345-541b-b9da-c125e32bac5a</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Survey or Questionnaire</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/b82ba8a3-7e23-5cfe-9696-f02c14a79a54">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/b82ba8a3-7e23-5cfe-9696-f02c14a79a54</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Community Response</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/bbc779bf-3ce5-5567-96a7-b334964c50d8">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/bbc779bf-3ce5-5567-96a7-b334964c50d8</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Delivery Confirmation</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/dcbb77ae-a085-5e65-8e8f-738b5245880b">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/dcbb77ae-a085-5e65-8e8f-738b5245880b</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/ab4fead3-022d-5af9-8955-4ee4e4ccaf0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>
