@@ -80,14 +80,6 @@ const biogeographyColumns = computed(() => [
     },
 ]);
 
-const discontinuedBiogeographyColumns = [
-    { field: 'biogeography_type', label: 'Type' },
-    { field: 'biogeography_name', label: 'Name' },
-    { field: 'biogeography_description', label: 'Description', isHtml: true },
-    { field: 'biogeography_entered_date', label: 'Modified On' },
-    { field: 'biogeography_entered_by', label: 'Modified By' },
-];
-
 const tenureColumns = [
     { field: 'tenure_type', label: 'Tenure Type' },
     { field: 'tenure_description', label: 'Tenure Description' },
@@ -380,10 +372,6 @@ const { processedData: biogeographyTableData } = useTileEditLog(
 );
 
 const hasBiogeography = computed(() => biogeographyTableData.value.length > 0);
-
-const hasDiscontinuedBiogeography = computed(() => {
-    return !!props.hriaData?.aliased_data?.biogeography;
-});
 
 const tenureRemarksData = computed((): AliasedTileData[] => {
     const data = props.data as Record<string, unknown> | undefined;
@@ -947,35 +935,6 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             <EmptyState
                                 v-else
                                 message="No biogeography information available."
-                            />
-                        </template>
-                    </DetailsSection>
-
-                    <DetailsSection
-                        section-title="Discontinued Attributes"
-                        variant="subsection"
-                        :visible="true"
-                        :class="{
-                            'empty-section': !hasDiscontinuedBiogeography,
-                        }"
-                    >
-                        <template #sectionContent>
-                            <StandardDataTable
-                                v-if="hasDiscontinuedBiogeography"
-                                :table-data="
-                                    [
-                                        props.hriaData?.aliased_data
-                                            ?.biogeography,
-                                    ].filter(Boolean)
-                                "
-                                :column-definitions="
-                                    discontinuedBiogeographyColumns
-                                "
-                                :initial-sort-field-index="3"
-                            />
-                            <EmptyState
-                                v-else
-                                message="No discontinued biogeography attributes available."
                             />
                         </template>
                     </DetailsSection>

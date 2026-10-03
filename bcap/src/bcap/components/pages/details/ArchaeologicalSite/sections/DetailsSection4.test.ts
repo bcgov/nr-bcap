@@ -124,38 +124,3 @@ describe('DetailsSection4 biogeography source', () => {
         ).toHaveLength(0);
     });
 });
-
-describe('DetailsSection4 discontinued biogeography (HRIA)', () => {
-    it('shows the discontinued table when hriaData has biogeography', () => {
-        const hriaBio = { aliased_data: { biogeography_type: 'legacy' } };
-        const wrapper = mountWithBiogeography([], [], {
-            aliased_data: { biogeography: hriaBio },
-        });
-
-        const tables = wrapper.findAllComponents({ name: 'StandardDataTable' });
-        expect(tables).toHaveLength(1);
-        // The template wraps the value in an array and filters falsy values.
-        expect(tables[0].props('tableData')).toEqual([hriaBio]);
-    });
-
-    it('does not show the discontinued table when hriaData has no biogeography', () => {
-        const wrapper = mountWithBiogeography([], [], {
-            aliased_data: {},
-        });
-
-        expect(
-            wrapper.findAllComponents({ name: 'StandardDataTable' }),
-        ).toHaveLength(0);
-    });
-
-    it('shows both live and discontinued tables when both sources have data', () => {
-        const liveTile = { tileid: 'live', aliased_data: {} };
-        const hriaBio = { aliased_data: { biogeography_type: 'legacy' } };
-        const wrapper = mountWithBiogeography([], [liveTile], {
-            aliased_data: { biogeography: hriaBio },
-        });
-
-        const tables = wrapper.findAllComponents({ name: 'StandardDataTable' });
-        expect(tables).toHaveLength(2);
-    });
-});
