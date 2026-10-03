@@ -64,11 +64,21 @@ const locationAndAccess = computed(() => {
     });
 });
 
-const biogeographyColumns = [
+const biogeographyColumns = computed(() => [
     { field: 'biogeography_type', label: 'Type' },
     { field: 'biogeography_name', label: 'Name' },
     { field: 'biogeography_description', label: 'Description', isHtml: true },
-];
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const tenureColumns = [
     { field: 'tenure_type', label: 'Tenure Type' },
@@ -346,11 +356,22 @@ const hasElevation = computed(() => {
     return hasGisElevation.value || hasElevationComments.value;
 });
 
-const hasBiogeography = computed(() => {
-    const data = props.data as Record<string, unknown> | undefined;
-    const bio = data?.biogeography;
-    return bio && Array.isArray(bio) && bio.length > 0;
+const biogeographySource = computed(() => {
+    const visitBio = (props.siteVisitData ?? [])
+        .flatMap((visit) => visit.aliased_data?.site_visit_location ?? [])
+        .flatMap((loc) => loc.aliased_data?.biogeography ?? []);
+
+    const siteBio = props.data?.biogeography ?? [];
+
+    return [...visitBio, ...siteBio];
 });
+
+const { processedData: biogeographyTableData } = useTileEditLog(
+    biogeographySource as unknown as Ref<AliasedTileData[]>,
+    toRef(props, 'editLogData'),
+);
+
+const hasBiogeography = computed(() => biogeographyTableData.value.length > 0);
 
 const tenureRemarksData = computed((): AliasedTileData[] => {
     const data = props.data as Record<string, unknown> | undefined;
@@ -896,19 +917,27 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                 section-title="Biogeography"
                 variant="subsection"
                 :visible="true"
-                :class="{ 'empty-section': !hasBiogeography }"
             >
                 <template #sectionContent>
-                    <StandardDataTable
-                        v-if="hasBiogeography"
-                        :table-data="(props.data as any)?.biogeography ?? []"
-                        :column-definitions="biogeographyColumns"
-                        :initial-sort-field-index="0"
-                    />
-                    <EmptyState
-                        v-else
-                        message="No biogeography information available."
-                    />
+                    <DetailsSection
+                        section-title="Biogeography"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{ 'empty-section': !hasBiogeography }"
+                    >
+                        <template #sectionContent>
+                            <StandardDataTable
+                                v-if="hasBiogeography"
+                                :table-data="biogeographyTableData"
+                                :column-definitions="biogeographyColumns"
+                                :initial-sort-field-index="0"
+                            />
+                            <EmptyState
+                                v-else
+                                message="No biogeography information available."
+                            />
+                        </template>
+                    </DetailsSection>
                 </template>
             </DetailsSection>
         </template>

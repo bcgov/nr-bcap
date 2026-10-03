@@ -54,7 +54,6 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     NAME_REMARKS = "name_remarks"
     NAME_TYPE = "name_type"
     NROS_FILE_NUMBER = "nros_file_number"
-    OTHER_UNPROTECTED_AREA_TYPE = "other_unprotected_area_type"
     PARCEL_OWNER_TYPE = "parcel_owner_type"
     PARENT_SITE = "parent_site"
     PHOTOGRAPHER = "photographer"
@@ -90,8 +89,10 @@ class ArchaeologicalSiteAliases(AbstractAliases):
     STREET_NUMBER = "street_number"
     TYPOLOGY_CLASS = "typology_class"
     TYPOLOGY_REMARK = "typology_remark"
-    UNPROTECTED_AREAS = "unprotected_areas"
-    UNPROTECTED_AREA_TYPE = "unprotected_area_type"
+    UNPROTECTED_AREA = "unprotected_area"
+    UNPROTECTED_SITE_AREA_CRITERIA = "unprotected_site_area_criteria"
+    UNPROTECTED_SITE_AREA_RATIONALE = "unprotected_site_area_rationale"
+    UNPROTECTED_SITE_AREA_TYPE = "unprotected_site_area_type"
 
     @staticmethod
     def get_aliases():

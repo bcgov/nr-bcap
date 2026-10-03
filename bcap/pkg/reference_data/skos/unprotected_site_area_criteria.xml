@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+>
+  <skos:Concept rdf:about="https://localhost/8f17b170-79cd-4578-bfa4-f0e501945daa">
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/8f17b170-79cd-4578-bfa4-f0e501945daa</dcterms:identifier>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41">
+        <dcterms:title>Unprotected Site Area Criteria</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Protected archaeological features, material, or sediments have been removed</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/cf59acb3-d951-403f-b50d-5951e3d9d859">
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Archaeological features or material post-date 1846</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/cf59acb3-d951-403f-b50d-5951e3d9d859</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/04bf9bec-69e3-432f-8143-f41eb799cc25">
+    <skos:prefLabel xml:lang="en">Site is partially located within federal jurisdiction</skos:prefLabel>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/04bf9bec-69e3-432f-8143-f41eb799cc25</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/01fdf43b-7edb-4440-aaa3-14b468743a60">
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/01fdf43b-7edb-4440-aaa3-14b468743a60</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Protected CMT(s) were harvested</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/2c5b264c-ffe2-4670-b4ea-b7aea592cb21">
+    <skos:prefLabel xml:lang="en">Ancestral remains have been removed</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/2c5b264c-ffe2-4670-b4ea-b7aea592cb21</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/8200de37-559b-4b2e-b053-098e6998510a">
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/8200de37-559b-4b2e-b053-098e6998510a</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">New Item: 2026-10-02 13:26:08</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/d8f227b6-81ee-4e1b-8f65-49b0d7520b51">
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <skos:prefLabel xml:lang="en">CMT(s) post-date 1846</skos:prefLabel>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/d8f227b6-81ee-4e1b-8f65-49b0d7520b51</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/d536f445-c2ca-4ab1-9eca-370afb1eea25">
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/d536f445-c2ca-4ab1-9eca-370afb1eea25</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Features or objects are non-anthropogenic</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/cb1fd622-cd45-4ab6-811f-d432d4052662">
+    <skos:inScheme rdf:resource="https://localhost/327629f1-e46a-4fb2-9298-43f153081a41"/>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</arches:sortorder>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/cb1fd622-cd45-4ab6-811f-d432d4052662</dcterms:identifier>
+  </skos:Concept>
+</rdf:RDF>

@@ -149,6 +149,7 @@ const siteVisitDetailsColumns = computed(() => [
         isHtml: true,
     },
     { field: 'permitted', label: 'Permitted' },
+    { field: 'affiliation', label: 'Non-permitted affiliation' },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -165,7 +166,8 @@ const permitDetailsColumns = computed(() => [
     { field: 'permit_number', label: 'Permit Number' },
     { field: 'permit_type', label: 'Permit Type' },
     { field: 'permit_holder', label: 'Permit Holder' },
-    { field: 'affiliation', label: 'Affiliation' },
+    // Add back in once Permitting data imported from APTS
+    // { field: 'affiliation', label: 'Affiliation' },
     { field: 'issuing_agency', label: 'Issuing Agency' },
 ]);
 </script>

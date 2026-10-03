@@ -68,17 +68,26 @@ describe('useResourceData', () => {
 
 describe('useRelatedResourceData', () => {
     it('returns the full array by default', async () => {
-        getRelatedResourceData.mockResolvedValue([{ id: 1 }, { id: 2 }]);
+        getRelatedResourceData.mockResolvedValue([
+            { id: 1, resourceinstanceid: 'uuid-1' },
+            { id: 2, resourceinstanceid: 'uuid-2' },
+        ]);
         const { data } = useRelatedResourceData('visit', ref('a'));
         await flushPromises();
-        expect(data.value).toEqual([{ id: 1 }, { id: 2 }]);
+        expect(data.value).toEqual([
+            { id: 1, resourceinstanceid: 'uuid-1' },
+            { id: 2, resourceinstanceid: 'uuid-2' },
+        ]);
     });
 
     it('returns the first element when getFirst is set', async () => {
-        getRelatedResourceData.mockResolvedValue([{ id: 1 }, { id: 2 }]);
+        getRelatedResourceData.mockResolvedValue([
+            { id: 1, resourceinstanceid: 'uuid-1' },
+            { id: 2, resourceinstanceid: 'uuid-2' },
+        ]);
         const { data } = useRelatedResourceData('visit', ref('a'), true);
         await flushPromises();
-        expect(data.value).toEqual({ id: 1 });
+        expect(data.value).toEqual({ id: 1, resourceinstanceid: 'uuid-1' });
     });
 
     it('clears data and reports the failure', async () => {
