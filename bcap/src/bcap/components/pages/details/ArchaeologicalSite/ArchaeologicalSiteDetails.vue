@@ -269,4 +269,7 @@ dt {
     min-width: 20rem;
     padding-top: 0.75rem;
 }
+.p-datatable-tbody > tr > td {
+    vertical-align: top;
+}
 </style>
