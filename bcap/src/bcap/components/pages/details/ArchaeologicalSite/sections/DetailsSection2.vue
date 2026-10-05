@@ -104,7 +104,7 @@ const authorityColumns = computed(() => [
     { field: 'reference_number', label: 'Reference #' },
     { field: 'authority_start_date', label: 'Start Date' },
     { field: 'authority_end_date', label: 'Expiry Date' },
-    { field: 'authority_description', label: 'Description' },
+    { field: 'authority_description', label: 'Description', isHtml: true },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
