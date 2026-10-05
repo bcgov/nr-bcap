@@ -55,6 +55,11 @@ class SiteVisitAliases(AbstractAliases):
     PHOTOGRAPHER = "photographer"
     PRIMARY_IMAGE = "primary_image"
     PROJECT_DESCRIPTION = "project_description"
+    PROPOSED_UNPROTECTED_AREA = "proposed_unprotected_area"
+    PROPOSED_UNPROTECTED_SITE_AREA_CRITERIA = "proposed_unprotected_site_area_criteria"
+    PROPOSED_UNPROTECTED_SITE_AREA_RATIONALE = (
+        "proposed_unprotected_site_area_rationale"
+    )
     PUBLICATION_REFERENCE = "publication_reference"
     RECORDERS_RECOMMENDATION = "recorders_recommendation"
     RELATED_DOCUMENT_DESCRIPTION = "related_document_description"

@@ -20,6 +20,7 @@ class SiteDescriptorTestCase(DescriptorTestCase):
     descriptor_class = BCAPSiteDescriptors
     node_names = {
         A.DECISION_REGISTRATION_STATUS: "Raw Status Node Name",
+        A.DECISION_DATE: "Decision Date",
         A.NAME: "Site Name",
         A.BORDEN_NUMBER: "Borden Number",
     }
@@ -29,6 +30,9 @@ class SiteDescriptorTestCase(DescriptorTestCase):
         # Derived from the typology_class tiles rather than read off a node.
         self.typologies: tuple[list, list] = ([], [])
         self.stub("_get_typologies", side_effect=lambda *a, **kw: self.typologies)
+        models_patcher = patch("bcap.functions.bcap_site_descriptors.models")
+        self.mock_models = models_patcher.start()
+        self.addCleanup(models_patcher.stop)
 
 
 class TestDescriptorDispatch(SiteDescriptorTestCase):

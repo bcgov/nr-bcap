@@ -18,6 +18,7 @@ import type {
     ArchaeologicalSiteGeneralRemarkInformationTile,
     SiteVisit,
     SiteVisitGeneralRemarkTile,
+    SiteVisitRecommendationTile,
 } from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
@@ -194,6 +195,46 @@ const remarksFromSiteVisit = (
         toArchSiteRemark,
     ) ?? [];
 
+const recommendationColumns = computed<ColumnDefinition[]>(() => [
+    {
+        field: 'recorders_recommendation',
+        label: "Recorder's Recommendation",
+        isHtml: true,
+    },
+    {
+        field: 'archaeology_branch_recommendation',
+        label: 'Archaeology Branch Recommendation',
+        isHtml: true,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
+const recommendationsSource = computed(() =>
+    props.siteVisitData.flatMap(
+        (sv): SiteVisitRecommendationTile[] =>
+            sv.aliased_data?.remarks_and_recommendations?.aliased_data
+                ?.recommendation ?? [],
+    ),
+);
+
+const { processedData: recommendationsTableData } = useTileEditLog(
+    recommendationsSource as unknown as Ref<AliasedTileData[]>,
+    toRef(props, 'editLogData'),
+);
+
+const hasRecommendations = computed(
+    () => recommendationsTableData.value.length > 0,
+);
+
 const generalRemarksData = computed<
     ArchaeologicalSiteGeneralRemarkInformationTile[]
 >(() => [
@@ -332,6 +373,25 @@ const hasHcaContraventionsSection = computed(
                     <EmptyState
                         v-else
                         message="No keywords available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="Recommendations"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasRecommendations }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasRecommendations"
+                        :table-data="recommendationsTableData"
+                        :column-definitions="recommendationColumns"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No recommendations available."
                     />
                 </template>
             </DetailsSection>
