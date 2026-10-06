@@ -432,6 +432,13 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "console",
         },
+        # The only per-user record of file access; ship it off-box.
+        "file_access": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(APP_ROOT, "logs", "file_access.log"),
+            "formatter": "console",
+        },
     },
     "loggers": {
         "arches": {
@@ -445,6 +452,11 @@ LOGGING = {
             "propagate": True,
         },
         "bcap": {"handlers": ["file", "console"], "level": "DEBUG", "propagate": True},
+        "bcap.records.file_access": {
+            "handlers": ["file_access", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
 
@@ -746,7 +758,7 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 STORAGES = {
     "default": {
-        "BACKEND": "bcap.services.virus_scan_service.ScanningStorage",
+        "BACKEND": "bcap.services.records.storage.RecordsStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -761,6 +773,8 @@ S3_URL = AWS_S3_ENDPOINT_URL
 # We want media to be accessed through the arches app not directly from S3
 # MEDIA_URL = AWS_S3_ENDPOINT_URL
 AWS_S3_PROXIES = {"https": get_env_variable("S3_PROXIES")}
+# A same-named re-upload gets a new key, so every version of a record is kept.
+AWS_S3_FILE_OVERWRITE = False
 
 # CSRF_TRUSTED_ORIGINS = ["https://{{ arches_url_hostname }}"]
 
