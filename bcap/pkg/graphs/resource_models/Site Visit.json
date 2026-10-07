@@ -1,8 +1,35 @@
 {
     "graph": [
         {
-            "author": "Sergey Popov",
+            "author": "QED Systems Inc.",
             "cards": [
+                {
+                    "active": true,
+                    "cardid": "019d29a4-7cf4-4570-beed-9e571729e52c",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": "{\"en\": \"\"}",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Biogeography"
+                    },
+                    "nodegroup_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
                 {
                     "active": true,
                     "cardid": "0484d2de-1410-11f0-8419-0242ac170007",
@@ -27,6 +54,33 @@
                     },
                     "nodegroup_id": "0484d0b8-1410-11f0-8419-0242ac170007",
                     "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "09db0805-0778-449e-a953-89b64618c8f9",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": "",
+                    "description": "{\"en\": \"\"}",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": true,
+                    "helptext": {
+                        "en": "<p>Define the spatial location of the site following the process below.</p>\n\n<p><u>Spatial Location</u></p>\n\n<p><strong>Step 1:</strong> Confirm there is no existing record for the site located on the map before making a new site.</p>\n\n<p><strong>Step 2:</strong> Navigate to the site on the map box. Enter street address or city in the map search bar. Click &ldquo;Edit&rdquo; on the right-side panel.</p>\n\n<p><strong>Step 3</strong>: Define the Site Boundary using one of the following options:</p>\n\n<ul>\n\t<li><strong>Draw:&nbsp;</strong>Add a new feature for the Site Boundary whether that&rsquo;s a point, line, or polygon and begin drawing the site boundaries in the map box using satellite imagery or other georeferences as a guide. Double click on the second last point to close a polygon.</li>\n\t<li><strong>Select Cadastral Feature:</strong>&nbsp;For &ldquo;Select Cadastral Feature&rdquo; turn on the Cadastral ParcelMap layer in the Overlays tab. Select the cadastral feature on the map and click &ldquo;Copy Geometry.&rdquo;</li>\n\t<li><strong>Upload Spatial Data</strong>: Upload a GeoJSON or KML file</li>\n</ul>\n\n<p><strong>Step 4:</strong> Saved geometry/geometries will appear as listed feature(s) that can be edited or deleted as necessary.</p>\n\n<p>&nbsp;</p>\n\n<p><u>Accuracy Remarks</u></p>\n\n<p>Describe how the site was digitized.</p>\n\n<p>Examples:</p>\n\n<p>Site digitized using shapefile; Site digitized using cadastral lot boundaries; Site digitized using satellite imagery</p>\n\n<p>&nbsp;</p>\n\n<p><u>Source Notes</u></p>\n\n<p>Describe the source of the spatial data.</p>\n\n<p>Example: Submitted by Local Government</p>\n"
+                    },
+                    "helptitle": {
+                        "en": "Spatial Location Help"
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Spatial Location"
+                    },
+                    "nodegroup_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -86,6 +140,60 @@
                 },
                 {
                     "active": true,
+                    "cardid": "31771714-5da2-44c3-a405-3796ab66872d",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": "{\"en\": \"\"}",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Proposed Unprotected Area"
+                    },
+                    "nodegroup_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "40b82fcc-9447-4858-8f69-6816530af445",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "1. Site Visit Location"
+                    },
+                    "nodegroup_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "45aa71cc-8aab-4157-bbe7-732e478e8e31",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -135,33 +243,6 @@
                     },
                     "nodegroup_id": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "4c611685-0f1a-442d-b938-c4f95fa732ee",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Biogeography"
-                    },
-                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -296,33 +377,6 @@
                         "en": "General Remarks"
                     },
                     "nodegroup_id": "9625020c-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true
-                },
-                {
-                    "active": true,
-                    "cardid": "9d9b69c4-316e-4d64-b374-59f8befd2280",
-                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
-                    "config": null,
-                    "constraints": [],
-                    "cssclass": null,
-                    "description": "{\"en\": \"\"}",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "helpenabled": false,
-                    "helptext": {
-                        "en": ""
-                    },
-                    "helptitle": {
-                        "en": ""
-                    },
-                    "instructions": {
-                        "en": ""
-                    },
-                    "name": {
-                        "en": "Proposed Unprotected Area"
-                    },
-                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
@@ -491,27 +545,27 @@
                 },
                 {
                     "active": true,
-                    "cardid": "cf40f022-13f0-11f0-9404-0242ac170007",
+                    "cardid": "d08e06f0-ebb8-4e5c-9319-e2bf20281ce1",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
                     "constraints": [],
-                    "cssclass": "",
-                    "description": "{\"en\": \"\"}",
+                    "cssclass": null,
+                    "description": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "helpenabled": true,
+                    "helpenabled": false,
                     "helptext": {
-                        "en": "<p>Define the spatial location of the site following the process below.</p>\n\n<p><u>Spatial Location</u></p>\n\n<p><strong>Step 1:</strong> Confirm there is no existing record for the site located on the map before making a new site.</p>\n\n<p><strong>Step 2:</strong> Navigate to the site on the map box. Enter street address or city in the map search bar. Click &ldquo;Edit&rdquo; on the right-side panel.</p>\n\n<p><strong>Step 3</strong>: Define the Site Boundary using one of the following options:</p>\n\n<ul>\n\t<li><strong>Draw:&nbsp;</strong>Add a new feature for the Site Boundary whether that&rsquo;s a point, line, or polygon and begin drawing the site boundaries in the map box using satellite imagery or other georeferences as a guide. Double click on the second last point to close a polygon.</li>\n\t<li><strong>Select Cadastral Feature:</strong>&nbsp;For &ldquo;Select Cadastral Feature&rdquo; turn on the Cadastral ParcelMap layer in the Overlays tab. Select the cadastral feature on the map and click &ldquo;Copy Geometry.&rdquo;</li>\n\t<li><strong>Upload Spatial Data</strong>: Upload a GeoJSON or KML file</li>\n</ul>\n\n<p><strong>Step 4:</strong> Saved geometry/geometries will appear as listed feature(s) that can be edited or deleted as necessary.</p>\n\n<p>&nbsp;</p>\n\n<p><u>Accuracy Remarks</u></p>\n\n<p>Describe how the site was digitized.</p>\n\n<p>Examples:</p>\n\n<p>Site digitized using shapefile; Site digitized using cadastral lot boundaries; Site digitized using satellite imagery</p>\n\n<p>&nbsp;</p>\n\n<p><u>Source Notes</u></p>\n\n<p>Describe the source of the spatial data.</p>\n\n<p>Example: Submitted by Local Government</p>\n"
+                        "en": ""
                     },
                     "helptitle": {
-                        "en": "Spatial Location Help"
+                        "en": ""
                     },
                     "instructions": {
                         "en": ""
                     },
                     "name": {
-                        "en": "1. Site Visit Location"
+                        "en": "Location and Access"
                     },
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
+                    "nodegroup_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
@@ -969,6 +1023,26 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "019d29a4-7cf4-4570-beed-9e571729e52c",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Biogeography Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        },
+                        "uneditable": false
+                    },
+                    "id": "1d482123-a9d1-4ce9-b234-b7515515f20d",
+                    "label": {
+                        "en": "Biogeography Type"
+                    },
+                    "node_id": "e2b03080-39d2-4ac5-8b71-101feef25849",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -1017,6 +1091,40 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "09db0805-0778-449e-a953-89b64618c8f9",
+                    "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "45c0fb37-31cf-4223-86e8-476ffbd51d5f",
+                                        "language_id": "en",
+                                        "list_item_id": "da9933b2-6b6c-435e-890e-21c78907625b",
+                                        "value": "Study Area",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "list_id": "da20ba4d-3f96-4801-b5cd-f5e1800cad12",
+                                "uri": "https://localhost/bcap/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b"
+                            }
+                        ],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Boundary Type",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "24c1b1c2-0892-4896-88b8-40dd942bd3f7",
+                    "label": {
+                        "en": "Boundary Type"
+                    },
+                    "node_id": "8bffa154-d7f1-49f1-86be-12a32104e742",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "fab4bca8-1408-11f0-9e93-0242ac170007",
@@ -1079,6 +1187,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "019d29a4-7cf4-4570-beed-9e571729e52c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Biogeography Name",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "3a66ae74-df50-48b5-a827-1d8363ca2a98",
+                    "label": {
+                        "en": "Biogeography Name"
+                    },
+                    "node_id": "3553a676-73eb-418a-8cd6-0cf57a7a9f09",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "a0c7cec6-1401-11f0-acd5-0242ac170007",
@@ -1165,53 +1301,6 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
-                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Biogeography Description",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "474abb9c-d2f0-44bd-820b-6b9a007c681b",
-                    "label": {
-                        "en": "Biogeography Description"
-                    },
-                    "node_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
-                    "config": {
-                        "i18n_properties": ["placeholder"],
-                        "label": "Proposed Unprotected Site Area Criteria",
-                        "placeholder": {
-                            "en": "Select an option"
-                        }
-                    },
-                    "id": "47b1d665-0f9b-4755-aa17-02a26dabd956",
-                    "label": {
-                        "en": "Proposed Unprotected Site Area Criteria"
-                    },
-                    "node_id": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
                     "config": {
                         "defaultResourceInstance": [],
@@ -1248,26 +1337,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
-                },
-                {
-                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
-                    "config": {
-                        "i18n_properties": ["placeholder"],
-                        "label": "Biogeography Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "4d0d8b6c-0e91-417e-9ef5-6ae30c3eed24",
-                    "label": {
-                        "en": "Biogeography Type"
-                    },
-                    "node_id": "5270c773-125c-4223-868e-badeb5cf5f78",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "e154ab8d-4f8b-4766-8614-aa2d48727792",
@@ -1351,34 +1420,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
-                },
-                {
-                    "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Location and Access",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "64487c95-bbd3-4ffd-983f-7959a611f9a3",
-                    "label": {
-                        "en": "Location and Access"
-                    },
-                    "node_id": "cca03a72-13fe-11f0-99e9-0242ac170007",
-                    "sortorder": 4,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "6d906048-140d-11f0-b9bb-0242ac170007",
@@ -1687,6 +1728,54 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+                    "card_id": "31771714-5da2-44c3-a405-3796ab66872d",
+                    "config": {
+                        "basemap": "British Columbia Roads",
+                        "bearing": 0,
+                        "centerX": -125.2111215300115,
+                        "centerY": 54.5952920093056,
+                        "defaultValue": "",
+                        "defaultValueType": "",
+                        "featureColor": "#FF0000",
+                        "featureLineWidth": 1,
+                        "featurePointSize": 3,
+                        "geocodePlaceholder": "Search",
+                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
+                        "geocoderVisible": true,
+                        "geometryTypes": [
+                            {
+                                "id": "Point",
+                                "text": "Point"
+                            },
+                            {
+                                "id": "Line",
+                                "text": "Line"
+                            },
+                            {
+                                "id": "Polygon",
+                                "text": "Polygon"
+                            }
+                        ],
+                        "label": "Proposed Unprotected Area",
+                        "maxZoom": 20,
+                        "minZoom": 0,
+                        "overlayConfigs": [],
+                        "overlayOpacity": 0,
+                        "pitch": 0,
+                        "rerender": true,
+                        "zoom": 10
+                    },
+                    "id": "7deac350-0f1e-4cb3-8f5b-59dc9683027b",
+                    "label": {
+                        "en": "Proposed Unprotected Area"
+                    },
+                    "node_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
                     "card_id": "962503ce-61ab-11f0-be7c-3a7a4e6803c5",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -1707,34 +1796,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
-                },
-                {
-                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Proposed Unprotected Site Area Rationale",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "88cc2766-fa24-438d-a965-7f126127245c",
-                    "label": {
-                        "en": "Proposed Unprotected Site Area Rationale"
-                    },
-                    "node_id": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "15f3be27-7841-4672-9c7f-72eff82cd4de",
@@ -1813,35 +1874,48 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
+                    "card_id": "31771714-5da2-44c3-a405-3796ab66872d",
                     "config": {
-                        "defaultValue": [
-                            {
-                                "labels": [
-                                    {
-                                        "id": "45c0fb37-31cf-4223-86e8-476ffbd51d5f",
-                                        "language_id": "en",
-                                        "list_item_id": "da9933b2-6b6c-435e-890e-21c78907625b",
-                                        "value": "Study Area",
-                                        "valuetype_id": "prefLabel"
-                                    }
-                                ],
-                                "list_id": "da20ba4d-3f96-4801-b5cd-f5e1800cad12",
-                                "uri": "https://localhost/bcap/plugins/controlled-list-manager/item/da9933b2-6b6c-435e-890e-21c78907625b"
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
                             }
-                        ],
+                        },
                         "i18n_properties": ["placeholder"],
-                        "label": "Boundary Type",
+                        "label": "Proposed Unprotected Site Area Rationale",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "9381f36e-9b10-4f05-ab5d-62d41312cc37",
+                    "label": {
+                        "en": "Proposed Unprotected Site Area Rationale"
+                    },
+                    "node_id": "c9696731-2655-401b-9d20-bea1854e859f",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "31771714-5da2-44c3-a405-3796ab66872d",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Proposed Unprotected Site Area Criteria",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
-                    "id": "959dfdbc-2f67-41d7-803b-10ff6bb8df82",
+                    "id": "94a5993b-b122-4b59-929c-333bc18e355c",
                     "label": {
-                        "en": "Boundary Type"
+                        "en": "Proposed Unprotected Site Area Criteria"
                     },
-                    "node_id": "9aea2913-e4ee-43dd-904c-abee908f61b6",
-                    "sortorder": 2,
+                    "node_id": "15238092-1b9b-45f7-8574-670bfbf45c4d",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -1865,6 +1939,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "019d29a4-7cf4-4570-beed-9e571729e52c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Biogeography Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a10e2da1-544c-4b2f-aefa-36a09771f0df",
+                    "label": {
+                        "en": "Biogeography Description"
+                    },
+                    "node_id": "dce2aec2-3776-4eb0-8d37-763d34a7fd34",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
@@ -1898,6 +2000,34 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000008"
+                },
+                {
+                    "card_id": "09db0805-0778-449e-a953-89b64618c8f9",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Boundary Description",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a995dc1d-c12b-4958-b7b8-48b650a012f4",
+                    "label": {
+                        "en": "Boundary Description"
+                    },
+                    "node_id": "64b506a3-77f2-4ecf-9a6d-cb301167f3ec",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "45aa71cc-8aab-4157-bbe7-732e478e8e31",
@@ -1958,34 +2088,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
-                    "card_id": "4c611685-0f1a-442d-b938-c4f95fa732ee",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Biogeography Name",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "bafb1e15-78dc-4ef7-b0c0-e329b31e6ccc",
-                    "label": {
-                        "en": "Biogeography Name"
-                    },
-                    "node_id": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "e5917cc0-6327-42ee-8643-e076e6afca55",
@@ -2232,76 +2334,7 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
-                    "config": {
-                        "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
-                        "label": "Assigned or Reported By",
-                        "placeholder": {
-                            "en": "Select a person"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "ccbad9c7-5362-4b3f-9ab7-51cea47c279a",
-                    "label": {
-                        "en": "Assigned or Reported By"
-                    },
-                    "node_id": "c85b4e24-140e-11f0-8419-0242ac170007",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
-                },
-                {
-                    "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
-                    "config": {
-                        "i18n_properties": ["placeholder"],
-                        "label": "Edit Type",
-                        "placeholder": {
-                            "en": "Select an option"
-                        },
-                        "uneditable": false
-                    },
-                    "id": "cf40f59a-13f0-11f0-9404-0242ac170007",
-                    "label": {
-                        "en": "Edit Type"
-                    },
-                    "node_id": "cf40f158-13f0-11f0-9404-0242ac170007",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
-                    "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Accuracy Remarks",
-                        "maxLength": "500",
-                        "placeholder": {
-                            "en": "E.g. Site digitized using..."
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "cf40f612-13f0-11f0-9404-0242ac170007",
-                    "label": {
-                        "en": "Accuracy Remarks"
-                    },
-                    "node_id": "cf40f40a-13f0-11f0-9404-0242ac170007",
-                    "sortorder": 3,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "cf40f022-13f0-11f0-9404-0242ac170007",
+                    "card_id": "09db0805-0778-449e-a953-89b64618c8f9",
                     "config": {
                         "basemap": "British Columbia Roads",
                         "bearing": 0,
@@ -2343,15 +2376,36 @@
                         "uneditable": false,
                         "zoom": "4"
                     },
-                    "id": "cf40f6e4-13f0-11f0-9404-0242ac170007",
+                    "id": "c20158e4-e674-4342-ac1d-7b02b6c0c689",
                     "label": {
                         "en": "Site Visit Location"
                     },
-                    "node_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
+                    "node_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000007"
+                },
+                {
+                    "card_id": "290cd148-e9a9-45c9-b649-065e59e893fa",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "label": "Assigned or Reported By",
+                        "placeholder": {
+                            "en": "Select a person"
+                        },
+                        "uneditable": false
+                    },
+                    "id": "ccbad9c7-5362-4b3f-9ab7-51cea47c279a",
+                    "label": {
+                        "en": "Assigned or Reported By"
+                    },
+                    "node_id": "c85b4e24-140e-11f0-8419-0242ac170007",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
@@ -2452,6 +2506,34 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "40b82fcc-9447-4858-8f69-6816530af445",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Location and Access",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "e64449a9-13c0-440d-a0da-163475f7946e",
+                    "label": {
+                        "en": "Location and Access"
+                    },
+                    "node_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
                     "card_id": "a1042450-ab0c-4fda-96a5-deec2e6bcd1e",
                     "config": {
                         "defaultValue": {
@@ -2478,54 +2560,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
-                    "card_id": "9d9b69c4-316e-4d64-b374-59f8befd2280",
-                    "config": {
-                        "basemap": "British Columbia Roads",
-                        "bearing": 0,
-                        "centerX": -125.2111215300115,
-                        "centerY": 54.5952920093056,
-                        "defaultValue": "",
-                        "defaultValueType": "",
-                        "featureColor": "#FF0000",
-                        "featureLineWidth": 1,
-                        "featurePointSize": 3,
-                        "geocodePlaceholder": "Search",
-                        "geocodeProvider": "10000000-0000-0000-0000-010000000000",
-                        "geocoderVisible": true,
-                        "geometryTypes": [
-                            {
-                                "id": "Point",
-                                "text": "Point"
-                            },
-                            {
-                                "id": "Line",
-                                "text": "Line"
-                            },
-                            {
-                                "id": "Polygon",
-                                "text": "Polygon"
-                            }
-                        ],
-                        "label": "Proposed Unprotected Area",
-                        "maxZoom": 20,
-                        "minZoom": 0,
-                        "overlayConfigs": [],
-                        "overlayOpacity": 0,
-                        "pitch": 0,
-                        "rerender": true,
-                        "zoom": 10
-                    },
-                    "id": "f2a94df5-ba1d-4d44-b5b3-5c8439d3044d",
-                    "label": {
-                        "en": "Proposed Unprotected Area"
-                    },
-                    "node_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000007"
                 },
                 {
                     "card_id": "6f96fa96-5049-11f0-91cd-0242ac170006",
@@ -2711,16 +2745,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "edgeid": "0d41b246-c673-48d8-982b-16340e725ae7",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
-                    "rangenode_id": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
                     "edgeid": "0ffa7a73-c141-40a2-a891-1da7ddd76c6e",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2731,32 +2755,12 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
-                    "edgeid": "112dd0e3-74b7-48c9-b5db-c264400f855a",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P103i_was_intention_of",
-                    "rangenode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "44713ace-babc-4ebe-b2f6-084ed0060f2c",
                     "edgeid": "13882ff3-c1a7-4898-b4d6-74bc4668677e",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
                     "rangenode_id": "55f5927c-8279-4864-ba1d-2f288ca46fcf",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "edgeid": "141683df-1093-41ed-ad7c-96e64905f060",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "rangenode_id": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
                     "source_identifier_id": null
                 },
                 {
@@ -2821,6 +2825,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "edgeid": "2b97676a-f94e-48a1-b18e-cb29e8e9f7ff",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "rangenode_id": "c9696731-2655-401b-9d20-bea1854e859f",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "a6536975-292e-47d1-8ebe-7e83092438bd",
                     "edgeid": "2cd7fbe5-5ea1-4877-beb6-08d5652e99aa",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -2857,26 +2871,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "acbdadfa-2ccf-4a68-9497-56d36dbd1021",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "edgeid": "38016a1f-d8fb-4ca7-adf1-42ce71b3dc31",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "95e5f9b6-71cd-4769-b365-9155442954ec",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "38f28cdb-eecb-45a6-ba6a-f807279ab91c",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "9aea2913-e4ee-43dd-904c-abee908f61b6",
                     "source_identifier_id": null
                 },
                 {
@@ -2961,12 +2955,32 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "840c5b80-d932-11ef-92f0-005056a3bc47",
+                    "edgeid": "58ebaf7a-b126-41a9-b790-f9680c617253",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "3648fb88-1401-11f0-acd5-0242ac170007",
                     "edgeid": "5c57f2c1-e95d-4518-9a07-42ac71bad015",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
                     "rangenode_id": "720dd6dc-1408-11f0-9e93-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "edgeid": "5df63ebe-3826-49a8-a5f3-fc56482949e1",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "64b506a3-77f2-4ecf-9a6d-cb301167f3ec",
                     "source_identifier_id": null
                 },
                 {
@@ -3001,12 +3015,22 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "698a6b41-5278-4201-9c7f-9d8b5774483f",
+                    "domainnode_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "edgeid": "66ac0a30-b592-456e-8897-03309418af1c",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
+                    "rangenode_id": "15238092-1b9b-45f7-8574-670bfbf45c4d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "edgeid": "6a446fc6-35ce-4bd1-9fca-26e486dd5cec",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "dce2aec2-3776-4eb0-8d37-763d34a7fd34",
                     "source_identifier_id": null
                 },
                 {
@@ -3081,16 +3105,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "6eccf4ed-db44-431f-aa70-6244082ddd34",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "cca03a72-13fe-11f0-99e9-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "6f96f910-5049-11f0-91cd-0242ac170006",
                     "edgeid": "6f971b84-5049-11f0-91cd-0242ac170006",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3161,16 +3175,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "7d323c2d-8f43-47a2-b389-cf2a0d59225e",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
-                    "rangenode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "77789d46-61ab-11f0-be7c-3a7a4e6803c5",
                     "edgeid": "806b255e-d72d-4f2e-bffa-2aa990970a31",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3187,6 +3191,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P62i_is_depicted_by",
                     "rangenode_id": "44713ace-babc-4ebe-b2f6-084ed0060f2c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "edgeid": "876c6a04-d3ee-4cf7-a546-c8c6b0eb690d",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
+                    "rangenode_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
                     "source_identifier_id": null
                 },
                 {
@@ -3217,6 +3231,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
                     "rangenode_id": "e9f36b4e-140d-11f0-b9bb-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "edgeid": "92df4b6f-b402-4734-891d-ac95c46177b4",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
+                    "rangenode_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
                     "source_identifier_id": null
                 },
                 {
@@ -3291,16 +3315,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "edgeid": "9e91624e-1cc7-421a-a95a-d1e714a0e670",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "rangenode_id": "5270c773-125c-4223-868e-badeb5cf5f78",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "a0c7cc6e-1401-11f0-acd5-0242ac170007",
                     "edgeid": "a0c7edfc-1401-11f0-acd5-0242ac170007",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3317,6 +3331,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "rangenode_id": "a0c7d128-1401-11f0-acd5-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "edgeid": "a58e2c87-5071-4de4-a4ab-1cb5c2f00094",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "8bffa154-d7f1-49f1-86be-12a32104e742",
                     "source_identifier_id": null
                 },
                 {
@@ -3361,12 +3385,32 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "edgeid": "b8928da9-842a-4a11-b6c8-7271d3120642",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "rangenode_id": "e2b03080-39d2-4ac5-8b71-101feef25849",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "c3738e14-a521-47c1-8b52-668847a8a51e",
                     "edgeid": "b8bd42ef-2669-4912-9f27-bcf795bff87d",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "d6765cc8-8dec-431b-bbb5-950567e6ed1c",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "edgeid": "b900ff32-7116-4ea6-964c-17d5ba45c75b",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
+                    "rangenode_id": "3553a676-73eb-418a-8cd6-0cf57a7a9f09",
                     "source_identifier_id": null
                 },
                 {
@@ -3397,6 +3441,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P44_has_condition",
                     "rangenode_id": "5d4e5254-1402-11f0-acd5-0242ac170007",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "edgeid": "bfda7e2a-2cb0-4337-89bd-f44fefcf99db",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "rangenode_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
                     "source_identifier_id": null
                 },
                 {
@@ -3521,26 +3575,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "cf410d14-13f0-11f0-9404-0242ac170007",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "cf40f40a-13f0-11f0-9404-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "edgeid": "cf410f4e-13f0-11f0-9404-0242ac170007",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "rangenode_id": "cf40f158-13f0-11f0-9404-0242ac170007",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "3648fb88-1401-11f0-acd5-0242ac170007",
                     "edgeid": "d210e92a-1633-4d6a-98ad-6b14d7d4f7b2",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
@@ -3611,12 +3645,12 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "edgeid": "f61fc95c-2dcb-4cfa-a2d4-dac84d4940ec",
+                    "domainnode_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "edgeid": "f6fa2a7d-c42e-47f1-bb92-43ce96f99e23",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "rangenode_id": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by",
+                    "rangenode_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
                     "source_identifier_id": null
                 },
                 {
@@ -3722,6 +3756,13 @@
                 },
                 {
                     "cardinality": "n",
+                    "grouping_node_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "legacygroupid": null,
+                    "nodegroupid": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "parentnodegroup_id": "36b6d091-a8d0-483e-ad5b-18f433f67311"
+                },
+                {
+                    "cardinality": "n",
                     "grouping_node_id": "22508fc8-1402-11f0-acd5-0242ac170007",
                     "legacygroupid": null,
                     "nodegroupid": "22508fc8-1402-11f0-acd5-0242ac170007",
@@ -3735,11 +3776,25 @@
                     "parentnodegroup_id": null
                 },
                 {
+                    "cardinality": "n",
+                    "grouping_node_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "legacygroupid": null,
+                    "nodegroupid": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "parentnodegroup_id": "736d222a-cedb-4671-9ab5-d6f14a532238"
+                },
+                {
                     "cardinality": "1",
                     "grouping_node_id": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "legacygroupid": null,
                     "nodegroupid": "37bdda22-140d-11f0-b9bb-0242ac170007",
                     "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
+                    "legacygroupid": null,
+                    "nodegroupid": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
+                    "parentnodegroup_id": "736d222a-cedb-4671-9ab5-d6f14a532238"
                 },
                 {
                     "cardinality": "1",
@@ -3754,13 +3809,6 @@
                     "legacygroupid": null,
                     "nodegroupid": "55f5927c-8279-4864-ba1d-2f288ca46fcf",
                     "parentnodegroup_id": "44713ace-babc-4ebe-b2f6-084ed0060f2c"
-                },
-                {
-                    "cardinality": "n",
-                    "grouping_node_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "legacygroupid": null,
-                    "nodegroupid": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
                 },
                 {
                     "cardinality": "n",
@@ -3791,11 +3839,11 @@
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
                 },
                 {
-                    "cardinality": "n",
-                    "grouping_node_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
+                    "cardinality": "1",
+                    "grouping_node_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
                     "legacygroupid": null,
-                    "nodegroupid": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "parentnodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007"
+                    "nodegroupid": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "parentnodegroup_id": null
                 },
                 {
                     "cardinality": "1",
@@ -3862,13 +3910,6 @@
                 },
                 {
                     "cardinality": "n",
-                    "grouping_node_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "legacygroupid": null,
-                    "nodegroupid": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "parentnodegroup_id": null
-                },
-                {
-                    "cardinality": "n",
                     "grouping_node_id": "fab4ba5a-1408-11f0-9e93-0242ac170007",
                     "legacygroupid": null,
                     "nodegroupid": "fab4ba5a-1408-11f0-9e93-0242ac170007",
@@ -3880,35 +3921,16 @@
                     "legacygroupid": null,
                     "nodegroupid": "fb559106-140c-11f0-b9bb-0242ac170007",
                     "parentnodegroup_id": "3648fb88-1401-11f0-acd5-0242ac170007"
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "legacygroupid": null,
+                    "nodegroupid": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "parentnodegroup_id": "736d222a-cedb-4671-9ab5-d6f14a532238"
                 }
             ],
             "nodes": [
-                {
-                    "alias": "proposed_unprotected_site_area_criteria",
-                    "config": {
-                        "controlledList": "327629f1-e46a-4fb2-9298-43f153081a41",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Proposed Unprotected Site Area Criteria",
-                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "nodeid": "039f5c70-0353-4126-b74d-0d1a0f3a3d64",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
                 {
                     "alias": "site_visit_team",
                     "config": {
@@ -4028,6 +4050,52 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "proposed_unprotected_area",
+                    "config": {
+                        "addToMap": false,
+                        "advancedStyle": "",
+                        "advancedStyling": false,
+                        "clusterDistance": 20,
+                        "clusterMaxZoom": 5,
+                        "clusterMinPoints": 3,
+                        "fillColor": "rgba(130, 130, 130, 0.5)",
+                        "haloRadius": 4,
+                        "haloWeight": 4,
+                        "layerActivated": true,
+                        "layerIcon": "",
+                        "layerLegend": "",
+                        "layerName": "",
+                        "lineColor": "rgba(130, 130, 130, 0.7)",
+                        "lineHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "outlineColor": "rgba(200, 200, 200, 0.7)",
+                        "outlineWeight": 2,
+                        "pointColor": "rgba(130, 130, 130, 0.7)",
+                        "pointHaloColor": "rgba(200, 200, 200, 0.5)",
+                        "radius": 2,
+                        "simplification": 0.3,
+                        "weight": 2
+                    },
+                    "datatype": "geojson-feature-collection",
+                    "description": "{\"en\": \"\"}",
+                    "exportable": true,
+                    "fieldname": "unprotarea",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Area",
+                    "nodegroup_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "nodeid": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D35_Area",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "image_description",
                     "config": {},
                     "datatype": "string",
@@ -4047,6 +4115,32 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "proposed_unprotected_site_area_criteria",
+                    "config": {
+                        "controlledList": "327629f1-e46a-4fb2-9298-43f153081a41",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "UNPROTCRIT",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Site Area Criteria",
+                    "nodegroup_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "nodeid": "15238092-1b9b-45f7-8574-670bfbf45c4d",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4151,6 +4245,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "biogeography_name",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "BG_NAME",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Name",
+                    "nodegroup_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "nodeid": "3553a676-73eb-418a-8cd6-0cf57a7a9f09",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "archaeological_data",
                     "config": {
                         "en": ""
@@ -4172,6 +4289,54 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P19i_was_made_for",
                     "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "site_visit_location_n1",
+                    "config": {
+                        "addToMap": true,
+                        "advancedStyle": "",
+                        "advancedStyling": false,
+                        "autoManageCache": false,
+                        "cacheTiles": false,
+                        "clusterDistance": 20,
+                        "clusterMaxZoom": 5,
+                        "clusterMinPoints": 3,
+                        "fillColor": "rgba(255,122,0,0.73)",
+                        "haloRadius": 4,
+                        "haloWeight": 4,
+                        "layerActivated": true,
+                        "layerIcon": "fa fa-bank",
+                        "layerLegend": "<p><img alt=\"\" class=\"legend-swatch site-provincial\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Provincial<br />\n<img alt=\"\" class=\"legend-swatch site-federal\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Federal<br />\n<img alt=\"\" class=\"legend-swatch site-municipal\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Municipal</p>\n",
+                        "layerName": "",
+                        "lineColor": "rgba(255,122,0,0.73)",
+                        "lineHaloColor": "rgba(255,122,0,0.3)",
+                        "outlineColor": "rgba(255,122,0,0.3)",
+                        "outlineWeight": 2,
+                        "pointColor": "rgba(255,122,0,0.73)",
+                        "pointHaloColor": "rgba(255,122,0,0.3)",
+                        "radius": 2,
+                        "simplification": 0.3,
+                        "weight": 2
+                    },
+                    "datatype": "geojson-feature-collection",
+                    "description": "{\"en\": \"\"}",
+                    "exportable": true,
+                    "fieldname": "boundary",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Spatial Location",
+                    "nodegroup_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "nodeid": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E47_Spatial_Coordinates",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P87_is_identified_by",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4233,6 +4398,29 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "location_and_access",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "LO_LOC_ACC",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Location and Access",
+                    "nodegroup_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
+                    "nodeid": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4322,32 +4510,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "biogeography_type",
-                    "config": {
-                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "BG_TYPE",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Type",
-                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "nodeid": "5270c773-125c-4223-868e-badeb5cf5f78",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "related_site_documents",
                     "config": {
                         "activateMax": false,
@@ -4371,29 +4533,6 @@
                     "nodeid": "55f5927c-8279-4864-ba1d-2f288ca46fcf",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E84_Information_Carrier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130i_features_are_also_found_on",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "biogeography_name",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "BG_NAME",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Name",
-                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "nodeid": "5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P149_is_identified_by",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -4425,12 +4564,12 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "proposed_unprotected_site_area_rationale",
+                    "alias": "boundary_description",
                     "config": {},
                     "datatype": "string",
                     "description": null,
-                    "exportable": false,
-                    "fieldname": null,
+                    "exportable": true,
+                    "fieldname": "SVLOCDESC",
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": false,
@@ -4438,12 +4577,12 @@
                     "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Proposed Unprotected Site Area Rationale",
-                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "nodeid": "5e3d4511-0381-4e20-8c52-4ead3aec608a",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 0,
+                    "name": "Boundary Description",
+                    "nodegroup_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "nodeid": "64b506a3-77f2-4ecf-9a6d-cb301167f3ec",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4591,29 +4730,6 @@
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D29_Annotation_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
                     "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "biogeography",
-                    "config": {},
-                    "datatype": "semantic",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography",
-                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "nodeid": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -5031,35 +5147,12 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "proposed_unprotected_area",
-                    "config": {
-                        "addToMap": false,
-                        "advancedStyle": "",
-                        "advancedStyling": false,
-                        "clusterDistance": 20,
-                        "clusterMaxZoom": 5,
-                        "clusterMinPoints": 3,
-                        "fillColor": "rgba(130, 130, 130, 0.5)",
-                        "haloRadius": 4,
-                        "haloWeight": 4,
-                        "layerActivated": true,
-                        "layerIcon": "",
-                        "layerLegend": "",
-                        "layerName": "",
-                        "lineColor": "rgba(130, 130, 130, 0.7)",
-                        "lineHaloColor": "rgba(200, 200, 200, 0.5)",
-                        "outlineColor": "rgba(200, 200, 200, 0.7)",
-                        "outlineWeight": 2,
-                        "pointColor": "rgba(130, 130, 130, 0.7)",
-                        "pointHaloColor": "rgba(200, 200, 200, 0.5)",
-                        "radius": 2,
-                        "simplification": 0.3,
-                        "weight": 2
-                    },
-                    "datatype": "geojson-feature-collection",
-                    "description": "{\"en\": \"\"}",
-                    "exportable": true,
-                    "fieldname": "unprotarea",
+                    "alias": "site_visit_location",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
                     "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                     "hascustomalias": false,
                     "is_collector": true,
@@ -5067,11 +5160,11 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Proposed Unprotected Area",
-                    "nodegroup_id": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "nodeid": "739b21dc-26c2-4ef2-a592-ef6ded123d87",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D35_Area",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P165i_is_incorporated_in",
+                    "name": "Site Visit Location",
+                    "nodegroup_id": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "nodeid": "736d222a-cedb-4671-9ab5-d6f14a532238",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -5223,6 +5316,32 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "boundary_type",
+                    "config": {
+                        "controlledList": "da20ba4d-3f96-4801-b5cd-f5e1800cad12",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "SVLOCTYPE",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Boundary Type",
+                    "nodegroup_id": "36b6d091-a8d0-483e-ad5b-18f433f67311",
+                    "nodeid": "8bffa154-d7f1-49f1-86be-12a32104e742",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "recommendation",
                     "config": {
                         "en": ""
@@ -5268,29 +5387,6 @@
                     "nodeid": "8cf43cd4-61ab-11f0-be7c-3a7a4e6803c5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "biogeography_description",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "BG_DESCRIP",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Biogeography Description",
-                    "nodegroup_id": "6abfca2d-8f5d-458a-b128-ab8ba49c1921",
-                    "nodeid": "95e5f9b6-71cd-4769-b365-9155442954ec",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -5419,32 +5515,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "boundary_type",
-                    "config": {
-                        "controlledList": "da20ba4d-3f96-4801-b5cd-f5e1800cad12",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "SVLOCTYPE",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Boundary Type",
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "nodeid": "9aea2913-e4ee-43dd-904c-abee908f61b6",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6089,6 +6159,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "proposed_unprotected_site_area_rationale",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "UNPROTRAT",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Proposed Unprotected Site Area Rationale",
+                    "nodegroup_id": "06d29c75-37f8-4b32-9e9d-6e57c260fa88",
+                    "nodeid": "c9696731-2655-401b-9d20-bea1854e859f",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "typology_remark",
                     "config": {
                         "en": ""
@@ -6110,31 +6203,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
                     "sortorder": 3,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "location_and_access",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "LO_LOC_ACC",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Location and Access",
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "nodeid": "cca03a72-13fe-11f0-99e9-0242ac170007",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S4_Observation",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6171,105 +6239,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P10_falls_within",
                     "sortorder": 4,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "site_visit_location",
-                    "config": {
-                        "addToMap": true,
-                        "advancedStyle": "",
-                        "advancedStyling": false,
-                        "autoManageCache": false,
-                        "cacheTiles": false,
-                        "clusterDistance": 20,
-                        "clusterMaxZoom": 5,
-                        "clusterMinPoints": 3,
-                        "fillColor": "rgba(255,122,0,0.73)",
-                        "haloRadius": 4,
-                        "haloWeight": 4,
-                        "layerActivated": true,
-                        "layerIcon": "fa fa-bank",
-                        "layerLegend": "<p><img alt=\"\" class=\"legend-swatch site-provincial\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Provincial<br />\n<img alt=\"\" class=\"legend-swatch site-federal\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Federal<br />\n<img alt=\"\" class=\"legend-swatch site-municipal\" src=\"/int/bc-fossil-management/static/img/blank.png\" />Municipal</p>\n",
-                        "layerName": "",
-                        "lineColor": "rgba(255,122,0,0.73)",
-                        "lineHaloColor": "rgba(255,122,0,0.3)",
-                        "outlineColor": "rgba(255,122,0,0.3)",
-                        "outlineWeight": 2,
-                        "pointColor": "rgba(255,122,0,0.73)",
-                        "pointHaloColor": "rgba(255,122,0,0.3)",
-                        "radius": 2,
-                        "simplification": 0.3,
-                        "weight": 2
-                    },
-                    "datatype": "geojson-feature-collection",
-                    "description": "{\"en\": \"\"}",
-                    "exportable": true,
-                    "fieldname": "boundary",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": true,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Site Visit Location",
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "nodeid": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E47_Spatial_Coordinates",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P103i_was_intention_of",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "latest_edit_type",
-                    "config": {
-                        "controlledList": "247c2519-6887-5bdd-aa76-deb839a3c65a",
-                        "multiValue": false
-                    },
-                    "datatype": "reference",
-                    "description": "Need to see what the intention is and how this will be used. Was just \"Edit Type\" but in the history of a value, this can/will mutate over time.",
-                    "exportable": true,
-                    "fieldname": "SA_CU_TYPE",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Latest Edit Type",
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "nodeid": "cf40f158-13f0-11f0-9404-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E17_Type_Assignment",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "accuracy_remarks",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": true,
-                    "fieldname": "SA_CU_REM",
-                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Accuracy Remarks",
-                    "nodegroup_id": "cf40edc0-13f0-11f0-9404-0242ac170007",
-                    "nodeid": "cf40f40a-13f0-11f0-9404-0242ac170007",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6319,6 +6288,55 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography_description",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "BG_DESCRIP",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Description",
+                    "nodegroup_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "nodeid": "dce2aec2-3776-4eb0-8d37-763d34a7fd34",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography_type",
+                    "config": {
+                        "controlledList": "9947b6d4-e7e8-5d32-a8cf-b978fa27f31d",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": true,
+                    "fieldname": "BG_TYPE",
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography Type",
+                    "nodegroup_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "nodeid": "e2b03080-39d2-4ac5-8b71-101feef25849",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6630,15 +6648,38 @@
                     "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "biogeography",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": "{\"en\": \"\"}",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Biogeography",
+                    "nodegroup_id": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "nodeid": "fc3ef2e4-88c4-4846-acf7-4354f35cb739",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67i_is_referred_to_by",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
             "publication": {
                 "graph_id": "2da1c15f-1ab6-4122-9dbc-d10da693ac79",
                 "most_recent_edit_id": null,
-                "notes": "Add Proposed Unprotected Area section",
-                "publicationid": "6a2a932b-c2cd-4409-b068-b5ee4bbd45cc",
-                "published_time": "2026-10-02T13:45:04.976"
+                "notes": "Make Location and Access mandatory. Add missing export field names",
+                "publicationid": "b4ed1c5f-109e-4bf3-befe-3229875d1c58",
+                "published_time": "2026-10-07T10:35:10.595"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
