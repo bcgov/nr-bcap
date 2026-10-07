@@ -2,7 +2,6 @@ from bcap.util.bcap_aliases import AbstractAliases
 
 
 class SiteVisitAliases(AbstractAliases):
-    ACCURACY_REMARKS = "accuracy_remarks"
     AFFILIATION = "affiliation"
     ANCESTRAL_REMAINS_REMARKS = "ancestral_remains_remarks"
     ANCESTRAL_REMAINS_REPOSITORY = "ancestral_remains_repository"
@@ -18,6 +17,7 @@ class SiteVisitAliases(AbstractAliases):
     BIOGEOGRAPHY_DESCRIPTION = "biogeography_description"
     BIOGEOGRAPHY_NAME = "biogeography_name"
     BIOGEOGRAPHY_TYPE = "biogeography_type"
+    BOUNDARY_DESCRIPTION = "boundary_description"
     BOUNDARY_TYPE = "boundary_type"
     CHRONOLOGY_REMARKS = "chronology_remarks"
     COPYRIGHT = "copyright"
@@ -43,7 +43,6 @@ class SiteVisitAliases(AbstractAliases):
     INFORMATION_SOURCE = "information_source"
     IS_SITE_VISIT_PERMITTED = "is_site_visit_permitted"
     LAST_DATE_OF_SITE_VISIT = "last_date_of_site_visit"
-    LATEST_EDIT_TYPE = "latest_edit_type"
     LOCATION_AND_ACCESS = "location_and_access"
     MEMBER_ROLES = "member_roles"
     MINIMUM_NUMBER_OF_INDIVIDUALS = "minimum_number_of_individuals"
@@ -71,8 +70,8 @@ class SiteVisitAliases(AbstractAliases):
     REPOSITORY = "repository"
     SITE_FORM_AUTHORS = "site_form_authors"
     SITE_IMAGES = "site_images"
-    SITE_VISIT_LOCATION = "site_visit_location"
     SITE_VISIT_TYPE = "site_visit_type"
+    SPATIAL_LOCATION = "spatial_location"
     START_YEAR = "start_year"
     START_YEAR_CALENDAR = "start_year_calendar"
     START_YEAR_QUALIFIER = "start_year_qualifier"
@@ -105,6 +104,7 @@ class SiteVisitGroupAliases(AbstractAliases):
     REMARKS_AND_RECOMMENDATIONS = "remarks_and_recommendations"
     SITE_DISTURBANCE = "site_disturbance"
     SITE_VISIT_DETAILS = "site_visit_details"
+    SITE_VISIT_LOCATION = "site_visit_location"
     SITE_VISIT_TEAM = "site_visit_team"
 
     @staticmethod

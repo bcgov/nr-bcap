@@ -1247,15 +1247,15 @@ export type ArchaeologicalSiteSiteBoundaryAliasedData = {
      * Enter text
      */
     site_boundary_description?: StringAliasedNodeData | null;
-    unprotected_areas?: Array<ArchaeologicalSiteUnprotectedAreasTile> | null;
-    /**
-     * Select an option
-     */
-    latest_edit_type: ReferenceAliasedNodeDataRequired | null;
+    unprotected_area?: Array<ArchaeologicalSiteUnprotectedAreaTile> | null;
     /**
      * E.g. Site digitized using...
      */
     accuracy_remarks: StringAliasedNodeDataMax500 | null;
+    /**
+     * Select an option
+     */
+    latest_edit_type: ReferenceAliasedNodeDataRequired | null;
 };
 
 export type ArchaeologicalSiteSiteBoundaryTile = {
@@ -1573,24 +1573,28 @@ export type ArchaeologicalSiteSiteTypologyTile = {
     } | null;
 };
 
-export type ArchaeologicalSiteUnprotectedAreasAliasedData = {
-    unprotected_areas?: GeojsonFeatureCollectionAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    unprotected_area_type: ReferenceAliasedNodeDataRequired | null;
+export type ArchaeologicalSiteUnprotectedAreaAliasedData = {
+    unprotected_area?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
      * Enter text
      */
-    other_unprotected_area_type?: StringAliasedNodeData | null;
+    unprotected_site_area_rationale: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    unprotected_site_area_type: ReferenceAliasedNodeDataRequired | null;
+    /**
+     * Select an option
+     */
+    unprotected_site_area_criteria: ReferenceAliasedNodeDataRequired | null;
 };
 
-export type ArchaeologicalSiteUnprotectedAreasTile = {
+export type ArchaeologicalSiteUnprotectedAreaTile = {
     tileid?: string | null;
     resourceinstance?: string | null;
     nodegroup?: string | null;
     parenttile?: string | null;
-    aliased_data?: ArchaeologicalSiteUnprotectedAreasAliasedData;
+    aliased_data?: ArchaeologicalSiteUnprotectedAreaAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -2587,8 +2591,8 @@ export type HriaDiscontinuedDataResourceAliasedData = {
     unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTile | null;
     site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTile> | null;
     archaeological_site?: HriaDiscontinuedDataArchaeologicalSiteTile | null;
-    biogeography?: HriaDiscontinuedDataBiogeographyTile | null;
     hria_jursidiction_and_tenure?: Array<HriaDiscontinuedDataHriaJursidictionAndTenureTile> | null;
+    biogeography?: HriaDiscontinuedDataBiogeographyTile | null;
     chronology?: Array<HriaDiscontinuedDataChronologyTile> | null;
     site_dimensions?: HriaDiscontinuedDataSiteDimensionsTile | null;
 };
@@ -2601,11 +2605,11 @@ export type HriaDiscontinuedDataSiteBoundaryAnnotationsAliasedData = {
     /**
      * Enter text
      */
-    site_boundary_entered_by?: NonLocalizedStringAliasedNodeData | null;
+    accuracy_remarks?: StringAliasedNodeData | null;
     /**
      * Enter text
      */
-    accuracy_remarks?: StringAliasedNodeData | null;
+    site_boundary_entered_by?: NonLocalizedStringAliasedNodeData | null;
     /**
      * Enter date
      */
@@ -4215,11 +4219,11 @@ export type NoticeOfProjectIntentEngagementDocumentAliasedData = {
      * Enter date
      */
     delivery_date?: DateAliasedNodeData | null;
+    is_for_distribution?: BooleanAliasedNodeData | null;
     /**
      * Enter text
      */
     document_type?: StringAliasedNodeData | null;
-    is_for_distribution?: BooleanAliasedNodeData | null;
     engagement_document?: FileListAliasedNodeData | null;
 };
 
@@ -4374,7 +4378,7 @@ export type NoticeOfProjectIntentResourceAliasedData = {
 
 export type NumberAliasedNodeData = {
     /**
-     * Upper (m asl)
+     * Lower (m asl)
      *
      * Enter number
      */
@@ -4491,6 +4495,13 @@ export type PaginatedProcessRequirementList = {
     next?: string | null;
     previous?: string | null;
     results: Array<ProcessRequirement>;
+};
+
+export type PaginatedProjectEngagementList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ProjectEngagement>;
 };
 
 export type PaginatedPublicationList = {
@@ -4823,35 +4834,6 @@ export type PermitApplicationDevelopmentProjectDetailsTile = {
     } | null;
 };
 
-export type PermitApplicationFirstNationsConsultationAliasedData = {
-    /**
-     * Enter text
-     */
-    fn_file_numbers?: StringAliasedNodeData | null;
-    has_fn_endorsements?: BooleanAliasedNodeData | null;
-};
-
-export type PermitApplicationFirstNationsConsultationTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PermitApplicationFirstNationsConsultationAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type PermitApplicationLegalAndConsentAliasedData = {
     /**
      * Enter text
@@ -5041,6 +5023,62 @@ export type PermitApplicationProcessRequirementTile = {
     } | null;
 };
 
+export type PermitApplicationProjectEngagementN1AliasedData = {
+    project_engagement_n1?: ResourceInstanceAliasedNodeData | null;
+};
+
+export type PermitApplicationProjectEngagementN1Tile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: PermitApplicationProjectEngagementN1AliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type PermitApplicationProjectEngagementsAliasedData = {
+    fn_boundary_intersections?: ResourceInstanceListAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    fn_file_numbers?: StringAliasedNodeData | null;
+    has_fn_endorsements?: BooleanAliasedNodeData | null;
+    project_engagement_n1?: Array<PermitApplicationProjectEngagementN1Tile> | null;
+};
+
+export type PermitApplicationProjectEngagementsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: PermitApplicationProjectEngagementsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type PermitApplicationProposedProjectAliasedData = {
     project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
@@ -5152,7 +5190,7 @@ export type PermitApplicationResourceAliasedData = {
     proposed_project?: PermitApplicationProposedProjectTile | null;
     archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTile> | null;
-    first_nations_consultation?: PermitApplicationFirstNationsConsultationTile | null;
+    project_engagements?: PermitApplicationProjectEngagementsTile | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTile | null;
     related_permit?: Array<PermitApplicationRelatedPermitTile> | null;
     application_admin?: PermitApplicationApplicationAdminTile | null;
@@ -5411,6 +5449,309 @@ export type ProcessRequirementSubmissionDataTile = {
             reviewtimestamp?: string | null;
         };
     } | null;
+};
+
+export type ProjectEngagement = {
+    resourceinstanceid?: string | null;
+    aliased_data?: ProjectEngagementResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
+export type ProjectEngagementDeliveryAttemptIncludedDocumentAliasedData = {
+    /**
+     * Enter text
+     */
+    included_document_identifier_snapshot?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    included_document_title_snapshot?: StringAliasedNodeData | null;
+};
+
+export type ProjectEngagementDeliveryAttemptIncludedDocumentTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDeliveryAttemptIncludedDocumentAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleAliasedData = {
+    /**
+     * Enter text
+     */
+    bundle_identifier?: NonLocalizedStringAliasedNodeData | null;
+    recipient_contributor_reference?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    recipient_email_address?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    bundle_status?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    recipient_name_as_provided?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    recipient_phone_number?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    bundle_intended_delivery_method?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    recipient_portal_url?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    bundle_required_delivery_date?: DateAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    bundle_delivery_instructions?: StringAliasedNodeData | null;
+    document_delivery_bundle_n1?: ProjectEngagementDocumentDeliveryBundleN1Tile | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleN1AliasedData = {
+    attempt_recipient_contributor_reference?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_email_address?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    delivery_attempt_identifier?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_name_as_provided?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_phone_number?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    delivery_attempt_date?: DateAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_portal_url?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    delivery_attempt_method?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    delivery_attempt_outcome?: ReferenceAliasedNodeData | null;
+    delivery_attempt_included_document?: Array<ProjectEngagementDeliveryAttemptIncludedDocumentTile> | null;
+    delivered_bundle_files?: FileListAliasedNodeData | null;
+    delivery_attempt_confirmation_files?: FileListAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    delivery_attempt_notes?: StringAliasedNodeData | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleN1Tile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDocumentDeliveryBundleN1AliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDocumentDeliveryBundleAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementAliasedData = {
+    engagement_details?: ProjectEngagementEngagementDetailsTile | null;
+    engagement_participant?: Array<ProjectEngagementEngagementParticipantTile> | null;
+    engagement_document?: Array<ProjectEngagementEngagementDocumentTile> | null;
+    document_delivery_bundle?: ProjectEngagementDocumentDeliveryBundleTile | null;
+};
+
+export type ProjectEngagementEngagementDetailsAliasedData = {
+    engagement_start_date?: DateAliasedNodeData | null;
+    engagement_target_length?: NumberAliasedNodeData | null;
+    engagement_type?: ReferenceAliasedNodeData | null;
+    engagement_status?: ReferenceAliasedNodeData | null;
+    engagement_end_date?: DateAliasedNodeData | null;
+    engagement_steps_taken?: StringAliasedNodeData | null;
+    engagement_outcome_summary?: StringAliasedNodeData | null;
+};
+
+export type ProjectEngagementEngagementDetailsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementDetailsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementDocumentAliasedData = {
+    document_identifier?: StringAliasedNodeData | null;
+    document_title?: StringAliasedNodeData | null;
+    document_type?: ReferenceAliasedNodeData | null;
+    document_description?: StringAliasedNodeData | null;
+    should_be_delivered?: BooleanAliasedNodeData | null;
+    document_file?: FileListAliasedNodeData | null;
+};
+
+export type ProjectEngagementEngagementDocumentTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementDocumentAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementParticipantAliasedData = {
+    other_participant?: StringAliasedNodeData | null;
+    participant_email_address?: NonLocalizedStringAliasedNodeData | null;
+    participant_type?: ReferenceAliasedNodeData | null;
+    participant_phone_number?: NonLocalizedStringAliasedNodeData | null;
+    participant_role?: ReferenceAliasedNodeData | null;
+    contributor_reference?: ResourceInstanceAliasedNodeData | null;
+    participant_portal_url?: NonLocalizedStringAliasedNodeData | null;
+    participant_notes?: StringAliasedNodeData | null;
+};
+
+export type ProjectEngagementEngagementParticipantTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementParticipantAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementResourceAliasedData = {
+    engagement?: Array<ProjectEngagementEngagementTile> | null;
 };
 
 export type Publication = {
@@ -6605,6 +6946,34 @@ export type SiteVisitIdentificationTile = {
     } | null;
 };
 
+export type SiteVisitLocationAndAccessAliasedData = {
+    /**
+     * Enter text
+     */
+    location_and_access: StringAliasedNodeData | null;
+};
+
+export type SiteVisitLocationAndAccessTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitLocationAndAccessAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type SiteVisitNewSiteNamesAliasedData = {
     /**
      * Select a person
@@ -6631,6 +7000,39 @@ export type SiteVisitNewSiteNamesTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: SiteVisitNewSiteNamesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type SiteVisitProposedUnprotectedAreaAliasedData = {
+    /**
+     * Enter text
+     */
+    proposed_unprotected_site_area_rationale: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    proposed_unprotected_site_area_criteria: ReferenceAliasedNodeDataRequired | null;
+    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeData | null;
+};
+
+export type SiteVisitProposedUnprotectedAreaTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitProposedUnprotectedAreaAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -6787,7 +7189,7 @@ export type SiteVisitRemarksAndRecommendationsTile = {
 };
 
 export type SiteVisitResourceAliasedData = {
-    site_visit_location?: Array<SiteVisitSiteVisitLocationTile> | null;
+    site_visit_location?: SiteVisitSiteVisitLocationTile | null;
     identification?: SiteVisitIdentificationTile | null;
     site_visit_details?: SiteVisitSiteVisitDetailsTile | null;
     archaeological_data?: SiteVisitArchaeologicalDataTile | null;
@@ -6945,23 +7347,8 @@ export type SiteVisitSiteVisitDetailsTile = {
 };
 
 export type SiteVisitSiteVisitLocationAliasedData = {
-    site_visit_location?: GeojsonFeatureCollectionAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    latest_edit_type: ReferenceAliasedNodeDataRequired | null;
-    /**
-     * Enter text
-     */
-    location_and_access?: StringAliasedNodeData | null;
-    /**
-     * E.g. Site digitized using...
-     */
-    accuracy_remarks: StringAliasedNodeDataMax500 | null;
-    /**
-     * Select an option
-     */
-    boundary_type: ReferenceAliasedNodeDataRequired | null;
+    location_and_access?: SiteVisitLocationAndAccessTile | null;
+    spatial_location?: Array<SiteVisitSpatialLocationTile> | null;
     biogeography?: Array<SiteVisitBiogeographyTile> | null;
 };
 
@@ -6996,6 +7383,40 @@ export type SiteVisitSiteVisitTeamTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: SiteVisitSiteVisitTeamAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type SiteVisitSpatialLocationAliasedData = {
+    /**
+     * Enter text
+     */
+    boundary_description: StringAliasedNodeData | null;
+    spatial_location?: GeojsonFeatureCollectionAliasedNodeData | null;
+    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTile> | null;
+    /**
+     * Select an option
+     */
+    boundary_type: ReferenceAliasedNodeDataRequired | null;
+};
+
+export type SiteVisitSpatialLocationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitSpatialLocationAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -8524,15 +8945,15 @@ export type ArchaeologicalSiteSiteBoundaryAliasedDataWritable = {
      * Enter text
      */
     site_boundary_description?: StringAliasedNodeDataWritable | null;
-    unprotected_areas?: Array<ArchaeologicalSiteUnprotectedAreasTileWritable> | null;
-    /**
-     * Select an option
-     */
-    latest_edit_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    unprotected_area?: Array<ArchaeologicalSiteUnprotectedAreaTileWritable> | null;
     /**
      * E.g. Site digitized using...
      */
     accuracy_remarks: StringAliasedNodeDataMax500Writable | null;
+    /**
+     * Select an option
+     */
+    latest_edit_type: ReferenceAliasedNodeDataRequiredWritable | null;
 };
 
 export type ArchaeologicalSiteSiteBoundaryTileWritable = {
@@ -8850,24 +9271,28 @@ export type ArchaeologicalSiteSiteTypologyTileWritable = {
     } | null;
 };
 
-export type ArchaeologicalSiteUnprotectedAreasAliasedDataWritable = {
-    unprotected_areas?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    unprotected_area_type: ReferenceAliasedNodeDataRequiredWritable | null;
+export type ArchaeologicalSiteUnprotectedAreaAliasedDataWritable = {
+    unprotected_area?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
-    other_unprotected_area_type?: StringAliasedNodeDataWritable | null;
+    unprotected_site_area_rationale: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    unprotected_site_area_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    /**
+     * Select an option
+     */
+    unprotected_site_area_criteria: ReferenceAliasedNodeDataRequiredWritable | null;
 };
 
-export type ArchaeologicalSiteUnprotectedAreasTileWritable = {
+export type ArchaeologicalSiteUnprotectedAreaTileWritable = {
     tileid?: string | null;
     resourceinstance?: string | null;
     nodegroup?: string | null;
     parenttile?: string | null;
-    aliased_data?: ArchaeologicalSiteUnprotectedAreasAliasedDataWritable;
+    aliased_data?: ArchaeologicalSiteUnprotectedAreaAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -9642,8 +10067,8 @@ export type HriaDiscontinuedDataResourceAliasedDataWritable = {
     unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTileWritable | null;
     site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTileWritable> | null;
     archaeological_site?: HriaDiscontinuedDataArchaeologicalSiteTileWritable | null;
-    biogeography?: HriaDiscontinuedDataBiogeographyTileWritable | null;
     hria_jursidiction_and_tenure?: Array<HriaDiscontinuedDataHriaJursidictionAndTenureTileWritable> | null;
+    biogeography?: HriaDiscontinuedDataBiogeographyTileWritable | null;
     chronology?: Array<HriaDiscontinuedDataChronologyTileWritable> | null;
     site_dimensions?: HriaDiscontinuedDataSiteDimensionsTileWritable | null;
 };
@@ -9656,11 +10081,11 @@ export type HriaDiscontinuedDataSiteBoundaryAnnotationsAliasedDataWritable = {
     /**
      * Enter text
      */
-    site_boundary_entered_by?: NonLocalizedStringAliasedNodeDataWritable | null;
+    accuracy_remarks?: StringAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
-    accuracy_remarks?: StringAliasedNodeDataWritable | null;
+    site_boundary_entered_by?: NonLocalizedStringAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
@@ -11005,11 +11430,11 @@ export type NoticeOfProjectIntentEngagementDocumentAliasedDataWritable = {
      * Enter date
      */
     delivery_date?: DateAliasedNodeDataWritable | null;
+    is_for_distribution?: BooleanAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
     document_type?: StringAliasedNodeDataWritable | null;
-    is_for_distribution?: BooleanAliasedNodeDataWritable | null;
     engagement_document?: FileListAliasedNodeDataWritable | null;
 };
 
@@ -11164,7 +11589,7 @@ export type NoticeOfProjectIntentResourceAliasedDataWritable = {
 
 export type NumberAliasedNodeDataWritable = {
     /**
-     * Upper (m asl)
+     * Lower (m asl)
      *
      * Enter number
      */
@@ -11269,6 +11694,13 @@ export type PaginatedProcessRequirementListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<ProcessRequirementWritable>;
+};
+
+export type PaginatedProjectEngagementListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ProjectEngagementWritable>;
 };
 
 export type PaginatedPublicationListWritable = {
@@ -11486,35 +11918,6 @@ export type PermitApplicationDevelopmentProjectDetailsTileWritable = {
     } | null;
 };
 
-export type PermitApplicationFirstNationsConsultationAliasedDataWritable = {
-    /**
-     * Enter text
-     */
-    fn_file_numbers?: StringAliasedNodeDataWritable | null;
-    has_fn_endorsements?: BooleanAliasedNodeDataWritable | null;
-};
-
-export type PermitApplicationFirstNationsConsultationTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PermitApplicationFirstNationsConsultationAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type PermitApplicationLegalAndConsentAliasedDataWritable = {
     /**
      * Enter text
@@ -11704,6 +12107,62 @@ export type PermitApplicationProcessRequirementTileWritable = {
     } | null;
 };
 
+export type PermitApplicationProjectEngagementN1AliasedDataWritable = {
+    project_engagement_n1?: ResourceInstanceAliasedNodeDataWritable | null;
+};
+
+export type PermitApplicationProjectEngagementN1TileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: PermitApplicationProjectEngagementN1AliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type PermitApplicationProjectEngagementsAliasedDataWritable = {
+    fn_boundary_intersections?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    fn_file_numbers?: StringAliasedNodeDataWritable | null;
+    has_fn_endorsements?: BooleanAliasedNodeDataWritable | null;
+    project_engagement_n1?: Array<PermitApplicationProjectEngagementN1TileWritable> | null;
+};
+
+export type PermitApplicationProjectEngagementsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: PermitApplicationProjectEngagementsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type PermitApplicationProposedProjectAliasedDataWritable = {
     project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
@@ -11815,7 +12274,7 @@ export type PermitApplicationResourceAliasedDataWritable = {
     proposed_project?: PermitApplicationProposedProjectTileWritable | null;
     archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTileWritable> | null;
-    first_nations_consultation?: PermitApplicationFirstNationsConsultationTileWritable | null;
+    project_engagements?: PermitApplicationProjectEngagementsTileWritable | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTileWritable | null;
     related_permit?: Array<PermitApplicationRelatedPermitTileWritable> | null;
     application_admin?: PermitApplicationApplicationAdminTileWritable | null;
@@ -12061,6 +12520,296 @@ export type ProcessRequirementSubmissionDataTileWritable = {
             reviewtimestamp?: string | null;
         };
     } | null;
+};
+
+export type ProjectEngagementWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: ProjectEngagementResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
+export type ProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable =
+    {
+        /**
+         * Enter text
+         */
+        included_document_identifier_snapshot?: NonLocalizedStringAliasedNodeDataWritable | null;
+        /**
+         * Enter text
+         */
+        included_document_title_snapshot?: StringAliasedNodeDataWritable | null;
+    };
+
+export type ProjectEngagementDeliveryAttemptIncludedDocumentTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    bundle_identifier?: NonLocalizedStringAliasedNodeDataWritable | null;
+    recipient_contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    recipient_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    bundle_status?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    recipient_name_as_provided?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    recipient_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    bundle_intended_delivery_method?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    recipient_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    bundle_required_delivery_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    bundle_delivery_instructions?: StringAliasedNodeDataWritable | null;
+    document_delivery_bundle_n1?: ProjectEngagementDocumentDeliveryBundleN1TileWritable | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable = {
+    attempt_recipient_contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    delivery_attempt_identifier?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_name_as_provided?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    delivery_attempt_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    attempt_recipient_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    delivery_attempt_method?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    delivery_attempt_outcome?: ReferenceAliasedNodeDataWritable | null;
+    delivery_attempt_included_document?: Array<ProjectEngagementDeliveryAttemptIncludedDocumentTileWritable> | null;
+    delivered_bundle_files?: FileListAliasedNodeDataWritable | null;
+    delivery_attempt_confirmation_files?: FileListAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    delivery_attempt_notes?: StringAliasedNodeDataWritable | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleN1TileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementDocumentDeliveryBundleTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementDocumentDeliveryBundleAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementAliasedDataWritable = {
+    engagement_details?: ProjectEngagementEngagementDetailsTileWritable | null;
+    engagement_participant?: Array<ProjectEngagementEngagementParticipantTileWritable> | null;
+    engagement_document?: Array<ProjectEngagementEngagementDocumentTileWritable> | null;
+    document_delivery_bundle?: ProjectEngagementDocumentDeliveryBundleTileWritable | null;
+};
+
+export type ProjectEngagementEngagementDetailsAliasedDataWritable = {
+    engagement_start_date?: DateAliasedNodeDataWritable | null;
+    engagement_target_length?: NumberAliasedNodeDataWritable | null;
+    engagement_type?: ReferenceAliasedNodeDataWritable | null;
+    engagement_status?: ReferenceAliasedNodeDataWritable | null;
+    engagement_end_date?: DateAliasedNodeDataWritable | null;
+    engagement_steps_taken?: StringAliasedNodeDataWritable | null;
+    engagement_outcome_summary?: StringAliasedNodeDataWritable | null;
+};
+
+export type ProjectEngagementEngagementDetailsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementDetailsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementDocumentAliasedDataWritable = {
+    document_identifier?: StringAliasedNodeDataWritable | null;
+    document_title?: StringAliasedNodeDataWritable | null;
+    document_type?: ReferenceAliasedNodeDataWritable | null;
+    document_description?: StringAliasedNodeDataWritable | null;
+    should_be_delivered?: BooleanAliasedNodeDataWritable | null;
+    document_file?: FileListAliasedNodeDataWritable | null;
+};
+
+export type ProjectEngagementEngagementDocumentTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementDocumentAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementParticipantAliasedDataWritable = {
+    other_participant?: StringAliasedNodeDataWritable | null;
+    participant_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
+    participant_type?: ReferenceAliasedNodeDataWritable | null;
+    participant_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
+    participant_role?: ReferenceAliasedNodeDataWritable | null;
+    contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
+    participant_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
+    participant_notes?: StringAliasedNodeDataWritable | null;
+};
+
+export type ProjectEngagementEngagementParticipantTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementParticipantAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementEngagementTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ProjectEngagementEngagementAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type ProjectEngagementResourceAliasedDataWritable = {
+    engagement?: Array<ProjectEngagementEngagementTileWritable> | null;
 };
 
 export type PublicationWritable = {
@@ -13151,6 +13900,34 @@ export type SiteVisitIdentificationTileWritable = {
     } | null;
 };
 
+export type SiteVisitLocationAndAccessAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    location_and_access: StringAliasedNodeDataWritable | null;
+};
+
+export type SiteVisitLocationAndAccessTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitLocationAndAccessAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type SiteVisitNewSiteNamesAliasedDataWritable = {
     /**
      * Select a person
@@ -13177,6 +13954,39 @@ export type SiteVisitNewSiteNamesTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: SiteVisitNewSiteNamesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type SiteVisitProposedUnprotectedAreaAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    proposed_unprotected_site_area_rationale: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    proposed_unprotected_site_area_criteria: ReferenceAliasedNodeDataRequiredWritable | null;
+    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+};
+
+export type SiteVisitProposedUnprotectedAreaTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitProposedUnprotectedAreaAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -13333,7 +14143,7 @@ export type SiteVisitRemarksAndRecommendationsTileWritable = {
 };
 
 export type SiteVisitResourceAliasedDataWritable = {
-    site_visit_location?: Array<SiteVisitSiteVisitLocationTileWritable> | null;
+    site_visit_location?: SiteVisitSiteVisitLocationTileWritable | null;
     identification?: SiteVisitIdentificationTileWritable | null;
     site_visit_details?: SiteVisitSiteVisitDetailsTileWritable | null;
     archaeological_data?: SiteVisitArchaeologicalDataTileWritable | null;
@@ -13491,23 +14301,8 @@ export type SiteVisitSiteVisitDetailsTileWritable = {
 };
 
 export type SiteVisitSiteVisitLocationAliasedDataWritable = {
-    site_visit_location?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    latest_edit_type: ReferenceAliasedNodeDataRequiredWritable | null;
-    /**
-     * Enter text
-     */
-    location_and_access?: StringAliasedNodeDataWritable | null;
-    /**
-     * E.g. Site digitized using...
-     */
-    accuracy_remarks: StringAliasedNodeDataMax500Writable | null;
-    /**
-     * Select an option
-     */
-    boundary_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    location_and_access?: SiteVisitLocationAndAccessTileWritable | null;
+    spatial_location?: Array<SiteVisitSpatialLocationTileWritable> | null;
     biogeography?: Array<SiteVisitBiogeographyTileWritable> | null;
 };
 
@@ -13542,6 +14337,40 @@ export type SiteVisitSiteVisitTeamTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: SiteVisitSiteVisitTeamAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type SiteVisitSpatialLocationAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    boundary_description: StringAliasedNodeDataWritable | null;
+    spatial_location?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTileWritable> | null;
+    /**
+     * Select an option
+     */
+    boundary_type: ReferenceAliasedNodeDataRequiredWritable | null;
+};
+
+export type SiteVisitSpatialLocationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: SiteVisitSpatialLocationAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -14745,6 +15574,45 @@ export type ApiProcessRequirementStatusPartialUpdateResponses = {
 
 export type ApiProcessRequirementStatusPartialUpdateResponse =
     ApiProcessRequirementStatusPartialUpdateResponses[keyof ApiProcessRequirementStatusPartialUpdateResponses];
+
+export type ApiProjectEngagementListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/bcap/api/project_engagement';
+};
+
+export type ApiProjectEngagementListResponses = {
+    200: PaginatedProjectEngagementList;
+};
+
+export type ApiProjectEngagementListResponse =
+    ApiProjectEngagementListResponses[keyof ApiProjectEngagementListResponses];
+
+export type ApiProjectEngagementRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bcap/api/project_engagement/{id}/';
+};
+
+export type ApiProjectEngagementRetrieveResponses = {
+    200: ProjectEngagement;
+};
+
+export type ApiProjectEngagementRetrieveResponse =
+    ApiProjectEngagementRetrieveResponses[keyof ApiProjectEngagementRetrieveResponses];
 
 export type ApiPublicationListData = {
     body?: never;
