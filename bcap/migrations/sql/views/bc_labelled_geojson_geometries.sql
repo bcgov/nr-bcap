@@ -7,7 +7,7 @@ select
     g.resourceinstanceid,
     g.nodeid,
     g.featureid,
-    ST_Transform(g.geom, 3005) as geom
+    ST_Transform(g.geom, 3005)::geometry(Geometry, 3005) as geom
 from geojson_geometries g
          join (select re2.*
                from resource_instances re2
