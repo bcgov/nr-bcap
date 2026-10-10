@@ -14,12 +14,12 @@ from tempfile import NamedTemporaryFile
 from bcap.util.dates import to_long
 
 
-# Copy of arches.app.tasks.export_search_results, with BCAPSearchResultsExporter
-# substituted for SearchResultsExporter to add a UTF-8 BOM to CSV exports.
+# Copy of arches.app.tasks.export_search_results using BCAP's CSV and shapefile exporter.
 @shared_task(bind=True)
 def export_search_results(self, userid, request_values, format, report_link):
     from bcap.search.search_export import (
         BCAPSearchResultsExporter as SearchResultsExporter,
+        add_empty_shapefile_export_diagnostic,
     )
     from arches.app.models.system_settings import settings
 
@@ -62,6 +62,7 @@ def export_search_results(self, userid, request_values, format, report_link):
     else:
         exporter = SearchResultsExporter(search_request=new_request)
         files, export_info = exporter.export(format, report_link)
+        add_empty_shapefile_export_diagnostic(files, format)
         exportid = exporter.write_export_zipfile(files, export_info, export_name)
 
     search_history_obj = models.SearchExportHistory.objects.get(pk=exportid)
