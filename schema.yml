@@ -1628,6 +1628,68 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/project_engagement:
+    get:
+      operationId: api_project_engagement_list
+      description: |-
+        Collection endpoint for the requesting user's Project Engagement resources.
+
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - 'External: project_engagement'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectEngagementList'
+          description: ''
+  /bcap/api/project_engagement/{id}/:
+    get:
+      operationId: api_project_engagement_retrieve
+      description: |-
+        Detail endpoint for a single Project Engagement resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: project_engagement'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectEngagement'
+          description: ''
   /bcap/api/publication:
     get:
       operationId: api_publication_list
@@ -4673,22 +4735,22 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        unprotected_areas:
+        unprotected_area:
           type: array
           items:
-            $ref: '#/components/schemas/Archaeological_Site_Unprotected_Areas_Tile'
+            $ref: '#/components/schemas/Archaeological_Site_Unprotected_Area_Tile'
           nullable: true
+        accuracy_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax500'
+          nullable: true
+          description: E.g. Site digitized using...
         latest_edit_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           title: Edit Type
           description: Select an option
-        accuracy_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax500'
-          nullable: true
-          description: E.g. Site digitized using...
       required:
       - accuracy_remarks
       - latest_edit_type
@@ -5320,26 +5382,35 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Archaeological_Site_Unprotected_Areas_Aliased_Data:
+    Archaeological_Site_Unprotected_Area_Aliased_Data:
       type: object
       properties:
-        unprotected_areas:
+        unprotected_area:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
           nullable: true
-        unprotected_area_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
-          nullable: true
-          description: Select an option
-        other_unprotected_area_type:
+          title: Unprotected Areas
+        unprotected_site_area_rationale:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        unprotected_site_area_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          title: Unprotected Area Type
+          description: Select an option
+        unprotected_site_area_criteria:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
       required:
-      - unprotected_area_type
-    Archaeological_Site_Unprotected_Areas_Tile:
+      - unprotected_site_area_criteria
+      - unprotected_site_area_rationale
+      - unprotected_site_area_type
+    Archaeological_Site_Unprotected_Area_Tile:
       type: object
       properties:
         tileid:
@@ -5359,7 +5430,7 @@ components:
           format: uuid
           nullable: true
         aliased_data:
-          $ref: '#/components/schemas/Archaeological_Site_Unprotected_Areas_Aliased_Data'
+          $ref: '#/components/schemas/Archaeological_Site_Unprotected_Area_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -7323,14 +7394,14 @@ components:
           allOf:
           - $ref: '#/components/schemas/Hria_Discontinued_Data_Archaeological_Site_Tile'
           nullable: true
-        biogeography:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Tile'
-          nullable: true
         hria_jursidiction_and_tenure:
           type: array
           items:
             $ref: '#/components/schemas/Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Tile'
+          nullable: true
+        biogeography:
+          allOf:
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Tile'
           nullable: true
         chronology:
           type: array
@@ -7349,16 +7420,16 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        accuracy_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
         site_boundary_entered_by:
           allOf:
           - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
           title: Edited By
-          description: Enter text
-        accuracy_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
           description: Enter text
         site_boundary_entered_on:
           allOf:
@@ -10527,15 +10598,15 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
+        is_for_distribution:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
         document_type:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        is_for_distribution:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
         engagement_document:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
@@ -10869,7 +10940,7 @@ components:
           type: number
           format: double
           nullable: true
-          title: Upper (m asl)
+          title: Lower (m asl)
           description: Enter number
         display_value:
           type: string
@@ -11200,6 +11271,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProcessRequirement'
+    PaginatedProjectEngagementList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectEngagement'
     PaginatedPublicationList:
       type: object
       required:
@@ -11907,66 +12001,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Permit_Application_First_Nations_Consultation_Aliased_Data:
-      type: object
-      properties:
-        fn_file_numbers:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        has_fn_endorsements:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-    Permit_Application_First_Nations_Consultation_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Permit_Application_First_Nations_Consultation_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Permit_Application_Legal_And_Consent_Aliased_Data:
       type: object
       properties:
@@ -12372,6 +12406,130 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Permit_Application_Project_Engagement_N1_Aliased_Data:
+      type: object
+      properties:
+        project_engagement_n1:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+    Permit_Application_Project_Engagement_N1_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Project_Engagement_N1_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Permit_Application_Project_Engagements_Aliased_Data:
+      type: object
+      properties:
+        fn_boundary_intersections:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
+          nullable: true
+        fn_file_numbers:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        has_fn_endorsements:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        project_engagement_n1:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permit_Application_Project_Engagement_N1_Tile'
+          nullable: true
+    Permit_Application_Project_Engagements_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Permit_Application_Project_Engagements_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Permit_Application_Proposed_Project_Aliased_Data:
       type: object
       properties:
@@ -12621,9 +12779,9 @@ components:
           items:
             $ref: '#/components/schemas/Permit_Application_Multi_Zone_Area_Addition_Tile'
           nullable: true
-        first_nations_consultation:
+        project_engagements:
           allOf:
-          - $ref: '#/components/schemas/Permit_Application_First_Nations_Consultation_Tile'
+          - $ref: '#/components/schemas/Permit_Application_Project_Engagements_Tile'
           nullable: true
         legal_and_consent:
           allOf:
@@ -13204,6 +13362,662 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    ProjectEngagement:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    Project_Engagement_Delivery_Attempt_Included_Document_Aliased_Data:
+      type: object
+      properties:
+        included_document_identifier_snapshot:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        included_document_title_snapshot:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Project_Engagement_Delivery_Attempt_Included_Document_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Delivery_Attempt_Included_Document_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Document_Delivery_Bundle_Aliased_Data:
+      type: object
+      properties:
+        bundle_identifier:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        recipient_contributor_reference:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        recipient_email_address:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        bundle_status:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        recipient_name_as_provided:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        recipient_phone_number:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        bundle_intended_delivery_method:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        recipient_portal_url:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        bundle_required_delivery_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        bundle_delivery_instructions:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        document_delivery_bundle_n1:
+          allOf:
+          - $ref: '#/components/schemas/Project_Engagement_Document_Delivery_Bundle_N1_Tile'
+          nullable: true
+    Project_Engagement_Document_Delivery_Bundle_N1_Aliased_Data:
+      type: object
+      properties:
+        attempt_recipient_contributor_reference:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        attempt_recipient_email_address:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        delivery_attempt_identifier:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        attempt_recipient_name_as_provided:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        attempt_recipient_phone_number:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        delivery_attempt_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        attempt_recipient_portal_url:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        delivery_attempt_method:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        delivery_attempt_outcome:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        delivery_attempt_included_document:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Engagement_Delivery_Attempt_Included_Document_Tile'
+          nullable: true
+        delivered_bundle_files:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        delivery_attempt_confirmation_files:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+        delivery_attempt_notes:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+    Project_Engagement_Document_Delivery_Bundle_N1_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Document_Delivery_Bundle_N1_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Document_Delivery_Bundle_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Document_Delivery_Bundle_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Engagement_Aliased_Data:
+      type: object
+      properties:
+        engagement_details:
+          allOf:
+          - $ref: '#/components/schemas/Project_Engagement_Engagement_Details_Tile'
+          nullable: true
+        engagement_participant:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Engagement_Engagement_Participant_Tile'
+          nullable: true
+        engagement_document:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Engagement_Engagement_Document_Tile'
+          nullable: true
+        document_delivery_bundle:
+          allOf:
+          - $ref: '#/components/schemas/Project_Engagement_Document_Delivery_Bundle_Tile'
+          nullable: true
+    Project_Engagement_Engagement_Details_Aliased_Data:
+      type: object
+      properties:
+        engagement_start_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+        engagement_target_length:
+          allOf:
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
+          nullable: true
+        engagement_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        engagement_status:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        engagement_end_date:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+        engagement_steps_taken:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        engagement_outcome_summary:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Project_Engagement_Engagement_Details_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Engagement_Details_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Engagement_Document_Aliased_Data:
+      type: object
+      properties:
+        document_identifier:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        document_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        document_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        document_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        should_be_delivered:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        document_file:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+    Project_Engagement_Engagement_Document_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Engagement_Document_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Engagement_Participant_Aliased_Data:
+      type: object
+      properties:
+        other_participant:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        participant_email_address:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        participant_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        participant_phone_number:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        participant_role:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        contributor_reference:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        participant_portal_url:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        participant_notes:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Project_Engagement_Engagement_Participant_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Engagement_Participant_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Engagement_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Project_Engagement_Engagement_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Project_Engagement_Resource_Aliased_Data:
+      type: object
+      properties:
+        engagement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Engagement_Engagement_Tile'
+          nullable: true
     Publication:
       type: object
       properties:
@@ -15728,6 +16542,64 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Site_Visit_Location_And_Access_Aliased_Data:
+      type: object
+      properties:
+        location_and_access:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - location_and_access
+    Site_Visit_Location_And_Access_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Site_Visit_Location_And_Access_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Site_Visit_New_Site_Names_Aliased_Data:
       type: object
       properties:
@@ -15783,6 +16655,74 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Site_Visit_New_Site_Names_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Site_Visit_Proposed_Unprotected_Area_Aliased_Data:
+      type: object
+      properties:
+        proposed_unprotected_site_area_rationale:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proposed_unprotected_site_area_criteria:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
+        proposed_unprotected_area:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
+      required:
+      - proposed_unprotected_site_area_criteria
+      - proposed_unprotected_site_area_rationale
+    Site_Visit_Proposed_Unprotected_Area_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Site_Visit_Proposed_Unprotected_Area_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -16126,9 +17066,8 @@ components:
       type: object
       properties:
         site_visit_location:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Site_Visit_Location_Tile'
+          allOf:
+          - $ref: '#/components/schemas/Site_Visit_Site_Visit_Location_Tile'
           nullable: true
         identification:
           allOf:
@@ -16438,40 +17377,20 @@ components:
     Site_Visit_Site_Visit_Location_Aliased_Data:
       type: object
       properties:
-        site_visit_location:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-        latest_edit_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
-          nullable: true
-          title: Edit Type
-          description: Select an option
         location_and_access:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/Site_Visit_Location_And_Access_Tile'
           nullable: true
-          description: Enter text
-        accuracy_remarks:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax500'
+        spatial_location:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Spatial_Location_Tile'
           nullable: true
-          description: E.g. Site digitized using...
-        boundary_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
-          nullable: true
-          description: Select an option
         biogeography:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Biogeography_Tile'
           nullable: true
-      required:
-      - accuracy_remarks
-      - boundary_type
-      - latest_edit_type
     Site_Visit_Site_Visit_Location_Tile:
       type: object
       properties:
@@ -16549,6 +17468,80 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Site_Visit_Site_Visit_Team_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Site_Visit_Spatial_Location_Aliased_Data:
+      type: object
+      properties:
+        boundary_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        spatial_location:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
+          title: Site Visit Location
+        proposed_unprotected_area:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Proposed_Unprotected_Area_Tile'
+          nullable: true
+        boundary_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
+      required:
+      - boundary_description
+      - boundary_type
+    Site_Visit_Spatial_Location_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Site_Visit_Spatial_Location_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647

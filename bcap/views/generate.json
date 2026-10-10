@@ -16,6 +16,7 @@
     "notice_of_project_intent": ["GET"],
     "permit_application": ["GET", "PATCH", "POST"],
     "process_requirement": ["GET", "PUT", "PATCH", "DELETE"],
+    "project_engagement": ["GET"],
     "project_sandbox": [],
     "publication": ["GET"],
     "repository": ["GET"],
