@@ -63,14 +63,15 @@ class QGISProjectionUpgradeMigrationTests(unittest.TestCase):
             sql = (VIEW_SQL_DIR / f"{view}.sql").read_text(encoding="utf-8")
             self.assertIn(expected, sql)
 
-    def test_reverse_sql_restores_pre_fix_view_definitions(self):
+    def test_reverse_sql_restores_immediate_predecessor_view_definitions(self):
         reverse_sql = _literal_assignment(self.tree, "REVERSE_SQL")
         self.assertEqual(set(reverse_sql), set(EXPECTED_VIEWS))
         for view, sql in reverse_sql.items():
             self.assertIn(f"drop view if exists public.{view}", sql.lower())
             self.assertIn(f"create view public.{view}", sql.lower())
-            self.assertIn("g.*", sql)
-            self.assertNotIn("ST_Transform(g.geom, 3005)", sql)
+            self.assertIn("ST_Transform(g.geom, 3005) as geom", sql)
+            self.assertNotIn("::geometry(Geometry, 3005)", sql)
+            self.assertNotIn("g.*", sql)
 
 
 if __name__ == "__main__":
