@@ -1,7 +1,10 @@
 import codecs
 import csv
 from arches.app.search.search_export import sanitize_csv_value
-from io import StringIO
+from io import StringIO, BytesIO
+
+from django.contrib.gis.geos import GeometryCollection
+from django.contrib.gis.gdal import SpatialReference
 
 from arches.app.models import models as arches_models
 from arches.app.search.search_export import SearchResultsExporter
@@ -38,6 +41,31 @@ class BCAPSearchResultsExporter(SearchResultsExporter):
             headers = [h for h in headers if h not in geojson_in_headers]
             headers.extend(name for name, _ in exportable if name not in in_headers)
         return headers
+
+    def to_shp(self, instances, headers, name):
+
+        BCALBERS_SRID = 3005
+
+        projected_instances = []
+        for instance in instances:
+            projected = dict(instance)
+            for k, v in projected.items():
+                if isinstance(v, GeometryCollection):
+                    geom = v.clone()
+                    if not geom.srid:
+                        geom.srid = 4326
+                    geom.transform(BCALBERS_SRID)
+                    projected[k] = geom
+            projected_instances.append(projected)
+
+        files = super().to_shp(projected_instances, headers, name)
+
+        bc_albers_wkt = SpatialReference(BCALBERS_SRID).wkt.encode()
+        for f in files:
+            if f["name"].endswith(".prj"):
+                f["outputfile"] = BytesIO(bc_albers_wkt)
+
+        return files
 
     def to_csv(self, instances, headers, name):
         """Mirrors the parent implementation with extrasaction='ignore' to drop keys absent from headers."""
