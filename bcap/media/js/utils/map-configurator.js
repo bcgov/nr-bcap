@@ -84,23 +84,28 @@ const mapConfigurator = {
     postConfig: function (map) {
         console.log('Custom post-config');
         console.log('layers', arches.layers);
-        const siteBoundaryControl = LayerToggleControl(
-            'Archaeological Site - Site Boundary',
-        );
-        map.addControl(siteBoundaryControl, 'top-left');
+        // Only show the site boundary control for archaeological sites edit
+        if (
+            map.getContainer().closest('div.archaeological_site.site_boundary')
+        ) {
+            const siteBoundaryControl = LayerToggleControl(
+                'Archaeological Site - Site Boundary',
+            );
+            map.addControl(siteBoundaryControl, 'top-left');
 
-        map.on('idle', function () {
-            if (
-                map
-                    .getContainer()
-                    .closest('.map-widget')
-                    ?.classList.contains('archaeological_site') &&
-                map._controls.find((c) => c.getMode)?.getAll()?.features
-                    ?.length > 0
-            ) {
-                siteBoundaryControl.activate();
-            }
-        });
+            map.on('idle', function () {
+                if (
+                    map
+                        .getContainer()
+                        .closest('.map-widget')
+                        ?.classList.contains('archaeological_site') &&
+                    map._controls.find((c) => c.getMode)?.getAll()?.features
+                        ?.length > 0
+                ) {
+                    siteBoundaryControl.activate();
+                }
+            });
+        }
 
         // Workaround for bug in core causing geocoder placeholder to be null
         // NOTE: map._controls is a private API; may break on Mapbox GL upgrades
