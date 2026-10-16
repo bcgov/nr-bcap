@@ -95,6 +95,13 @@ from .process_requirement import (
     ProcessRequirementView,
 )
 
+from .project_engagement import (
+    ProjectEngagementSerializer,
+    ProjectEngagementViewMixin,
+    ProjectEngagementListView,
+    ProjectEngagementView,
+)
+
 from .publication import (
     PublicationSerializer,
     PublicationViewMixin,
@@ -176,6 +183,10 @@ __all__ = [
     "ProcessRequirementSerializer",
     "ProcessRequirementView",
     "ProcessRequirementViewMixin",
+    "ProjectEngagementListView",
+    "ProjectEngagementSerializer",
+    "ProjectEngagementView",
+    "ProjectEngagementViewMixin",
     "PublicationListView",
     "PublicationSerializer",
     "PublicationView",
