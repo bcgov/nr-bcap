@@ -10,7 +10,7 @@ class AliasesTests(SimpleTestCase):
         self.assertEqual(ArchaeologicalSiteAliases.ACCURACY_REMARKS, "accuracy_remarks")
 
     def test_site_visit_alias_value_matches_attribute_name(self):
-        self.assertEqual(SiteVisitAliases.ACCURACY_REMARKS, "accuracy_remarks")
+        self.assertEqual(SiteVisitAliases.BOUNDARY_DESCRIPTION, "boundary_description")
 
     def test_source_notes_removed_from_archaeological_site(self):
         self.assertFalse(hasattr(ArchaeologicalSiteAliases, "SOURCE_NOTES"))

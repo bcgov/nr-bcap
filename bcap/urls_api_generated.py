@@ -42,6 +42,8 @@ from bcap.views.generated import (
     PermitApplicationView,
     ProcessRequirementListView,
     ProcessRequirementView,
+    ProjectEngagementListView,
+    ProjectEngagementView,
     PublicationListView,
     PublicationView,
     RepositoryListView,
@@ -182,6 +184,16 @@ urlpatterns = [
         "api/process_requirement/<uuid:pk>/",
         ProcessRequirementView.as_view(),
         name="api_process_requirement",
+    ),
+    path(
+        "api/project_engagement",
+        ProjectEngagementListView.as_view(),
+        name="api_project_engagement_list",
+    ),
+    path(
+        "api/project_engagement/<uuid:pk>/",
+        ProjectEngagementView.as_view(),
+        name="api_project_engagement",
     ),
     path(
         "api/publication",

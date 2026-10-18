@@ -17,37 +17,36 @@ const props = withDefaults(
 const current = computed(() => props.data);
 
 const hasLocationData = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.length ?? 0 > 0;
+    return !!current.value?.aliased_data?.site_visit_location;
 });
 
 const hasLocationAndAccess = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.map(
-        (loc) => loc?.aliased_data?.location_and_access?.node_value,
-    );
+    return current.value?.aliased_data?.site_visit_location?.aliased_data
+        ?.location_and_access?.aliased_data?.location_and_access?.node_value;
 });
 
 const hasGeoJsonData = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.[0]?.aliased_data
-        ?.site_visit_location?.node_value;
+    return current.value?.aliased_data?.site_visit_location?.aliased_data
+        ?.spatial_location?.[0]?.aliased_data?.spatial_location?.node_value;
 });
 
 const hasBiogeography = computed(() => {
     let biogeographyData =
-        current.value?.aliased_data?.site_visit_location?.[0]?.aliased_data
+        current.value?.aliased_data?.site_visit_location?.aliased_data
             ?.biogeography;
     return biogeographyData && biogeographyData.length > 0;
 });
 
 const biogeographyRows = computed(
     () =>
-        (current.value?.aliased_data?.site_visit_location?.[0]?.aliased_data
+        (current.value?.aliased_data?.site_visit_location?.aliased_data
             ?.biogeography || []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const biogeographyColumns = [
     { field: 'biogeography_type', label: 'Type' },
     { field: 'biogeography_name', label: 'Name' },
-    { field: 'biogeography_description', label: 'Description' },
+    { field: 'biogeography_description', label: 'Description', isHtml: true },
 ];
 </script>
 
@@ -67,47 +66,30 @@ const biogeographyColumns = [
                 <template #sectionContent>
                     <div v-if="hasLocationData">
                         <dl>
-                            <dt>Location and Access</dt>
+                            <dt>Boundary Type</dt>
                             <dd
-                                v-for="loc in current?.aliased_data
-                                    ?.site_visit_location"
-                                :key="loc.tileid ?? 0"
-                                v-html="
-                                    loc?.aliased_data?.location_and_access
+                                v-text="
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.boundary_type
                                         ?.display_value
                                 "
                             />
-
-                            <dt
-                                v-if="
-                                    current?.aliased_data
-                                        ?.site_visit_location?.[0]?.aliased_data
-                                        ?.latest_edit_type?.node_value
-                                "
-                            >
-                                Latest Edit Type
-                            </dt>
+                            <dt>Boundary Description</dt>
                             <dd
-                                v-if="
-                                    current?.aliased_data
-                                        ?.site_visit_location?.[0]?.aliased_data
-                                        ?.latest_edit_type?.node_value
-                                "
-                            >
-                                {{
-                                    current?.aliased_data
-                                        ?.site_visit_location?.[0]?.aliased_data
-                                        ?.latest_edit_type?.display_value
-                                }}
-                            </dd>
-
-                            <dt>Accuracy Remarks</dt>
-                            <dd
-                                v-for="loc in current?.aliased_data
-                                    ?.site_visit_location"
-                                :key="loc.tileid ?? 0"
                                 v-html="
-                                    loc?.aliased_data?.accuracy_remarks
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.boundary_description
+                                        ?.display_value
+                                "
+                            />
+                            <dt>Location and Access</dt>
+                            <dd
+                                v-html="
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.location_and_access
+                                        ?.aliased_data?.location_and_access
                                         ?.display_value
                                 "
                             />
@@ -152,9 +134,10 @@ const biogeographyColumns = [
                             "
                             >{{
                                 JSON.stringify(
-                                    current?.aliased_data
-                                        ?.site_visit_location?.[0]?.aliased_data
-                                        ?.site_visit_location?.node_value,
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.spatial_location
+                                        ?.node_value,
                                     null,
                                     2,
                                 )
