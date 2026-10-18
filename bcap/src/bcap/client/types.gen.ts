@@ -1839,10 +1839,6 @@ export type ContributorContributorAliasedData = {
     /**
      * Enter text
      */
-    contact_email?: StringAliasedNodeDataMax125 | null;
-    /**
-     * Enter text
-     */
     contact_phone_number?: StringAliasedNodeDataMax25 | null;
     /**
      * Enter Individual's last name, or the Organization's full name
@@ -1861,6 +1857,40 @@ export type ContributorContributorAliasedData = {
      */
     first_name?: StringAliasedNodeDataMax125 | null;
     inactive?: BooleanAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    contact_email?: StringAliasedNodeDataMax125 | null;
+    mailing_address?: ContributorMailingAddressTile | null;
+};
+
+export type ContributorContributorDocumentAliasedData = {
+    /**
+     * Select the type of document
+     */
+    contributor_document_type: ReferenceAliasedNodeDataRequired | null;
+    contributor_document: FileListAliasedNodeDataRequired | null;
+};
+
+export type ContributorContributorDocumentTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ContributorContributorDocumentAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type ContributorContributorTile = {
@@ -1884,8 +1914,38 @@ export type ContributorContributorTile = {
     } | null;
 };
 
+export type ContributorMailingAddressAliasedData = {
+    address_line_1?: StringAliasedNodeData | null;
+    address_line_2?: StringAliasedNodeData | null;
+    city?: StringAliasedNodeData | null;
+    province?: ReferenceAliasedNodeData | null;
+    postal_code?: NonLocalizedStringAliasedNodeData | null;
+};
+
+export type ContributorMailingAddressTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ContributorMailingAddressAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type ContributorResourceAliasedData = {
     contributor?: ContributorContributorTile | null;
+    contributor_document?: ContributorContributorDocumentTile | null;
 };
 
 export type DateAliasedNodeData = {
@@ -2226,6 +2286,23 @@ export type ExternalDashboardPage = {
 };
 
 export type FileListAliasedNodeData = {
+    node_value: Array<{
+        name?: string;
+        size?: number;
+        type?: string;
+        url?: string | null;
+        file?: {
+            objectURL?: string | null;
+        };
+        node_id?: string;
+    }> | null;
+    readonly display_value?: string;
+    readonly details?: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
+export type FileListAliasedNodeDataRequired = {
     node_value: Array<{
         name?: string;
         size?: number;
@@ -4067,10 +4144,6 @@ export type LocalGovernmentGovernmentNameTile = {
 
 export type LocalGovernmentOfficeAddressAliasedData = {
     /**
-     * Select an option
-     */
-    province?: ReferenceAliasedNodeData | null;
-    /**
      * Enter text
      */
     street_address?: StringAliasedNodeData | null;
@@ -4078,6 +4151,10 @@ export type LocalGovernmentOfficeAddressAliasedData = {
      * Enter text
      */
     city?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    province?: ReferenceAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -4378,7 +4455,7 @@ export type NoticeOfProjectIntentResourceAliasedData = {
 
 export type NumberAliasedNodeData = {
     /**
-     * Lower (m asl)
+     * Upper (m asl)
      *
      * Enter number
      */
@@ -6131,10 +6208,6 @@ export type RepositoryContactInformationAliasedData = {
     /**
      * Enter text
      */
-    address_line_2?: StringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
     address_notes?: StringAliasedNodeData | null;
     physical_location?: RepositoryPhysicalLocationTile | null;
     /**
@@ -6146,13 +6219,17 @@ export type RepositoryContactInformationAliasedData = {
      */
     primary_email?: StringAliasedNodeData | null;
     /**
-     * Select an option
+     * Enter text
      */
-    province?: ReferenceAliasedNodeData | null;
+    address_line_2?: StringAliasedNodeData | null;
     /**
      * Enter text
      */
     city: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    province?: ReferenceAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -9469,10 +9546,6 @@ export type ContributorContributorAliasedDataWritable = {
     /**
      * Enter text
      */
-    contact_email?: StringAliasedNodeDataMax125Writable | null;
-    /**
-     * Enter text
-     */
     contact_phone_number?: StringAliasedNodeDataMax25Writable | null;
     /**
      * Enter Individual's last name, or the Organization's full name
@@ -9491,6 +9564,40 @@ export type ContributorContributorAliasedDataWritable = {
      */
     first_name?: StringAliasedNodeDataMax125Writable | null;
     inactive?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    contact_email?: StringAliasedNodeDataMax125Writable | null;
+    mailing_address?: ContributorMailingAddressTileWritable | null;
+};
+
+export type ContributorContributorDocumentAliasedDataWritable = {
+    /**
+     * Select the type of document
+     */
+    contributor_document_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    contributor_document: FileListAliasedNodeDataRequiredWritable | null;
+};
+
+export type ContributorContributorDocumentTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ContributorContributorDocumentAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type ContributorContributorTileWritable = {
@@ -9514,8 +9621,38 @@ export type ContributorContributorTileWritable = {
     } | null;
 };
 
+export type ContributorMailingAddressAliasedDataWritable = {
+    address_line_1?: StringAliasedNodeDataWritable | null;
+    address_line_2?: StringAliasedNodeDataWritable | null;
+    city?: StringAliasedNodeDataWritable | null;
+    province?: ReferenceAliasedNodeDataWritable | null;
+    postal_code?: NonLocalizedStringAliasedNodeDataWritable | null;
+};
+
+export type ContributorMailingAddressTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: ContributorMailingAddressAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type ContributorResourceAliasedDataWritable = {
     contributor?: ContributorContributorTileWritable | null;
+    contributor_document?: ContributorContributorDocumentTileWritable | null;
 };
 
 export type DateAliasedNodeDataWritable = {
@@ -9738,6 +9875,19 @@ export type DraftRecordWritable = {
 };
 
 export type FileListAliasedNodeDataWritable = {
+    node_value: Array<{
+        name?: string;
+        size?: number;
+        type?: string;
+        url?: string | null;
+        file?: {
+            objectURL?: string | null;
+        };
+        node_id?: string;
+    }> | null;
+};
+
+export type FileListAliasedNodeDataRequiredWritable = {
     node_value: Array<{
         name?: string;
         size?: number;
@@ -11351,10 +11501,6 @@ export type LocalGovernmentGovernmentNameTileWritable = {
 
 export type LocalGovernmentOfficeAddressAliasedDataWritable = {
     /**
-     * Select an option
-     */
-    province?: ReferenceAliasedNodeDataWritable | null;
-    /**
      * Enter text
      */
     street_address?: StringAliasedNodeDataWritable | null;
@@ -11362,6 +11508,10 @@ export type LocalGovernmentOfficeAddressAliasedDataWritable = {
      * Enter text
      */
     city?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    province?: ReferenceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
@@ -11589,7 +11739,7 @@ export type NoticeOfProjectIntentResourceAliasedDataWritable = {
 
 export type NumberAliasedNodeDataWritable = {
     /**
-     * Lower (m asl)
+     * Upper (m asl)
      *
      * Enter number
      */
@@ -13127,10 +13277,6 @@ export type RepositoryContactInformationAliasedDataWritable = {
     /**
      * Enter text
      */
-    address_line_2?: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
     address_notes?: StringAliasedNodeDataWritable | null;
     physical_location?: RepositoryPhysicalLocationTileWritable | null;
     /**
@@ -13142,13 +13288,17 @@ export type RepositoryContactInformationAliasedDataWritable = {
      */
     primary_email?: StringAliasedNodeDataWritable | null;
     /**
-     * Select an option
+     * Enter text
      */
-    province?: ReferenceAliasedNodeDataWritable | null;
+    address_line_2?: StringAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
     city: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    province?: ReferenceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
