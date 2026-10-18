@@ -5977,11 +5977,6 @@ components:
           - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
           description: Enter text
-        contact_email:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeDataMax125'
-          nullable: true
-          description: Enter text
         contact_phone_number:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax25'
@@ -6013,9 +6008,81 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
+        contact_email:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax125'
+          nullable: true
+          description: Enter text
+        mailing_address:
+          allOf:
+          - $ref: '#/components/schemas/Contributor_Mailing_Address_Tile'
+          nullable: true
       required:
       - contributor_name
       - contributor_type
+    Contributor_Contributor_Document_Aliased_Data:
+      type: object
+      properties:
+        contributor_document_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select the type of document
+        contributor_document:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeDataRequired'
+          nullable: true
+      required:
+      - contributor_document
+      - contributor_document_type
+    Contributor_Contributor_Document_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Contributor_Contributor_Document_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Contributor_Contributor_Tile:
       type: object
       properties:
@@ -6064,12 +6131,87 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Contributor_Mailing_Address_Aliased_Data:
+      type: object
+      properties:
+        address_line_1:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        address_line_2:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        province:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+        postal_code:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+    Contributor_Mailing_Address_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Contributor_Mailing_Address_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Contributor_Resource_Aliased_Data:
       type: object
       properties:
         contributor:
           allOf:
           - $ref: '#/components/schemas/Contributor_Contributor_Tile'
+          nullable: true
+        contributor_document:
+          allOf:
+          - $ref: '#/components/schemas/Contributor_Contributor_Document_Tile'
           nullable: true
     DateAliasedNodeData:
       type: object
@@ -6677,6 +6819,45 @@ components:
               node_id:
                 type: string
                 format: uuid
+        display_value:
+          type: string
+          readOnly: true
+        details:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - node_value
+    FileListAliasedNodeDataRequired:
+      type: object
+      properties:
+        node_value:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              size:
+                type: number
+              type:
+                type: string
+              url:
+                type: string
+                nullable: true
+              file:
+                type: object
+                properties:
+                  objectURL:
+                    type: string
+                    nullable: true
+              node_id:
+                type: string
+                format: uuid
+          minItems: 1
         display_value:
           type: string
           readOnly: true
@@ -10321,11 +10502,6 @@ components:
     Local_Government_Office_Address_Aliased_Data:
       type: object
       properties:
-        province:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          description: Select an option
         street_address:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -10337,6 +10513,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        province:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
         postal_code:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -10940,7 +11121,7 @@ components:
           type: number
           format: double
           nullable: true
-          title: Lower (m asl)
+          title: Upper (m asl)
           description: Enter number
         display_value:
           type: string
@@ -14833,11 +15014,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        address_line_2:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
         address_notes:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -14857,16 +15033,21 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        province:
+        address_line_2:
           allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Select an option
+          description: Enter text
         city:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        province:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
         postal_code:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
