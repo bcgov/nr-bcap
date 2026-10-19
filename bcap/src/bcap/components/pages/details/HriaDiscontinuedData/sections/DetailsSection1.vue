@@ -7,6 +7,7 @@ import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTabl
 import type {
     HriaDiscontinuedData,
     HriaDiscontinuedDataBiogeographyTile,
+    HriaDiscontinuedDataOtherMapsTile,
 } from '@/bcap/client/types.gen.ts';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
@@ -120,12 +121,7 @@ const hasBiogeography = computed(() => {
         return false;
     }
 
-    if (Array.isArray(bio)) {
-        return bio.length > 0;
-    }
-
-    const singleBio = bio as HriaDiscontinuedDataBiogeographyTile;
-    const data = singleBio.aliased_data;
+    const data = bio.aliased_data;
 
     if (!data) {
         return false;
@@ -159,14 +155,7 @@ const hasArchaeologicalSite = computed(() => {
 });
 
 const hasOtherMaps = computed(() => {
-    const maps = currentData.value?.other_maps;
-    if (!maps) {
-        return false;
-    }
-    if (Array.isArray(maps)) {
-        return maps.length > 0;
-    }
-    return true;
+    return !!currentData.value?.other_maps;
 });
 
 const hasSiteBoundaryAnnotations = computed(() => {
@@ -191,10 +180,8 @@ const otherMapsTableData = computed(() => {
     if (!maps) {
         return [] as AliasedTileDataWithAudit[];
     }
-    if (Array.isArray(maps)) {
-        return maps as unknown as AliasedTileDataWithAudit[];
-    }
-    return [maps] as unknown as AliasedTileDataWithAudit[];
+    const tile: HriaDiscontinuedDataOtherMapsTile = maps;
+    return [tile] as unknown as AliasedTileDataWithAudit[];
 });
 
 const siteBoundaryAnnotationsTableData = computed(
@@ -208,10 +195,8 @@ const biogeographyTableData = computed(() => {
     if (!bio) {
         return [] as AliasedTileDataWithAudit[];
     }
-    if (Array.isArray(bio)) {
-        return bio as unknown as AliasedTileDataWithAudit[];
-    }
-    return [bio] as unknown as AliasedTileDataWithAudit[];
+    const tile: HriaDiscontinuedDataBiogeographyTile = bio;
+    return [tile] as unknown as AliasedTileDataWithAudit[];
 });
 </script>
 

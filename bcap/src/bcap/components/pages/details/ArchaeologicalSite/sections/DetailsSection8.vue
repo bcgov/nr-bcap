@@ -251,8 +251,7 @@ const restrictedInfoDataRaw = computed(
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;
     if (!keywords) return [];
-    const keywordsArray = Array.isArray(keywords) ? keywords : [keywords];
-    return keywordsArray
+    return keywords
         .map((tile) => tile.aliased_data?.remark_keyword)
         .filter(
             (keyword): keyword is NonNullable<typeof keyword> => !!keyword,
@@ -262,9 +261,8 @@ const keywordsData = computed(() => {
 const contraventionDocumentsExpanded = computed(() => {
     const docs = currentData.value?.contravention_document;
     if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as unknown as AliasedTileData[],
+        docs as unknown as AliasedTileData[],
         'contravention_document',
     );
 });
@@ -272,9 +270,8 @@ const contraventionDocumentsExpanded = computed(() => {
 const restrictedDocumentsExpanded = computed(() => {
     const docs = currentData.value?.restricted_document;
     if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as unknown as AliasedTileData[],
+        docs as unknown as AliasedTileData[],
         'restricted_document',
     );
 });
