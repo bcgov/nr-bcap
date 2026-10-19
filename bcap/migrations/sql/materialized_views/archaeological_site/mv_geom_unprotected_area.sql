@@ -14,8 +14,8 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS archaeological_site;
 
-DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_unprotected_areas CASCADE;
-CREATE MATERIALIZED VIEW archaeological_site.mv_geom_unprotected_areas AS
+DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_unprotected_area CASCADE;
+CREATE MATERIALIZED VIEW archaeological_site.mv_geom_unprotected_area AS
 WITH per_tile AS (
     SELECT t.resourceinstanceid, t.tileid,
            ST_Collect(ST_Transform(g.geom, 4326)) AS geom
@@ -35,19 +35,19 @@ fixed AS (
     FROM per_res
 )
 SELECT resourceinstanceid,
-       g::geometry(Geometry, 4326)   AS unprotected_areas_geom,
-       ST_GeometryType(g)            AS unprotected_areas_geom_type,
-       ST_IsValid(raw)               AS unprotected_areas_source_valid,
+       g::geometry(Geometry, 4326)   AS unprotected_area_geom,
+       ST_GeometryType(g)            AS unprotected_area_geom_type,
+       ST_IsValid(raw)               AS unprotected_area_source_valid,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 1)) THEN NULL
-             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 4326)      AS unprotected_areas_points,
+             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 4326)      AS unprotected_area_points,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 2)) THEN NULL
-             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS unprotected_areas_lines,
+             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS unprotected_area_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
-             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS unprotected_areas_polygons
+             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS unprotected_area_polygons
 FROM fixed;
 
-CREATE UNIQUE INDEX mv_geom_unprotected_areas_pk   ON archaeological_site.mv_geom_unprotected_areas (resourceinstanceid);
-CREATE INDEX mv_geom_unprotected_areas_gix         ON archaeological_site.mv_geom_unprotected_areas USING GIST (unprotected_areas_geom);
-CREATE INDEX mv_geom_unprotected_areas_poly_gix    ON archaeological_site.mv_geom_unprotected_areas USING GIST (unprotected_areas_polygons);
-CREATE INDEX mv_geom_unprotected_areas_pt_gix      ON archaeological_site.mv_geom_unprotected_areas USING GIST (unprotected_areas_points);
-CREATE INDEX mv_geom_unprotected_areas_line_gix    ON archaeological_site.mv_geom_unprotected_areas USING GIST (unprotected_areas_lines);
+CREATE UNIQUE INDEX mv_geom_unprotected_area_pk   ON archaeological_site.mv_geom_unprotected_area (resourceinstanceid);
+CREATE INDEX mv_geom_unprotected_area_gix         ON archaeological_site.mv_geom_unprotected_area USING GIST (unprotected_area_geom);
+CREATE INDEX mv_geom_unprotected_area_poly_gix    ON archaeological_site.mv_geom_unprotected_area USING GIST (unprotected_area_polygons);
+CREATE INDEX mv_geom_unprotected_area_pt_gix      ON archaeological_site.mv_geom_unprotected_area USING GIST (unprotected_area_points);
+CREATE INDEX mv_geom_unprotected_area_line_gix    ON archaeological_site.mv_geom_unprotected_area USING GIST (unprotected_area_lines);

@@ -19,12 +19,12 @@ SELECT
     r.site_boundary_points,
     r.site_boundary_lines,
     r.site_boundary_polygons,
-    r.unprotected_areas_geom,
-    r.unprotected_areas_geom_type,
-    r.unprotected_areas_source_valid,
-    r.unprotected_areas_points,
-    r.unprotected_areas_lines,
-    r.unprotected_areas_polygons,
+    r.unprotected_area_geom,
+    r.unprotected_area_geom_type,
+    r.unprotected_area_source_valid,
+    r.unprotected_area_points,
+    r.unprotected_area_lines,
+    r.unprotected_area_polygons,
     r.site_boundary ->> 'site_boundary_description' AS site_boundary_description,
     r.site_boundary ->> 'accuracy_remarks' AS accuracy_remarks,
     arches_util.a2csv(r.site_boundary -> 'latest_edit_type', 'label', ' | ') AS latest_edit_type,
@@ -45,10 +45,12 @@ SELECT
     arches_util.a2csv(r.identification_and_registration -> 'register_type', 'list_item_id', ' | ') AS register_type_ids,
     arches_util.resource_name(arches_util.to_uuid(r.identification_and_registration ->> 'parent_site')) AS parent_site,
     r.identification_and_registration ->> 'parent_site' AS parent_site_id,
-    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_areas', '{}'::text[], 'unprotected_area_type', 'label', ' | ', '; ') AS unprotected_area_type,
-    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_areas', '{}'::text[], 'unprotected_area_type', 'list_item_id', ' | ', '; ') AS unprotected_area_type_ids,
-    arches_util.deep_csv(r.site_boundary -> 'unprotected_areas', '{}'::text[], 'other_unprotected_area_type', ' | ') AS other_unprotected_area_type,
-    jsonb_array_length(arches_util.as_array(r.site_boundary -> 'unprotected_areas')) AS unprotected_areas_count,
+    arches_util.deep_csv(r.site_boundary -> 'unprotected_area', '{}'::text[], 'unprotected_site_area_rationale', ' | ') AS unprotected_site_area_rationale,
+    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_area', '{}'::text[], 'unprotected_site_area_type', 'label', ' | ', '; ') AS unprotected_site_area_type,
+    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_area', '{}'::text[], 'unprotected_site_area_type', 'list_item_id', ' | ', '; ') AS unprotected_site_area_type_ids,
+    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_area', '{}'::text[], 'unprotected_site_area_criteria', 'label', ' | ', '; ') AS unprotected_site_area_criteria,
+    arches_util.deep_csv_nested(r.site_boundary -> 'unprotected_area', '{}'::text[], 'unprotected_site_area_criteria', 'list_item_id', ' | ', '; ') AS unprotected_site_area_criteria_ids,
+    jsonb_array_length(arches_util.as_array(r.site_boundary -> 'unprotected_area')) AS unprotected_area_count,
     r.ancestral_remains -> 'restricted_ancestral_remains_remark' ->> 'restricted_ancestral_remains_remark' AS restricted_ancestral_remains_remark,
     arches_util.resource_name(arches_util.to_uuid(r.ancestral_remains -> 'restricted_ancestral_remains_remark' ->> 'remains_remark_made_by')) AS remains_remark_made_by,
     r.ancestral_remains -> 'restricted_ancestral_remains_remark' ->> 'remains_remark_made_by' AS remains_remark_made_by_id,
@@ -64,17 +66,17 @@ SELECT
     r.identification_and_registration -> 'site_alert' ->> 'alert_branch_contact' AS alert_branch_contact_id,
     arches_util.resource_name(arches_util.to_uuid(r.identification_and_registration -> 'site_alert' ->> 'alert_entered_by')) AS alert_entered_by,
     r.identification_and_registration -> 'site_alert' ->> 'alert_entered_by' AS alert_entered_by_id,
-    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'decision_registration_status', 'label', ' | ', '; ') AS decision_registration_status,
-    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'decision_registration_status', 'list_item_id', ' | ', '; ') AS decision_registration_status_ids,
-    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_date', ' | ') AS decision_date,
-    arches_util.deep_res_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by,
-    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by_ids,
-    arches_util.deep_res_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommended_by', ' | ') AS recommended_by,
-    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommended_by', ' | ') AS recommended_by_ids,
-    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'recommendation_date', ' | ') AS recommendation_date,
-    arches_util.deep_csv(latest_sd.latest_site_decision, '{}'::text[], 'decision_description', ' | ') AS decision_description,
-    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'site_decision', 'label', ' | ', '; ') AS site_decision,
-    arches_util.deep_csv_nested(latest_sd.latest_site_decision, '{}'::text[], 'site_decision', 'list_item_id', ' | ', '; ') AS site_decision_ids,
+    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_registration_status', 'label', ' | ', '; ') AS decision_registration_status,
+    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_registration_status', 'list_item_id', ' | ', '; ') AS decision_registration_status_ids,
+    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_date', ' | ') AS decision_date,
+    arches_util.deep_res_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by,
+    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_made_by', ' | ') AS decision_made_by_ids,
+    arches_util.deep_res_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommended_by', ' | ') AS recommended_by,
+    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommended_by', ' | ') AS recommended_by_ids,
+    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'recommendation_date', ' | ') AS recommendation_date,
+    arches_util.deep_csv(r.identification_and_registration -> 'site_decision', '{}'::text[], 'decision_description', ' | ') AS decision_description,
+    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'site_decision', 'label', ' | ', '; ') AS site_decision,
+    arches_util.deep_csv_nested(r.identification_and_registration -> 'site_decision', '{}'::text[], 'site_decision', 'list_item_id', ' | ', '; ') AS site_decision_ids,
     jsonb_array_length(arches_util.as_array(r.identification_and_registration -> 'site_decision')) AS site_decision_count,
     arches_util.deep_csv(r.identification_and_registration -> 'site_names', '{}'::text[], 'name', ' | ') AS name,
     arches_util.deep_res_csv(r.identification_and_registration -> 'site_names', '{}'::text[], 'assigned_or_reported_by', ' | ') AS assigned_or_reported_by,
@@ -97,6 +99,7 @@ SELECT
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'remark_keyword')) AS remark_keyword_count,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'name', ' | ', '; ') AS restricted_document,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'file_id', ' | ', '; ') AS restricted_document_file_ids,
+    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'file_id', ' | ', '; '), ' | ', '; ') AS restricted_document_file_paths,
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'restricted_document')) AS restricted_document_count,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'hca_contravention', '{}'::text[], 'inventory_remark', ' | ') AS inventory_remark,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'hca_contravention', '{}'::text[], 'contravention_address', ' | ') AS contravention_address,
@@ -105,6 +108,7 @@ SELECT
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'hca_contravention')) AS hca_contravention_count,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'name', ' | ', '; ') AS contravention_document,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'file_id', ' | ', '; ') AS contravention_document_file_ids,
+    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'file_id', ' | ', '; '), ' | ', '; ') AS contravention_document_file_paths,
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'contravention_document')) AS contravention_document_count,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'restricted_information', '{}'::text[], 'restricted_entry_date', ' | ') AS restricted_entry_date,
     arches_util.deep_res_csv(r.remarks_and_restricted_information -> 'restricted_information', '{}'::text[], 'restricted_person', ' | ') AS restricted_person,
@@ -124,12 +128,14 @@ SELECT
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_document_type', 'list_item_id', ' | ', '; ') AS related_document_type_ids,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'name', ' | ', '; ') AS related_site_documents,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; ') AS related_site_documents_file_ids,
+    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; '), ' | ', '; ') AS related_site_documents_file_paths,
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'related_site_documents')) AS related_site_documents_count,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_type', 'label', ' | ', '; ') AS image_type,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_type', 'list_item_id', ' | ', '; ') AS image_type_ids,
     arches_util.deep_csv(r.related_documents -> 'site_images', '{}'::text[], 'photographer', ' | ') AS photographer,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'name', ' | ', '; ') AS site_images,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; ') AS site_images_file_ids,
+    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; '), ' | ', '; ') AS site_images_file_paths,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'label', ' | ', '; ') AS image_view,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'list_item_id', ' | ', '; ') AS image_view_ids,
     arches_util.deep_csv(r.related_documents -> 'site_images', '{}'::text[], 'image_description', ' | ') AS image_description,
@@ -141,16 +147,8 @@ SELECT
     arches_util.deep_res_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', ' | ', '; ') AS publication_reference,
     arches_util.deep_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', NULL, ' | ', '; ') AS publication_reference_ids,
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'publication_reference')) AS publication_reference_count
-FROM archaeological_site.mv_resource r
-LEFT JOIN LATERAL (
-    SELECT (
-        SELECT jsonb_build_array(elem)
-        FROM jsonb_array_elements(arches_util.as_array(r.identification_and_registration -> 'site_decision')) AS elem
-        ORDER BY (elem ->> 'decision_date')::date DESC NULLS LAST
-        LIMIT 1
-    ) AS latest_site_decision
-) latest_sd ON true;
+FROM archaeological_site.mv_resource r;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON archaeological_site.mv_resource_flat (resourceinstanceid);
 CREATE INDEX mv_resource_flat_site_boundary_gix ON archaeological_site.mv_resource_flat USING GIST (site_boundary_geom);
-CREATE INDEX mv_resource_flat_unprotected_areas_gix ON archaeological_site.mv_resource_flat USING GIST (unprotected_areas_geom);
+CREATE INDEX mv_resource_flat_unprotected_area_gix ON archaeological_site.mv_resource_flat USING GIST (unprotected_area_geom);

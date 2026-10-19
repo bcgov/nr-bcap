@@ -6,6 +6,7 @@
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference/concept _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
+--   * File path columns (public.files.path) added alongside each file-list field
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 
 CREATE SCHEMA IF NOT EXISTS databc;
@@ -30,11 +31,13 @@ SELECT
     -- Copyright Type
     distribution_permitted,                                                         -- boolean
     LEFT(signed_agreement, 4000)                    AS signed_agreement,
+    LEFT(signed_agreement_file_paths, 4000)         AS signed_agreement_file_paths,
     LEFT(agreement_text, 4000)                      AS agreement_text,
     LEFT(copyright_type, 4000)                      AS copyright_type,
 
     -- Information Carrier
     LEFT(information_carrier, 4000)                 AS information_carrier,
+    LEFT(information_carrier_file_paths, 4000)      AS information_carrier_file_paths,
 
     -- Keyword
     LEFT(keyword, 4000)                             AS keyword,

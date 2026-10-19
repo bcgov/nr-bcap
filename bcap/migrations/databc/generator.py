@@ -335,6 +335,12 @@ class SpecGenerator:
                 cols.append(
                     (f"{f}_file_ids", f"arches_util.a2csv({v}, 'file_id', {self._D})")
                 )
+                cols.append(
+                    (
+                        f"{f}_file_paths",
+                        f"arches_util.file_ids_to_paths(arches_util.a2csv({v}, 'file_id', {self._D}), {self._D})",
+                    )
+                )
             elif dt == "url":
                 cols.append((f, f"{v} ->> 'url'"))
                 cols.append((f"{f}_label", f"{v} ->> 'label'"))
@@ -397,6 +403,12 @@ class SpecGenerator:
                     (
                         f"{f}_file_ids",
                         f"arches_util.deep_csv_nested({arr}, {P}, '{f}', 'file_id', {self._D}, {self._ID})",
+                    )
+                )
+                cols.append(
+                    (
+                        f"{f}_file_paths",
+                        f"arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested({arr}, {P}, '{f}', 'file_id', {self._D}, {self._ID}), {self._D}, {self._ID})",
                     )
                 )
             elif dt == "url":

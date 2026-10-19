@@ -7,6 +7,7 @@
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference/concept _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
+--   * File path columns (public.files.path) added alongside each file-list field
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 --
 -- Three views are created:
@@ -40,8 +41,8 @@ SELECT
     site_boundary_polygons,                                                 -- geometry (polygons only)
 
     -- Unprotected Areas geometry (union of all unprotected area tiles)
-    unprotected_areas_geom,                                                 -- geometry
-    unprotected_areas_polygons,                                             -- geometry (polygons only)
+    unprotected_area_geom,                                                 -- geometry
+    unprotected_area_polygons,                                             -- geometry (polygons only)
 
     -- Identification and Registration
     LEFT(borden_number, 4000)                       AS borden_number,
@@ -94,11 +95,13 @@ SELECT
 
     -- Related Site Documents
     LEFT(related_site_documents, 4000)              AS related_site_documents,
+    LEFT(related_site_documents_file_paths, 4000)   AS related_site_documents_file_paths,
     LEFT(related_document_type, 4000)               AS related_document_type,
     LEFT(related_document_description, 4000)        AS related_document_description,
 
     -- Site Images
     LEFT(site_images, 4000)                         AS site_images,
+    LEFT(site_images_file_paths, 4000)              AS site_images_file_paths,
     LEFT(primary_image, 4000)                       AS primary_image,
     LEFT(image_type, 4000)                          AS image_type,
     LEFT(image_view, 4000)                          AS image_view,

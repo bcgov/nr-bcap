@@ -385,3 +385,43 @@ RETURNS int LANGUAGE sql IMMUTABLE PARALLEL SAFE AS $$
     SELECT CASE WHEN s IS NULL THEN 0
            ELSE (length(s) - length(replace(s, delim, ''))) / length(delim) + 1 END;
 $$;
+
+
+-- =====================================================================
+-- 4. FILE PATH RESOLUTION  (file-list _file_ids CSV -> public.files.path CSV)
+--
+--  Both functions mirror the CSV structure of the _file_ids columns produced
+--  by the generator so downstream DataBC views get pre-joined path columns
+--  from the flat MVs rather than doing per-row lookups at query time.
+--
+--  Positional alignment is preserved: a file_id with no match in public.files
+--  emits '' (empty string) rather than being dropped, so slot counts stay
+--  consistent with the sibling _file_ids and name columns.
+-- =====================================================================
+
+-- For cardinality-1 file-list fields (produced by a2csv with a single
+-- ' | ' delimiter).  ids: 'uuid1 | uuid2 | ...'
+CREATE OR REPLACE FUNCTION arches_util.file_ids_to_paths(
+    ids text, delim text DEFAULT ' | ')
+RETURNS text LANGUAGE sql STABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS $$
+    SELECT string_agg(COALESCE(f.path, ''), delim ORDER BY u.i)
+    FROM unnest(string_to_array(ids, delim)) WITH ORDINALITY AS u(fid, i)
+    LEFT JOIN public.files f ON f.fileid::text = trim(u.fid);
+$$;
+
+
+-- For cardinality-n file-list fields (produced by deep_csv_nested with outer
+-- delim ' | ' between tiles and inner_delim '; ' within a tile).
+-- ids: 'uuid1; uuid2 | uuid3 | ...'
+CREATE OR REPLACE FUNCTION arches_util.file_ids_to_paths_nested(
+    ids text, delim text DEFAULT ' | ', inner_delim text DEFAULT '; ')
+RETURNS text LANGUAGE sql STABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS $$
+    SELECT string_agg(
+        COALESCE(
+            (SELECT string_agg(COALESCE(f.path, ''), inner_delim ORDER BY j)
+               FROM unnest(string_to_array(grp, inner_delim)) WITH ORDINALITY AS u2(fid, j)
+               LEFT JOIN public.files f ON f.fileid::text = trim(u2.fid)),
+            ''),
+        delim ORDER BY i)
+    FROM unnest(string_to_array(ids, delim)) WITH ORDINALITY AS u1(grp, i);
+$$;

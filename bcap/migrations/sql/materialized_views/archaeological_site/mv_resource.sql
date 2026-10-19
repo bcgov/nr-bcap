@@ -35,12 +35,12 @@ SELECT
     g_site_boundary.site_boundary_points,
     g_site_boundary.site_boundary_lines,
     g_site_boundary.site_boundary_polygons,
-    g_unprotected_areas.unprotected_areas_geom,
-    g_unprotected_areas.unprotected_areas_geom_type,
-    g_unprotected_areas.unprotected_areas_source_valid,
-    g_unprotected_areas.unprotected_areas_points,
-    g_unprotected_areas.unprotected_areas_lines,
-    g_unprotected_areas.unprotected_areas_polygons,
+    g_unprotected_area.unprotected_area_geom,
+    g_unprotected_area.unprotected_area_geom_type,
+    g_unprotected_area.unprotected_area_source_valid,
+    g_unprotected_area.unprotected_area_points,
+    g_unprotected_area.unprotected_area_lines,
+    g_unprotected_area.unprotected_area_polygons,
     jsonb_build_object(
         'resourceinstanceid', r.resourceinstanceid,
         'site_boundary', b0.site_boundary,
@@ -64,12 +64,12 @@ LEFT JOIN archaeological_site.mv_remarks_and_restricted_information b6 ON b6.res
 LEFT JOIN archaeological_site.mv_heritage_site_location b7 ON b7.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_related_documents b8 ON b8.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_geom_site_boundary g_site_boundary ON g_site_boundary.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN archaeological_site.mv_geom_unprotected_areas g_unprotected_areas ON g_unprotected_areas.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN archaeological_site.mv_geom_unprotected_area g_unprotected_area ON g_unprotected_area.resourceinstanceid = r.resourceinstanceid
 WHERE r.graphid = 'cef9c510-e3e6-4057-ac08-89ad926180b4'::uuid;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON archaeological_site.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON archaeological_site.mv_resource USING GIN (resource jsonb_path_ops);
 CREATE INDEX mv_resource_site_boundary_gix      ON archaeological_site.mv_resource USING GIST (site_boundary_geom);
 CREATE INDEX mv_resource_site_boundary_poly_gix ON archaeological_site.mv_resource USING GIST (site_boundary_polygons);
-CREATE INDEX mv_resource_unprotected_areas_gix      ON archaeological_site.mv_resource USING GIST (unprotected_areas_geom);
-CREATE INDEX mv_resource_unprotected_areas_poly_gix ON archaeological_site.mv_resource USING GIST (unprotected_areas_polygons);
+CREATE INDEX mv_resource_unprotected_area_gix      ON archaeological_site.mv_resource USING GIST (unprotected_area_geom);
+CREATE INDEX mv_resource_unprotected_area_poly_gix ON archaeological_site.mv_resource USING GIST (unprotected_area_polygons);
