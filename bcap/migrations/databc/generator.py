@@ -462,8 +462,9 @@ class SpecGenerator:
             f"LEFT JOIN public.files f ON f.fileid = (e.item ->> 'file_id')::uuid\n"
             f"WHERE r.graphid = '{self.GRAPH_ID}'::uuid\n"
             f"WITH NO DATA;\n\n"
-            f"CREATE INDEX mv_file_attachments_res    ON {self.SC}.mv_file_attachments (resourceinstanceid);\n"
-            f"CREATE INDEX mv_file_attachments_fileid ON {self.SC}.mv_file_attachments (file_id);\n"
+            f"CREATE UNIQUE INDEX mv_file_attachments_pk     ON {self.SC}.mv_file_attachments (tileid, field, file_index);\n"
+            f"CREATE INDEX mv_file_attachments_res           ON {self.SC}.mv_file_attachments (resourceinstanceid);\n"
+            f"CREATE INDEX mv_file_attachments_fileid        ON {self.SC}.mv_file_attachments (file_id);\n"
             + self._time_sql(f"{self.SC}.mv_file_attachments done")
         )
 
