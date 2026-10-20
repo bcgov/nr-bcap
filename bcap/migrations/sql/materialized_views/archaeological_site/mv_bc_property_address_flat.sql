@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_bc_property_address_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_bc_property_address_flat CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_bc_property_address_flat AS
 SELECT
@@ -29,6 +30,8 @@ FROM archaeological_site.mv_resource r,
      LATERAL jsonb_array_elements(arches_util.as_array(r.heritage_site_location))
              WITH ORDINALITY AS p(t, ord),
      LATERAL jsonb_array_elements(arches_util.as_array(p.t -> 'bc_property_address'))
-             WITH ORDINALITY AS g(t, ord);
+             WITH ORDINALITY AS g(t, ord)
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_bc_property_address_flat_pk ON archaeological_site.mv_bc_property_address_flat (resourceinstanceid, site_location_index, bc_property_address_index);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_bc_property_address_flat done %', clock_timestamp(); END $$;

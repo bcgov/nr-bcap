@@ -6,6 +6,7 @@
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference/concept _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
+--   * File paths: see companion view vw_publication_file_attachments (one row per file)
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 
 CREATE SCHEMA IF NOT EXISTS databc;
@@ -66,26 +67,38 @@ COMMENT ON VIEW databc.vw_publication IS
 -- ============================================================
 DO $$
 DECLARE
-    r     record;
-    v_max bigint;
+    r          record;
+    v_max      bigint;
+    _populated boolean;
 BEGIN
-    FOR r IN
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = 'publication'
-          AND table_name   = 'resource_flat'
-          AND data_type    = 'text'
-        ORDER BY ordinal_position
-    LOOP
-        EXECUTE format(
-            $q$SELECT max(length(%I)) FROM publication.resource_flat$q$,
-            r.column_name
-        ) INTO v_max;
-        IF v_max IS NOT NULL AND v_max > 4000 THEN
-            RAISE WARNING
-                'publication.resource_flat.% max length = % — truncated in databc.vw_publication',
-                r.column_name, v_max;
-        END IF;
-    END LOOP;
-    RAISE NOTICE 'Length check complete for publication.resource_flat';
+    SELECT c.relispopulated INTO _populated
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'publication'
+      AND c.relname = 'mv_resource_flat'
+      AND c.relkind = 'm';
+
+    IF NOT FOUND OR NOT _populated THEN
+        RAISE WARNING 'Length check skipped for publication.resource_flat (not yet populated)';
+    ELSE
+        FOR r IN
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = 'publication'
+              AND table_name   = 'resource_flat'
+              AND data_type    = 'text'
+            ORDER BY ordinal_position
+        LOOP
+            EXECUTE format(
+                $q$SELECT max(length(%I)) FROM publication.resource_flat$q$,
+                r.column_name
+            ) INTO v_max;
+            IF v_max IS NOT NULL AND v_max > 4000 THEN
+                RAISE WARNING
+                    'publication.resource_flat.% max length = % — truncated in databc.vw_publication',
+                    r.column_name, v_max;
+            END IF;
+        END LOOP;
+        RAISE NOTICE 'Length check complete for publication.resource_flat';
+    END IF;
 END $$;

@@ -29,6 +29,25 @@ GRAPHS = {
         "view_names": {
             "heritage_site_location": "site_location",
         },
+        # latest_site_decision: the most recent site_decision tile by decision_date.
+        # Exposed as a jsonb single-element array for consistent downstream access.
+        "extra_flat_select": [
+            ("latest_site_decision", "latest_sd.latest_site_decision"),
+        ],
+        "extra_flat_joins": [
+            "LEFT JOIN LATERAL (\n"
+            "    SELECT (\n"
+            "        SELECT jsonb_build_array(elem)\n"
+            "        FROM jsonb_array_elements(\n"
+            "            arches_util.as_array(\n"
+            "                r.identification_and_registration -> 'site_decision'\n"
+            "            )\n"
+            "        ) AS elem\n"
+            "        ORDER BY (elem ->> 'decision_date')::date DESC NULLS LAST\n"
+            "        LIMIT 1\n"
+            "    ) AS latest_site_decision\n"
+            ") latest_sd ON true",
+        ],
     },
     "per": {
         "arches_slug": "hca_permit",

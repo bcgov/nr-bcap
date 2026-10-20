@@ -18,6 +18,7 @@ import type {
     ArchaeologicalSite,
     ArchaeologicalSiteIdentificationAndRegistrationTile,
     ArchaeologicalSiteIdentificationAndRegistrationAliasedData,
+    ArchaeologicalSiteSiteAlertTile,
     SiteVisit,
     SiteVisitTemporaryNumberTile,
     HriaDiscontinuedData,
@@ -227,11 +228,11 @@ const temporaryNumbersData = computed((): SiteVisitTemporaryNumberTile[] => {
     });
 });
 
-const siteAlertDataRaw = computed(() => {
+const siteAlertDataRaw = computed((): ArchaeologicalSiteSiteAlertTile[] => {
     const alert = currentData.value?.site_alert;
     if (!alert) return [];
 
-    return Array.isArray(alert) ? alert : [alert];
+    return [alert];
 });
 
 const { processedData: authorityTableData } = useTileEditLog(

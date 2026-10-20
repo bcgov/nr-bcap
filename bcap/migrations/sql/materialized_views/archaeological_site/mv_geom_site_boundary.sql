@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS archaeological_site;
 
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_geom_site_boundary start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_site_boundary CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_geom_site_boundary AS
 WITH per_tile AS (
@@ -44,10 +45,12 @@ SELECT resourceinstanceid,
              ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS site_boundary_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
              ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS site_boundary_polygons
-FROM fixed;
+FROM fixed
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_geom_site_boundary_pk   ON archaeological_site.mv_geom_site_boundary (resourceinstanceid);
 CREATE INDEX mv_geom_site_boundary_gix         ON archaeological_site.mv_geom_site_boundary USING GIST (site_boundary_geom);
 CREATE INDEX mv_geom_site_boundary_poly_gix    ON archaeological_site.mv_geom_site_boundary USING GIST (site_boundary_polygons);
 CREATE INDEX mv_geom_site_boundary_pt_gix      ON archaeological_site.mv_geom_site_boundary USING GIST (site_boundary_points);
 CREATE INDEX mv_geom_site_boundary_line_gix    ON archaeological_site.mv_geom_site_boundary USING GIST (site_boundary_lines);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_geom_site_boundary done %', clock_timestamp(); END $$;

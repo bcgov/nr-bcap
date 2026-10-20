@@ -68,7 +68,7 @@ const restrictedRemainsDataRaw = computed(
             props.data?.aliased_data?.restricted_ancestral_remains_remark;
         if (!remark) return [];
 
-        return Array.isArray(remark) ? remark : [remark];
+        return [remark];
     },
 );
 

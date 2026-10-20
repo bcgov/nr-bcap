@@ -8,7 +8,7 @@ DECLARE
 BEGIN
     FOREACH mv IN ARRAY ARRAY[
         'archaeological_site.mv_geom_site_boundary',
-        'archaeological_site.mv_geom_unprotected_areas',
+        'archaeological_site.mv_geom_unprotected_area',
         'archaeological_site.mv_site_boundary',
         'archaeological_site.mv_site_record_admin',
         'archaeological_site.mv_external_url',

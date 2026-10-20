@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- remarks_and_recommendations  (cardinality 1)  children: recommendation, general_remark
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_remarks_and_recommendations start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_remarks_and_recommendations CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_remarks_and_recommendations AS
 WITH recommendation AS (
@@ -52,6 +53,8 @@ remarks_and_recommendations AS (
     WHERE t.nodegroupid = '77789d46-61ab-11f0-be7c-3a7a4e6803c5'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS remarks_and_recommendations FROM remarks_and_recommendations;
+SELECT resourceinstanceid, obj AS remarks_and_recommendations FROM remarks_and_recommendations
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_remarks_and_recommendations_pk ON site_visit.mv_remarks_and_recommendations (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_remarks_and_recommendations done %', clock_timestamp(); END $$;

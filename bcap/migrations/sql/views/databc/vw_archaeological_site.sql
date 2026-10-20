@@ -7,6 +7,7 @@
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference/concept _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
+--   * File paths: see companion views vw_archaeological_site_file_attachments (one row per file)
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 --
 -- Three views are created:
@@ -40,8 +41,8 @@ SELECT
     site_boundary_polygons,                                                 -- geometry (polygons only)
 
     -- Unprotected Areas geometry (union of all unprotected area tiles)
-    unprotected_areas_geom,                                                 -- geometry
-    unprotected_areas_polygons,                                             -- geometry (polygons only)
+    unprotected_area_geom,                                                 -- geometry
+    unprotected_area_polygons,                                             -- geometry (polygons only)
 
     -- Identification and Registration
     LEFT(borden_number, 4000)                       AS borden_number,
@@ -185,16 +186,29 @@ COMMENT ON VIEW databc.vw_archaeological_site_bc_property_address IS
 -- ============================================================
 DO $$
 DECLARE
-    r     record;
-    v_max bigint;
-    src   text;
-    vw    text;
+    r          record;
+    v_max      bigint;
+    src        text;
+    vw         text;
+    _populated boolean;
 BEGIN
     FOR src, vw IN VALUES
-        ('resource_flat',         'vw_archaeological_site'),
-        ('site_location_flat',    'vw_archaeological_site_site_location'),
+        ('resource_flat',            'vw_archaeological_site'),
+        ('site_location_flat',       'vw_archaeological_site_site_location'),
         ('bc_property_address_flat', 'vw_archaeological_site_bc_property_address')
     LOOP
+        SELECT c.relispopulated INTO _populated
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = 'archaeological_site'
+          AND c.relname = 'mv_' || src
+          AND c.relkind = 'm';
+
+        IF NOT FOUND OR NOT _populated THEN
+            RAISE WARNING 'Length check skipped for archaeological_site.% (not yet populated)', src;
+            CONTINUE;
+        END IF;
+
         FOR r IN
             SELECT column_name
             FROM information_schema.columns

@@ -9,16 +9,23 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_resource_flat AS
 SELECT
     r.resourceinstanceid,
-    r.site_visit_location_geom,
-    r.site_visit_location_geom_type,
-    r.site_visit_location_source_valid,
-    r.site_visit_location_points,
-    r.site_visit_location_lines,
-    r.site_visit_location_polygons,
+    r.proposed_unprotected_area_geom,
+    r.proposed_unprotected_area_geom_type,
+    r.proposed_unprotected_area_source_valid,
+    r.proposed_unprotected_area_points,
+    r.proposed_unprotected_area_lines,
+    r.proposed_unprotected_area_polygons,
+    r.spatial_location_geom,
+    r.spatial_location_geom_type,
+    r.spatial_location_source_valid,
+    r.spatial_location_points,
+    r.spatial_location_lines,
+    r.spatial_location_polygons,
     arches_util.deep_csv_nested(r.ancestral_remains, '{}'::text[], 'ancestral_remains_type', 'label', ' | ', '; ') AS ancestral_remains_type,
     arches_util.deep_csv_nested(r.ancestral_remains, '{}'::text[], 'ancestral_remains_type', 'list_item_id', ' | ', '; ') AS ancestral_remains_type_ids,
     arches_util.deep_csv(r.ancestral_remains, '{}'::text[], 'multiple_burials', ' | ') AS multiple_burials,
@@ -136,7 +143,10 @@ SELECT
     arches_util.deep_csv_nested(r.site_visit_details -> 'site_visit_team' -> 'team_member', '{}'::text[], 'member_roles', 'label', ' | ', '; ') AS member_roles,
     arches_util.deep_csv_nested(r.site_visit_details -> 'site_visit_team' -> 'team_member', '{}'::text[], 'member_roles', 'list_item_id', ' | ', '; ') AS member_roles_ids,
     jsonb_array_length(arches_util.as_array(r.site_visit_details -> 'site_visit_team' -> 'team_member')) AS team_member_count
-FROM site_visit.mv_resource r;
+FROM site_visit.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON site_visit.mv_resource_flat (resourceinstanceid);
-CREATE INDEX mv_resource_flat_site_visit_location_gix ON site_visit.mv_resource_flat USING GIST (site_visit_location_geom);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource_flat done %', clock_timestamp(); END $$;
+CREATE INDEX mv_resource_flat_proposed_unprotected_area_gix ON site_visit.mv_resource_flat USING GIST (proposed_unprotected_area_geom);
+CREATE INDEX mv_resource_flat_spatial_location_gix ON site_visit.mv_resource_flat USING GIST (spatial_location_geom);

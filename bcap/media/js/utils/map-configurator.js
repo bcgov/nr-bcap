@@ -93,7 +93,7 @@ const mapConfigurator = {
             );
             map.addControl(siteBoundaryControl, 'top-left');
 
-            map.on('idle', function () {
+            map.once('idle', function () {
                 if (
                     map
                         .getContainer()

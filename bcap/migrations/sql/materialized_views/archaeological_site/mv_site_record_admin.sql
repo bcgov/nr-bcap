@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- site_record_admin  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_site_record_admin start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_site_record_admin CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_site_record_admin AS
 WITH site_record_admin AS (
@@ -29,6 +30,8 @@ WITH site_record_admin AS (
     WHERE t.nodegroupid = '0684fec8-0d07-11ed-8804-5254008afee6'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS site_record_admin FROM site_record_admin;
+SELECT resourceinstanceid, arr AS site_record_admin FROM site_record_admin
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_record_admin_pk ON archaeological_site.mv_site_record_admin (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_site_record_admin done %', clock_timestamp(); END $$;

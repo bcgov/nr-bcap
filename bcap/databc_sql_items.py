@@ -8,14 +8,15 @@ from bcap.migrations.util.migration_util import format_sql
 _SV_BRANCHES = [
     ("bcap", "sv_mv_ancestral_remains"),
     ("bcap", "sv_mv_site_visit_details"),
-    ("bcap", "sv_mv_site_visit_location"),
     ("bcap", "sv_mv_related_documents"),
+    ("bcap", "sv_mv_site_visit_location"),
     ("bcap", "sv_mv_remarks_and_recommendations"),
     ("bcap", "sv_mv_identification"),
     ("bcap", "sv_mv_archaeological_data"),
 ]
 _SV_GEOMS = [
-    ("bcap", "sv_mv_geom_site_visit_location"),
+    ("bcap", "sv_mv_geom_proposed_unprotected_area"),
+    ("bcap", "sv_mv_geom_spatial_location"),
 ]
 _SV_GRAIN_FLATS = [
     ("bcap", "sv_mv_site_visit_location_flat"),
@@ -35,7 +36,7 @@ _AS_BRANCHES = [
 ]
 _AS_GEOMS = [
     ("bcap", "as_mv_geom_site_boundary"),
-    ("bcap", "as_mv_geom_unprotected_areas"),
+    ("bcap", "as_mv_geom_unprotected_area"),
 ]
 _AS_GRAIN_FLATS = [
     ("bcap", "as_mv_heritage_site_location_flat"),
@@ -102,15 +103,15 @@ sql_items = [
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "sv_mv_site_visit_location",
-        format_sql("sql/materialized_views/site_visit/mv_site_visit_location.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_location CASCADE;",
-        dependencies=[("bcap", "databc_arches_util")],
-    ),
-    SQLItem(
         "sv_mv_related_documents",
         format_sql("sql/materialized_views/site_visit/mv_related_documents.sql"),
         reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_related_documents CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "sv_mv_site_visit_location",
+        format_sql("sql/materialized_views/site_visit/mv_site_visit_location.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_location CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
@@ -134,9 +135,17 @@ sql_items = [
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "sv_mv_geom_site_visit_location",
-        format_sql("sql/materialized_views/site_visit/mv_geom_site_visit_location.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_geom_site_visit_location CASCADE;",
+        "sv_mv_geom_proposed_unprotected_area",
+        format_sql(
+            "sql/materialized_views/site_visit/mv_geom_proposed_unprotected_area.sql"
+        ),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_geom_proposed_unprotected_area CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
+        "sv_mv_geom_spatial_location",
+        format_sql("sql/materialized_views/site_visit/mv_geom_spatial_location.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_geom_spatial_location CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
@@ -172,21 +181,36 @@ sql_items = [
         dependencies=[("bcap", "sv_mv_resource_flat")],
     ),
     SQLItem(
+        "sv_mv_file_attachments",
+        format_sql("sql/materialized_views/site_visit/mv_file_attachments.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_file_attachments CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
         "sv_flat_views",
         format_sql("sql/materialized_views/site_visit/flat_views.sql"),
         reverse_sql=(
             "DROP VIEW IF EXISTS site_visit.resource_flat;\n"
             "DROP VIEW IF EXISTS site_visit.site_visit_location_flat;\n"
+            "DROP VIEW IF EXISTS site_visit.file_attachments;\n"
         ),
         replace=True,
-        dependencies=[("bcap", "sv_mv_resource_flat")] + _SV_GRAIN_FLATS,
+        dependencies=[
+            ("bcap", "sv_mv_resource_flat"),
+            ("bcap", "sv_mv_file_attachments"),
+        ]
+        + _SV_GRAIN_FLATS,
     ),
     SQLItem(
         "sv_refresh_flat",
         format_sql("sql/materialized_views/site_visit/refresh_flat.sql"),
         reverse_sql="DROP PROCEDURE IF EXISTS site_visit.refresh_flat(boolean);",
         replace=True,
-        dependencies=[("bcap", "sv_mv_resource_flat")] + _SV_GRAIN_FLATS,
+        dependencies=[
+            ("bcap", "sv_mv_resource_flat"),
+            ("bcap", "sv_mv_file_attachments"),
+        ]
+        + _SV_GRAIN_FLATS,
     ),
     # -------------------------------------------------------------------
     # archaeological_site
@@ -268,11 +292,11 @@ sql_items = [
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "as_mv_geom_unprotected_areas",
+        "as_mv_geom_unprotected_area",
         format_sql(
-            "sql/materialized_views/archaeological_site/mv_geom_unprotected_areas.sql"
+            "sql/materialized_views/archaeological_site/mv_geom_unprotected_area.sql"
         ),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_unprotected_areas CASCADE;",
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_unprotected_area CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
@@ -318,22 +342,39 @@ sql_items = [
         dependencies=[("bcap", "as_mv_resource_flat")],
     ),
     SQLItem(
+        "as_mv_file_attachments",
+        format_sql(
+            "sql/materialized_views/archaeological_site/mv_file_attachments.sql"
+        ),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_file_attachments CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
         "as_flat_views",
         format_sql("sql/materialized_views/archaeological_site/flat_views.sql"),
         reverse_sql=(
             "DROP VIEW IF EXISTS archaeological_site.resource_flat;\n"
             "DROP VIEW IF EXISTS archaeological_site.site_location_flat;\n"
             "DROP VIEW IF EXISTS archaeological_site.bc_property_address_flat;\n"
+            "DROP VIEW IF EXISTS archaeological_site.file_attachments;\n"
         ),
         replace=True,
-        dependencies=[("bcap", "as_mv_resource_flat")] + _AS_GRAIN_FLATS,
+        dependencies=[
+            ("bcap", "as_mv_resource_flat"),
+            ("bcap", "as_mv_file_attachments"),
+        ]
+        + _AS_GRAIN_FLATS,
     ),
     SQLItem(
         "as_refresh_flat",
         format_sql("sql/materialized_views/archaeological_site/refresh_flat.sql"),
         reverse_sql="DROP PROCEDURE IF EXISTS archaeological_site.refresh_flat(boolean);",
         replace=True,
-        dependencies=[("bcap", "as_mv_resource_flat")] + _AS_GRAIN_FLATS,
+        dependencies=[
+            ("bcap", "as_mv_resource_flat"),
+            ("bcap", "as_mv_file_attachments"),
+        ]
+        + _AS_GRAIN_FLATS,
     ),
     # -------------------------------------------------------------------
     # hca_permit
@@ -450,18 +491,33 @@ sql_items = [
         dependencies=[("bcap", "pub_mv_resource")],
     ),
     SQLItem(
+        "pub_mv_file_attachments",
+        format_sql("sql/materialized_views/publication/mv_file_attachments.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_file_attachments CASCADE;",
+        dependencies=[("bcap", "databc_arches_util")],
+    ),
+    SQLItem(
         "pub_flat_views",
         format_sql("sql/materialized_views/publication/flat_views.sql"),
-        reverse_sql=("DROP VIEW IF EXISTS publication.resource_flat;\n"),
+        reverse_sql=(
+            "DROP VIEW IF EXISTS publication.resource_flat;\n"
+            "DROP VIEW IF EXISTS publication.file_attachments;\n"
+        ),
         replace=True,
-        dependencies=[("bcap", "pub_mv_resource_flat")],
+        dependencies=[
+            ("bcap", "pub_mv_resource_flat"),
+            ("bcap", "pub_mv_file_attachments"),
+        ],
     ),
     SQLItem(
         "pub_refresh_flat",
         format_sql("sql/materialized_views/publication/refresh_flat.sql"),
         reverse_sql="DROP PROCEDURE IF EXISTS publication.refresh_flat(boolean);",
         replace=True,
-        dependencies=[("bcap", "pub_mv_resource_flat")],
+        dependencies=[
+            ("bcap", "pub_mv_resource_flat"),
+            ("bcap", "pub_mv_file_attachments"),
+        ],
     ),
     # -------------------------------------------------------------------
     # repository
@@ -574,5 +630,19 @@ sql_items = [
         reverse_sql=("DROP VIEW IF EXISTS databc.vw_repository;\n"),
         replace=True,
         dependencies=[("bcap", "rep_flat_views")],
+    ),
+    # -------------------------------------------------------------------
+    # Unified file attachments view (cross-schema)
+    # -------------------------------------------------------------------
+    SQLItem(
+        "databc_file_attachments",
+        format_sql("sql/views/databc/vw_file_attachments.sql"),
+        reverse_sql="DROP VIEW IF EXISTS databc.vw_file_attachments;",
+        replace=True,
+        dependencies=[
+            ("bcap", "sv_mv_file_attachments"),
+            ("bcap", "as_mv_file_attachments"),
+            ("bcap", "pub_mv_file_attachments"),
+        ],
     ),
 ]

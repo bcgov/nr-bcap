@@ -18,7 +18,10 @@ import type {
     ArchaeologicalSiteRelatedDocumentsAliasedData,
     SiteVisit,
 } from '@/bcap/client/types.gen.ts';
-import type { HriaDiscontinuedData } from '@/bcap/client/types.gen.ts';
+import type {
+    HriaDiscontinuedData,
+    HriaDiscontinuedDataOtherMapsTile,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
@@ -71,11 +74,10 @@ const relatedDocumentsData = computed(() => {
 
     const docs = currentData.value?.related_site_documents;
     if (docs) {
-        const docsArray = Array.isArray(docs) ? docs : [docs];
         documents = [
             ...documents,
             ...expandDocumentRows(
-                docsArray as unknown as AliasedTileData[],
+                docs as unknown as AliasedTileData[],
                 'related_site_documents',
             ),
         ];
@@ -248,12 +250,10 @@ const { processedData: siteImagesTableData } = useTileEditLog(
 const hasImages = computed(() => siteImagesTableData.value.length > 0);
 
 const otherMapsData = computed<AliasedTileDataWithAudit[]>(() => {
-    const hriaData = props.hriaData as HriaDiscontinuedData | undefined;
-    const maps = hriaData?.aliased_data?.other_maps;
+    const maps = props.hriaData?.aliased_data?.other_maps;
     if (!maps) return [];
-    return (Array.isArray(maps)
-        ? maps
-        : [maps]) as unknown as AliasedTileDataWithAudit[];
+    const tile: HriaDiscontinuedDataOtherMapsTile = maps;
+    return [tile] as unknown as AliasedTileDataWithAudit[];
 });
 
 const hasOtherMaps = computed(() => {

@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- identification_and_registration  (cardinality 1)  children: site_alert, site_decision, site_names, authority
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_identification_and_registration start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_identification_and_registration CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_identification_and_registration AS
 WITH site_alert AS (
@@ -95,6 +96,8 @@ identification_and_registration AS (
     WHERE t.nodegroupid = '034d1c32-13f2-11f0-9ff8-0242ac170007'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS identification_and_registration FROM identification_and_registration;
+SELECT resourceinstanceid, obj AS identification_and_registration FROM identification_and_registration
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_identification_and_registration_pk ON archaeological_site.mv_identification_and_registration (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_identification_and_registration done %', clock_timestamp(); END $$;

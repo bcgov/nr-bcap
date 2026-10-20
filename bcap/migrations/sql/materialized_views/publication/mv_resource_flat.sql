@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_resource_flat AS
 SELECT
@@ -49,6 +50,8 @@ SELECT
     arches_util.deep_csv_nested(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier_type', 'list_item_id', ' | ', '; ') AS publication_identifier_type_ids,
     arches_util.deep_csv(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier', ' | ') AS publication_identifier,
     jsonb_array_length(arches_util.as_array(r.publication_details -> 'publication_identifier')) AS publication_identifier_count
-FROM publication.mv_resource r;
+FROM publication.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON publication.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource_flat done %', clock_timestamp(); END $$;

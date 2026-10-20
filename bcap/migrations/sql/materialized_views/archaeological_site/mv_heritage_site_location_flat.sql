@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_heritage_site_location_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_heritage_site_location_flat CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_heritage_site_location_flat AS
 SELECT
@@ -28,6 +29,8 @@ SELECT
     jsonb_array_length(arches_util.as_array(g.t -> 'elevation' -> 'elevation_comments')) AS elevation_comments_count
 FROM archaeological_site.mv_resource r,
      LATERAL jsonb_array_elements(arches_util.as_array(r.heritage_site_location))
-             WITH ORDINALITY AS g(t, ord);
+             WITH ORDINALITY AS g(t, ord)
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_heritage_site_location_flat_pk ON archaeological_site.mv_heritage_site_location_flat (resourceinstanceid, site_location_index);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_heritage_site_location_flat done %', clock_timestamp(); END $$;

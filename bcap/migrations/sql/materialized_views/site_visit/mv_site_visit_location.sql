@@ -15,43 +15,85 @@ SET work_mem             = '128MB';
 CREATE SCHEMA IF NOT EXISTS site_visit;
 
 -- ---------------------------------------------------------------------
--- site_visit_location  (cardinality n)  children: biogeography
+-- site_visit_location  (cardinality 1)  children: biogeography, location_and_access, spatial_location
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_location CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_site_visit_location AS
 WITH biogeography AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'biogeography_description', arches_util.i18n_text(t.tiledata -> '95e5f9b6-71cd-4769-b365-9155442954ec'),
-            'biogeography_type', arches_util.reference_flat(t.tiledata -> '5270c773-125c-4223-868e-badeb5cf5f78'),
-            'biogeography_name', arches_util.i18n_text(t.tiledata -> '5c7d9c33-c53e-45ea-b503-d4bbeaa9e31c')
+            'biogeography_description', arches_util.i18n_text(t.tiledata -> 'dce2aec2-3776-4eb0-8d37-763d34a7fd34'),
+            'biogeography_type', arches_util.reference_flat(t.tiledata -> 'e2b03080-39d2-4ac5-8b71-101feef25849'),
+            'biogeography_name', arches_util.i18n_text(t.tiledata -> '3553a676-73eb-418a-8cd6-0cf57a7a9f09')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
-    WHERE t.nodegroupid = '6abfca2d-8f5d-458a-b128-ab8ba49c1921'::uuid
+    WHERE t.nodegroupid = 'fc3ef2e4-88c4-4846-acf7-4354f35cb739'::uuid
     GROUP BY t.parenttileid
 ),
-geom_site_visit_location AS (
+location_and_access AS (
+    SELECT DISTINCT ON (t.parenttileid) t.parenttileid AS parenttileid,
+           jsonb_build_object(
+            'location_and_access', arches_util.i18n_text(t.tiledata -> '38608aa6-6c00-4de1-aa07-e440db5c78ae')
+        ) AS obj
+    FROM public.tiles t
+    WHERE t.nodegroupid = '38608aa6-6c00-4de1-aa07-e440db5c78ae'::uuid
+    ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
+),
+geom_proposed_unprotected_area AS (
     SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
     FROM public.geojson_geometries gg
-    WHERE gg.nodeid = 'cf40edc0-13f0-11f0-9404-0242ac170007'::uuid
+    WHERE gg.nodeid = '06d29c75-37f8-4b32-9e9d-6e57c260fa88'::uuid
     GROUP BY gg.tileid
 ),
-site_visit_location AS (
-    SELECT t.resourceinstanceid AS resourceinstanceid,
+proposed_unprotected_area AS (
+    SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'site_visit_location', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
-            'latest_edit_type', arches_util.reference_flat(t.tiledata -> 'cf40f158-13f0-11f0-9404-0242ac170007'),
-            'boundary_type', arches_util.reference_flat(t.tiledata -> '9aea2913-e4ee-43dd-904c-abee908f61b6'),
-            'location_and_access', arches_util.i18n_text(t.tiledata -> 'cca03a72-13fe-11f0-99e9-0242ac170007'),
-            'accuracy_remarks', arches_util.i18n_text(t.tiledata -> 'cf40f40a-13f0-11f0-9404-0242ac170007'),
-            'biogeography', COALESCE(biogeography.arr, '[]'::jsonb)
+            'proposed_unprotected_site_area_rationale', arches_util.i18n_text(t.tiledata -> 'c9696731-2655-401b-9d20-bea1854e859f'),
+            'proposed_unprotected_site_area_criteria', arches_util.reference_flat(t.tiledata -> '15238092-1b9b-45f7-8574-670bfbf45c4d'),
+            'proposed_unprotected_area', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
-    LEFT JOIN geom_site_visit_location g ON g.tileid = t.tileid
+    LEFT JOIN geom_proposed_unprotected_area g ON g.tileid = t.tileid
+    WHERE t.nodegroupid = '06d29c75-37f8-4b32-9e9d-6e57c260fa88'::uuid
+    GROUP BY t.parenttileid
+),
+geom_spatial_location AS (
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    FROM public.geojson_geometries gg
+    WHERE gg.nodeid = '36b6d091-a8d0-483e-ad5b-18f433f67311'::uuid
+    GROUP BY gg.tileid
+),
+spatial_location AS (
+    SELECT t.parenttileid AS parenttileid,
+           jsonb_agg(jsonb_build_object(
+            'boundary_type', arches_util.reference_flat(t.tiledata -> '8bffa154-d7f1-49f1-86be-12a32104e742'),
+            'spatial_location', CASE WHEN g.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(g.geom, 7)::jsonb END,
+            'boundary_description', arches_util.i18n_text(t.tiledata -> '64b506a3-77f2-4ecf-9a6d-cb301167f3ec'),
+            'proposed_unprotected_area', COALESCE(proposed_unprotected_area.arr, '[]'::jsonb)
+        ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
+    FROM public.tiles t
+    LEFT JOIN geom_spatial_location g ON g.tileid = t.tileid
+    LEFT JOIN proposed_unprotected_area proposed_unprotected_area ON proposed_unprotected_area.parenttileid = t.tileid
+    WHERE t.nodegroupid = '36b6d091-a8d0-483e-ad5b-18f433f67311'::uuid
+    GROUP BY t.parenttileid
+),
+site_visit_location AS (
+    SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
+           jsonb_build_object(
+            'biogeography', COALESCE(biogeography.arr, '[]'::jsonb),
+            'location_and_access', location_and_access.obj,
+            'spatial_location', COALESCE(spatial_location.arr, '[]'::jsonb)
+        ) AS obj
+    FROM public.tiles t
     LEFT JOIN biogeography biogeography ON biogeography.parenttileid = t.tileid
-    WHERE t.nodegroupid = 'cf40edc0-13f0-11f0-9404-0242ac170007'::uuid
-    GROUP BY t.resourceinstanceid
+    LEFT JOIN location_and_access location_and_access ON location_and_access.parenttileid = t.tileid
+    LEFT JOIN spatial_location spatial_location ON spatial_location.parenttileid = t.tileid
+    WHERE t.nodegroupid = '736d222a-cedb-4671-9ab5-d6f14a532238'::uuid
+    ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, arr AS site_visit_location FROM site_visit_location;
+SELECT resourceinstanceid, obj AS site_visit_location FROM site_visit_location
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_visit_location_pk ON site_visit.mv_site_visit_location (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location done %', clock_timestamp(); END $$;

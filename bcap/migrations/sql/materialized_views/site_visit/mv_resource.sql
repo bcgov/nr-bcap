@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS site_visit;
 
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_resource CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
@@ -22,23 +23,29 @@ SELECT
     r.resourceinstanceid,
     COALESCE(b0.ancestral_remains, '[]'::jsonb) AS ancestral_remains,
     b1.site_visit_details,
-    COALESCE(b2.site_visit_location, '[]'::jsonb) AS site_visit_location,
-    b3.related_documents,
+    b2.related_documents,
+    b3.site_visit_location,
     b4.remarks_and_recommendations,
     b5.identification,
     b6.archaeological_data,
-    g_site_visit_location.site_visit_location_geom,
-    g_site_visit_location.site_visit_location_geom_type,
-    g_site_visit_location.site_visit_location_source_valid,
-    g_site_visit_location.site_visit_location_points,
-    g_site_visit_location.site_visit_location_lines,
-    g_site_visit_location.site_visit_location_polygons,
+    g_proposed_unprotected_area.proposed_unprotected_area_geom,
+    g_proposed_unprotected_area.proposed_unprotected_area_geom_type,
+    g_proposed_unprotected_area.proposed_unprotected_area_source_valid,
+    g_proposed_unprotected_area.proposed_unprotected_area_points,
+    g_proposed_unprotected_area.proposed_unprotected_area_lines,
+    g_proposed_unprotected_area.proposed_unprotected_area_polygons,
+    g_spatial_location.spatial_location_geom,
+    g_spatial_location.spatial_location_geom_type,
+    g_spatial_location.spatial_location_source_valid,
+    g_spatial_location.spatial_location_points,
+    g_spatial_location.spatial_location_lines,
+    g_spatial_location.spatial_location_polygons,
     jsonb_build_object(
         'resourceinstanceid', r.resourceinstanceid,
         'ancestral_remains', COALESCE(b0.ancestral_remains, '[]'::jsonb),
         'site_visit_details', b1.site_visit_details,
-        'site_visit_location', COALESCE(b2.site_visit_location, '[]'::jsonb),
-        'related_documents', b3.related_documents,
+        'related_documents', b2.related_documents,
+        'site_visit_location', b3.site_visit_location,
         'remarks_and_recommendations', b4.remarks_and_recommendations,
         'identification', b5.identification,
         'archaeological_data', b6.archaeological_data
@@ -46,15 +53,20 @@ SELECT
 FROM public.resource_instances r
 LEFT JOIN site_visit.mv_ancestral_remains b0 ON b0.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_site_visit_details b1 ON b1.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_site_visit_location b2 ON b2.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_related_documents b3 ON b3.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_related_documents b2 ON b2.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_site_visit_location b3 ON b3.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_remarks_and_recommendations b4 ON b4.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_identification b5 ON b5.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN site_visit.mv_archaeological_data b6 ON b6.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN site_visit.mv_geom_site_visit_location g_site_visit_location ON g_site_visit_location.resourceinstanceid = r.resourceinstanceid
-WHERE r.graphid = '2da1c15f-1ab6-4122-9dbc-d10da693ac79'::uuid;
+LEFT JOIN site_visit.mv_geom_proposed_unprotected_area g_proposed_unprotected_area ON g_proposed_unprotected_area.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN site_visit.mv_geom_spatial_location g_spatial_location ON g_spatial_location.resourceinstanceid = r.resourceinstanceid
+WHERE r.graphid = '2da1c15f-1ab6-4122-9dbc-d10da693ac79'::uuid
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON site_visit.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON site_visit.mv_resource USING GIN (resource jsonb_path_ops);
-CREATE INDEX mv_resource_site_visit_location_gix      ON site_visit.mv_resource USING GIST (site_visit_location_geom);
-CREATE INDEX mv_resource_site_visit_location_poly_gix ON site_visit.mv_resource USING GIST (site_visit_location_polygons);
+CREATE INDEX mv_resource_proposed_unprotected_area_gix      ON site_visit.mv_resource USING GIST (proposed_unprotected_area_geom);
+CREATE INDEX mv_resource_proposed_unprotected_area_poly_gix ON site_visit.mv_resource USING GIST (proposed_unprotected_area_polygons);
+CREATE INDEX mv_resource_spatial_location_gix      ON site_visit.mv_resource USING GIST (spatial_location_geom);
+CREATE INDEX mv_resource_spatial_location_poly_gix ON site_visit.mv_resource USING GIST (spatial_location_polygons);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource done %', clock_timestamp(); END $$;

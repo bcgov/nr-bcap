@@ -7,11 +7,12 @@ DECLARE
     mv   text;
 BEGIN
     FOREACH mv IN ARRAY ARRAY[
-        'site_visit.mv_geom_site_visit_location',
+        'site_visit.mv_geom_proposed_unprotected_area',
+        'site_visit.mv_geom_spatial_location',
         'site_visit.mv_ancestral_remains',
         'site_visit.mv_site_visit_details',
-        'site_visit.mv_site_visit_location',
         'site_visit.mv_related_documents',
+        'site_visit.mv_site_visit_location',
         'site_visit.mv_remarks_and_recommendations',
         'site_visit.mv_identification',
         'site_visit.mv_archaeological_data',

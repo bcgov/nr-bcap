@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- information_carrier  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_information_carrier start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_information_carrier CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_information_carrier AS
 WITH information_carrier AS (
@@ -28,6 +29,8 @@ WITH information_carrier AS (
     WHERE t.nodegroupid = '9f210d2d-e74a-11e6-84a6-026d961c88e6'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS information_carrier FROM information_carrier;
+SELECT resourceinstanceid, arr AS information_carrier FROM information_carrier
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_information_carrier_pk ON publication.mv_information_carrier (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_information_carrier done %', clock_timestamp(); END $$;

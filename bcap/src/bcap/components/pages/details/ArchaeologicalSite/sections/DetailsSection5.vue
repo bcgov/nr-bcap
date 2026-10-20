@@ -78,23 +78,8 @@ const hasDimensions = computed(() => {
 });
 
 const hasBoundaryDescription = computed(() => {
-    return (
-        siteBoundaryDescriptionTableData.value?.some((item) => {
-            const description = item.aliased_data?.site_boundary_description;
-
-            if (!description || Array.isArray(description)) return false;
-
-            const displayValue =
-                'display_value' in description
-                    ? description.display_value
-                    : null;
-
-            return (
-                displayValue &&
-                typeof displayValue === 'string' &&
-                displayValue.trim() !== ''
-            );
-        }) ?? false
+    return !isEmpty(
+        props.data?.aliased_data?.site_boundary_description as AliasedNodeData,
     );
 });
 

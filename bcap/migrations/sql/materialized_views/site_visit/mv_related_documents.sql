@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- related_documents  (cardinality 1)  children: related_site_documents, publication_reference, site_images
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_related_documents start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_related_documents CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_related_documents AS
 WITH related_site_documents AS (
@@ -70,6 +71,8 @@ related_documents AS (
     WHERE t.nodegroupid = '44713ace-babc-4ebe-b2f6-084ed0060f2c'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS related_documents FROM related_documents;
+SELECT resourceinstanceid, obj AS related_documents FROM related_documents
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_related_documents_pk ON site_visit.mv_related_documents (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_related_documents done %', clock_timestamp(); END $$;

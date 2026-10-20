@@ -2,6 +2,7 @@
 
 CREATE OR REPLACE VIEW site_visit.resource_flat AS SELECT * FROM site_visit.mv_resource_flat;
 CREATE OR REPLACE VIEW site_visit.site_visit_location_flat AS SELECT * FROM site_visit.mv_site_visit_location_flat;
+CREATE OR REPLACE VIEW site_visit.file_attachments AS SELECT * FROM site_visit.mv_file_attachments;
 
 COMMENT ON VIEW site_visit.resource_flat IS
 'Flat site_visit records, one row per resource. Cardinality-n values are delimiter-joined text (" | " between tiles, "; " within a tile).';

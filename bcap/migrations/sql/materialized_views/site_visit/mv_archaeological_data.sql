@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- archaeological_data  (cardinality 1)  children: archaeological_culture, stratigraphy, additional_site_typology, site_disturbance, chronology, cultural_material, archaeological_feature
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_archaeological_data start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_archaeological_data CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_archaeological_data AS
 WITH archaeological_culture AS (
@@ -122,6 +123,8 @@ archaeological_data AS (
     WHERE t.nodegroupid = '3648fb88-1401-11f0-acd5-0242ac170007'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS archaeological_data FROM archaeological_data;
+SELECT resourceinstanceid, obj AS archaeological_data FROM archaeological_data
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_archaeological_data_pk ON site_visit.mv_archaeological_data (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_archaeological_data done %', clock_timestamp(); END $$;
