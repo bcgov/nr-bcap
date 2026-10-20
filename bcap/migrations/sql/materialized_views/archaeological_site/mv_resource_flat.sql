@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_resource_flat AS
 SELECT
@@ -99,7 +100,7 @@ SELECT
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'remark_keyword')) AS remark_keyword_count,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'name', ' | ', '; ') AS restricted_document,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'file_id', ' | ', '; ') AS restricted_document_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'file_id', ' | ', '; '), ' | ', '; ') AS restricted_document_file_paths,
+    arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'restricted_document', '{}'::text[], 'restricted_document', 'path', ' | ', '; ') AS restricted_document_file_paths,
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'restricted_document')) AS restricted_document_count,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'hca_contravention', '{}'::text[], 'inventory_remark', ' | ') AS inventory_remark,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'hca_contravention', '{}'::text[], 'contravention_address', ' | ') AS contravention_address,
@@ -108,7 +109,7 @@ SELECT
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'hca_contravention')) AS hca_contravention_count,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'name', ' | ', '; ') AS contravention_document,
     arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'file_id', ' | ', '; ') AS contravention_document_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'file_id', ' | ', '; '), ' | ', '; ') AS contravention_document_file_paths,
+    arches_util.deep_csv_nested(r.remarks_and_restricted_information -> 'contravention_document', '{}'::text[], 'contravention_document', 'path', ' | ', '; ') AS contravention_document_file_paths,
     jsonb_array_length(arches_util.as_array(r.remarks_and_restricted_information -> 'contravention_document')) AS contravention_document_count,
     arches_util.deep_csv(r.remarks_and_restricted_information -> 'restricted_information', '{}'::text[], 'restricted_entry_date', ' | ') AS restricted_entry_date,
     arches_util.deep_res_csv(r.remarks_and_restricted_information -> 'restricted_information', '{}'::text[], 'restricted_person', ' | ') AS restricted_person,
@@ -128,14 +129,14 @@ SELECT
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_document_type', 'list_item_id', ' | ', '; ') AS related_document_type_ids,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'name', ' | ', '; ') AS related_site_documents,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; ') AS related_site_documents_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; '), ' | ', '; ') AS related_site_documents_file_paths,
+    arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'path', ' | ', '; ') AS related_site_documents_file_paths,
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'related_site_documents')) AS related_site_documents_count,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_type', 'label', ' | ', '; ') AS image_type,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_type', 'list_item_id', ' | ', '; ') AS image_type_ids,
     arches_util.deep_csv(r.related_documents -> 'site_images', '{}'::text[], 'photographer', ' | ') AS photographer,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'name', ' | ', '; ') AS site_images,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; ') AS site_images_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; '), ' | ', '; ') AS site_images_file_paths,
+    arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'path', ' | ', '; ') AS site_images_file_paths,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'label', ' | ', '; ') AS image_view,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'list_item_id', ' | ', '; ') AS image_view_ids,
     arches_util.deep_csv(r.related_documents -> 'site_images', '{}'::text[], 'image_description', ' | ') AS image_description,
@@ -146,9 +147,24 @@ SELECT
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'site_images')) AS site_images_count,
     arches_util.deep_res_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', ' | ', '; ') AS publication_reference,
     arches_util.deep_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', NULL, ' | ', '; ') AS publication_reference_ids,
-    jsonb_array_length(arches_util.as_array(r.related_documents -> 'publication_reference')) AS publication_reference_count
-FROM archaeological_site.mv_resource r;
+    jsonb_array_length(arches_util.as_array(r.related_documents -> 'publication_reference')) AS publication_reference_count,
+    latest_sd.latest_site_decision AS latest_site_decision
+FROM archaeological_site.mv_resource r
+LEFT JOIN LATERAL (
+    SELECT (
+        SELECT jsonb_build_array(elem)
+        FROM jsonb_array_elements(
+            arches_util.as_array(
+                r.identification_and_registration -> 'site_decision'
+            )
+        ) AS elem
+        ORDER BY (elem ->> 'decision_date')::date DESC NULLS LAST
+        LIMIT 1
+    ) AS latest_site_decision
+) latest_sd ON true
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON archaeological_site.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_resource_flat done %', clock_timestamp(); END $$;
 CREATE INDEX mv_resource_flat_site_boundary_gix ON archaeological_site.mv_resource_flat USING GIST (site_boundary_geom);
 CREATE INDEX mv_resource_flat_unprotected_area_gix ON archaeological_site.mv_resource_flat USING GIST (unprotected_area_geom);

@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS site_visit;
 
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_geom_spatial_location start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_geom_spatial_location CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_geom_spatial_location AS
 WITH per_tile AS (
@@ -44,10 +45,12 @@ SELECT resourceinstanceid,
              ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS spatial_location_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
              ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS spatial_location_polygons
-FROM fixed;
+FROM fixed
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_geom_spatial_location_pk   ON site_visit.mv_geom_spatial_location (resourceinstanceid);
 CREATE INDEX mv_geom_spatial_location_gix         ON site_visit.mv_geom_spatial_location USING GIST (spatial_location_geom);
 CREATE INDEX mv_geom_spatial_location_poly_gix    ON site_visit.mv_geom_spatial_location USING GIST (spatial_location_polygons);
 CREATE INDEX mv_geom_spatial_location_pt_gix      ON site_visit.mv_geom_spatial_location USING GIST (spatial_location_points);
 CREATE INDEX mv_geom_spatial_location_line_gix    ON site_visit.mv_geom_spatial_location USING GIST (spatial_location_lines);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_geom_spatial_location done %', clock_timestamp(); END $$;

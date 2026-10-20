@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_location_flat CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_site_visit_location_flat AS
 SELECT
@@ -26,6 +27,8 @@ SELECT
     jsonb_array_length(arches_util.as_array(g.t -> 'spatial_location')) AS spatial_location_count
 FROM site_visit.mv_resource r,
      LATERAL jsonb_array_elements(arches_util.as_array(r.site_visit_location))
-             WITH ORDINALITY AS g(t, ord);
+             WITH ORDINALITY AS g(t, ord)
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_visit_location_flat_pk ON site_visit.mv_site_visit_location_flat (resourceinstanceid, site_visit_location_index);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location_flat done %', clock_timestamp(); END $$;

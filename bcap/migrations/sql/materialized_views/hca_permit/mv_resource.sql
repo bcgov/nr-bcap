@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS hca_permit;
 
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_resource start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_resource CASCADE;
 CREATE MATERIALIZED VIEW hca_permit.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
@@ -27,7 +28,9 @@ SELECT
     ) AS resource
 FROM public.resource_instances r
 LEFT JOIN hca_permit.mv_permit_identification b0 ON b0.resourceinstanceid = r.resourceinstanceid
-WHERE r.graphid = 'f4b391f1-79d1-4886-ab2d-d72a197a9f21'::uuid;
+WHERE r.graphid = 'f4b391f1-79d1-4886-ab2d-d72a197a9f21'::uuid
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON hca_permit.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON hca_permit.mv_resource USING GIN (resource jsonb_path_ops);
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_resource done %', clock_timestamp(); END $$;

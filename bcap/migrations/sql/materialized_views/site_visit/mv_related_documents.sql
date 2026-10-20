@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- related_documents  (cardinality 1)  children: related_site_documents, publication_reference, site_images
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_related_documents start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_related_documents CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_related_documents AS
 WITH related_site_documents AS (
@@ -24,7 +25,7 @@ WITH related_site_documents AS (
            jsonb_agg(jsonb_build_object(
             'related_document_description', arches_util.i18n_text(t.tiledata -> '844ae10f-b38b-4706-8fac-8804d04ab05e'),
             'related_document_type', arches_util.reference_flat(t.tiledata -> 'acbdadfa-2ccf-4a68-9497-56d36dbd1021'),
-            'related_site_documents', arches_util.file_list(t.tiledata -> '55f5927c-8279-4864-ba1d-2f288ca46fcf')
+            'related_site_documents', arches_util.file_list_with_paths(t.tiledata -> '55f5927c-8279-4864-ba1d-2f288ca46fcf')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '55f5927c-8279-4864-ba1d-2f288ca46fcf'::uuid
@@ -44,7 +45,7 @@ site_images AS (
            jsonb_agg(jsonb_build_object(
             'primary_image', NULLIF(t.tiledata ->> '696b4699-bc65-4d0e-8d48-f2a211fe5e3a', '')::boolean,
             'image_type', arches_util.reference_flat(t.tiledata -> '98c6f7ee-5c7f-4287-aeed-0168e5c40773'),
-            'site_images', arches_util.file_list(t.tiledata -> 'a6536975-292e-47d1-8ebe-7e83092438bd'),
+            'site_images', arches_util.file_list_with_paths(t.tiledata -> 'a6536975-292e-47d1-8ebe-7e83092438bd'),
             'photographer', arches_util.i18n_text(t.tiledata -> 'd20d1438-701d-47e9-8f93-7a460f3bba75'),
             'image_view', arches_util.reference_flat(t.tiledata -> 'c0dbd7b1-9c2b-4c27-96f3-17cb5aad7d25'),
             'image_description', arches_util.i18n_text(t.tiledata -> '10d83dfd-49d8-4bf3-9977-4acbc809b7b8'),
@@ -70,6 +71,8 @@ related_documents AS (
     WHERE t.nodegroupid = '44713ace-babc-4ebe-b2f6-084ed0060f2c'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS related_documents FROM related_documents;
+SELECT resourceinstanceid, obj AS related_documents FROM related_documents
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_related_documents_pk ON site_visit.mv_related_documents (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_related_documents done %', clock_timestamp(); END $$;

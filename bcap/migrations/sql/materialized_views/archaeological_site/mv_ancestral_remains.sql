@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- ancestral_remains  (cardinality 1)  children: restricted_ancestral_remains_remark
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_ancestral_remains start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_ancestral_remains CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_ancestral_remains AS
 WITH restricted_ancestral_remains_remark AS (
@@ -40,6 +41,8 @@ ancestral_remains AS (
     WHERE t.nodegroupid = '14179ca2-64ad-11f0-a4ef-6e5bb479055b'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS ancestral_remains FROM ancestral_remains;
+SELECT resourceinstanceid, obj AS ancestral_remains FROM ancestral_remains
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_ancestral_remains_pk ON archaeological_site.mv_ancestral_remains (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_ancestral_remains done %', clock_timestamp(); END $$;

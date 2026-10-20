@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- authors  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_authors start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_authors CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_authors AS
 WITH authors AS (
@@ -29,6 +30,8 @@ WITH authors AS (
     WHERE t.nodegroupid = 'c03e8f18-bc30-11ed-bf42-5254004d77d3'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS authors FROM authors;
+SELECT resourceinstanceid, arr AS authors FROM authors
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_authors_pk ON publication.mv_authors (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_authors done %', clock_timestamp(); END $$;

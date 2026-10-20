@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_resource_flat AS
 SELECT
@@ -54,7 +55,7 @@ SELECT
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_document_type', 'list_item_id', ' | ', '; ') AS related_document_type_ids,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'name', ' | ', '; ') AS related_site_documents,
     arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; ') AS related_site_documents_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'file_id', ' | ', '; '), ' | ', '; ') AS related_site_documents_file_paths,
+    arches_util.deep_csv_nested(r.related_documents -> 'related_site_documents', '{}'::text[], 'related_site_documents', 'path', ' | ', '; ') AS related_site_documents_file_paths,
     jsonb_array_length(arches_util.as_array(r.related_documents -> 'related_site_documents')) AS related_site_documents_count,
     arches_util.deep_res_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', ' | ', '; ') AS publication_reference,
     arches_util.deep_csv_nested(r.related_documents -> 'publication_reference', '{}'::text[], 'publication_reference', NULL, ' | ', '; ') AS publication_reference_ids,
@@ -64,7 +65,7 @@ SELECT
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_type', 'list_item_id', ' | ', '; ') AS image_type_ids,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'name', ' | ', '; ') AS site_images,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; ') AS site_images_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'file_id', ' | ', '; '), ' | ', '; ') AS site_images_file_paths,
+    arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'site_images', 'path', ' | ', '; ') AS site_images_file_paths,
     arches_util.deep_csv(r.related_documents -> 'site_images', '{}'::text[], 'photographer', ' | ') AS photographer,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'label', ' | ', '; ') AS image_view,
     arches_util.deep_csv_nested(r.related_documents -> 'site_images', '{}'::text[], 'image_view', 'list_item_id', ' | ', '; ') AS image_view_ids,
@@ -144,8 +145,10 @@ SELECT
     arches_util.deep_csv_nested(r.site_visit_details -> 'site_visit_team' -> 'team_member', '{}'::text[], 'member_roles', 'label', ' | ', '; ') AS member_roles,
     arches_util.deep_csv_nested(r.site_visit_details -> 'site_visit_team' -> 'team_member', '{}'::text[], 'member_roles', 'list_item_id', ' | ', '; ') AS member_roles_ids,
     jsonb_array_length(arches_util.as_array(r.site_visit_details -> 'site_visit_team' -> 'team_member')) AS team_member_count
-FROM site_visit.mv_resource r;
+FROM site_visit.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON site_visit.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_resource_flat done %', clock_timestamp(); END $$;
 CREATE INDEX mv_resource_flat_proposed_unprotected_area_gix ON site_visit.mv_resource_flat USING GIST (proposed_unprotected_area_geom);
 CREATE INDEX mv_resource_flat_spatial_location_gix ON site_visit.mv_resource_flat USING GIST (spatial_location_geom);

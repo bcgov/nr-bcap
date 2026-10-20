@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- external_url  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_external_url start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_external_url CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_external_url AS
 WITH external_url AS (
@@ -29,6 +30,8 @@ WITH external_url AS (
     WHERE t.nodegroupid = '3ee73f28-ca40-11ed-af48-5254004d77d3'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS external_url FROM external_url;
+SELECT resourceinstanceid, arr AS external_url FROM external_url
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_external_url_pk ON archaeological_site.mv_external_url (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_external_url done %', clock_timestamp(); END $$;

@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS repository;
 -- ---------------------------------------------------------------------
 -- contact_information  (cardinality 1)  children: physical_location
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_contact_information start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_contact_information CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_contact_information AS
 WITH geom_physical_location AS (
@@ -53,6 +54,8 @@ contact_information AS (
     WHERE t.nodegroupid = 'ba927470-14d5-11ec-a57a-5254008afee6'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS contact_information FROM contact_information;
+SELECT resourceinstanceid, obj AS contact_information FROM contact_information
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_contact_information_pk ON repository.mv_contact_information (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_contact_information done %', clock_timestamp(); END $$;

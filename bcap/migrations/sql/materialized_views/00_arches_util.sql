@@ -171,6 +171,35 @@ RETURNS jsonb LANGUAGE sql IMMUTABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS
 $$;
 
 
+-- Like file_list but enriches each object with 'path' from public.files.
+-- STABLE (not IMMUTABLE) because it reads public.files.
+-- Used in the branch MVs so path resolution happens once per tile rather than
+-- per-row at flat MV creation time.
+CREATE OR REPLACE FUNCTION arches_util.file_list_with_paths(val jsonb, lang text DEFAULT 'en')
+RETURNS jsonb LANGUAGE sql STABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS $$
+    SELECT CASE WHEN jsonb_typeof(val) <> 'array' THEN NULL ELSE COALESCE((
+        SELECT jsonb_agg(jsonb_build_object(
+            'file_id',       item ->> 'file_id',
+            'name',          item ->> 'name',
+            'url',           item ->> 'url',
+            'size',          NULLIF(item ->> 'size', '')::bigint,
+            'mime_type',     item ->> 'type',
+            'status',        item ->> 'status',
+            'title',         arches_util.i18n_text(item -> 'title',       lang),
+            'alt_text',      arches_util.i18n_text(item -> 'altText',     lang),
+            'attribution',   arches_util.i18n_text(item -> 'attribution', lang),
+            'description',   arches_util.i18n_text(item -> 'description', lang),
+            'last_modified', CASE WHEN (item ->> 'lastModified') ~ '^[0-9]+$'
+                THEN to_char(to_timestamp((item ->> 'lastModified')::bigint / 1000.0)
+                             AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') END,
+            'path',          COALESCE(f.path, '')
+        ) ORDER BY COALESCE(NULLIF(item ->> 'index', '')::int, 2147483647), t.ord)
+        FROM jsonb_array_elements(val) WITH ORDINALITY AS t(item, ord)
+        LEFT JOIN public.files f ON f.fileid = (item ->> 'file_id')::uuid
+    ), '[]'::jsonb) END;
+$$;
+
+
 -- Arches `url` datatype -> {"url": ..., "label": ..., "raw": ...}
 -- Confirmed shape: {"url": "https://...", "url_label": "..."} with url_label a
 -- PLAIN string. Falls back to a bare string, and if the value is NEITHER shape it
@@ -406,7 +435,7 @@ CREATE OR REPLACE FUNCTION arches_util.file_ids_to_paths(
 RETURNS text LANGUAGE sql STABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS $$
     SELECT string_agg(COALESCE(f.path, ''), delim ORDER BY u.i)
     FROM unnest(string_to_array(ids, delim)) WITH ORDINALITY AS u(fid, i)
-    LEFT JOIN public.files f ON f.fileid::text = trim(u.fid);
+    LEFT JOIN public.files f ON f.fileid = trim(u.fid)::uuid;
 $$;
 
 
@@ -416,12 +445,14 @@ $$;
 CREATE OR REPLACE FUNCTION arches_util.file_ids_to_paths_nested(
     ids text, delim text DEFAULT ' | ', inner_delim text DEFAULT '; ')
 RETURNS text LANGUAGE sql STABLE PARALLEL SAFE RETURNS NULL ON NULL INPUT AS $$
-    SELECT string_agg(
-        COALESCE(
-            (SELECT string_agg(COALESCE(f.path, ''), inner_delim ORDER BY j)
-               FROM unnest(string_to_array(grp, inner_delim)) WITH ORDINALITY AS u2(fid, j)
-               LEFT JOIN public.files f ON f.fileid::text = trim(u2.fid)),
-            ''),
-        delim ORDER BY i)
-    FROM unnest(string_to_array(ids, delim)) WITH ORDINALITY AS u1(grp, i);
+    SELECT string_agg(COALESCE(inner_paths, ''), delim ORDER BY outer_ord)
+    FROM (
+        SELECT outer_ord,
+               string_agg(COALESCE(f.path, ''), inner_delim ORDER BY inner_ord) AS inner_paths
+        FROM unnest(string_to_array(ids, delim)) WITH ORDINALITY AS u1(grp, outer_ord)
+        CROSS JOIN LATERAL
+            unnest(string_to_array(grp, inner_delim)) WITH ORDINALITY AS u2(fid, inner_ord)
+        LEFT JOIN public.files f ON f.fileid = trim(u2.fid)::uuid
+        GROUP BY outer_ord
+    ) t;
 $$;

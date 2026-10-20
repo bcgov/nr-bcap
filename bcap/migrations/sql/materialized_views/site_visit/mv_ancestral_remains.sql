@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- ancestral_remains  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_ancestral_remains start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_ancestral_remains CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_ancestral_remains AS
 WITH ancestral_remains AS (
@@ -33,6 +34,8 @@ WITH ancestral_remains AS (
     WHERE t.nodegroupid = '6f96f910-5049-11f0-91cd-0242ac170006'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS ancestral_remains FROM ancestral_remains;
+SELECT resourceinstanceid, arr AS ancestral_remains FROM ancestral_remains
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_ancestral_remains_pk ON site_visit.mv_ancestral_remains (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_ancestral_remains done %', clock_timestamp(); END $$;

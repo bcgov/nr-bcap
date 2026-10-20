@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- identification  (cardinality 1)  children: temporary_number, new_site_names
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_identification start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_identification CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_identification AS
 WITH temporary_number AS (
@@ -55,6 +56,8 @@ identification AS (
     WHERE t.nodegroupid = '37bdda22-140d-11f0-b9bb-0242ac170007'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS identification FROM identification;
+SELECT resourceinstanceid, obj AS identification FROM identification
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_identification_pk ON site_visit.mv_identification (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_identification done %', clock_timestamp(); END $$;

@@ -17,8 +17,8 @@
 --   vw_site_visit                 ON resourceinstanceid
 --   -> vw_site_visit_location     ON resourceinstanceid, site_visit_location_index
 --
--- site_visit_location_geom is the combined PostGIS geometry for all location
--- tiles; per-tile text attributes live in vw_site_visit_location.
+-- spatial_location_geom is the combined PostGIS geometry for all spatial_location
+-- tiles (child of site_visit_location); per-tile text attributes live in vw_site_visit_location.
 
 CREATE SCHEMA IF NOT EXISTS databc;
 
@@ -30,7 +30,7 @@ SELECT
     resourceinstanceid::text                        AS resourceinstanceid,
 
     -- Site Visit Location (resource-level combined geometry)
-    site_visit_location_geom,                                               -- geometry
+    spatial_location_geom,                                                  -- geometry
 
     -- Site Visit Details
     is_site_visit_permitted,                                                -- boolean
@@ -161,9 +161,10 @@ SELECT
     site_visit_location_index,                                              -- integer join key
 
     -- Site Visit Location attributes
+
+    LEFT(boundary_type, 4000)                    AS latest_edit_type,
     LEFT(location_and_access, 4000)                 AS location_and_access,
-    LEFT(latest_edit_type, 4000)                    AS latest_edit_type,
-    LEFT(accuracy_remarks, 4000)                    AS accuracy_remarks,
+    LEFT(boundary_description, 4000)                    AS accuracy_remarks,
 
     -- Biogeography
     LEFT(biogeography_type, 4000)                   AS biogeography_type,
@@ -183,15 +184,28 @@ COMMENT ON VIEW databc.vw_site_visit_location IS
 -- ============================================================
 DO $$
 DECLARE
-    r     record;
-    v_max bigint;
-    src   text;
-    vw    text;
+    r          record;
+    v_max      bigint;
+    src        text;
+    vw         text;
+    _populated boolean;
 BEGIN
     FOR src, vw IN VALUES
-        ('resource_flat',              'vw_site_visit'),
-        ('site_visit_location_flat',   'vw_site_visit_location')
+        ('resource_flat',            'vw_site_visit'),
+        ('site_visit_location_flat', 'vw_site_visit_location')
     LOOP
+        SELECT c.relispopulated INTO _populated
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = 'site_visit'
+          AND c.relname = 'mv_' || src
+          AND c.relkind = 'm';
+
+        IF NOT FOUND OR NOT _populated THEN
+            RAISE WARNING 'Length check skipped for site_visit.% (not yet populated)', src;
+            CONTINUE;
+        END IF;
+
         FOR r IN
             SELECT column_name
             FROM information_schema.columns

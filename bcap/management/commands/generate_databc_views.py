@@ -172,6 +172,8 @@ class Command(BaseCommand):
         arches_slug = cfg["arches_slug"]
         flat_grains = cfg["flat_grains"]
         view_names = cfg.get("view_names", {})
+        extra_flat_select = cfg.get("extra_flat_select", [])
+        extra_flat_joins = cfg.get("extra_flat_joins", [])
         schema = arches_slug.replace("-", "_")
 
         try:
@@ -289,6 +291,8 @@ class Command(BaseCommand):
             SLUG=slug,
             FLAT_GRAINS=flat_grains,
             FLAT_GRAIN_VIEW_NAMES=view_names,
+            EXTRA_FLAT_SELECT=extra_flat_select,
+            EXTRA_FLAT_JOINS=extra_flat_joins,
             NG=ng_list,
         )
 

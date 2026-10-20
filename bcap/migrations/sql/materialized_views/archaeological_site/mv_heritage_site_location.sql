@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- heritage_site_location  (cardinality n)  children: site_tenure, biogeography, elevation, bc_property_address
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_heritage_site_location start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_heritage_site_location CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_heritage_site_location AS
 WITH site_tenure_type AS (
@@ -125,6 +126,8 @@ heritage_site_location AS (
     WHERE t.nodegroupid = '1b62393e-0d0f-11ed-98c2-5254008afee6'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS heritage_site_location FROM heritage_site_location;
+SELECT resourceinstanceid, arr AS heritage_site_location FROM heritage_site_location
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_heritage_site_location_pk ON archaeological_site.mv_heritage_site_location (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_heritage_site_location done %', clock_timestamp(); END $$;

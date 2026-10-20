@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS publication;
 
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
@@ -42,7 +43,9 @@ LEFT JOIN publication.mv_copyright_type b2 ON b2.resourceinstanceid = r.resource
 LEFT JOIN publication.mv_keyword b3 ON b3.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN publication.mv_authors b4 ON b4.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN publication.mv_publication_details b5 ON b5.resourceinstanceid = r.resourceinstanceid
-WHERE r.graphid = '3caf329f-b8f7-11e6-84a5-026d961c88e6'::uuid;
+WHERE r.graphid = '3caf329f-b8f7-11e6-84a5-026d961c88e6'::uuid
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON publication.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON publication.mv_resource USING GIN (resource jsonb_path_ops);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource done %', clock_timestamp(); END $$;

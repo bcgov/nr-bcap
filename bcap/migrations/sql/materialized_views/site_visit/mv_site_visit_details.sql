@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- site_visit_details  (cardinality 1)  children: site_visit_team
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_details start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_details CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_site_visit_details AS
 WITH team_member AS (
@@ -59,6 +60,8 @@ site_visit_details AS (
     WHERE t.nodegroupid = '887edb3a-df58-11ef-8fa3-0242ac170009'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS site_visit_details FROM site_visit_details;
+SELECT resourceinstanceid, obj AS site_visit_details FROM site_visit_details
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_visit_details_pk ON site_visit.mv_site_visit_details (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_details done %', clock_timestamp(); END $$;

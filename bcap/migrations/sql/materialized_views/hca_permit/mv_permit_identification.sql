@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS hca_permit;
 -- ---------------------------------------------------------------------
 -- permit_identification  (cardinality 1)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_permit_identification start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_permit_identification CASCADE;
 CREATE MATERIALIZED VIEW hca_permit.mv_permit_identification AS
 WITH permit_identification AS (
@@ -31,6 +32,8 @@ WITH permit_identification AS (
     WHERE t.nodegroupid = '588c9c3c-df62-11ef-9ad0-0242ac170009'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS permit_identification FROM permit_identification;
+SELECT resourceinstanceid, obj AS permit_identification FROM permit_identification
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_permit_identification_pk ON hca_permit.mv_permit_identification (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_permit_identification done %', clock_timestamp(); END $$;

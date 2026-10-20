@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS repository;
 
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_resource start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_resource CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
@@ -40,9 +41,11 @@ LEFT JOIN repository.mv_contact_information b0 ON b0.resourceinstanceid = r.reso
 LEFT JOIN repository.mv_repository_notes b1 ON b1.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN repository.mv_repository_identifier b2 ON b2.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN repository.mv_geom_physical_location g_physical_location ON g_physical_location.resourceinstanceid = r.resourceinstanceid
-WHERE r.graphid = '3e6a2880-14d4-11ec-9df0-5254008afee6'::uuid;
+WHERE r.graphid = '3e6a2880-14d4-11ec-9df0-5254008afee6'::uuid
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON repository.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON repository.mv_resource USING GIN (resource jsonb_path_ops);
 CREATE INDEX mv_resource_physical_location_gix      ON repository.mv_resource USING GIST (physical_location_geom);
 CREATE INDEX mv_resource_physical_location_poly_gix ON repository.mv_resource USING GIST (physical_location_polygons);
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_resource done %', clock_timestamp(); END $$;

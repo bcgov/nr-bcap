@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_resource_flat AS
 SELECT
@@ -21,12 +22,12 @@ SELECT
     arches_util.a2csv(r.reference_link -> 'repositories', NULL, ' | ') AS repositories_ids,
     arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'name', ' | ', '; ') AS information_carrier,
     arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'file_id', ' | ', '; ') AS information_carrier_file_ids,
-    arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'file_id', ' | ', '; '), ' | ', '; ') AS information_carrier_file_paths,
+    arches_util.deep_csv_nested(r.information_carrier, '{}'::text[], 'information_carrier', 'path', ' | ', '; ') AS information_carrier_file_paths,
     jsonb_array_length(arches_util.as_array(r.information_carrier)) AS information_carrier_count,
     (r.copyright_type ->> 'distribution_permitted')::boolean AS distribution_permitted,
     arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'name', ' | ') AS signed_agreement,
     arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'file_id', ' | ') AS signed_agreement_file_ids,
-    arches_util.file_ids_to_paths(arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'file_id', ' | '), ' | ') AS signed_agreement_file_paths,
+    arches_util.a2csv(r.copyright_type -> 'signed_agreement', 'path', ' | ') AS signed_agreement_file_paths,
     r.copyright_type ->> 'agreement_text' AS agreement_text,
     arches_util.a2csv(r.copyright_type -> 'copyright_type', 'label', ' | ') AS copyright_type,
     arches_util.a2csv(r.copyright_type -> 'copyright_type', 'list_item_id', ' | ') AS copyright_type_ids,
@@ -51,6 +52,8 @@ SELECT
     arches_util.deep_csv_nested(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier_type', 'list_item_id', ' | ', '; ') AS publication_identifier_type_ids,
     arches_util.deep_csv(r.publication_details -> 'publication_identifier', '{}'::text[], 'publication_identifier', ' | ') AS publication_identifier,
     jsonb_array_length(arches_util.as_array(r.publication_details -> 'publication_identifier')) AS publication_identifier_count
-FROM publication.mv_resource r;
+FROM publication.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON publication.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource_flat done %', clock_timestamp(); END $$;

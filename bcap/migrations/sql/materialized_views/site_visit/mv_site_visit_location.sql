@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS site_visit;
 -- ---------------------------------------------------------------------
 -- site_visit_location  (cardinality 1)  children: biogeography, location_and_access, spatial_location
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_site_visit_location CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_site_visit_location AS
 WITH biogeography AS (
@@ -91,6 +92,8 @@ site_visit_location AS (
     WHERE t.nodegroupid = '736d222a-cedb-4671-9ab5-d6f14a532238'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS site_visit_location FROM site_visit_location;
+SELECT resourceinstanceid, obj AS site_visit_location FROM site_visit_location
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_visit_location_pk ON site_visit.mv_site_visit_location (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_site_visit_location done %', clock_timestamp(); END $$;

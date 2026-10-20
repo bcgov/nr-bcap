@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- remarks_and_restricted_information  (cardinality 1)  children: remark_keyword, restricted_document, hca_contravention, contravention_document, restricted_information, general_remark_information, conviction
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_remarks_and_restricted_information start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_remarks_and_restricted_information CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_remarks_and_restricted_information AS
 WITH remark_keyword AS (
@@ -31,7 +32,7 @@ WITH remark_keyword AS (
 restricted_document AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'restricted_document', arches_util.file_list(t.tiledata -> '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5')
+            'restricted_document', arches_util.file_list_with_paths(t.tiledata -> '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5'::uuid
@@ -52,7 +53,7 @@ hca_contravention AS (
 contravention_document AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'contravention_document', arches_util.file_list(t.tiledata -> '1bebc404-61a5-11f0-9674-3a7a4e6803c5')
+            'contravention_document', arches_util.file_list_with_paths(t.tiledata -> '1bebc404-61a5-11f0-9674-3a7a4e6803c5')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '1bebc404-61a5-11f0-9674-3a7a4e6803c5'::uuid
@@ -112,6 +113,8 @@ remarks_and_restricted_information AS (
     WHERE t.nodegroupid = '75c91464-619f-11f0-acf4-3a7a4e6803c5'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS remarks_and_restricted_information FROM remarks_and_restricted_information;
+SELECT resourceinstanceid, obj AS remarks_and_restricted_information FROM remarks_and_restricted_information
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_remarks_and_restricted_information_pk ON archaeological_site.mv_remarks_and_restricted_information (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_remarks_and_restricted_information done %', clock_timestamp(); END $$;

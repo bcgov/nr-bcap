@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- keyword  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_keyword start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_keyword CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_keyword AS
 WITH keyword AS (
@@ -28,6 +29,8 @@ WITH keyword AS (
     WHERE t.nodegroupid = 'b5f5b1ed-e74a-11e6-84a6-026d961c88e6'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS keyword FROM keyword;
+SELECT resourceinstanceid, arr AS keyword FROM keyword
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_keyword_pk ON publication.mv_keyword (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_keyword done %', clock_timestamp(); END $$;

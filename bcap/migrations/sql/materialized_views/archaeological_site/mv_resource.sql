@@ -14,6 +14,7 @@ SET work_mem             = '128MB';
 
 CREATE SCHEMA IF NOT EXISTS archaeological_site;
 
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_resource start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_resource CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
@@ -65,7 +66,8 @@ LEFT JOIN archaeological_site.mv_heritage_site_location b7 ON b7.resourceinstanc
 LEFT JOIN archaeological_site.mv_related_documents b8 ON b8.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_geom_site_boundary g_site_boundary ON g_site_boundary.resourceinstanceid = r.resourceinstanceid
 LEFT JOIN archaeological_site.mv_geom_unprotected_area g_unprotected_area ON g_unprotected_area.resourceinstanceid = r.resourceinstanceid
-WHERE r.graphid = 'cef9c510-e3e6-4057-ac08-89ad926180b4'::uuid;
+WHERE r.graphid = 'cef9c510-e3e6-4057-ac08-89ad926180b4'::uuid
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_pk  ON archaeological_site.mv_resource (resourceinstanceid);
 CREATE INDEX mv_resource_res        ON archaeological_site.mv_resource USING GIN (resource jsonb_path_ops);
@@ -73,3 +75,4 @@ CREATE INDEX mv_resource_site_boundary_gix      ON archaeological_site.mv_resour
 CREATE INDEX mv_resource_site_boundary_poly_gix ON archaeological_site.mv_resource USING GIST (site_boundary_polygons);
 CREATE INDEX mv_resource_unprotected_area_gix      ON archaeological_site.mv_resource USING GIST (unprotected_area_geom);
 CREATE INDEX mv_resource_unprotected_area_poly_gix ON archaeological_site.mv_resource USING GIST (unprotected_area_polygons);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_resource done %', clock_timestamp(); END $$;

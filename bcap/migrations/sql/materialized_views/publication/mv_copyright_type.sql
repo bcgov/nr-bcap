@@ -17,13 +17,14 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- copyright_type  (cardinality 1)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_copyright_type start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_copyright_type CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_copyright_type AS
 WITH copyright_type AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
             'distribution_permitted', NULLIF(t.tiledata ->> 'a5f5cc8c-c40c-11ed-82cd-5254004d77d3', '')::boolean,
-            'signed_agreement', arches_util.file_list(t.tiledata -> 'a5f5d268-c40c-11ed-82cd-5254004d77d3'),
+            'signed_agreement', arches_util.file_list_with_paths(t.tiledata -> 'a5f5d268-c40c-11ed-82cd-5254004d77d3'),
             'agreement_text', arches_util.i18n_text(t.tiledata -> 'a5f5d6fa-c40c-11ed-82cd-5254004d77d3'),
             'copyright_type', arches_util.reference_flat(t.tiledata -> 'a5f5c7b4-c40c-11ed-82cd-5254004d77d3')
         ) AS obj
@@ -31,6 +32,8 @@ WITH copyright_type AS (
     WHERE t.nodegroupid = 'a5f5c7b4-c40c-11ed-82cd-5254004d77d3'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS copyright_type FROM copyright_type;
+SELECT resourceinstanceid, obj AS copyright_type FROM copyright_type
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_copyright_type_pk ON publication.mv_copyright_type (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_copyright_type done %', clock_timestamp(); END $$;

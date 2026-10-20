@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- publication_details  (cardinality 1)  children: publication_identifier
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_publication_details start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_publication_details CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_publication_details AS
 WITH publication_identifier AS (
@@ -47,6 +48,8 @@ publication_details AS (
     WHERE t.nodegroupid = 'e9366370-bc33-11ed-bf42-5254004d77d3'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS publication_details FROM publication_details;
+SELECT resourceinstanceid, obj AS publication_details FROM publication_details
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_publication_details_pk ON publication.mv_publication_details (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_publication_details done %', clock_timestamp(); END $$;

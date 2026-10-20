@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS repository;
 -- ---------------------------------------------------------------------
 -- repository_notes  (cardinality n)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_repository_notes start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_repository_notes CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_repository_notes AS
 WITH repository_notes AS (
@@ -28,6 +29,8 @@ WITH repository_notes AS (
     WHERE t.nodegroupid = 'd435ce8a-ab99-11ec-affe-5254008afee6'::uuid
     GROUP BY t.resourceinstanceid
 )
-SELECT resourceinstanceid, arr AS repository_notes FROM repository_notes;
+SELECT resourceinstanceid, arr AS repository_notes FROM repository_notes
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_repository_notes_pk ON repository.mv_repository_notes (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_repository_notes done %', clock_timestamp(); END $$;

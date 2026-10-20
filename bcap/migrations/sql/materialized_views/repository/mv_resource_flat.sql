@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_resource_flat AS
 SELECT
@@ -35,7 +36,9 @@ SELECT
     arches_util.deep_csv(r.repository_identifier -> 'alternate_identifiers', '{}'::text[], 'alternate_name', ' | ') AS alternate_name,
     arches_util.deep_csv(r.repository_identifier -> 'alternate_identifiers', '{}'::text[], 'alternate_code', ' | ') AS alternate_code,
     jsonb_array_length(arches_util.as_array(r.repository_identifier -> 'alternate_identifiers')) AS alternate_identifiers_count
-FROM repository.mv_resource r;
+FROM repository.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON repository.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_resource_flat done %', clock_timestamp(); END $$;
 CREATE INDEX mv_resource_flat_physical_location_gix ON repository.mv_resource_flat USING GIST (physical_location_geom);

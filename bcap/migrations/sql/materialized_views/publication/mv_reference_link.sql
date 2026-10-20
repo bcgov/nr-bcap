@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS publication;
 -- ---------------------------------------------------------------------
 -- reference_link  (cardinality 1)
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_reference_link start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS publication.mv_reference_link CASCADE;
 CREATE MATERIALIZED VIEW publication.mv_reference_link AS
 WITH reference_link AS (
@@ -30,6 +31,8 @@ WITH reference_link AS (
     WHERE t.nodegroupid = '037c8f98-be00-11ed-8b5e-5254004d77d3'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS reference_link FROM reference_link;
+SELECT resourceinstanceid, obj AS reference_link FROM reference_link
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_reference_link_pk ON publication.mv_reference_link (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_reference_link done %', clock_timestamp(); END $$;

@@ -9,6 +9,7 @@
 
 SET client_min_messages = warning;
 
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_resource_flat start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS hca_permit.mv_resource_flat CASCADE;
 CREATE MATERIALIZED VIEW hca_permit.mv_resource_flat AS
 SELECT
@@ -20,6 +21,8 @@ SELECT
     arches_util.a2csv(r.permit_identification -> 'hca_permit_type', 'list_item_id', ' | ') AS hca_permit_type_ids,
     arches_util.resource_names_csv(r.permit_identification -> 'permit_holder', ' | ') AS permit_holder,
     arches_util.a2csv(r.permit_identification -> 'permit_holder', NULL, ' | ') AS permit_holder_ids
-FROM hca_permit.mv_resource r;
+FROM hca_permit.mv_resource r
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_resource_flat_pk ON hca_permit.mv_resource_flat (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING hca_permit.mv_resource_flat done %', clock_timestamp(); END $$;

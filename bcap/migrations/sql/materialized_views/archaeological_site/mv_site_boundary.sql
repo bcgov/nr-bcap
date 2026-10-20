@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS archaeological_site;
 -- ---------------------------------------------------------------------
 -- site_boundary  (cardinality 1)  children: unprotected_area
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_site_boundary start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_site_boundary CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_site_boundary AS
 WITH geom_unprotected_area AS (
@@ -59,6 +60,8 @@ site_boundary AS (
     WHERE t.nodegroupid = 'b18223c2-13ef-11f0-8695-0242ac170007'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS site_boundary FROM site_boundary;
+SELECT resourceinstanceid, obj AS site_boundary FROM site_boundary
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_site_boundary_pk ON archaeological_site.mv_site_boundary (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_site_boundary done %', clock_timestamp(); END $$;

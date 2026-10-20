@@ -34,6 +34,8 @@ class SpecGenerator:
         self.SLUG = spec.SLUG
         self.GRAINS = list(spec.FLAT_GRAINS)
         self.GRAIN_VIEW_NAMES = getattr(spec, "FLAT_GRAIN_VIEW_NAMES", {})
+        self.EXTRA_FLAT_SELECT = getattr(spec, "EXTRA_FLAT_SELECT", [])
+        self.EXTRA_FLAT_JOINS = getattr(spec, "EXTRA_FLAT_JOINS", [])
         self.schema_dir = os.path.join(out_dir, self.SC)
 
         self.BY = {n[0]: n for n in spec.NG}
@@ -71,6 +73,11 @@ class SpecGenerator:
             c.append(n)
             n = self._parent(n)
         return list(reversed(c))
+
+    def _time_sql(self, label):
+        return (
+            f"DO $$ BEGIN RAISE WARNING 'TIMING {label} %', clock_timestamp(); END $$;\n"
+        )
 
     def _geom_field(self, n):
         for f, nid, dt, _ in self.BY.get(n, ("", "", "", "", []))[4]:
@@ -116,7 +123,7 @@ class SpecGenerator:
         if dt == "resource-instance-list":
             return f"arches_util.resource_ids({t}.tiledata -> '{nid}')"
         if dt == "file-list":
-            return f"arches_util.file_list({t}.tiledata -> '{nid}')"
+            return f"arches_util.file_list_with_paths({t}.tiledata -> '{nid}')"
         if dt == "url":
             return f"arches_util.url_obj({t}.tiledata -> '{nid}')"
         if dt == "number":
@@ -207,16 +214,19 @@ class SpecGenerator:
             f"-- ---------------------------------------------------------------------\n"
             f"-- {n}  (cardinality {self._card(n)}){kids}\n"
             f"-- ---------------------------------------------------------------------\n"
-            f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_{n} CASCADE;\n"
+            + self._time_sql(f"{self.SC}.mv_{n} start")
+            + f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_{n} CASCADE;\n"
             f"CREATE MATERIALIZED VIEW {self.SC}.mv_{n} AS\nWITH "
             + ",\n".join(self._subtree(n))
-            + f"\n{sel};\n\n"
+            + f"\n{sel}\nWITH NO DATA;\n\n"
             f"CREATE UNIQUE INDEX mv_{n}_pk ON {self.SC}.mv_{n} (resourceinstanceid);\n"
+            + self._time_sql(f"{self.SC}.mv_{n} done")
         )
 
     def _geom_mv_sql(self, fname, nid, ng_id):
         return (
-            f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_geom_{fname} CASCADE;\n"
+            self._time_sql(f"{self.SC}.mv_geom_{fname} start")
+            + f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_geom_{fname} CASCADE;\n"
             f"CREATE MATERIALIZED VIEW {self.SC}.mv_geom_{fname} AS\n"
             f"WITH per_tile AS (\n"
             f"    SELECT t.resourceinstanceid, t.tileid,\n"
@@ -246,12 +256,13 @@ class SpecGenerator:
             f"             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS {fname}_lines,\n"
             f"       (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL\n"
             f"             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS {fname}_polygons\n"
-            f"FROM fixed;\n\n"
+            f"FROM fixed\nWITH NO DATA;\n\n"
             f"CREATE UNIQUE INDEX mv_geom_{fname}_pk   ON {self.SC}.mv_geom_{fname} (resourceinstanceid);\n"
             f"CREATE INDEX mv_geom_{fname}_gix         ON {self.SC}.mv_geom_{fname} USING GIST ({fname}_geom);\n"
             f"CREATE INDEX mv_geom_{fname}_poly_gix    ON {self.SC}.mv_geom_{fname} USING GIST ({fname}_polygons);\n"
             f"CREATE INDEX mv_geom_{fname}_pt_gix      ON {self.SC}.mv_geom_{fname} USING GIST ({fname}_points);\n"
             f"CREATE INDEX mv_geom_{fname}_line_gix    ON {self.SC}.mv_geom_{fname} USING GIST ({fname}_lines);\n"
+            + self._time_sql(f"{self.SC}.mv_geom_{fname} done")
         )
 
     def _final_mv_sql(self):
@@ -281,7 +292,8 @@ class SpecGenerator:
             for _, f, _ in self.GEOMS
         )
         return (
-            f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_resource CASCADE;\n"
+            self._time_sql(f"{self.SC}.mv_resource start")
+            + f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_resource CASCADE;\n"
             f"CREATE MATERIALIZED VIEW {self.SC}.mv_resource AS\n"
             f"-- resource_instances is the row driver: one row per resource including\n"
             f"-- resources with zero tiles; carries the graphid filter.\n"
@@ -289,10 +301,11 @@ class SpecGenerator:
             f"    r.resourceinstanceid,\n" + "\n".join(cols) + "\n"
             f"    jsonb_build_object(\n{body}\n    ) AS resource\n"
             f"FROM public.resource_instances r\n" + "\n".join(joins) + "\n"
-            f"WHERE r.graphid = '{self.GRAPH_ID}'::uuid;\n\n"
+            f"WHERE r.graphid = '{self.GRAPH_ID}'::uuid\nWITH NO DATA;\n\n"
             f"CREATE UNIQUE INDEX mv_resource_pk  ON {self.SC}.mv_resource (resourceinstanceid);\n"
             f"CREATE INDEX mv_resource_res        ON {self.SC}.mv_resource USING GIN (resource jsonb_path_ops);\n"
             + geom_idx
+            + self._time_sql(f"{self.SC}.mv_resource done")
         )
 
     # -----------------------------------------------------------------------
@@ -336,10 +349,7 @@ class SpecGenerator:
                     (f"{f}_file_ids", f"arches_util.a2csv({v}, 'file_id', {self._D})")
                 )
                 cols.append(
-                    (
-                        f"{f}_file_paths",
-                        f"arches_util.file_ids_to_paths(arches_util.a2csv({v}, 'file_id', {self._D}), {self._D})",
-                    )
+                    (f"{f}_file_paths", f"arches_util.a2csv({v}, 'path', {self._D})")
                 )
             elif dt == "url":
                 cols.append((f, f"{v} ->> 'url'"))
@@ -408,7 +418,7 @@ class SpecGenerator:
                 cols.append(
                     (
                         f"{f}_file_paths",
-                        f"arches_util.file_ids_to_paths_nested(arches_util.deep_csv_nested({arr}, {P}, '{f}', 'file_id', {self._D}, {self._ID}), {self._D}, {self._ID})",
+                        f"arches_util.deep_csv_nested({arr}, {P}, '{f}', 'path', {self._D}, {self._ID})",
                     )
                 )
             elif dt == "url":
@@ -481,10 +491,13 @@ class SpecGenerator:
     def _render_flat(self, name, cols, frm, extra_pk):
         sel = ",\n".join(f"    {e} AS {c}" for c, e in cols)
         idx = f"CREATE UNIQUE INDEX mv_{name}_pk ON {self.SC}.mv_{name} ({extra_pk});\n"
+        query = frm.format(sel=sel).rstrip().rstrip(";")
         return (
-            f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_{name} CASCADE;\n"
+            self._time_sql(f"{self.SC}.mv_{name} start")
+            + f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_{name} CASCADE;\n"
             f"CREATE MATERIALIZED VIEW {self.SC}.mv_{name} AS\n"
-            f"{frm.format(sel=sel)}\n\n{idx}"
+            f"{query}\nWITH NO DATA;\n\n{idx}"
+            + self._time_sql(f"{self.SC}.mv_{name} done")
         )
 
     # -----------------------------------------------------------------------
@@ -697,16 +710,21 @@ class SpecGenerator:
         # Flat MV
         flat_head = self._flat_head()
         res_cols = self._build_table(None)
+        # Append any extra columns configured in databc_config (e.g. lateral join results)
+        res_cols = res_cols + list(self.EXTRA_FLAT_SELECT)
         geom_cols_sql = "".join(
             f"    r.{f}_geom,\n    r.{f}_geom_type,\n    r.{f}_source_valid,\n"
             f"    r.{f}_points,\n    r.{f}_lines,\n    r.{f}_polygons,\n"
             for _, f, _ in self.GEOMS
         )
+        extra_joins_sql = (
+            ("\n" + "\n".join(self.EXTRA_FLAT_JOINS)) if self.EXTRA_FLAT_JOINS else ""
+        )
         res_flat_body = self._render_flat(
             "resource_flat",
             res_cols,
             "SELECT\n    r.resourceinstanceid,\n" + geom_cols_sql + "{sel}\n"
-            f"FROM {self.SC}.mv_resource r;",
+            f"FROM {self.SC}.mv_resource r{extra_joins_sql};",
             "resourceinstanceid",
         )
         for _, f, _ in self.GEOMS:

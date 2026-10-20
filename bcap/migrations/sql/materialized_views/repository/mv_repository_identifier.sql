@@ -17,6 +17,7 @@ CREATE SCHEMA IF NOT EXISTS repository;
 -- ---------------------------------------------------------------------
 -- repository_identifier  (cardinality 1)  children: alternate_identifiers
 -- ---------------------------------------------------------------------
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_repository_identifier start %', clock_timestamp(); END $$;
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_repository_identifier CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_repository_identifier AS
 WITH alternate_identifiers AS (
@@ -41,6 +42,8 @@ repository_identifier AS (
     WHERE t.nodegroupid = 'ea5a7956-14d4-11ec-aa11-5254008afee6'::uuid
     ORDER BY t.resourceinstanceid, COALESCE(t.sortorder, 2147483647), t.tileid
 )
-SELECT resourceinstanceid, obj AS repository_identifier FROM repository_identifier;
+SELECT resourceinstanceid, obj AS repository_identifier FROM repository_identifier
+WITH NO DATA;
 
 CREATE UNIQUE INDEX mv_repository_identifier_pk ON repository.mv_repository_identifier (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_repository_identifier done %', clock_timestamp(); END $$;
