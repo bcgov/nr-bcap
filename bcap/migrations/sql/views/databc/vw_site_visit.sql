@@ -6,7 +6,7 @@
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
---   * File path columns (public.files.path) added alongside each file-list field
+--   * File paths: see companion views vw_site_visit_file_attachments (one row per file)
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 --
 -- Two views are created:
@@ -122,13 +122,11 @@ SELECT
 
     -- Related Site Documents
     LEFT(related_site_documents, 4000)              AS related_site_documents,
-    LEFT(related_site_documents_file_paths, 4000)   AS related_site_documents_file_paths,
     LEFT(related_document_type, 4000)               AS related_document_type,
     LEFT(related_document_description, 4000)        AS related_document_description,
 
     -- Site Images
     LEFT(site_images, 4000)                         AS site_images,
-    LEFT(site_images_file_paths, 4000)              AS site_images_file_paths,
     LEFT(primary_image, 4000)                       AS primary_image,
     LEFT(image_type, 4000)                          AS image_type,
     LEFT(image_view, 4000)                          AS image_view,

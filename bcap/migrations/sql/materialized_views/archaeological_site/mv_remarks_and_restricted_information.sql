@@ -32,7 +32,7 @@ WITH remark_keyword AS (
 restricted_document AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'restricted_document', arches_util.file_list_with_paths(t.tiledata -> '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5')
+            'restricted_document', arches_util.file_list(t.tiledata -> '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '250ed6fe-61a8-11f0-ad02-3a7a4e6803c5'::uuid
@@ -53,7 +53,7 @@ hca_contravention AS (
 contravention_document AS (
     SELECT t.parenttileid AS parenttileid,
            jsonb_agg(jsonb_build_object(
-            'contravention_document', arches_util.file_list_with_paths(t.tiledata -> '1bebc404-61a5-11f0-9674-3a7a4e6803c5')
+            'contravention_document', arches_util.file_list(t.tiledata -> '1bebc404-61a5-11f0-9674-3a7a4e6803c5')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '1bebc404-61a5-11f0-9674-3a7a4e6803c5'::uuid

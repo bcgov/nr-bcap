@@ -7,7 +7,8 @@ DECLARE
     mv   text;
 BEGIN
     FOREACH mv IN ARRAY ARRAY[
-        'publication.mv_resource_flat'
+        'publication.mv_resource_flat',
+        'publication.mv_file_attachments'
     ]
     LOOP
         RAISE NOTICE 'refreshing %', mv;

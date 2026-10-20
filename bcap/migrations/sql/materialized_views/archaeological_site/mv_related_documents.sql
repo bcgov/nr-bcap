@@ -25,7 +25,7 @@ WITH related_site_documents AS (
            jsonb_agg(jsonb_build_object(
             'related_document_description', arches_util.i18n_text(t.tiledata -> '2ad1655e-50ad-11f0-a6c8-0242ac170006'),
             'related_document_type', arches_util.reference_flat(t.tiledata -> '2ad16676-50ad-11f0-a6c8-0242ac170006'),
-            'related_site_documents', arches_util.file_list_with_paths(t.tiledata -> '2ad161ee-50ad-11f0-a6c8-0242ac170006')
+            'related_site_documents', arches_util.file_list(t.tiledata -> '2ad161ee-50ad-11f0-a6c8-0242ac170006')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '2ad161ee-50ad-11f0-a6c8-0242ac170006'::uuid
@@ -36,7 +36,7 @@ site_images AS (
            jsonb_agg(jsonb_build_object(
             'image_type', arches_util.reference_flat(t.tiledata -> 'c8162ad0-01d8-11f0-850c-0242ac170007'),
             'photographer', arches_util.i18n_text(t.tiledata -> 'c8162c2e-01d8-11f0-850c-0242ac170007'),
-            'site_images', arches_util.file_list_with_paths(t.tiledata -> 'c81626e8-01d8-11f0-850c-0242ac170007'),
+            'site_images', arches_util.file_list(t.tiledata -> 'c81626e8-01d8-11f0-850c-0242ac170007'),
             'image_view', arches_util.reference_flat(t.tiledata -> 'c8162d0a-01d8-11f0-850c-0242ac170007'),
             'image_description', arches_util.i18n_text(t.tiledata -> 'c8162df0-01d8-11f0-850c-0242ac170007'),
             'copyright', arches_util.i18n_text(t.tiledata -> 'c8162ecc-01d8-11f0-850c-0242ac170007'),

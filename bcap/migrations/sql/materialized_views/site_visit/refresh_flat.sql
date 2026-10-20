@@ -8,7 +8,8 @@ DECLARE
 BEGIN
     FOREACH mv IN ARRAY ARRAY[
         'site_visit.mv_resource_flat',
-        'site_visit.mv_site_visit_location_flat'
+        'site_visit.mv_site_visit_location_flat',
+        'site_visit.mv_file_attachments'
     ]
     LOOP
         RAISE NOTICE 'refreshing %', mv;

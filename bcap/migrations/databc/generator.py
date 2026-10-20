@@ -75,9 +75,7 @@ class SpecGenerator:
         return list(reversed(c))
 
     def _time_sql(self, label):
-        return (
-            f"DO $$ BEGIN RAISE WARNING 'TIMING {label} %', clock_timestamp(); END $$;\n"
-        )
+        return f"DO $$ BEGIN RAISE WARNING 'TIMING {label} %', clock_timestamp(); END $$;\n"
 
     def _geom_field(self, n):
         for f, nid, dt, _ in self.BY.get(n, ("", "", "", "", []))[4]:
@@ -123,7 +121,7 @@ class SpecGenerator:
         if dt == "resource-instance-list":
             return f"arches_util.resource_ids({t}.tiledata -> '{nid}')"
         if dt == "file-list":
-            return f"arches_util.file_list_with_paths({t}.tiledata -> '{nid}')"
+            return f"arches_util.file_list({t}.tiledata -> '{nid}')"
         if dt == "url":
             return f"arches_util.url_obj({t}.tiledata -> '{nid}')"
         if dt == "number":
@@ -348,9 +346,7 @@ class SpecGenerator:
                 cols.append(
                     (f"{f}_file_ids", f"arches_util.a2csv({v}, 'file_id', {self._D})")
                 )
-                cols.append(
-                    (f"{f}_file_paths", f"arches_util.a2csv({v}, 'path', {self._D})")
-                )
+                # file paths: see {schema}.file_attachments grain view
             elif dt == "url":
                 cols.append((f, f"{v} ->> 'url'"))
                 cols.append((f"{f}_label", f"{v} ->> 'label'"))
@@ -415,12 +411,7 @@ class SpecGenerator:
                         f"arches_util.deep_csv_nested({arr}, {P}, '{f}', 'file_id', {self._D}, {self._ID})",
                     )
                 )
-                cols.append(
-                    (
-                        f"{f}_file_paths",
-                        f"arches_util.deep_csv_nested({arr}, {P}, '{f}', 'path', {self._D}, {self._ID})",
-                    )
-                )
+                # file paths: see {schema}.file_attachments grain view
             elif dt == "url":
                 cols.append(
                     (f, f"arches_util.deep_url_csv({arr}, {P}, '{f}', {self._D})")
@@ -431,6 +422,50 @@ class SpecGenerator:
                         f"arches_util.deep_csv_sub({arr}, {P}, '{f}', 'label', {self._D})",
                     )
                 )
+
+    def _file_list_nodes(self):
+        """Return list of (field_alias, nodeid) for all file-list nodes in the graph."""
+        result = []
+        for ng_alias in self.BY:
+            for f, nid, dt, _ in self._fields(ng_alias):
+                if dt == "file-list":
+                    result.append((f, nid))
+        return result
+
+    def _file_attachment_mv_sql(self, file_nodes):
+        """One-row-per-file-attachment MV that replaces _file_paths CSV columns."""
+        values = ",\n    ".join(f"('{nid}', '{f}')" for f, nid in file_nodes)
+        return (
+            self._time_sql(f"{self.SC}.mv_file_attachments start")
+            + f"DROP MATERIALIZED VIEW IF EXISTS {self.SC}.mv_file_attachments CASCADE;\n"
+            f"CREATE MATERIALIZED VIEW {self.SC}.mv_file_attachments AS\n"
+            f"SELECT\n"
+            f"    r.resourceinstanceid,\n"
+            f"    t.tileid,\n"
+            f"    n.field,\n"
+            f"    (e.ord - 1)::int               AS file_index,\n"
+            f"    (e.item ->> 'file_id')::uuid   AS file_id,\n"
+            f"    e.item ->> 'name'              AS name,\n"
+            f"    COALESCE(f.path, '')           AS path,\n"
+            f"    e.item ->> 'url'               AS url,\n"
+            f"    NULLIF(e.item ->> 'size', '')::bigint AS size,\n"
+            f"    e.item ->> 'type'              AS mime_type,\n"
+            f"    e.item ->> 'status'            AS status\n"
+            f"FROM public.resource_instances r\n"
+            f"JOIN public.tiles t ON t.resourceinstanceid = r.resourceinstanceid\n"
+            f"JOIN (\n"
+            f"    VALUES\n"
+            f"    {values}\n"
+            f") AS n(nodeid, field) ON t.tiledata ? n.nodeid\n"
+            f"CROSS JOIN LATERAL jsonb_array_elements(arches_util.as_array(t.tiledata -> n.nodeid))\n"
+            f"    WITH ORDINALITY AS e(item, ord)\n"
+            f"LEFT JOIN public.files f ON f.fileid = (e.item ->> 'file_id')::uuid\n"
+            f"WHERE r.graphid = '{self.GRAPH_ID}'::uuid\n"
+            f"WITH NO DATA;\n\n"
+            f"CREATE INDEX mv_file_attachments_res    ON {self.SC}.mv_file_attachments (resourceinstanceid);\n"
+            f"CREATE INDEX mv_file_attachments_fileid ON {self.SC}.mv_file_attachments (file_id);\n"
+            + self._time_sql(f"{self.SC}.mv_file_attachments done")
+        )
 
     def _build_table(self, root):
         """Build column list for a flat table. root=None → resource_flat."""
@@ -772,6 +807,15 @@ class SpecGenerator:
                 flat_head + self._render_flat(mv_name, gcols, frm, pk),
             )
 
+        # File attachment grain view (one row per file, replaces _file_paths CSV cols)
+        file_nodes = self._file_list_nodes()
+        has_file_attachments = bool(file_nodes)
+        if has_file_attachments:
+            self._write(
+                "mv_file_attachments.sql",
+                flat_head + self._file_attachment_mv_sql(file_nodes),
+            )
+
         # Flat wrapper views (use stable view_names)
         wraps = [("resource_flat", "resource_flat")] + [
             (f"{self._grain_view_name(g)}_flat", f"{g}_flat") for g in self.GRAINS
@@ -779,6 +823,8 @@ class SpecGenerator:
         fv = "-- GENERATED by manage.py generate_databc_views - do not edit.\n\n"
         for w, m in wraps:
             fv += f"CREATE OR REPLACE VIEW {self.SC}.{w} AS SELECT * FROM {self.SC}.mv_{m};\n"
+        if has_file_attachments:
+            fv += f"CREATE OR REPLACE VIEW {self.SC}.file_attachments AS SELECT * FROM {self.SC}.mv_file_attachments;\n"
         fv += (
             f"\nCOMMENT ON VIEW {self.SC}.resource_flat IS\n"
             f"'Flat {self.SC} records, one row per resource. "
@@ -789,6 +835,8 @@ class SpecGenerator:
 
         # Refresh procedure (flat)
         refresh_flat_mvs = [f"{self.SC}.mv_{m}" for _, m in wraps]
+        if has_file_attachments:
+            refresh_flat_mvs.append(f"{self.SC}.mv_file_attachments")
         self._write(
             "refresh_flat.sql", self._refresh_proc("refresh_flat", refresh_flat_mvs)
         )
@@ -814,4 +862,5 @@ class SpecGenerator:
             "grain_view_names": dict(self.GRAIN_VIEW_NAMES),
             "grain_tables": grain_tables,
             "res_cols": res_cols,
+            "has_file_attachments": has_file_attachments,
         }

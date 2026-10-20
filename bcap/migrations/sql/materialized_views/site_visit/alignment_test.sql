@@ -20,9 +20,8 @@ WITH v AS (
                arches_util.nslots(related_document_type),
                arches_util.nslots(related_document_type_ids),
                arches_util.nslots(related_site_documents),
-               arches_util.nslots(related_site_documents_file_ids),
-               arches_util.nslots(related_site_documents_file_paths)] AS slots,
-         ARRAY['related_document_description', 'related_document_type', 'related_document_type_ids', 'related_site_documents', 'related_site_documents_file_ids', 'related_site_documents_file_paths']::text[] AS colnames
+               arches_util.nslots(related_site_documents_file_ids)] AS slots,
+         ARRAY['related_document_description', 'related_document_type', 'related_document_type_ids', 'related_site_documents', 'related_site_documents_file_ids']::text[] AS colnames
   FROM site_visit.mv_resource_flat WHERE related_site_documents_count > 0
   UNION ALL
   SELECT resourceinstanceid, publication_reference_count AS n, 'resource_flat.publication_reference' AS grp,
@@ -37,7 +36,6 @@ WITH v AS (
                arches_util.nslots(image_type_ids),
                arches_util.nslots(site_images),
                arches_util.nslots(site_images_file_ids),
-               arches_util.nslots(site_images_file_paths),
                arches_util.nslots(photographer),
                arches_util.nslots(image_view),
                arches_util.nslots(image_view_ids),
@@ -45,7 +43,7 @@ WITH v AS (
                arches_util.nslots(copyright),
                arches_util.nslots(image_date),
                arches_util.nslots(image_features)] AS slots,
-         ARRAY['primary_image', 'image_type', 'image_type_ids', 'site_images', 'site_images_file_ids', 'site_images_file_paths', 'photographer', 'image_view', 'image_view_ids', 'image_description', 'copyright', 'image_date', 'image_features']::text[] AS colnames
+         ARRAY['primary_image', 'image_type', 'image_type_ids', 'site_images', 'site_images_file_ids', 'photographer', 'image_view', 'image_view_ids', 'image_description', 'copyright', 'image_date', 'image_features']::text[] AS colnames
   FROM site_visit.mv_resource_flat WHERE site_images_count > 0
   UNION ALL
   SELECT resourceinstanceid, recommendation_count AS n, 'resource_flat.recommendation' AS grp,

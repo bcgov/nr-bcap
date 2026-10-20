@@ -4,9 +4,8 @@
 WITH v AS (
   SELECT resourceinstanceid, information_carrier_count AS n, 'resource_flat.information_carrier' AS grp,
          ARRAY[arches_util.nslots(information_carrier),
-               arches_util.nslots(information_carrier_file_ids),
-               arches_util.nslots(information_carrier_file_paths)] AS slots,
-         ARRAY['information_carrier', 'information_carrier_file_ids', 'information_carrier_file_paths']::text[] AS colnames
+               arches_util.nslots(information_carrier_file_ids)] AS slots,
+         ARRAY['information_carrier', 'information_carrier_file_ids']::text[] AS colnames
   FROM publication.mv_resource_flat WHERE information_carrier_count > 0
   UNION ALL
   SELECT resourceinstanceid, keyword_count AS n, 'resource_flat.keyword' AS grp,

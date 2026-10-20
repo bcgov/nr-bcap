@@ -24,7 +24,7 @@ WITH copyright_type AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
             'distribution_permitted', NULLIF(t.tiledata ->> 'a5f5cc8c-c40c-11ed-82cd-5254004d77d3', '')::boolean,
-            'signed_agreement', arches_util.file_list_with_paths(t.tiledata -> 'a5f5d268-c40c-11ed-82cd-5254004d77d3'),
+            'signed_agreement', arches_util.file_list(t.tiledata -> 'a5f5d268-c40c-11ed-82cd-5254004d77d3'),
             'agreement_text', arches_util.i18n_text(t.tiledata -> 'a5f5d6fa-c40c-11ed-82cd-5254004d77d3'),
             'copyright_type', arches_util.reference_flat(t.tiledata -> 'a5f5c7b4-c40c-11ed-82cd-5254004d77d3')
         ) AS obj

@@ -9,7 +9,8 @@ BEGIN
     FOREACH mv IN ARRAY ARRAY[
         'archaeological_site.mv_resource_flat',
         'archaeological_site.mv_heritage_site_location_flat',
-        'archaeological_site.mv_bc_property_address_flat'
+        'archaeological_site.mv_bc_property_address_flat',
+        'archaeological_site.mv_file_attachments'
     ]
     LOOP
         RAISE NOTICE 'refreshing %', mv;

@@ -23,7 +23,7 @@ CREATE MATERIALIZED VIEW publication.mv_information_carrier AS
 WITH information_carrier AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
-            'information_carrier', arches_util.file_list_with_paths(t.tiledata -> '9f210d2d-e74a-11e6-84a6-026d961c88e6')
+            'information_carrier', arches_util.file_list(t.tiledata -> '9f210d2d-e74a-11e6-84a6-026d961c88e6')
         ) ORDER BY COALESCE(t.sortorder, 2147483647), t.tileid) AS arr
     FROM public.tiles t
     WHERE t.nodegroupid = '9f210d2d-e74a-11e6-84a6-026d961c88e6'::uuid

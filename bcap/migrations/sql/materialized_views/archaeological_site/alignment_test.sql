@@ -78,9 +78,8 @@ WITH v AS (
   UNION ALL
   SELECT resourceinstanceid, restricted_document_count AS n, 'resource_flat.restricted_document' AS grp,
          ARRAY[arches_util.nslots(restricted_document),
-               arches_util.nslots(restricted_document_file_ids),
-               arches_util.nslots(restricted_document_file_paths)] AS slots,
-         ARRAY['restricted_document', 'restricted_document_file_ids', 'restricted_document_file_paths']::text[] AS colnames
+               arches_util.nslots(restricted_document_file_ids)] AS slots,
+         ARRAY['restricted_document', 'restricted_document_file_ids']::text[] AS colnames
   FROM archaeological_site.mv_resource_flat WHERE restricted_document_count > 0
   UNION ALL
   SELECT resourceinstanceid, hca_contravention_count AS n, 'resource_flat.hca_contravention' AS grp,
@@ -93,9 +92,8 @@ WITH v AS (
   UNION ALL
   SELECT resourceinstanceid, contravention_document_count AS n, 'resource_flat.contravention_document' AS grp,
          ARRAY[arches_util.nslots(contravention_document),
-               arches_util.nslots(contravention_document_file_ids),
-               arches_util.nslots(contravention_document_file_paths)] AS slots,
-         ARRAY['contravention_document', 'contravention_document_file_ids', 'contravention_document_file_paths']::text[] AS colnames
+               arches_util.nslots(contravention_document_file_ids)] AS slots,
+         ARRAY['contravention_document', 'contravention_document_file_ids']::text[] AS colnames
   FROM archaeological_site.mv_resource_flat WHERE contravention_document_count > 0
   UNION ALL
   SELECT resourceinstanceid, restricted_information_count AS n, 'resource_flat.restricted_information' AS grp,
@@ -125,9 +123,8 @@ WITH v AS (
                arches_util.nslots(related_document_type),
                arches_util.nslots(related_document_type_ids),
                arches_util.nslots(related_site_documents),
-               arches_util.nslots(related_site_documents_file_ids),
-               arches_util.nslots(related_site_documents_file_paths)] AS slots,
-         ARRAY['related_document_description', 'related_document_type', 'related_document_type_ids', 'related_site_documents', 'related_site_documents_file_ids', 'related_site_documents_file_paths']::text[] AS colnames
+               arches_util.nslots(related_site_documents_file_ids)] AS slots,
+         ARRAY['related_document_description', 'related_document_type', 'related_document_type_ids', 'related_site_documents', 'related_site_documents_file_ids']::text[] AS colnames
   FROM archaeological_site.mv_resource_flat WHERE related_site_documents_count > 0
   UNION ALL
   SELECT resourceinstanceid, site_images_count AS n, 'resource_flat.site_images' AS grp,
@@ -136,7 +133,6 @@ WITH v AS (
                arches_util.nslots(photographer),
                arches_util.nslots(site_images),
                arches_util.nslots(site_images_file_ids),
-               arches_util.nslots(site_images_file_paths),
                arches_util.nslots(image_view),
                arches_util.nslots(image_view_ids),
                arches_util.nslots(image_description),
@@ -144,7 +140,7 @@ WITH v AS (
                arches_util.nslots(image_date),
                arches_util.nslots(image_features),
                arches_util.nslots(primary_image)] AS slots,
-         ARRAY['image_type', 'image_type_ids', 'photographer', 'site_images', 'site_images_file_ids', 'site_images_file_paths', 'image_view', 'image_view_ids', 'image_description', 'copyright', 'image_date', 'image_features', 'primary_image']::text[] AS colnames
+         ARRAY['image_type', 'image_type_ids', 'photographer', 'site_images', 'site_images_file_ids', 'image_view', 'image_view_ids', 'image_description', 'copyright', 'image_date', 'image_features', 'primary_image']::text[] AS colnames
   FROM archaeological_site.mv_resource_flat WHERE site_images_count > 0
   UNION ALL
   SELECT resourceinstanceid, publication_reference_count AS n, 'resource_flat.publication_reference' AS grp,
