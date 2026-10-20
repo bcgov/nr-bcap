@@ -86,9 +86,7 @@ class Command(BaseCommand):
                 self._call_proc(schema, "refresh_flat", concurrent)
 
         elapsed = time.monotonic() - t_total
-        self.stdout.write(
-            self.style.SUCCESS(f"\nDone. Total time: {elapsed:.1f}s")
-        )
+        self.stdout.write(self.style.SUCCESS(f"\nDone. Total time: {elapsed:.1f}s"))
 
     def _call_proc(self, schema, proc, concurrent):
         self.stdout.write(f"    CALL {schema}.{proc}({str(concurrent).lower()}) ...")
