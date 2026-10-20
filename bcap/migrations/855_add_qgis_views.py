@@ -13,22 +13,22 @@ class Migration(migrations.Migration):
     operations = [
         django_migrate_sql.operations.CreateSQL(
             name="bc_labelled_site_visit_geometries",
-            sql="create or replace view public.bc_labelled_site_visit_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'site_visit') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
+            sql="create or replace view public.bc_labelled_site_visit_geometries as\n(\nselect\n    re.name ->> 'en'           as resource_name,\n    g.id,\n    g.tileid,\n    g.resourceinstanceid,\n    g.nodeid,\n    g.featureid,\n    ST_Transform(g.geom, 3005) as geom\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs gr on re2.graphid = gr.graphid and\n                                          gr.slug = 'site_visit') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
             reverse_sql="drop view bc_labelled_site_visit_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
             name="bc_labelled_geojson_geometries",
-            sql="create or replace view public.bc_labelled_geojson_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug in ('archaeological_site', 'site_visit', 'sandcastle')) re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
+            sql="create or replace view public.bc_labelled_geojson_geometries as\n(\nselect\n    re.name ->> 'en'           as resource_name,\n    g.id,\n    g.tileid,\n    g.resourceinstanceid,\n    g.nodeid,\n    g.featureid,\n    ST_Transform(g.geom, 3005) as geom\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs gr on re2.graphid = gr.graphid and\n                                          gr.slug in ('archaeological_site', 'site_visit', 'sandcastle')) re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
             reverse_sql="drop view bc_labelled_geojson_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
             name="bc_labelled_sandcastle_geometries",
-            sql="create or replace view public.bc_labelled_sandcastle_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'sandcastle') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
+            sql="create or replace view public.bc_labelled_sandcastle_geometries as\n(\nselect\n    re.name ->> 'en'           as resource_name,\n    g.id,\n    g.tileid,\n    g.resourceinstanceid,\n    g.nodeid,\n    g.featureid,\n    ST_Transform(g.geom, 3005) as geom\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs gr on re2.graphid = gr.graphid and\n                                          gr.slug = 'sandcastle') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
             reverse_sql="drop view bc_labelled_sandcastle_geometries;",
         ),
         django_migrate_sql.operations.CreateSQL(
             name="bc_labelled_site_geometries",
-            sql="create or replace view public.bc_labelled_site_geometries as\n(\nselect re.name ->> 'en' resource_name, g.*\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs g on re2.graphid = g.graphid and\n                                         g.slug = 'archaeological_site') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
+            sql="create or replace view public.bc_labelled_site_geometries as\n(\nselect\n    re.name ->> 'en'           as resource_name,\n    g.id,\n    g.tileid,\n    g.resourceinstanceid,\n    g.nodeid,\n    g.featureid,\n    ST_Transform(g.geom, 3005) as geom\nfrom geojson_geometries g\n         join (select re2.*\n               from resource_instances re2\n                        join graphs gr on re2.graphid = gr.graphid and\n                                          gr.slug = 'archaeological_site') re\n              on g.resourceinstanceid = re.resourceinstanceid);\n",
             reverse_sql="drop view bc_labelled_site_geometries;",
         ),
     ]

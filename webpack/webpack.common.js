@@ -7,7 +7,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleTracker = require("webpack-bundle-tracker");
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const { VueLoaderPlugin } = require("vue-loader");
+
+const {
+    requireVueLoaderWithTypeResolutionPatch,
+} = require("./webpack-utils/patch-vue-compiler-sfc-type-resolution");
+const { VueLoaderPlugin } = requireVueLoaderWithTypeResolutionPatch();
 
 const {
     buildFilepathLookup,
@@ -537,6 +541,10 @@ module.exports = () => {
                 modules: [
                     Path.resolve(__dirname, PROJECT_RELATIVE_NODE_MODULES_PATH),
                 ],
+                // arches-controlled-lists imports the '@/arches_vue_components/application'
+                // directory, which needs index.ts. This replaces webpack's
+                // defaults, so they are repeated here.
+                extensions: ['.js', '.json', '.wasm', '.ts'],
                 alias: {
                     ...javascriptRelativeFilepathToAbsoluteFilepathLookup,
                     ...templateFilepathLookup,

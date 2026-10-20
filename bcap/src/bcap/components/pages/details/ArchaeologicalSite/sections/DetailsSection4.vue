@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
@@ -14,17 +14,19 @@ import 'primeicons/primeicons.css';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
-import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    ArchaeologicalSiteHeritageSiteLocationAliasedData,
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteLocationTile | undefined;
-        siteVisitData: SiteVisitSchema[];
-        hriaData: HriaDiscontinuedDataSchema | undefined;
+        data: ArchaeologicalSiteHeritageSiteLocationAliasedData | undefined;
+        siteVisitData: SiteVisit[];
+        hriaData: HriaDiscontinuedData | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -47,7 +49,7 @@ const locationAndAccess = computed(() => {
         .map((visit) => ({
             location:
                 visit.aliased_data?.site_visit_location?.aliased_data
-                    ?.location_and_access,
+                    ?.location_and_access?.aliased_data?.location_and_access,
             visitName: visit.descriptors?.en?.name,
         }))
         .filter(
@@ -56,11 +58,21 @@ const locationAndAccess = computed(() => {
         );
 });
 
-const biogeographyColumns = [
+const biogeographyColumns = computed(() => [
     { field: 'biogeography_type', label: 'Type' },
     { field: 'biogeography_name', label: 'Name' },
-    { field: 'biogeography_description', label: 'Description' },
-];
+    { field: 'biogeography_description', label: 'Description', isHtml: true },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
 
 const tenureColumns = [
     { field: 'tenure_type', label: 'Tenure Type' },
@@ -85,7 +97,7 @@ const discontinuedTenureColumns = [
     { field: 'site_jurisdiction', label: 'Jurisdiction' },
     { field: 'tenure_type', label: 'Tenure/Reserves Type' },
     { field: 'tenure_identifier', label: 'Description' },
-    { field: 'tenure_remarks', label: 'Tenure Remarks' },
+    { field: 'tenure_remarks', label: 'Tenure Remarks', isHtml: true },
     { field: 'jurisdiction_entered_date', label: 'Modified On' },
     { field: 'jurisdiction_entered_by', label: 'Modified By' },
 ];
@@ -147,7 +159,7 @@ const streetAddressColumns = [
     { field: 'street_name', label: 'Street Name' },
     { field: 'city', label: 'City' },
     { field: 'postal_code', label: 'Postal Code' },
-    { field: 'address_remarks', label: 'Address Remarks' },
+    { field: 'address_remarks', label: 'Address Remarks', isHtml: true },
 ];
 
 const hasCoordinates = computed(() => {
@@ -322,8 +334,8 @@ const hasGisElevation = computed(() => {
     const elev = props.data?.elevation?.aliased_data;
     return (
         elev &&
-        (!isEmpty(elev.gis_lower_elevation) ||
-            !isEmpty(elev.gis_upper_elevation))
+        (!isEmpty(elev.gis_lower_elevation as AliasedNodeData) ||
+            !isEmpty(elev.gis_upper_elevation as AliasedNodeData))
     );
 });
 
@@ -338,11 +350,22 @@ const hasElevation = computed(() => {
     return hasGisElevation.value || hasElevationComments.value;
 });
 
-const hasBiogeography = computed(() => {
-    const data = props.data as Record<string, unknown> | undefined;
-    const bio = data?.biogeography;
-    return bio && Array.isArray(bio) && bio.length > 0;
+const biogeographySource = computed(() => {
+    const visitBio = (props.siteVisitData ?? [])
+        .flatMap((visit) => visit.aliased_data?.site_visit_location ?? [])
+        .flatMap((loc) => loc.aliased_data?.biogeography ?? []);
+
+    const siteBio = props.data?.biogeography ?? [];
+
+    return [...visitBio, ...siteBio];
 });
+
+const { processedData: biogeographyTableData } = useTileEditLog(
+    biogeographySource as unknown as Ref<AliasedTileData[]>,
+    toRef(props, 'editLogData'),
+);
+
+const hasBiogeography = computed(() => biogeographyTableData.value.length > 0);
 
 const tenureRemarksData = computed((): AliasedTileData[] => {
     const data = props.data as Record<string, unknown> | undefined;
@@ -372,7 +395,7 @@ const { processedData: addressRemarksData } = useSingleTileEditLog(
 );
 
 const { processedData: elevationCommentsTableData } = useTileEditLog(
-    elevationCommentsData,
+    elevationCommentsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 </script>
@@ -590,8 +613,9 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             <StandardDataTable
                                 v-if="hasDiscontinuedTenure"
                                 :table-data="
-                                    props.hriaData?.aliased_data
-                                        ?.hria_jursidiction_and_tenure ?? []
+                                    (props.hriaData?.aliased_data
+                                        ?.hria_jursidiction_and_tenure ??
+                                        []) as unknown as AliasedTileDataWithAudit[]
                                 "
                                 :column-definitions="discontinuedTenureColumns"
                                 :initial-sort-field-index="4"
@@ -617,17 +641,24 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                             v-for="(item, index) in locationAndAccess"
                             :key="index"
                         >
-                            <dt>
-                                {{ item.visitName || `Visit ${index + 1}` }} -
-                                Location and Access
-                            </dt>
-                            <dd>
-                                {{
-                                    getDisplayValue(
-                                        item.location as AliasedNodeData,
-                                    )
-                                }}
-                            </dd>
+                            <template
+                                v-if="
+                                    item.location &&
+                                    !isEmpty(item.location as AliasedNodeData)
+                                "
+                            >
+                                <dt>
+                                    {{ item.visitName || `Visit ${index + 1}` }}
+                                    - Location and Access
+                                </dt>
+                                <dd
+                                    v-html="
+                                        getDisplayValue(
+                                            item.location as AliasedNodeData,
+                                        )
+                                    "
+                                />
+                            </template>
                         </template>
                     </dl>
                     <EmptyState
@@ -767,7 +798,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -778,7 +809,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -786,7 +817,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             getDisplayValue(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_lower_elevation,
+                                                    ?.gis_lower_elevation as AliasedNodeData,
                                             )
                                         }}
                                     </dd>
@@ -796,7 +827,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -807,7 +838,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             !isEmpty(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         "
                                     >
@@ -815,7 +846,7 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                                             getDisplayValue(
                                                 props.data?.elevation
                                                     ?.aliased_data
-                                                    ?.gis_upper_elevation,
+                                                    ?.gis_upper_elevation as AliasedNodeData,
                                             )
                                         }}
                                     </dd>
@@ -860,19 +891,27 @@ const { processedData: elevationCommentsTableData } = useTileEditLog(
                 section-title="Biogeography"
                 variant="subsection"
                 :visible="true"
-                :class="{ 'empty-section': !hasBiogeography }"
             >
                 <template #sectionContent>
-                    <StandardDataTable
-                        v-if="hasBiogeography"
-                        :table-data="(props.data as any)?.biogeography ?? []"
-                        :column-definitions="biogeographyColumns"
-                        :initial-sort-field-index="0"
-                    />
-                    <EmptyState
-                        v-else
-                        message="No biogeography information available."
-                    />
+                    <DetailsSection
+                        section-title="Biogeography"
+                        variant="subsection"
+                        :visible="true"
+                        :class="{ 'empty-section': !hasBiogeography }"
+                    >
+                        <template #sectionContent>
+                            <StandardDataTable
+                                v-if="hasBiogeography"
+                                :table-data="biogeographyTableData"
+                                :column-definitions="biogeographyColumns"
+                                :initial-sort-field-index="0"
+                            />
+                            <EmptyState
+                                v-else
+                                message="No biogeography information available."
+                            />
+                        </template>
+                    </DetailsSection>
                 </template>
             </DetailsSection>
         </template>

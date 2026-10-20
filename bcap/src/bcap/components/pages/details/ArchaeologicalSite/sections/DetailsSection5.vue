@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
 import { isEmpty } from '@/bcap/util.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import 'primeicons/primeicons.css';
-import type { SiteBoundaryTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    ArchaeologicalSiteSiteBoundaryTile,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteBoundaryTile | undefined;
-        hriaData: HriaDiscontinuedDataSchema | undefined;
+        data: ArchaeologicalSiteSiteBoundaryTile | undefined;
+        hriaData: HriaDiscontinuedData | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -37,7 +42,7 @@ const currentSiteBoundaryData = computed(() => {
 });
 
 const { processedData: siteBoundaryWithAudit } = useTileEditLog(
-    currentSiteBoundaryData,
+    currentSiteBoundaryData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
@@ -73,23 +78,8 @@ const hasDimensions = computed(() => {
 });
 
 const hasBoundaryDescription = computed(() => {
-    return (
-        siteBoundaryDescriptionTableData.value?.some((item) => {
-            const description = item.aliased_data?.site_boundary_description;
-
-            if (!description || Array.isArray(description)) return false;
-
-            const displayValue =
-                'display_value' in description
-                    ? description.display_value
-                    : null;
-
-            return (
-                displayValue &&
-                typeof displayValue === 'string' &&
-                displayValue.trim() !== ''
-            );
-        }) ?? false
+    return !isEmpty(
+        props.data?.aliased_data?.site_boundary_description as AliasedNodeData,
     );
 });
 
@@ -101,8 +91,7 @@ const hasSpatialAccuracy = computed(() => {
         ) ||
             !isEmpty(
                 currentSiteBoundary.value.accuracy_remarks as AliasedNodeData,
-            ) ||
-            !isEmpty(currentSiteBoundary.value.source_notes as AliasedNodeData))
+            ))
     );
 });
 
@@ -130,7 +119,7 @@ const gisDimensionsTableData = computed(() => {
             width_direction: tile.aliased_data.width_direction,
             site_area: tile.aliased_data.site_area,
         },
-    ];
+    ] as unknown as AliasedTileDataWithAudit[];
 });
 
 const discontinuedDimensionsTableData = computed(() => {
@@ -179,7 +168,7 @@ const siteBoundaryDescriptionColumns = computed(() => [
 
 const currentSpatialAccuracyColumns = computed(() => [
     { field: 'latest_edit_type', label: 'Edit Type' },
-    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
+    { field: 'accuracy_remarks', label: 'Accuracy Remarks', isHtml: true },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -193,8 +182,8 @@ const currentSpatialAccuracyColumns = computed(() => [
 ]);
 
 const historicalSpatialAccuracyColumns = [
-    { field: 'source_notes', label: 'Source Notes' },
-    { field: 'accuracy_remarks', label: 'Accuracy Remarks' },
+    { field: 'source_notes', label: 'Source Notes', isHtml: true },
+    { field: 'accuracy_remarks', label: 'Accuracy Remarks', isHtml: true },
     { field: 'entered_on', label: 'Edited On', visible: props.showAuditFields },
     { field: 'entered_by', label: 'Edited By', visible: props.showAuditFields },
 ];

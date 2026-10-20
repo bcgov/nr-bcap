@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
+import tempfile
 
 from bcap.settings import *
 
@@ -31,13 +32,14 @@ BUSINESS_DATA_FILES = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+# localhost may not work cross networks in docker
 DATABASES = {
     "default": {
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "localhost",
+        "HOST": os.environ.get("PGHOST", "localhost"),
         "NAME": "bcap",
         "OPTIONS": {},
         "PASSWORD": "postgis",
@@ -51,25 +53,67 @@ DATABASES = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     },
     "user_permission": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "user_permission_cache",
     },
 }
 
 LOGGING["loggers"]["arches"]["level"] = "ERROR"
 
+# Silence the per-file DEBUG chatter from the storage filename generator.
+LOGGING["loggers"]["bcap.util.storage_filename_generator"] = {
+    "level": "INFO",
+    "propagate": True,
+}
+
+LOGGING["loggers"]["django.request"] = {
+    "level": "ERROR",
+    "propagate": True,
+}
+
+LOGGING["loggers"]["bcap.services.message.thread_service"] = {
+    "level": "ERROR",
+    "propagate": True,
+}
+
 ELASTICSEARCH_PREFIX = "test"
 
-TEST_RUNNER = "arches.test.runner.ArchesTestRunner"
+TEST_RUNNER = "tests.runner.BcapTestRunner"
 
 SILENCED_SYSTEM_CHECKS.append(
     # Cache backend does not support rate-limiting
     "arches.W001",
 )
 
+# localhost may not work cross networks in docker
 ELASTICSEARCH_HOSTS = [
-    {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+    {
+        "scheme": os.environ.get("ES_SCHEME", "http"),
+        "host": os.environ.get("ES_HOST", "localhost"),
+        "port": int(os.environ.get("ES_PORT", ELASTICSEARCH_HTTP_PORT)),
+    }
 ]
+
+# No broker in tests. Empty short-circuits check_if_celery_available() so every
+# resource save indexes inline instead of probing the dead broker (~6s backoff
+# per save). Same inline-index result the fallback already produces.
+CELERY_BROKER_URL = ""
+
+# Do not use on prod, just for unit test performance.
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Tests write and delete uploaded files locally. The prod default is the S3
+# backend, whose post_delete signal reaches the object store (and fails outright
+# when S3_BUCKET is unset, as in CI), so keep file storage on the filesystem.
+# Point it at a temp dir, not MEDIA_ROOT, so test uploads don't land in the
+# tracked fixtures directory.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": os.path.join(tempfile.gettempdir(), "bcap_test_media")},
+    },
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}

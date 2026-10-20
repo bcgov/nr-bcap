@@ -1,6 +1,6 @@
 # Must be run from bcap root
 export APP_INSTANCE=$1
-export ANSIBLE_BRANCH=feat/v8_updates
+export ANSIBLE_BRANCH=main
 docker exec -it \
       --env-file "./cd/docker/config/app_env" \
       --env-file "./cd/docker/config/deployment_secrets" \

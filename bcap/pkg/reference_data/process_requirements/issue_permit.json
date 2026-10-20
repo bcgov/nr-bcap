@@ -1,0 +1,26 @@
+{
+    "id": "PERM-001",
+    "name": "Permit Issuance",
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [
+        {
+            "name": "Review Decision Summary",
+            "description": "Confirm SDM decision summary supports permit issuance",
+            "sort_order": 1,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Generate Permit Number",
+            "description": "Run process to generate permit number",
+            "sort_order": 2,
+            "sub_satisfied": false
+        },
+        {
+            "name": "Assemble Documentation",
+            "description": "Assemble all documents required to notify relevant parties",
+            "sort_order": 3,
+            "sub_satisfied": false
+        }
+    ]
+}

@@ -1,39 +1,40 @@
-from django.db import migrations
 from django_migrate_sql.config import SQLItem
 from bcap.migrations.util.migration_util import format_sql
+from bcap.databc_sql_items import sql_items as _databc_sql_items
 
+_APP = "bcap"
 
-sql_items = [
+_static_sql_items = [
     SQLItem(
         "bc_labelled_geojson_geometries",
-        format_sql(
-            "sql/views/bc_labelled_geojson_geometries.sql",
-        ),
+        format_sql("sql/views/bc_labelled_geojson_geometries.sql"),
         reverse_sql="drop view bc_labelled_geojson_geometries;",
         replace=True,
     ),
     SQLItem(
         "bc_labelled_site_geometries",
-        format_sql(
-            "sql/views/bc_labelled_site_geometries.sql",
-        ),
+        format_sql("sql/views/bc_labelled_site_geometries.sql"),
         reverse_sql="drop view bc_labelled_site_geometries;",
         replace=True,
     ),
     SQLItem(
         "bc_labelled_site_visit_geometries",
-        format_sql(
-            "sql/views/bc_labelled_site_visit_geometries.sql",
-        ),
+        format_sql("sql/views/bc_labelled_site_visit_geometries.sql"),
         reverse_sql="drop view bc_labelled_site_visit_geometries;",
         replace=True,
     ),
     SQLItem(
         "bc_labelled_sandcastle_geometries",
-        format_sql(
-            "sql/views/bc_labelled_sandcastle_geometries.sql",
-        ),
+        format_sql("sql/views/bc_labelled_sandcastle_geometries.sql"),
         reverse_sql="drop view bc_labelled_sandcastle_geometries;",
         replace=True,
     ),
+    SQLItem(
+        "get_map_attribute_data",
+        format_sql("sql/functions/get_map_attribute_data.sql"),
+        reverse_sql="drop function get_map_attribute_data;",
+        replace=True,
+    ),
 ]
+
+sql_items = _static_sql_items + _databc_sql_items

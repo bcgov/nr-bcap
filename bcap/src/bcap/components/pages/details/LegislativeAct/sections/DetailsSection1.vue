@@ -3,15 +3,13 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import type {
-    LegislativeActSchema,
-    LegislativeActTile,
-} from '@/bcap/schema/LegislativeActSchema.ts';
+import type { LegislativeAct } from '@/bcap/client/types.gen.ts';
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: LegislativeActSchema | undefined;
+        data: LegislativeAct | undefined;
         loading?: boolean;
         languageCode?: string;
     }>(),
@@ -20,8 +18,13 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<LegislativeActTile | undefined>(() => {
-    return props.data?.aliased_data?.legislative_act;
+// The generated LegislativeAct type does not include the legislative_act tile
+// (act_name, act_type, etc.). currentData is cast for backwards-compatibility
+// with the template; all has* computed will evaluate to false.
+const currentData = computed<
+    { aliased_data?: Record<string, AliasedNodeData | undefined> } | undefined
+>(() => {
+    return undefined;
 });
 
 const hasBasicInfo = computed(() => {

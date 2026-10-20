@@ -2,16 +2,18 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: Bug
 assignees: ''
 type: Bug
 
 ---
 
-**Describe the bug**
+**Reported by:**
+
+**Bug Description**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**Steps to Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -21,7 +23,10 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**Actual behavior**
+A clear and concise description of what you saw. 
+
+**Screenshots if applicable**
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
@@ -35,5 +40,5 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Additional context**
+**Additional context / rationale**
 Add any other context about the problem here.

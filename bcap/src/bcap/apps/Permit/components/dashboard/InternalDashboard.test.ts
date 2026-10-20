@@ -1,0 +1,602 @@
+import { mount, flushPromises } from '@vue/test-utils';
+
+// Route is read for ProjectCard navigation; name becomes the card route. A card
+// click routes to the permit details view via useRouter().push.
+const push = vi.fn();
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ name: 'Home', query: {} }),
+    useRouter: () => ({ push }),
+}));
+
+// The dashboard data source is mocked so we control exactly what renders
+const getInternalDashboardData = vi.fn();
+vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
+    getInternalDashboardData: (...args: unknown[]) =>
+        getInternalDashboardData(...args),
+}));
+
+// arches.urls.plugin() builds the checklist URL navigateToReport opens
+
+import InternalDashboard from './InternalDashboard.vue';
+import ProjectCard from '@/bcgov_arches_common/components/card/ProjectCard.vue';
+
+function mountDashboard() {
+    return mount(InternalDashboard, {
+        global: {
+            stubs: {
+                RouterLink: true,
+                SortingBar: true,
+            },
+        },
+    });
+}
+
+// Drive a toolbar emit (filter, search, sort, refresh) and wait for the render
+async function emitFromToolbar(
+    wrapper: ReturnType<typeof mountDashboard>,
+    event: string,
+    payload?: unknown,
+) {
+    wrapper.findComponent({ name: 'SortingBar' }).vm.$emit(event, payload);
+    await flushPromises();
+}
+
+function makeCard(overrides: Record<string, unknown> = {}) {
+    return {
+        id: 'res-1',
+        requirement_id: 'req-1',
+        priority_level: 'High',
+        requirement_name: 'Site Visit',
+        requirement_due_date: '2026-07-01',
+        project_name: 'My Project',
+        application_number: 'APP-123',
+        industrial_sector: 'Mining',
+        permit_number: 'PN-9',
+        permit_holder: 'Acme Co',
+        project_officer: 'Jane Officer',
+        ministry_assignee_name: 'John Doe',
+        urgency: 5,
+        ...overrides,
+    };
+}
+
+beforeEach(() => {
+    // The dashboard remembers the active tab, so a tab set by one test would
+    // otherwise decide the next test's starting filter.
+    sessionStorage.clear();
+    getInternalDashboardData.mockReset();
+    push.mockReset();
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
+});
+
+describe('data loading', () => {
+    it('shows the loading spinner before data resolves', () => {
+        getInternalDashboardData.mockReturnValue(new Promise(() => {}));
+        const wrapper = mountDashboard();
+        expect(wrapper.find('.loading-state').exists()).toBe(true);
+        expect(wrapper.find('.dash-row').exists()).toBe(false);
+    });
+
+    it('requests "my_projects" on mount (not the unassigned feed)', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        mountDashboard();
+        await flushPromises();
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'ASSIGNED_TO_ME',
+            1,
+            100,
+        );
+    });
+
+    it('renders one ProjectCard per assigned result once loaded', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'res-1', project_name: 'Alpha' }),
+            makeCard({ id: 'res-2', project_name: 'Beta' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.find('.loading-state').exists()).toBe(false);
+        const cards = wrapper.findAllComponents(ProjectCard);
+        expect(cards).toHaveLength(2);
+        expect(cards.map((c) => c.props('bodyTitle'))).toEqual([
+            'Alpha',
+            'Beta',
+        ]);
+    });
+
+    it('shows the empty state when no projects match', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
+        expect(wrapper.find('.empty-state').text()).toContain(
+            'No projects match your search criteria.',
+        );
+    });
+
+    it('hides the spinner and recovers when the API rejects', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        getInternalDashboardData.mockRejectedValue(new Error('boom'));
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.find('.loading-state').exists()).toBe(false);
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
+    });
+});
+
+describe('field mapping (data shows up right)', () => {
+    it('maps backend fields onto the card props', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard()]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        const card = wrapper.findComponent(ProjectCard);
+        expect(card.props('bodyTitle')).toBe('My Project');
+        expect(card.props('bodySubtitle1')).toBe('APP-123');
+        expect(card.props('bodySubtitle2')).toBe('Mining');
+        expect(card.props('capLabel')).toBe('Site Visit');
+        expect(card.props('capDate')).toBe('2026-07-01');
+        expect(card.props('capPriority')).toBe(true);
+        expect(card.props('footerName')).toBe('John Doe');
+    });
+
+    it('marks capPriority false for non-High priority levels', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ priority_level: 'Low' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findComponent(ProjectCard).props('capPriority')).toBe(
+            false,
+        );
+    });
+
+    it('formats the labelled body lines as plain text', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ submission_type: 'Site Visit' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        const card = wrapper.findComponent(ProjectCard);
+        expect(card.props('body')).toEqual([
+            'Type: Site Visit',
+            'Permit: PN-9',
+            'Holder: Acme Co',
+            'Officer: Jane Officer',
+        ]);
+    });
+
+    it('falls back to placeholder text for missing fields', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            {
+                id: 'res-x',
+                ministry_assignee_name: 'John Doe',
+                urgency: 0,
+            },
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        const card = wrapper.findComponent(ProjectCard);
+        expect(card.props('bodyTitle')).toBe('Unknown Project');
+        expect(card.props('bodySubtitle1')).toBe('No App #');
+        expect(card.props('capDate')).toBe('Pending');
+    });
+});
+
+describe('unresolved messages', () => {
+    it('badges a card with its unresolved message count', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ unresolved_messages: 4 }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
+            4,
+        );
+    });
+
+    it('reads a card without the field as having none', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard()]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(wrapper.findComponent(ProjectCard).props('unreadMessages')).toBe(
+            0,
+        );
+    });
+
+    it('labels the filter for unresolved messages', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        expect(
+            wrapper
+                .findComponent({ name: 'SortingBar' })
+                .props('messagesOnlyLabel'),
+        ).toBe('Unresolved messages only');
+    });
+
+    it('keeps only cards with unresolved messages when filtered', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'quiet', project_name: 'Quiet' }),
+            makeCard({
+                id: 'waiting',
+                project_name: 'Waiting',
+                unresolved_messages: 1,
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:messagesOnly', true);
+
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((card) => card.props('bodyTitle')),
+        ).toEqual(['Waiting']);
+    });
+});
+
+describe('default "my_projects" filter', () => {
+    it('renders every card the backend returns (filtering is server-side)', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'mine', ministry_assignee_name: 'John Doe' }),
+            makeCard({ id: 'theirs', ministry_assignee_name: 'Someone Else' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        // The ASSIGNED_TO_ME backend filter decides who shows; the component
+        // does not re-filter by assignee on the client.
+        const cards = wrapper.findAllComponents(ProjectCard);
+        expect(cards).toHaveLength(2);
+    });
+
+    it('counts all returned cards in the results summary', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'mine' }),
+            makeCard({ id: 'theirs' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        const bar = wrapper.findComponent({ name: 'SortingBar' });
+        expect(bar.props('shown')).toBe(2);
+        expect(bar.props('total')).toBe(2);
+    });
+});
+
+describe('filter switching', () => {
+    it('reloads from the unassigned feed when that tab is selected', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'u1', ministry_assignee_name: undefined }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        getInternalDashboardData.mockClear();
+
+        await emitFromToolbar(wrapper, 'update:activeTab', 'UNASSIGNED');
+
+        // The status passed to the feed switches to the unassigned filter.
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'UNASSIGNED',
+            1,
+            100,
+        );
+        const cards = wrapper.findAllComponents(ProjectCard);
+        expect(cards).toHaveLength(1);
+        expect(cards[0].props('footerName')).toBe('Unassigned');
+    });
+
+    it('does not reload when the active tab is unchanged', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        getInternalDashboardData.mockClear();
+
+        await emitFromToolbar(wrapper, 'update:activeTab', 'ASSIGNED_TO_ME');
+
+        expect(getInternalDashboardData).not.toHaveBeenCalled();
+    });
+
+    it('shows every result under a non-assignee filter', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'a', ministry_assignee_name: 'John Doe' }),
+            makeCard({ id: 'b', ministry_assignee_name: 'Someone Else' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:activeTab', 'ALL');
+
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(2);
+    });
+
+    it('reloads when the toolbar requests a refresh', async () => {
+        getInternalDashboardData.mockResolvedValue([]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        getInternalDashboardData.mockClear();
+
+        await emitFromToolbar(wrapper, 'refresh');
+
+        expect(getInternalDashboardData).toHaveBeenCalledWith(
+            'ASSIGNED_TO_ME',
+            1,
+            100,
+        );
+    });
+});
+
+describe('search filtering', () => {
+    it('feeds the term back to the toolbar, so the input keeps what was typed', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'a' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'copper');
+
+        expect(
+            wrapper.findComponent({ name: 'SortingBar' }).props('search'),
+        ).toBe('copper');
+    });
+
+    it('keeps only cards whose title matches the search term', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'a', project_name: 'Copper Mine' }),
+            makeCard({ id: 'b', project_name: 'Gravel Pit' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'copper');
+
+        const cards = wrapper.findAllComponents(ProjectCard);
+        expect(cards).toHaveLength(1);
+        expect(cards[0].props('bodyTitle')).toBe('Copper Mine');
+    });
+
+    it('matches against any mapped body field (e.g. permit holder)', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'a', permit_holder: 'Acme Co' }),
+            makeCard({ id: 'b', permit_holder: 'Globex' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'acme');
+
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(1);
+    });
+
+    it('treats "priority" as a keyword surfacing only starred cards', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'hi', project_name: 'Zzz', priority_level: 'High' }),
+            makeCard({ id: 'lo', project_name: 'Yyy', priority_level: 'Low' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'priority');
+
+        const cards = wrapper.findAllComponents(ProjectCard);
+        expect(cards).toHaveLength(1);
+        expect(cards[0].props('capPriority')).toBe(true);
+    });
+
+    it('shows the empty state when the search matches nothing', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard()]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:search', 'no-such-thing');
+
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
+        expect(wrapper.find('.empty-state').exists()).toBe(true);
+    });
+});
+
+describe('sorting', () => {
+    function titlesOf(wrapper: ReturnType<typeof mountDashboard>) {
+        return wrapper
+            .findAllComponents(ProjectCard)
+            .map((c) => c.props('bodyTitle'));
+    }
+
+    it('sorts by due date with the oldest first', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({
+                id: 'late',
+                project_name: 'Late',
+                requirement_due_date: '2026-12-01',
+            }),
+            makeCard({
+                id: 'early',
+                project_name: 'Early',
+                requirement_due_date: '2026-01-01',
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'capDate');
+
+        expect(titlesOf(wrapper)).toEqual(['Early', 'Late']);
+    });
+
+    it('pushes cards with unparseable dates to the end', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({
+                id: 'none',
+                project_name: 'NoDate',
+                requirement_due_date: undefined,
+            }),
+            makeCard({
+                id: 'has',
+                project_name: 'HasDate',
+                requirement_due_date: '2026-01-01',
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'capDate');
+
+        expect(titlesOf(wrapper)).toEqual(['HasDate', 'NoDate']);
+    });
+
+    it('leaves cards in place when none have a parseable date', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({
+                id: 'a',
+                project_name: 'First',
+                requirement_due_date: undefined,
+            }),
+            makeCard({
+                id: 'b',
+                project_name: 'Second',
+                requirement_due_date: undefined,
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'capDate');
+
+        expect(titlesOf(wrapper)).toEqual(['First', 'Second']);
+    });
+
+    it('sorts starred cards first when sorting by priority', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'lo', project_name: 'Low', priority_level: 'Low' }),
+            makeCard({
+                id: 'hi',
+                project_name: 'High',
+                priority_level: 'High',
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'capPriority');
+
+        expect(titlesOf(wrapper)).toEqual(['High', 'Low']);
+    });
+
+    it('sorts alphabetically by a string field', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({
+                id: 'b',
+                project_name: 'Bee',
+                application_number: 'BBB',
+            }),
+            makeCard({
+                id: 'a',
+                project_name: 'Ay',
+                application_number: 'AAA',
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'bodySubtitle1');
+
+        expect(titlesOf(wrapper)).toEqual(['Ay', 'Bee']);
+    });
+
+    it('reverses the result order when sort order is descending', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({
+                id: 'a',
+                project_name: 'Ay',
+                application_number: 'AAA',
+            }),
+            makeCard({
+                id: 'b',
+                project_name: 'Bee',
+                application_number: 'BBB',
+            }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await emitFromToolbar(wrapper, 'update:currentSort', 'bodySubtitle1');
+        await emitFromToolbar(wrapper, 'update:sortOrder', 'desc');
+
+        expect(titlesOf(wrapper)).toEqual(['Bee', 'Ay']);
+    });
+});
+
+describe('onCardClick', () => {
+    const originalLocation = window.location;
+
+    beforeEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: { href: '' },
+        });
+    });
+
+    afterEach(() => {
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: originalLocation,
+        });
+        vi.restoreAllMocks();
+    });
+
+    it('routes to the permit details view on a standard click, drilling in on the card requirement', async () => {
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-1' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        await wrapper.findComponent(ProjectCard).trigger('click');
+
+        expect(push).toHaveBeenCalledWith({
+            name: 'internalPermitDetails',
+            params: { id: 'res-1' },
+            query: { requirement: 'req-1' },
+        });
+    });
+
+    it('omits the requirement query when the card has no requirement', async () => {
+        getInternalDashboardData.mockResolvedValue([
+            makeCard({ id: 'res-1', requirement_id: '' }),
+        ]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+        await wrapper.findComponent(ProjectCard).trigger('click');
+
+        expect(push).toHaveBeenCalledWith({
+            name: 'internalPermitDetails',
+            params: { id: 'res-1' },
+            query: {},
+        });
+    });
+
+    it('opens the resource graph in a new tab when clicked with the Ctrl key', async () => {
+        const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+        getInternalDashboardData.mockResolvedValue([makeCard({ id: 'res-9' })]);
+        const wrapper = mountDashboard();
+        await flushPromises();
+
+        await wrapper.findComponent(ProjectCard).trigger('click', {
+            ctrlKey: true,
+        });
+
+        expect(openSpy).toHaveBeenCalledWith('/bcap/resource/res-9', '_blank');
+        expect(push).not.toHaveBeenCalled();
+    });
+});

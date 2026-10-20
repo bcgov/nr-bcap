@@ -1,24 +1,38 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref, watchEffect } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
-import type { EditLogData } from '@/bcgov_arches_common/types.ts';
-import 'primeicons/primeicons.css';
-import type { RelatedDocumentsTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
 import type {
-    HriaDiscontinuedDataSchema,
-    OtherMapsTile,
-} from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+    AliasedTileDataWithAudit,
+    EditLogData,
+} from '@/bcgov_arches_common/types.ts';
+import type { AliasedTileData } from '@/arches_vue_components/types.ts';
+import 'primeicons/primeicons.css';
+import type {
+    PublicationPublicationDetailsTile,
+    Publication,
+    PublicationAuthorsTile,
+    ArchaeologicalSiteRelatedDocumentsTile,
+    ArchaeologicalSiteRelatedDocumentsAliasedData,
+    SiteVisit,
+} from '@/bcap/client/types.gen.ts';
+import type {
+    HriaDiscontinuedData,
+    HriaDiscontinuedDataOtherMapsTile,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { expandDocumentRows } from '@/bcgov_arches_common/utils/document.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: RelatedDocumentsTile | undefined;
-        hriaData?: HriaDiscontinuedDataSchema;
+        data: ArchaeologicalSiteRelatedDocumentsTile | undefined;
+        siteVisitData: SiteVisit[];
+        hriaData?: HriaDiscontinuedData;
+        publicationData?: Publication[] | undefined;
+        siteVisitPublicationData?: Publication[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -32,28 +46,109 @@ const props = withDefaults(
         editLogData: () => ({}),
         showAuditFields: false,
         hriaData: undefined,
+        publicationData: undefined,
+        siteVisitPublicationData: undefined,
     },
 );
 
-const currentData = computed<RelatedDocumentsTile | undefined>(
-    (): RelatedDocumentsTile | undefined => {
-        return props.data?.aliased_data as RelatedDocumentsTile | undefined;
-    },
-);
-
-const relatedDocumentsData = computed(() => {
-    const docs = currentData.value?.related_site_documents;
-    if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
-    return expandDocumentRows(docsArray, 'related_site_documents');
+const currentData = computed<
+    ArchaeologicalSiteRelatedDocumentsAliasedData | undefined
+>((): ArchaeologicalSiteRelatedDocumentsAliasedData | undefined => {
+    return props.data?.aliased_data;
 });
 
-const referencesColumns: ColumnDefinition[] = [
-    { field: 'reference_type', label: 'Reference Type' },
-    { field: 'reference_title', label: 'Title' },
-    { field: 'reference_year', label: 'Year' },
-    { field: 'reference_authors', label: 'Author(s)' },
-    { field: 'reference_remarks', label: 'Remarks' },
+const relatedDocumentsData = computed(() => {
+    let documents: AliasedTileData[] = [];
+
+    if (props.siteVisitData?.length) {
+        const siteVisitDocuments = props.siteVisitData.flatMap(
+            (visit) =>
+                visit?.aliased_data?.related_documents?.aliased_data
+                    ?.related_site_documents ?? [],
+        );
+        documents = expandDocumentRows(
+            siteVisitDocuments as unknown as AliasedTileData[],
+            'related_documents',
+        );
+    }
+
+    const docs = currentData.value?.related_site_documents;
+    if (docs) {
+        documents = [
+            ...documents,
+            ...expandDocumentRows(
+                docs as unknown as AliasedTileData[],
+                'related_site_documents',
+            ),
+        ];
+    }
+    return documents;
+});
+
+watchEffect(() =>
+    console.log('relatedDocumentsData', relatedDocumentsData.value.length),
+);
+
+type PublicationDetailsTileWithAuthors = AliasedTileDataWithAudit &
+    PublicationPublicationDetailsTile & {
+        aliased_data: PublicationPublicationDetailsTile['aliased_data'] & {
+            authors: PublicationAuthorsTile[] | undefined;
+        };
+    };
+
+const publicationReferencesData = computed<PublicationDetailsTileWithAuthors[]>(
+    () => {
+        let publications: Publication[] = [];
+
+        if (props.siteVisitPublicationData?.length) {
+            publications = [...props.siteVisitPublicationData];
+        }
+
+        if (props.publicationData?.length) {
+            const seenIds = new Set(
+                publications.map((p) => p.resourceinstanceid),
+            );
+            publications = [
+                ...publications,
+                ...props.publicationData.filter(
+                    (p) => !seenIds.has(p.resourceinstanceid),
+                ),
+            ];
+        }
+
+        return publications.map((publication) => {
+            let data = publication.aliased_data
+                ?.publication_details as PublicationDetailsTileWithAuthors;
+            data.aliased_data.authors =
+                publication.aliased_data?.authors ?? undefined;
+            return data;
+        });
+    },
+);
+
+const publicationColumns: ColumnDefinition[] = [
+    {
+        field: 'publication_type',
+        label: 'Reference Type',
+    },
+    { field: 'title', label: 'Title' },
+    {
+        field: 'year_of_publication',
+        label: 'Year',
+    },
+    {
+        field: 'authors.0.aliased_data.authors',
+        label: 'Author(s)',
+        displayFunction: (value: AliasedTileDataWithAudit) =>
+            (value.aliased_data?.authors as PublicationAuthorsTile[])
+                ?.map((author) => author?.aliased_data?.authors?.display_value)
+                .join(', '),
+    },
+    {
+        label: 'Remarks',
+        field: 'publication_remarks',
+        isHtml: true,
+    },
 ];
 
 const relatedDocumentsColumns = computed<ColumnDefinition[]>(() => {
@@ -128,20 +223,37 @@ const hasRelatedDocuments = computed(() => {
     return relatedDocumentsData.value && relatedDocumentsData.value.length > 0;
 });
 
-const siteImagesData = computed(() => currentData.value?.site_images || []);
+const siteImagesData = computed(() => {
+    let images: AliasedTileData[] = [];
+
+    if (props.siteVisitData?.length) {
+        images = props.siteVisitData.flatMap(
+            (visit) =>
+                visit?.aliased_data?.related_documents?.aliased_data
+                    ?.site_images ?? [],
+        ) as unknown as AliasedTileData[];
+    }
+
+    const asSiteImages = currentData.value?.site_images;
+    if (asSiteImages?.length) {
+        images = [...images, ...(asSiteImages as unknown as AliasedTileData[])];
+    }
+
+    return images;
+});
 
 const { processedData: siteImagesTableData } = useTileEditLog(
-    siteImagesData,
+    siteImagesData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const hasImages = computed(() => siteImagesTableData.value.length > 0);
 
-const otherMapsData = computed<OtherMapsTile[]>(() => {
-    const hriaData = props.hriaData as HriaDiscontinuedDataSchema | undefined;
-    const maps = hriaData?.aliased_data?.other_maps;
+const otherMapsData = computed<AliasedTileDataWithAudit[]>(() => {
+    const maps = props.hriaData?.aliased_data?.other_maps;
     if (!maps) return [];
-    return Array.isArray(maps) ? maps : [maps];
+    const tile: HriaDiscontinuedDataOtherMapsTile = maps;
+    return [tile] as unknown as AliasedTileDataWithAudit[];
 });
 
 const hasOtherMaps = computed(() => {
@@ -166,8 +278,8 @@ const hasOtherMaps = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasReferences"
-                        :table-data="currentData?.publication_reference ?? []"
-                        :column-definitions="referencesColumns"
+                        :table-data="publicationReferencesData"
+                        :column-definitions="publicationColumns"
                         :initial-sort-field-index="2"
                     />
                     <EmptyState

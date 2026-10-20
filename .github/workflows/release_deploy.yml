@@ -1,0 +1,20 @@
+name: Release package to GitHub Packages
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+      - 'dev/*'
+      - 'release/*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.title, 'on merge: github release of version')
+    uses: bcgov/bcgov-arches-common/.github/workflows/release_deploy_common.yml@main

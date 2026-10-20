@@ -1,0 +1,14 @@
+{
+    "id": "REJ-001",
+    "name": "Reject Permit Application",
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [
+        {
+            "name": "Communicate with Proponent",
+            "description": "Has the proponent been notified the Application will be rejected?",
+            "sort_order": 1,
+            "sub_satisfied": false
+        }
+    ]
+}

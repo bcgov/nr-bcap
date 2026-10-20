@@ -101,9 +101,7 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Legal Instrument",
                         "placeholder": {
                             "en": "Select the legal instrument"
@@ -149,9 +147,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Act Section",
                         "maxLength": null,
                         "placeholder": {
@@ -173,9 +169,7 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Recognition Type",
                         "placeholder": {
                             "en": "Select the recognition type"
@@ -240,9 +234,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Citation",
                         "maxLength": "80",
                         "placeholder": {
@@ -280,9 +272,7 @@
                 {
                     "card_id": "7e71fa57-b986-406b-bde6-3a8996937fe8",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Authority",
                         "placeholder": {
                             "en": "Select the level of the responsible government"
@@ -302,9 +292,7 @@
                     "card_id": "7b496e9d-021c-4807-8448-1c2d7902f5f8",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Replaced By",
                         "placeholder": {
                             "en": "Select Legislative Act this Act was replaced by"
@@ -759,10 +747,7 @@
                         "falseLabel": {
                             "en": "Inactive"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Active"
                         }

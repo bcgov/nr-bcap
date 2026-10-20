@@ -140,7 +140,6 @@ function MultiRootBareJsResolver() {
                 skipSelf: true,
             });
             // out(`prior? ${prior}`);
-            // console.error(prior);
             if (prior && fs.statSync(prior.id).isFile()) return prior;
 
             // out(`isBare(${source}) = ${isBare(source)}`);
@@ -444,11 +443,11 @@ export default defineConfig({
                 ),
             },
             {
-                find: "@/arches_component_lab",
+                find: "@/arches_vue_components",
                 replacement: path.resolve(
                     path.join(
                         __dirname,
-                        "./../arches-component-lab/arches_component_lab/src/arches_component_lab",
+                        "./../arches-vue-components/arches_vue_components/src/arches_vue_components",
                     ),
                 ),
             },

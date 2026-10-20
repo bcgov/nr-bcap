@@ -1,0 +1,1177 @@
+{
+    "graph": [
+        {
+            "author": "",
+            "color": "#db9a19",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-gavel",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": false,
+            "jsonldcontext": null,
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": null,
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": "",
+            "functions_x_graphs": [],
+            "graphid": "d7922b11-13c3-4d35-983a-e26da78914f8",
+            "name": {
+                "en": "Methodology"
+            },
+            "slug": "methodology",
+            "publication": null,
+            "root": {
+                "alias": "methodology",
+                "config": {},
+                "datatype": "semantic",
+                "description": null,
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                "hascustomalias": false,
+                "is_collector": true,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Methodology",
+                "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                "nodeid": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                "parentproperty": "",
+                "sortorder": 2,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "nodes": [
+                {
+                    "alias": "has_winter_assessments",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Winter Assessments",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "ef8ce1ef-1cee-4713-9046-e09101ec618d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 13,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "machine_assisted_inspection_methods",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Machine Assisted Inspection Methods",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "6f6548ce-3606-419b-b7ec-b0d59413d1e1",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 11,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "other_field_methods",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Other Field Methods",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "2d0cdf66-e04c-4a9d-a6bf-9a0141c9cf0e",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 17,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_subsurface_testing",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Subsurface Testing",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "dc4d60b2-5557-4b6b-8149-2e8b409ea6f9",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 8,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "pre_field_research",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Pre Field Research",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "938157bc-bf9a-46b7-b6f8-2c2f65602871",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "arch_potential_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Arch Potential Approach",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "78d4c74c-5d83-417d-b3e0-d669bf85bca1",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "machine_assisted_inspection_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Machine Assisted Inspection Approach",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "2b3e45e0-cc00-4cb7-852a-5e3d3230bbdc",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 12,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "data_analysis_methods",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Data Analysis Methods",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "56f0c3df-5201-44f8-b3ab-20c130bb6837",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 16,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "field_transport_and_lab_methods",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Field Transport and Lab Methods",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "06e3da46-ad2a-460f-be7e-2a1d3e355365",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 15,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_arch_potential",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Arch Potential",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "ebb97c8c-a75e-446d-b60b-9b7ea0b9f82a",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_survey_coverage",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Survey Coverage",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "75c705a3-c84d-45ab-a8a1-648f209ef349",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "arch_bearing_sediment",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Arch Bearing Sediment",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "3ac7a866-59d6-4ff2-a5d7-338203987164",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 7,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "methodology",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Methodology",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "parentproperty": "",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "winter_assessment_methods",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Winter Assessment Methods",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "e80e11b2-57e7-4fd5-a6e6-e44e866e0deb",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 14,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "subsurface_testing_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Subsurface Testing Approach",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "00d51044-99a3-44d8-8327-0cfb7e9d48ea",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 9,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "survey_coverage_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Survey Coverage Approach",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "8e485502-3790-4a13-aeb4-3aa379af763d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_pre_field_research",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Pre Field Research",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "c7dc86b2-64c0-4e44-9135-fdb3b661fd91",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "methods_alignment",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Methods Alignment",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "081a2fb8-b9e9-4f06-bb87-814e1d28afd0",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "has_machine_assisted_inspection",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Has Machine Assisted Inspection",
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "nodeid": "0962f818-566c-4bc8-bc8c-9ea6753985ba",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 10,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "legacygroupid": null,
+                    "nodegroupid": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Methodology"
+                    },
+                    "nodegroup_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "93de561a-dfc0-4f5d-bdd4-2bac1e2084b6",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "938157bc-bf9a-46b7-b6f8-2c2f65602871",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "58ecda46-9040-44bb-b939-d3679133b293",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "78d4c74c-5d83-417d-b3e0-d669bf85bca1",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "a3d5081a-1992-4887-aa0a-d5517ba21cad",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "6f6548ce-3606-419b-b7ec-b0d59413d1e1",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "2f784500-4404-4820-b1a3-9552ce4e947f",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "06e3da46-ad2a-460f-be7e-2a1d3e355365",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "249eb832-935d-4a43-8a94-d2133eeba658",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "56f0c3df-5201-44f8-b3ab-20c130bb6837",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "b556d533-8436-4083-a6b2-d889a7fc8cbe",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "8e485502-3790-4a13-aeb4-3aa379af763d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "cc81c226-930b-45cb-90d3-c66c9c900c7e",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "e80e11b2-57e7-4fd5-a6e6-e44e866e0deb",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "efe9875b-dbec-4b6e-8369-f22ffc557dd6",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "ef8ce1ef-1cee-4713-9046-e09101ec618d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "f8d99258-4076-419c-9fc6-d5e4b25a3017",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "75c705a3-c84d-45ab-a8a1-648f209ef349",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "f49f7872-e3b5-4f8e-b526-f9060aa39a9f",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "2d0cdf66-e04c-4a9d-a6bf-9a0141c9cf0e",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "391ff60a-7a10-4129-9a3f-c8e411ad8532",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "0962f818-566c-4bc8-bc8c-9ea6753985ba",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "55849760-343a-47b7-9d9e-7166f7967308",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "2b3e45e0-cc00-4cb7-852a-5e3d3230bbdc",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "52b98e42-7c39-4ba8-a0ba-c6a622b67fc1",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "00d51044-99a3-44d8-8327-0cfb7e9d48ea",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "b952d357-a3c2-45ae-9de7-b8c05760906e",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
+                    "rangenode_id": "081a2fb8-b9e9-4f06-bb87-814e1d28afd0",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "a04ff018-079d-44cb-a71b-959bea8009bb",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "dc4d60b2-5557-4b6b-8149-2e8b409ea6f9",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "23e59bec-3dc8-46a1-85b8-8330ac5f3a20",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "c7dc86b2-64c0-4e44-9135-fdb3b661fd91",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "49d2aaf7-42fe-42a0-8d9a-da1199182b6e",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "3ac7a866-59d6-4ff2-a5d7-338203987164",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "f2fbe961-bd91-44dd-a0fc-3c5f3f63775d",
+                    "edgeid": "71aa2697-9ddc-4ded-84d0-8bf964bc06ba",
+                    "graph_id": "d7922b11-13c3-4d35-983a-e26da78914f8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "ebb97c8c-a75e-446d-b60b-9b7ea0b9f82a",
+                    "source_identifier_id": null
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Data Analysis Methods",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "fb889237-2046-473f-b900-0753b43bf5ae",
+                    "label": {
+                        "en": "Data Analysis Methods"
+                    },
+                    "node_id": "56f0c3df-5201-44f8-b3ab-20c130bb6837",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Arch Potential"
+                    },
+                    "id": "d8b43381-1fd4-4a7a-99b7-60e34cc88728",
+                    "label": {
+                        "en": "Has Arch Potential"
+                    },
+                    "node_id": "ebb97c8c-a75e-446d-b60b-9b7ea0b9f82a",
+                    "sortorder": 12,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Survey Coverage"
+                    },
+                    "id": "47a1c0a3-190c-49fb-ab14-7676f360e273",
+                    "label": {
+                        "en": "Has Survey Coverage"
+                    },
+                    "node_id": "75c705a3-c84d-45ab-a8a1-648f209ef349",
+                    "sortorder": 16,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Subsurface Testing Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "c8392872-60de-45ce-a305-34b3a728ec23",
+                    "label": {
+                        "en": "Subsurface Testing Approach"
+                    },
+                    "node_id": "00d51044-99a3-44d8-8327-0cfb7e9d48ea",
+                    "sortorder": 11,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Machine Assisted Inspection Methods",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "a5302d8e-6179-4b8a-9051-0a7a2d423377",
+                    "label": {
+                        "en": "Machine Assisted Inspection Methods"
+                    },
+                    "node_id": "6f6548ce-3606-419b-b7ec-b0d59413d1e1",
+                    "sortorder": 9,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Field Transport and Lab Methods",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "39e0930c-4d52-457a-a1c0-56dcb858e4fb",
+                    "label": {
+                        "en": "Field Transport and Lab Methods"
+                    },
+                    "node_id": "06e3da46-ad2a-460f-be7e-2a1d3e355365",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Machine Assisted Inspection Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "c611c618-c1db-4bc8-91ec-1cc901a90ef7",
+                    "label": {
+                        "en": "Machine Assisted Inspection Approach"
+                    },
+                    "node_id": "2b3e45e0-cc00-4cb7-852a-5e3d3230bbdc",
+                    "sortorder": 8,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Other Field Methods",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "38dad129-2d3c-4355-bf86-5d63f49b350a",
+                    "label": {
+                        "en": "Other Field Methods"
+                    },
+                    "node_id": "2d0cdf66-e04c-4a9d-a6bf-9a0141c9cf0e",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Subsurface Testing"
+                    },
+                    "id": "cb19af59-4df1-4cf5-a17a-4a7a156456b7",
+                    "label": {
+                        "en": "Has Subsurface Testing"
+                    },
+                    "node_id": "dc4d60b2-5557-4b6b-8149-2e8b409ea6f9",
+                    "sortorder": 10,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Pre Field Research"
+                    },
+                    "id": "b3c21410-13fb-4019-bf9c-6aeab8e5d5cd",
+                    "label": {
+                        "en": "Has Pre Field Research"
+                    },
+                    "node_id": "c7dc86b2-64c0-4e44-9135-fdb3b661fd91",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Methods Alignment",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "6d4e15df-8878-4797-b744-b41123456e13",
+                    "label": {
+                        "en": "Methods Alignment"
+                    },
+                    "node_id": "081a2fb8-b9e9-4f06-bb87-814e1d28afd0",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Arch Bearing Sediment",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "024e5c5f-133f-4377-8045-95ebe06eb342",
+                    "label": {
+                        "en": "Arch Bearing Sediment"
+                    },
+                    "node_id": "3ac7a866-59d6-4ff2-a5d7-338203987164",
+                    "sortorder": 13,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Winter Assessment Methods",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "b1ddcbde-4cdc-412a-990b-9f49256d183b",
+                    "label": {
+                        "en": "Winter Assessment Methods"
+                    },
+                    "node_id": "e80e11b2-57e7-4fd5-a6e6-e44e866e0deb",
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Machine Assisted Inspection"
+                    },
+                    "id": "3d587151-0426-4b94-bbe9-0abbac1c161b",
+                    "label": {
+                        "en": "Has Machine Assisted Inspection"
+                    },
+                    "node_id": "0962f818-566c-4bc8-bc8c-9ea6753985ba",
+                    "sortorder": 7,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Arch Potential Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "761e598b-a870-4194-aa67-eb9d2fccb85d",
+                    "label": {
+                        "en": "Arch Potential Approach"
+                    },
+                    "node_id": "78d4c74c-5d83-417d-b3e0-d669bf85bca1",
+                    "sortorder": 14,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Survey Coverage Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "b6101dc4-8def-42ef-b26b-53a87dac8536",
+                    "label": {
+                        "en": "Survey Coverage Approach"
+                    },
+                    "node_id": "8e485502-3790-4a13-aeb4-3aa379af763d",
+                    "sortorder": 15,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "f93baaa5-c7ce-43dd-b37d-3e3f46ff829a",
+                    "config": {
+                        "defaultValue": null,
+                        "label": "Has Winter Assessments"
+                    },
+                    "id": "a89b81e0-136c-45b8-b048-0f67ac556e4e",
+                    "label": {
+                        "en": "Has Winter Assessments"
+                    },
+                    "node_id": "ef8ce1ef-1cee-4713-9046-e09101ec618d",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                }
+            ]
+        }
+    ],
+    "metadata": {}
+}

@@ -3,11 +3,12 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         loading?: boolean;
     }>(),
     { loading: false },
@@ -16,17 +17,17 @@ const props = withDefaults(
 const current = computed(() => props.data);
 
 const hasLocationData = computed(() => {
-    return current.value?.aliased_data?.site_visit_location?.aliased_data;
+    return !!current.value?.aliased_data?.site_visit_location;
 });
 
 const hasLocationAndAccess = computed(() => {
     return current.value?.aliased_data?.site_visit_location?.aliased_data
-        ?.location_and_access?.node_value;
+        ?.location_and_access?.aliased_data?.location_and_access?.node_value;
 });
 
 const hasGeoJsonData = computed(() => {
     return current.value?.aliased_data?.site_visit_location?.aliased_data
-        ?.site_visit_location?.node_value;
+        ?.spatial_location?.[0]?.aliased_data?.spatial_location?.node_value;
 });
 
 const hasBiogeography = computed(() => {
@@ -36,17 +37,16 @@ const hasBiogeography = computed(() => {
     return biogeographyData && biogeographyData.length > 0;
 });
 
-const biogeographyRows = computed(() => {
-    return (
-        current.value?.aliased_data?.site_visit_location?.aliased_data
-            ?.biogeography || []
-    );
-});
+const biogeographyRows = computed(
+    () =>
+        (current.value?.aliased_data?.site_visit_location?.aliased_data
+            ?.biogeography || []) as unknown as AliasedTileDataWithAudit[],
+);
 
 const biogeographyColumns = [
     { field: 'biogeography_type', label: 'Type' },
     { field: 'biogeography_name', label: 'Name' },
-    { field: 'biogeography_description', label: 'Description' },
+    { field: 'biogeography_description', label: 'Description', isHtml: true },
 ];
 </script>
 
@@ -66,55 +66,33 @@ const biogeographyColumns = [
                 <template #sectionContent>
                     <div v-if="hasLocationData">
                         <dl>
+                            <dt>Boundary Type</dt>
+                            <dd
+                                v-text="
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.boundary_type
+                                        ?.display_value
+                                "
+                            />
+                            <dt>Boundary Description</dt>
+                            <dd
+                                v-html="
+                                    current?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.boundary_description
+                                        ?.display_value
+                                "
+                            />
                             <dt>Location and Access</dt>
-                            <dd>
-                                {{
+                            <dd
+                                v-html="
                                     current?.aliased_data?.site_visit_location
                                         ?.aliased_data?.location_and_access
+                                        ?.aliased_data?.location_and_access
                                         ?.display_value
-                                }}
-                            </dd>
-
-                            <dt
-                                v-if="
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type
-                                        ?.node_value
                                 "
-                            >
-                                Latest Edit Type
-                            </dt>
-                            <dd
-                                v-if="
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type
-                                        ?.node_value
-                                "
-                            >
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.latest_edit_type
-                                        ?.display_value
-                                }}
-                            </dd>
-
-                            <dt>Accuracy Remarks</dt>
-                            <dd>
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.accuracy_remarks
-                                        ?.display_value
-                                }}
-                            </dd>
-
-                            <dt>Source Notes</dt>
-                            <dd>
-                                {{
-                                    current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.source_notes
-                                        ?.display_value
-                                }}
-                            </dd>
+                            />
                         </dl>
                     </div>
                     <EmptyState v-else />
@@ -130,7 +108,7 @@ const biogeographyColumns = [
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasBiogeography"
-                        :table-data="biogeographyRows ? biogeographyRows : []"
+                        :table-data="biogeographyRows"
                         :column-definitions="biogeographyColumns"
                         :initial-sort-field-index="0"
                     />
@@ -157,13 +135,13 @@ const biogeographyColumns = [
                             >{{
                                 JSON.stringify(
                                     current?.aliased_data?.site_visit_location
-                                        ?.aliased_data?.site_visit_location
+                                        ?.aliased_data?.spatial_location?.[0]
+                                        ?.aliased_data?.spatial_location
                                         ?.node_value,
                                     null,
                                     2,
                                 )
-                            }}</pre
-                        >
+                            }}</pre>
                     </div>
                     <EmptyState
                         v-else

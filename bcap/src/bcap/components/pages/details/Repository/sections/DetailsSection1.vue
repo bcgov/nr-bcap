@@ -3,12 +3,12 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import type { RepositorySchema } from '@/bcap/schema/RepositorySchema.ts';
+import type { Repository } from '@/bcap/client/types.gen.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: RepositorySchema | undefined;
+        data: Repository | undefined;
         loading?: boolean;
         languageCode?: string;
     }>(),
@@ -38,9 +38,9 @@ const hasContactInfo = computed(() => {
     const data = contactData.value?.aliased_data;
     return (
         data &&
-        (!isEmpty(data.contact_person) ||
-            !isEmpty(data.contact_email) ||
-            !isEmpty(data.contact_phone))
+        (!isEmpty(data.primary_email) ||
+            !isEmpty(data.address_line_1) ||
+            !isEmpty(data.city))
     );
 });
 
@@ -137,30 +137,39 @@ const hasNotes = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    contactData?.aliased_data?.contact_person,
+                                    contactData?.aliased_data?.address_line_1,
                                 )
                             "
                         >
-                            Contact Person
+                            Address
                         </dt>
                         <dd
                             v-if="
                                 !isEmpty(
-                                    contactData?.aliased_data?.contact_person,
+                                    contactData?.aliased_data?.address_line_1,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    contactData?.aliased_data?.contact_person,
+                                    contactData?.aliased_data?.address_line_1,
                                 )
+                            }}
+                        </dd>
+
+                        <dt v-if="!isEmpty(contactData?.aliased_data?.city)">
+                            City
+                        </dt>
+                        <dd v-if="!isEmpty(contactData?.aliased_data?.city)">
+                            {{
+                                getDisplayValue(contactData?.aliased_data?.city)
                             }}
                         </dd>
 
                         <dt
                             v-if="
                                 !isEmpty(
-                                    contactData?.aliased_data?.contact_email,
+                                    contactData?.aliased_data?.primary_email,
                                 )
                             "
                         >
@@ -169,36 +178,13 @@ const hasNotes = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    contactData?.aliased_data?.contact_email,
+                                    contactData?.aliased_data?.primary_email,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    contactData?.aliased_data?.contact_email,
-                                )
-                            }}
-                        </dd>
-
-                        <dt
-                            v-if="
-                                !isEmpty(
-                                    contactData?.aliased_data?.contact_phone,
-                                )
-                            "
-                        >
-                            Phone
-                        </dt>
-                        <dd
-                            v-if="
-                                !isEmpty(
-                                    contactData?.aliased_data?.contact_phone,
-                                )
-                            "
-                        >
-                            {{
-                                getDisplayValue(
-                                    contactData?.aliased_data?.contact_phone,
+                                    contactData?.aliased_data?.primary_email,
                                 )
                             }}
                         </dd>

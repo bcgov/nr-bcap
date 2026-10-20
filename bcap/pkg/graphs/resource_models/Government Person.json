@@ -39,9 +39,7 @@
                         {
                             "card_id": "04707817-e6c5-4cb4-a59c-074640c46e36",
                             "constraintid": "809a4d58-ea9b-4591-a8e7-30fe92c45564",
-                            "nodes": [
-                                "2fde21de-a31e-11ed-9722-5254004d77d3"
-                            ],
+                            "nodes": ["2fde21de-a31e-11ed-9722-5254004d77d3"],
                             "uniquetoallinstances": true
                         }
                     ],
@@ -133,9 +131,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Email Address",
                         "maxLength": "50",
                         "placeholder": {
@@ -163,9 +159,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "First Name",
                         "maxLength": "40",
                         "placeholder": {
@@ -193,9 +187,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Username",
                         "maxLength": "12",
                         "placeholder": {
@@ -223,9 +215,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Phone Number",
                         "maxLength": "12",
                         "placeholder": {
@@ -253,9 +243,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Last Name",
                         "maxLength": "40",
                         "placeholder": {
@@ -278,9 +266,7 @@
                     "card_id": "0629d64b-a60a-445e-a49d-83d08e4e6cd4",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Government Association",
                         "placeholder": {
                             "en": ""
@@ -305,9 +291,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Government Position",
                         "maxLength": null,
                         "placeholder": {

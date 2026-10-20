@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/3ad13286-f34e-5e47-9066-9c19477355d6">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/3ad13286-f34e-5e47-9066-9c19477355d6</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Planned</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6">
+        <dcterms:title>Engagement Status</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/f239c71c-599a-5733-9880-c4692d43d912">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/f239c71c-599a-5733-9880-c4692d43d912</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">In Progress</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/e58d25d9-4f39-5ce0-87cf-e3650cc82bc1">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/e58d25d9-4f39-5ce0-87cf-e3650cc82bc1</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Completed</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/263f2125-6c94-5bcd-afb0-004d239b865d">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/263f2125-6c94-5bcd-afb0-004d239b865d</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Cancelled</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/24d68973-4356-53a4-b831-3df71a0b5a12">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/24d68973-4356-53a4-b831-3df71a0b5a12</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Not Required</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

@@ -5,14 +5,15 @@ import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import type {
-    ContributorSchema,
-    ContributorTile,
-} from '@/bcap/schema/ContributorSchema.ts';
+    Contributor,
+    ContributorContributorTile,
+} from '@/bcap/client/types.gen.ts';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: ContributorSchema | undefined;
+        data: Contributor | undefined;
         loading?: boolean;
         languageCode?: string;
     }>(),
@@ -21,8 +22,8 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<ContributorTile | undefined>(() => {
-    return props.data?.aliased_data?.contributor;
+const currentData = computed<ContributorContributorTile | undefined>(() => {
+    return props.data?.aliased_data?.contributor ?? undefined;
 });
 
 const organizationColumns = [
@@ -53,10 +54,19 @@ const hasContactInfo = computed(() => {
 
 const hasOrganizations = computed(() => {
     return (
-        props.data?.aliased_data?.associated_organization &&
-        props.data.aliased_data.associated_organization.length > 0
+        props.data?.aliased_data?.contributor?.aliased_data
+            ?.associated_organization &&
+        props.data.aliased_data.contributor.aliased_data.associated_organization
+            .length > 0
     );
 });
+
+const associatedOrganizationData = computed(
+    () =>
+        (props.data?.aliased_data?.contributor?.aliased_data
+            ?.associated_organization ??
+            []) as unknown as AliasedTileDataWithAudit[],
+);
 </script>
 
 <template>
@@ -257,10 +267,7 @@ const hasOrganizations = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasOrganizations"
-                        :table-data="
-                            props.data?.aliased_data?.associated_organization ??
-                            []
-                        "
+                        :table-data="associatedOrganizationData"
                         :column-definitions="organizationColumns"
                         :initial-sort-field-index="1"
                     />

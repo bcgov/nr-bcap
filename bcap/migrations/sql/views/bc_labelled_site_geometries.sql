@@ -1,9 +1,16 @@
 create or replace view public.bc_labelled_site_geometries as
 (
-select re.name ->> 'en' resource_name, g.*
+select
+    re.name ->> 'en'           as resource_name,
+    g.id,
+    g.tileid,
+    g.resourceinstanceid,
+    g.nodeid,
+    g.featureid,
+    ST_Transform(g.geom, 3005) as geom
 from geojson_geometries g
          join (select re2.*
                from resource_instances re2
-                        join graphs g on re2.graphid = g.graphid and
-                                         g.slug = 'archaeological_site') re
+                        join graphs gr on re2.graphid = gr.graphid and
+                                          gr.slug = 'archaeological_site') re
               on g.resourceinstanceid = re.resourceinstanceid);

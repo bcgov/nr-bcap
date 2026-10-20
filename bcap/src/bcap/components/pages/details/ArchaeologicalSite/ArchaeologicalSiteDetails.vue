@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import {
     useResourceData,
     useRelatedResourceData,
@@ -16,10 +17,12 @@ import Section7 from '@/bcap/components/pages/details/ArchaeologicalSite/section
 import Section8 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection8.vue';
 import Section9 from '@/bcap/components/pages/details/ArchaeologicalSite/sections/DetailsSection9.vue';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { SiteLocationTile } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import type {
+    ArchaeologicalSite,
+    SiteVisit,
+    Publication,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 import DataTable from 'primevue/datatable';
 
 const props = withDefaults(
@@ -43,39 +46,96 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: currentData, loading: siteDataLoading } =
-    useResourceData<ArchaeologySiteSchema>('archaeological_site', resourceId);
+const {
+    data: currentData,
+    loading: siteDataLoading,
+    error: siteError,
+} = useResourceData<ArchaeologicalSite>('archaeological_site', resourceId);
 
-const { data: siteVisitData, loading: siteVisitDataLoading } =
-    useRelatedResourceData<SiteVisitSchema>('site_visit', resourceId);
+const {
+    data: siteVisitData,
+    loading: siteVisitDataLoading,
+    error: siteVisitError,
+} = useRelatedResourceData<SiteVisit>('site_visit', resourceId);
 
-const { data: childSiteData, loading: childSiteDataLoading } =
-    useRelatedResourceData<ArchaeologySiteSchema>(
-        'archaeological_site',
-        resourceId,
-    );
+const {
+    data: publicationData,
+    loading: publicationDataLoading,
+    error: publicationError,
+} = useRelatedResourceData<Publication>('publication', resourceId);
 
-const { data: hriaDiscontinuedData, loading: hriaDataLoading } =
-    useRelatedResourceData<HriaDiscontinuedDataSchema>(
-        'hria_discontinued_data',
-        resourceId,
-        true,
-    );
+const {
+    data: childSiteData,
+    loading: childSiteDataLoading,
+    error: childSiteError,
+} = useRelatedResourceData<ArchaeologicalSite>(
+    'archaeological_site',
+    resourceId,
+);
+
+const {
+    data: hriaDiscontinuedData,
+    loading: hriaDataLoading,
+    error: hriaError,
+} = useRelatedResourceData<HriaDiscontinuedData>(
+    'hria_discontinued_data',
+    resourceId,
+    true,
+);
+
+const loadError = computed(
+    () =>
+        siteError.value ||
+        siteVisitError.value ||
+        publicationError.value ||
+        siteVisitPublicationError.value ||
+        childSiteError.value ||
+        hriaError.value,
+);
+
+watch(currentData, () => {
+    if (currentData.value) {
+        console.log(
+            'Current archaeological site data updated:',
+            currentData.value,
+        );
+    }
+});
 
 const typedCurrentData = computed(
-    () => currentData.value as ArchaeologySiteSchema | undefined,
+    () => currentData.value as ArchaeologicalSite | undefined,
 );
 
 const typedSiteVisitData = computed(
-    () => (siteVisitData.value || []) as SiteVisitSchema[],
+    () => (siteVisitData.value || []) as SiteVisit[],
 );
 
 const typedChildSiteData = computed(
-    () => childSiteData.value as ArchaeologySiteSchema[] | undefined,
+    () => childSiteData.value as ArchaeologicalSite[] | undefined,
 );
 
 const typedHriaData = computed(
-    () => hriaDiscontinuedData.value as HriaDiscontinuedDataSchema | undefined,
+    () => hriaDiscontinuedData.value as HriaDiscontinuedData | undefined,
+);
+
+const typedPublicationData = computed(
+    () => publicationData.value as Publication[] | undefined,
+);
+
+const siteVisitIds = computed(() =>
+    typedSiteVisitData.value
+        .map((v) => v.resourceinstanceid)
+        .filter((id): id is string => !!id),
+);
+
+const {
+    data: siteVisitPublicationData,
+    loading: siteVisitPublicationLoading,
+    error: siteVisitPublicationError,
+} = useRelatedResourceData<Publication>('publication', siteVisitIds);
+
+const typedSiteVisitPublicationData = computed(
+    () => siteVisitPublicationData.value as Publication[] | undefined,
 );
 </script>
 
@@ -89,6 +149,11 @@ const typedHriaData = computed(
     </div>
 
     <div class="container">
+        <InlineError
+            v-if="loadError"
+            title="Some of this record could not be loaded."
+            :detail="loadError"
+        />
         <Section1
             :data="typedCurrentData"
             :loading="siteDataLoading"
@@ -117,8 +182,8 @@ const typedHriaData = computed(
         />
         <Section4
             :data="
-                (typedCurrentData?.aliased_data?.heritage_site_location?.[0]
-                    ?.aliased_data as unknown as SiteLocationTile) || undefined
+                typedCurrentData?.aliased_data?.heritage_site_location?.[0]
+                    ?.aliased_data ?? undefined
             "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
@@ -128,7 +193,7 @@ const typedHriaData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section5
-            :data="typedCurrentData?.aliased_data?.site_boundary"
+            :data="typedCurrentData?.aliased_data?.site_boundary ?? undefined"
             :hria-data="typedHriaData"
             :loading="siteDataLoading || hriaDataLoading"
             :force-collapsed="props.forceCollapsed"
@@ -136,7 +201,9 @@ const typedHriaData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section6
-            :data="typedCurrentData?.aliased_data?.archaeological_data"
+            :data="
+                typedCurrentData?.aliased_data?.archaeological_data ?? undefined
+            "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
             :loading="siteDataLoading"
@@ -145,7 +212,9 @@ const typedHriaData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section7
-            :data="typedCurrentData?.aliased_data?.ancestral_remains"
+            :data="
+                typedCurrentData?.aliased_data?.ancestral_remains ?? undefined
+            "
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading || siteVisitDataLoading"
             :force-collapsed="props.forceCollapsed"
@@ -155,7 +224,7 @@ const typedHriaData = computed(
         <Section8
             :data="
                 typedCurrentData?.aliased_data
-                    ?.remarks_and_restricted_information
+                    ?.remarks_and_restricted_information ?? undefined
             "
             :site-visit-data="typedSiteVisitData"
             :loading="siteDataLoading"
@@ -164,9 +233,19 @@ const typedHriaData = computed(
             :edit-log-data="props.editLogData"
         />
         <Section9
-            :data="typedCurrentData?.aliased_data?.related_documents"
+            :data="
+                typedCurrentData?.aliased_data?.related_documents ?? undefined
+            "
+            :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
-            :loading="siteDataLoading || hriaDataLoading"
+            :publication-data="typedPublicationData"
+            :site-visit-publication-data="typedSiteVisitPublicationData"
+            :loading="
+                siteDataLoading ||
+                hriaDataLoading ||
+                publicationDataLoading ||
+                siteVisitPublicationLoading
+            "
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"
             :edit-log-data="props.editLogData"
@@ -189,5 +268,8 @@ dl {
 dt {
     min-width: 20rem;
     padding-top: 0.75rem;
+}
+.p-datatable-tbody > tr > td {
+    vertical-align: top;
 }
 </style>

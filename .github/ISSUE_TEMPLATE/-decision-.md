@@ -2,7 +2,7 @@
 name: "[DECISION]"
 about: Create a decision request
 title: "[DECISION]"
-labels: ''
+labels: Bug, TRIAGE
 assignees: ''
 
 ---

@@ -14,6 +14,8 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+from bcap.util.dates import to_long
+
 
 def get_env_variable(var_name, is_optional=False):
     msg = "Set the %s environment variable"
@@ -38,9 +40,13 @@ load_dotenv(
 APP_NAME = "bcap"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=1)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+DEPLOYMENT_TIMESTAMP = get_env_variable("DEPLOYMENT_TIMESTAMP")
 
 # PROXY prefix used - NB - cannot have leading "/", and must have trailing "/"
 BCGOV_PROXY_PREFIX = get_env_variable("BCGOV_PROXY_PREFIX")
+
+# Normalised proxy prefix for url patterns: "" or "<prefix>/" (no leading slash).
+URL_PREFIX = BCGOV_PROXY_PREFIX.rstrip("/") + "/" if BCGOV_PROXY_PREFIX else ""
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -54,6 +60,13 @@ ETL_MODULE_LOCATIONS.append("bcap.etl_modules")
 SEARCH_COMPONENT_LOCATIONS.append("bcap.search_components")
 
 LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
+
+# ClamAV virus scanning of uploads
+CLAMAV_ENABLED = (
+    str(get_env_variable("CLAMAV_ENABLED", is_optional=True)).lower() == "true"
+)
+CLAMAV_HOST = get_env_variable("CLAMAV_HOST", is_optional=True)
+CLAMAV_PORT = get_env_variable("CLAMAV_PORT", is_optional=True) or 3310
 
 FILE_TYPE_CHECKING = "lenient"
 FILE_TYPES = [
@@ -97,13 +110,7 @@ ELASTICSEARCH_HOSTS = [
     }
 ]
 
-ELASTICSEARCH_INDEX_SETTINGS = {
-    "settings": {
-        "index": {
-            "max_terms_count": 150000
-        }
-    }
-}
+ELASTICSEARCH_INDEX_SETTINGS = {"settings": {"index": {"max_terms_count": 150000}}}
 
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 # ELASTICSEARCH_CONNECTION_OPTIONS = {"request_timeout": 30, "verify_certs": False, "basic_auth": ("elastic", "E1asticSearchforArche5")}
@@ -192,7 +199,8 @@ DATABASES = {
     "default": {
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": True,
-        "CONN_MAX_AGE": 0,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "HOST": get_env_variable("PGHOST"),
         "NAME": get_env_variable("PGDBNAME"),
@@ -218,6 +226,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "django_hosts",
     "arches",
     "arches.app.models",
@@ -235,15 +244,49 @@ INSTALLED_APPS = (
     "storages",
     "bcap",
     "arches_querysets",
-    "arches_component_lab",
+    "arches_vue_components",
     "arches_controlled_lists",
     "rest_framework",
+    "drf_spectacular",
+    "arches_zod_validation",
+    "arches_workflow_stepper",
     "bcgov_arches_common",
 )
 INSTALLED_APPS += (
     "arches.app",
     "django.contrib.admin",
 )
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "bcap.views.exception_handler.bcap_exception_handler",
+    "DEFAULT_PERMISSION_CLASSES": ["bcap.permissions.route_guards.Internal"],
+    # Session cookies only. DRF's own default adds BasicAuthentication, which
+    # would accept a password on every API route.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication"
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BCAP API",
+    "DESCRIPTION": "BC Archaeology Portal API",
+    "VERSION": "2.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_URLCONF": "bcap.urls_api_documented",
+    # Pinned so operation ids don't shift with whichever urlconf a generation run
+    # enumerates: unset, drf-spectacular estimates the prefix as the common path
+    # of the endpoints it sees, which strips "api" and renames every generated type.
+    "SCHEMA_PATH_PREFIX": "/bcap",
+    # The arches-querysets tile schemas are introspected from graph nodes whose
+    # order isn't deterministic; order all component properties by the graph node
+    # sortorder for stable, meaningful diffs. Keep the default enum hook.
+    "POSTPROCESSING_HOOKS": [
+        "drf_spectacular.hooks.postprocess_schema_enums",
+        "arches_zod_validation.schema.sort_generated_schema_properties",
+        "arches_zod_validation.schema.type_base_serializer_fields",
+    ],
+}
 
 # toggle Vite injection
 USE_VITE = False
@@ -259,7 +302,7 @@ if USE_VITE:
     DJANGO_VITE = {
         "default": {
             "dev_mode": USE_VITE,
-            "static_url_prefix": "/bcrhp/static",
+            "static_url_prefix": "/bcap/static",
             # "static_url_prefix": "/",
         }
     }
@@ -304,6 +347,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "arches.app.utils.middleware.SetAnonymousUser",
+    "bcap.permissions.applicant_gate.ArchesDefaultDenyApplicantGate",
     # "silk.middleware.SilkyMiddleware",
 ]
 
@@ -324,6 +368,7 @@ TEMPLATES = build_templates_config(
 
 # make vite context processor available in templates
 TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+    "bcap.util.context_processors.deployment_settings",
     "bcap.context_processors.vite",
 ]
 
@@ -403,6 +448,10 @@ LOGGING = {
     },
 }
 
+# The file handler can't create its own parent directory (gitignored, so absent
+# on a fresh checkout); make it before logging is configured.
+os.makedirs(os.path.join(APP_ROOT, "logs"), exist_ok=True)
+
 # Rate limit for authentication views
 # See options (including None or python callables):
 # https://django-ratelimit.readthedocs.io/en/stable/rates.html#rates-chapter
@@ -461,6 +510,7 @@ if MODE == "DEV":
     CSRF_TRUSTED_ORIGINS = ["http://localhost:82"]
     PUBLIC_ORIGIN = "http://localhost:82"
 
+
 AUTHLIB_OAUTH_CLIENTS = {
     "default": {
         "client_id": get_env_variable("OAUTH_CLIENT_ID"),
@@ -487,12 +537,22 @@ AUTHLIB_OAUTH_CLIENTS = {
                 "/bcap/auth/eoauth_cb",
                 "/bcap/o/token",
                 # "/bcap/api/borden-number",
-                "/bcap/auth/user_profile"
+                "/bcap/auth/user_profile",
+                # Signup-link target must be reachable while anonymous; it
+                # stashes the token and bounces the visitor into login.
+                "/bcap/signup/claim",
                 # "/bcap/geojson"
             ],
         },
     }
 }
+
+REGISTRATION_LINK_TTL_DAYS = 7
+
+PERMISSION_FRAMEWORK = "bcap_arches_permission_framework.BcapArchesPermissionFramework"
+
+
+from bcap.permissions.permission_settings import PERMISSION_DEFAULTS  # noqa: E402
 
 # Optional: storage location for updated tokens
 OAUTH2_TOKEN_STORE = "bcgov_arches_common.util.auth.token_store.save_token"
@@ -521,12 +581,24 @@ else:
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  #<-- Only need to uncomment this for testing without an actual email server
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST = "apps.smtp.gov.bc.ca"
-EMAIL_HOST_USER = "BCHistoricPlacesRegister@gov.bc.ca"
 # EMAIL_HOST_PASSWORD = 'xxxxxxx'
 # EMAIL_PORT = 587
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Read by Django 6 / Arches 8.2 On upgrade, drop EMAIL_* below and above.
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "apps.smtp.gov.bc.ca",
+            "username": "BCHistoricPlacesRegister@gov.bc.ca",
+        },
+    }
+}
+
+EMAIL_HOST = MAILERS["default"]["OPTIONS"]["host"]
+EMAIL_HOST_USER = MAILERS["default"]["OPTIONS"]["username"]
+
+DEFAULT_FROM_EMAIL = MAILERS["default"]["OPTIONS"]["username"]
 
 CELERY_WORKER_NAME = get_env_variable("CELERY_WORKER_NAME")
 CELERY_BROKER_URL = get_env_variable(
@@ -589,7 +661,6 @@ RENDERERS = [
     },
 ]
 
-# By setting RESTRICT_MEDIA_ACCESS to True, media file requests outside of Arches will checked against nodegroup permissions.
 RESTRICT_MEDIA_ACCESS = True
 
 # By setting RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER to True, if the user is attempting
@@ -600,9 +671,9 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (
+    "expiration": to_long(
         datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
-    ).strftime("%A, %d %B %Y"),
+    ),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
@@ -675,7 +746,7 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "bcap.services.virus_scan_service.ScanningStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -702,19 +773,19 @@ TILESERVER_URL = "https://openmaps.gov.bc.ca/"
 BC_TILESERVER_URLS = {
     "maps": {
         "url": "https://maps.gov.bc.ca/",
-        "use_outbound_proxy": True  # Use outbound proxy for this source
+        "use_outbound_proxy": True,  # Use outbound proxy for this source
     },
     "openmaps": {
         "url": TILESERVER_URL,
-        "use_outbound_proxy": True  # Don't use outbound proxy for this source
+        "use_outbound_proxy": True,  # Don't use outbound proxy for this source
     },
     "local": {
         "url": get_env_variable("TILESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
     "local-feature": {
         "url": get_env_variable("FEATURESERVER_LOCAL_URL"),
-        "use_outbound_proxy": False  # Local doesn't need outbound proxy
+        "use_outbound_proxy": False,  # Local doesn't need outbound proxy
     },
 }
 
@@ -776,3 +847,5 @@ TIMEWHEEL_DATE_TIERS = {
 
 # "Translating" one resource type to another (i.e., finding related instances)
 TRANSLATE_RESOURCE_TYPE_MAX_SOURCES = 10000
+
+TIME_ZONE = "America/Vancouver"

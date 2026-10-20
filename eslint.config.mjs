@@ -7,6 +7,8 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import vueESLintParser from 'vue-eslint-parser';
 
 export default [
+    // Generated Zod schemas -- formatting/escapes we don't control.
+    { ignores: ["**/client/zod.gen.ts"] },
     js.configs.recommended,
     ...pluginVue.configs['flat/recommended'],
     ...tseslint.configs.recommended,
@@ -38,6 +40,19 @@ export default [
         },
         "rules": {
             "semi": ["error", "always"],
+            "vue/no-restricted-v-on": ["error", {
+                argument: "update:value",
+                element: "GenericWidget",
+                message: "Bind @update:aliased-node-data and read node_value or display_value off the node.",
+            }],
+        },
+    },
+    {
+        // Test files declare inline stub components for mounting; the
+        // one-component-per-file rule doesn't apply to them.
+        files: ["**/*.test.ts", "**/*.spec.ts"],
+        rules: {
+            "vue/one-component-per-file": "off",
         },
     },
 ];

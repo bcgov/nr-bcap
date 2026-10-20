@@ -10,7 +10,7 @@ else
 	PACKAGE_JSON_FOLDER=${ARCHES_ROOT}
 fi
 
-PYTHON_EXEC=python3.11
+PYTHON_EXEC=python3
 
 # Environmental Variables
 export DJANGO_PORT=${DJANGO_PORT:-8000}
@@ -67,7 +67,7 @@ init_arches() {
 
 		cd ${WEB_ROOT}
 
-		arches-project create ${ARCHES_PROJECT}
+		arches-admin startproject ${ARCHES_PROJECT}
 		run_setup_db
 
 		exit_code=$?
@@ -145,7 +145,14 @@ run_django_server() {
 	echo ""
 	cd ${APP_FOLDER}
     echo "Running Django"
-	exec sh -c "pip install debugpy -t /tmp && ${PYTHON_EXEC} -Wdefault /tmp/debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:${DJANGO_PORT}"
+	# VSCODE_DEBUG=true makes debugpy listen (host 5690 maps to the container port) for a
+	# VSCode "Remote Attach". Off by default for faster boot. Port defaults to 5678.
+	if [[ "${VSCODE_DEBUG}" == "true" ]]; then
+		VSCODE_DEBUG_PORT=${VSCODE_DEBUG_PORT:-5678}
+		echo "debugpy listening on 0.0.0.0:${VSCODE_DEBUG_PORT}"
+		exec ${PYTHON_EXEC} -W default -m debugpy --listen 0.0.0.0:${VSCODE_DEBUG_PORT} manage.py runserver 0.0.0.0:${DJANGO_PORT}
+	fi
+	exec ${PYTHON_EXEC} -W default manage.py runserver 0.0.0.0:${DJANGO_PORT}
 }
 
 run_livereload_server() {

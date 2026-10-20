@@ -99,9 +99,7 @@
                         {
                             "card_id": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
                             "constraintid": "64993cb2-8001-4a58-a311-45ed69ffa433",
-                            "nodes": [
-                                "91cc2384-a31c-11ed-b90e-5254004d77d3"
-                            ],
+                            "nodes": ["91cc2384-a31c-11ed-b90e-5254004d77d3"],
                             "uniquetoallinstances": true
                         }
                     ],
@@ -132,9 +130,7 @@
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Street Name",
                         "maxLength": null,
                         "placeholder": {
@@ -157,9 +153,7 @@
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "City",
                         "maxLength": null,
                         "placeholder": {
@@ -181,9 +175,7 @@
                 {
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Province",
                         "placeholder": {
                             "en": "Select an option"
@@ -203,9 +195,7 @@
                     "card_id": "1d43db4c-a31c-11ed-bbb0-5254004d77d3",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Postal Code",
                         "maxLength": null,
                         "placeholder": {
@@ -285,9 +275,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Government Name",
                         "maxLength": null,
                         "placeholder": {
@@ -309,9 +297,7 @@
                 {
                     "card_id": "7d35e296-ba54-4879-88aa-c2951dce0d1c",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Government Type",
                         "placeholder": {
                             "en": "Select an option"

@@ -1,0 +1,497 @@
+{
+    "graph": [
+        {
+            "author": "",
+            "color": "#db9a19",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": {
+                "en": ""
+            },
+            "group_permissions": {},
+            "has_unpublished_changes": true,
+            "iconclass": "fa fa-gavel",
+            "is_active": true,
+            "is_copy_immutable": false,
+            "isresource": false,
+            "jsonldcontext": null,
+            "ontology_id": "e6e8db47-2ccf-11e6-927e-b8f6b115d7dd",
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "resource_instance_lifecycle": null,
+            "source_identifier_id": null,
+            "spatial_views": [],
+            "subtitle": {
+                "en": ""
+            },
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "user_permissions": {},
+            "version": "",
+            "functions_x_graphs": [],
+            "graphid": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+            "name": {
+                "en": "Material Collection"
+            },
+            "slug": "material_collection",
+            "publication": null,
+            "root": {
+                "alias": "material_collection",
+                "config": {},
+                "datatype": "semantic",
+                "description": null,
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                "hascustomalias": false,
+                "is_collector": true,
+                "is_immutable": false,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "Material Collection",
+                "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                "nodeid": "df75d745-51e1-4693-b8fd-9801048821c6",
+                "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                "parentproperty": "",
+                "sortorder": 4,
+                "source_identifier_id": null,
+                "sourcebranchpublication_id": null
+            },
+            "nodes": [
+                {
+                    "alias": "details_of_collected_materials",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Details of Collected Materials",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "5e053eb4-4f75-4eed-ace9-61f2b98dd213",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "collection_approach_additional_comments",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Collection Approach Additional Comments",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "850dc43c-0b54-48fa-9fb4-0adae51095a8",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "details_of_collected_samples",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Details of Collected Samples",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "a590c9f6-32dc-4991-999f-a17de16ff22d",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "material_collection",
+                    "config": {},
+                    "datatype": "semantic",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "Material Collection",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "parentproperty": "",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "collection_approach_details",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Details on Collection:\nMaterials\nSamples \nAdditional Details",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Collection Approach Details",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "dff8ab20-cc2a-4760-83f5-8617b741b17b",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "collection_approach",
+                    "config": {},
+                    "datatype": "string",
+                    "description": "Should be LOV",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Collection Approach",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "69c74836-3e58-4993-ab28-3c35cca76484",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "additional_collection_and_sampling_details",
+                    "config": {},
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Additional Collection and Sampling Details",
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "nodeid": "3ff6509a-df68-4116-bcf5-8bf48a397e40",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                }
+            ],
+            "nodegroups": [
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "legacygroupid": null,
+                    "nodegroupid": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Material Collection"
+                    },
+                    "nodegroup_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true
+                }
+            ],
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "69c74836-3e58-4993-ab28-3c35cca76484",
+                    "edgeid": "622fc5bc-9837-47f6-b379-e5883b551b48",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "dff8ab20-cc2a-4760-83f5-8617b741b17b",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "69c74836-3e58-4993-ab28-3c35cca76484",
+                    "edgeid": "42e69f5e-65d4-4e5f-954e-e01a91946657",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "850dc43c-0b54-48fa-9fb4-0adae51095a8",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "edgeid": "86f7055b-3400-4573-a31f-687f94c295f6",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "3ff6509a-df68-4116-bcf5-8bf48a397e40",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "edgeid": "b1e47192-3c2e-478f-9441-5f58dc8d3778",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "a590c9f6-32dc-4991-999f-a17de16ff22d",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "edgeid": "61aa2ea5-1aba-47ba-93fa-4aad17ec67cb",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "5e053eb4-4f75-4eed-ace9-61f2b98dd213",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "df75d745-51e1-4693-b8fd-9801048821c6",
+                    "edgeid": "af6435cd-1ad7-488c-83ab-155127705481",
+                    "graph_id": "856e2d87-5a30-4ade-a6af-9e695e60eed8",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "rangenode_id": "69c74836-3e58-4993-ab28-3c35cca76484",
+                    "source_identifier_id": null
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Details of Collected Materials",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "064184a2-cb54-4dfb-90ed-b1d021cc76bd",
+                    "label": {
+                        "en": "Details of Collected Materials"
+                    },
+                    "node_id": "5e053eb4-4f75-4eed-ace9-61f2b98dd213",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Collection Approach Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "0c529801-46fd-4fec-aa7e-f04862b70d10",
+                    "label": {
+                        "en": "Collection Approach Details"
+                    },
+                    "node_id": "dff8ab20-cc2a-4760-83f5-8617b741b17b",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Additional Collection and Sampling Details",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "72d1a843-cce8-4360-a8ce-a01a68fb19ce",
+                    "label": {
+                        "en": "Additional Collection and Sampling Details"
+                    },
+                    "node_id": "3ff6509a-df68-4116-bcf5-8bf48a397e40",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Collection Approach",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "33f70159-236e-4075-9adc-6b80dac0cfa3",
+                    "label": {
+                        "en": "Collection Approach"
+                    },
+                    "node_id": "69c74836-3e58-4993-ab28-3c35cca76484",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Collection Approach Additional Comments",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "f41776ab-bbf7-4457-a822-edfc7026810f",
+                    "label": {
+                        "en": "Collection Approach Additional Comments"
+                    },
+                    "node_id": "850dc43c-0b54-48fa-9fb4-0adae51095a8",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2fbe0998-61e8-4727-bd9a-6668415d3b74",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "label": "Details of Collected Samples",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "9d5dc0af-48bb-4e01-83c0-cdd8515aa2f6",
+                    "label": {
+                        "en": "Details of Collected Samples"
+                    },
+                    "node_id": "a590c9f6-32dc-4991-999f-a17de16ff22d",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                }
+            ]
+        }
+    ],
+    "metadata": {}
+}

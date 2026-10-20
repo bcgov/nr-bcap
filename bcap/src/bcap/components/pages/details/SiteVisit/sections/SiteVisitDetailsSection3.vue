@@ -1,23 +1,27 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
-import { useResourceData } from '@/bcap/composables/useResourceData.ts';
+import type { ApiHcaPermitListResponse } from '@/bcap/client/types.gen.ts';
+import { useResourceList } from '@/bcap/composables/useResourceData.ts';
 import {
     useTileEditLog,
     useSingleTileEditLog,
 } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HcaPermitSchema } from '@/bcap/schema/HcaPermitSchema.ts';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
+import type {
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
+        data: SiteVisit | undefined;
         sectionTitle?: string;
         loading?: boolean;
         visible?: boolean;
@@ -33,50 +37,59 @@ const props = withDefaults(
     },
 );
 
-const details = computed(() => props.data?.aliased_data?.site_visit_details);
+const details = computed(
+    () => props.data?.aliased_data?.site_visit_details ?? undefined,
+);
 const teamTile = computed(() => details.value?.aliased_data?.site_visit_team);
 const teamMembers = computed(
     () => teamTile.value?.aliased_data?.team_member || [],
 );
 const siteFormAuthorsField = computed(() => {
     return details.value?.aliased_data?.site_form_authors as
-        | AliasedNodeData
-        | undefined;
+        AliasedNodeData | undefined;
 });
 
-const associatedPermitId = computed(() => {
+const associatedPermitIds = computed(() => {
     const permitField = details.value?.aliased_data?.associated_permit;
-    return permitField?.details?.[0]?.resource_id;
+    return (permitField?.details ?? [])
+        .map((detail) => detail.resource_id)
+        .filter((id): id is string => id !== null);
 });
 
-const { data: permitData } = useResourceData<HcaPermitSchema>(
-    'hca_permit',
-    associatedPermitId,
-);
+const { data: permitData, error: permitError } = useResourceList<
+    Ref<ApiHcaPermitListResponse>
+>('hca_permit', associatedPermitIds);
 
 const permitDetails = computed(() => {
-    return permitData.value?.aliased_data?.permit_identification?.aliased_data;
+    return (permitData?.value?.results.map(
+        (permit) => permit.aliased_data?.permit_identification,
+    ) || []) as AliasedTileData[];
 });
 
 const { processedData: teamMembersTableData } = useTileEditLog(
-    teamMembers,
+    teamMembers as unknown as ReturnType<typeof computed<AliasedTileData[]>>,
+    toRef(props, 'editLogData'),
+);
+
+const { processedData: permitDetailsTableData } = useTileEditLog(
+    permitDetails,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: siteVisitDetailsData } = useSingleTileEditLog(
-    details,
+    details as unknown as Ref<AliasedTileData | undefined>,
     toRef(props, 'editLogData'),
 );
 
 const permittedValue = computed(() => {
-    const nonPermittedField =
-        siteVisitDetailsData.value?.aliased_data?.nonpermitted_site_visit;
+    const permittedField =
+        siteVisitDetailsData.value?.aliased_data?.is_site_visit_permitted;
 
-    if (nonPermittedField && 'node_value' in nonPermittedField) {
-        const nonPermitted = nonPermittedField.node_value;
-        if (nonPermitted === undefined || nonPermitted === null) return '';
+    if (permittedField && 'node_value' in permittedField) {
+        const permitted = permittedField.node_value;
+        if (permitted === undefined || permitted === null) return '';
 
-        return nonPermitted ? 'Yes' : 'No';
+        return permitted ? 'Yes' : 'No';
     }
 
     return '';
@@ -96,26 +109,6 @@ const siteVisitDetailsTableData = computed(() => {
             permitted: {
                 node_value: permittedValue.value,
                 display_value: permittedValue.value,
-                details: [],
-            },
-            permit_number: permitDetails.value?.permit_number || {
-                node_value: null,
-                display_value: '',
-                details: [],
-            },
-            permit_type: permitDetails.value?.hca_permit_type || {
-                node_value: null,
-                display_value: '',
-                details: [],
-            },
-            permit_holder: permitDetails.value?.permit_holder || {
-                node_value: null,
-                display_value: '',
-                details: [],
-            },
-            issuing_agency: permitDetails.value?.issuing_agency || {
-                node_value: null,
-                display_value: '',
                 details: [],
             },
         },
@@ -147,15 +140,16 @@ const teamColumns = computed(() => [
 ]);
 
 const siteVisitDetailsColumns = computed(() => [
+    { field: 'archaeological_site', label: 'Archaeological Site' },
     { field: 'site_visit_type', label: 'Site Visit Type' },
     { field: 'last_date_of_site_visit', label: 'Last Date On Site' },
-    { field: 'project_description', label: 'Site Visit Description' },
+    {
+        field: 'project_description',
+        label: 'Site Visit Description',
+        isHtml: true,
+    },
     { field: 'permitted', label: 'Permitted' },
-    { field: 'permit_number', label: 'Permit Number' },
-    { field: 'permit_type', label: 'Permit Type' },
-    { field: 'permit_holder', label: 'Permit Holder' },
-    { field: 'affiliation', label: 'Affiliation' },
-    { field: 'issuing_agency', label: 'Issuing Agency' },
+    { field: 'affiliation', label: 'Non-permitted affiliation' },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -166,6 +160,15 @@ const siteVisitDetailsColumns = computed(() => [
         label: 'Entered By',
         visible: props.showAuditFields,
     },
+]);
+
+const permitDetailsColumns = computed(() => [
+    { field: 'permit_number', label: 'Permit Number' },
+    { field: 'hca_permit_type', label: 'Permit Type' },
+    { field: 'permit_holder', label: 'Permit Holder' },
+    // Add back in once Permitting data imported from APTS
+    // { field: 'affiliation', label: 'Affiliation' },
+    { field: 'issuing_agency', label: 'Issuing Agency' },
 ]);
 </script>
 
@@ -184,19 +187,19 @@ const siteVisitDetailsColumns = computed(() => [
             >
                 <template #sectionContent>
                     <div v-if="details">
-                        <dl>
-                            <dt>Archaeological Site</dt>
-                            <dd>
-                                {{
-                                    details?.aliased_data?.archaeological_site
-                                        ?.display_value
-                                }}
-                            </dd>
-                        </dl>
-
                         <StandardDataTable
                             :column-definitions="siteVisitDetailsColumns"
                             :table-data="siteVisitDetailsTableData"
+                        />
+                        <InlineError
+                            v-if="permitError"
+                            title="The associated permits could not be loaded."
+                            :detail="permitError"
+                        />
+                        <StandardDataTable
+                            v-else
+                            :column-definitions="permitDetailsColumns"
+                            :table-data="permitDetailsTableData"
                         />
                     </div>
                     <EmptyState

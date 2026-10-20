@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 USER root
 ENV PROJECT_NAME=bcap
 ## Setting default environment variables
@@ -8,8 +8,10 @@ ENV APP_ROOT=${WEB_ROOT}/${PROJECT_NAME}
 ENV ARCHES_ROOT=${WEB_ROOT}/arches
 ENV COMMON_ROOT=${WEB_ROOT}/bcgov-arches-common
 ENV CONTROLLED_LISTS_ROOT=${WEB_ROOT}/arches-controlled-lists
-ENV COMPONENT_LAB_ROOT=${WEB_ROOT}/arches-component-lab
+ENV VUE_COMPONENTS_ROOT=${WEB_ROOT}/arches-vue-components
 ENV QUERYSETS_ROOT=${WEB_ROOT}/arches-querysets
+ENV WORKFLOW_STEPPER_ROOT=${WEB_ROOT}/arches-workflow-stepper
+ENV ZOD_VALIDATION_ROOT=${WEB_ROOT}/arches-zod-validation
 ENV WHEELS=/wheels
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y make software-properties-common
@@ -23,13 +25,13 @@ RUN mkdir ${WEB_ROOT}
 RUN set -ex \
   && RUN_DEPS=" \
   build-essential \
-  python3.11-dev \
-  mime-support \
+  python3-dev \
+  media-types \
   libgdal-dev \
+  libpq-dev \
   postgresql-client-16 \
-  python3.11 \
-  python3.11-distutils \
-  python3.11-venv \
+  python3 \
+  python3-venv \
   dos2unix \
   git \
   gettext \
@@ -41,8 +43,11 @@ RUN set -ex \
   && add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -sc)-pgdg main" \
   && apt-get update -y \
   && apt-get install -y --no-install-recommends $RUN_DEPS \
+  && apt-get remove -y python3-jwt python3-cryptography || true \
+  && apt-get autoremove -y \
+  && rm -f /usr/lib/python3.12/EXTERNALLY-MANAGED \
   && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-  && python3.11 get-pip.py \
+  && python3 get-pip.py \
   && apt-get install -y nodejs
 
 # Install Yarn components
@@ -56,8 +61,12 @@ COPY ./arches ${ARCHES_ROOT}
 # From here, run commands from ARCHES_ROOT
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev] && \
-    pip install python-dotenv boto3==1.26 django-storages==1.13 oracledb html2text cffi redis && \
+    pip install python-dotenv clamd boto3==1.26 django-storages==1.13 oracledb html2text cffi redis drf-spectacular==0.29.0 djangorestframework-dataclasses==1.4.0 faker && \
     pip install --upgrade cryptography PyJWT Authlib
+
+ARG INSTALL_PYCHARM_DEBUG=false
+RUN if [ "$INSTALL_PYCHARM_DEBUG" = "true" ]; then pip install pydevd-pycharm~=253.31033.139; fi
+
 
 COPY ./bcgov-arches-common ${COMMON_ROOT}
 WORKDIR ${COMMON_ROOT}
@@ -67,13 +76,21 @@ COPY ./arches-controlled-lists ${CONTROLLED_LISTS_ROOT}
 WORKDIR ${CONTROLLED_LISTS_ROOT}
 RUN pip install -e .
 
-COPY ./arches-component-lab ${COMPONENT_LAB_ROOT}
-WORKDIR ${COMPONENT_LAB_ROOT}
+COPY ./arches-vue-components ${VUE_COMPONENTS_ROOT}
+WORKDIR ${VUE_COMPONENTS_ROOT}
 RUN pip install -e .
 
 COPY ./arches-querysets ${QUERYSETS_ROOT}
 WORKDIR ${QUERYSETS_ROOT}
 RUN pip install -e .[drf]
+
+COPY ./arches-workflow-stepper ${WORKFLOW_STEPPER_ROOT}
+WORKDIR ${WORKFLOW_STEPPER_ROOT}
+RUN pip install -e .
+
+COPY ./arches-zod-validation ${ZOD_VALIDATION_ROOT}
+WORKDIR ${ZOD_VALIDATION_ROOT}
+RUN pip install -e .
 
 WORKDIR ${ARCHES_ROOT}
 RUN pip install -e .[dev]
@@ -83,6 +100,11 @@ RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
   dos2unix ${WEB_ROOT}/entrypoint.sh
 RUN mkdir /var/log/supervisor
 RUN mkdir /var/log/celery
+
+RUN chown ubuntu:ubuntu ${WEB_ROOT}/entrypoint.sh \
+  && chown -R ubuntu:ubuntu /var/log/supervisor /var/log/celery
+USER ubuntu
+
 # Set default workdir
 WORKDIR ${APP_ROOT}
 #COPY ../common/* ${PROJECT_NAME}/
@@ -91,3 +113,21 @@ ENTRYPOINT ["../entrypoint.sh"]
 CMD ["run_arches"]
 # Expose port 8000
 EXPOSE 8000
+
+# ---- Jupyter stage ----
+FROM base AS jupyter
+USER root
+COPY ./nr-bcap/pyproject.toml ${APP_ROOT}/pyproject.toml
+RUN pip install --no-cache-dir --group jupyter
+USER ubuntu
+
+WORKDIR ${APP_ROOT}
+
+CMD jupyter server \
+     --ip=0.0.0.0 \
+     --port=8888 \
+     --no-browser \
+     ${JUPYTER_TOKEN:+--IdentityProvider.token=${JUPYTER_TOKEN}} \
+     --ServerApp.notebook_dir=/web_root/bcap/notebooks
+
+EXPOSE 8888

@@ -1,14 +1,17 @@
-@import url("node_modules/bcgov_arches_common/bcgov_arches_common/media/css/project.css");
-@import "../fontawesome/css/fontawesome.min.css";
-@import "../fontawesome/css/solid.min.css";
-@import "resource_details.css";
+@import url('node_modules/bcgov_arches_common/bcgov_arches_common/media/css/project.css');
+@import '../fontawesome/css/fontawesome.min.css';
+@import '../fontawesome/css/solid.min.css';
+@import 'resource_details.css';
 
-.card_component.start_year, .card_component.end_year, .card_component.dates_approximate {
+.card_component.start_year,
+.card_component.end_year,
+.card_component.dates_approximate {
     display: inline-block;
     width: 30%;
 }
 
-.card_component.pid, .card_component.pin {
+.card_component.pid,
+.card_component.pin {
     display: inline-block;
     /*max-width: 45%;*/
     /*min-width: 350px;*/
@@ -16,10 +19,10 @@
 }
 
 .card_component.pin::before {
-    content: "or" !important;
+    content: 'or' !important;
     position: relative;
     top: 60px;
-    margin-left: -20px
+    margin-left: -20px;
 }
 
 .card_component.dates_approximate {
@@ -52,7 +55,10 @@
     margin-bottom: 1.5rem;
 }
 
-.street_address, .city, .province, .address_separator {
+.street_address,
+.city,
+.province,
+.address_separator {
     font-size: 1.4rem;
 }
 
@@ -64,14 +70,16 @@
 }
 
 .photo-info span.separator {
-    margin-right: .5rem;
+    margin-right: 0.5rem;
 }
 
 .slick-slide .photo-info {
     opacity: 0;
 }
 
-.photo-caption-part > span, .photo-info dl, span.separator {
+.photo-caption-part > span,
+.photo-info dl,
+span.separator {
     font-size: 1.4rem;
 }
 
@@ -103,4 +111,13 @@
 
 .slick-slide.slick-current .photo-info {
     opacity: 100% !important;
+}
+
+/* Home Slider Add Black Bars */
+.home-slider .slide-img-container {
+    background-color: #000000;
+}
+/* Forces the image to keep its aspect ratio */
+.home-slider .slide-img-container img {
+    object-fit: contain;
 }

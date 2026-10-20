@@ -1,0 +1,929 @@
+<!-- Ideally we want to rename this to FilingSummary.vue --->
+<script setup lang="ts">
+import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import Panel from 'primevue/panel';
+import ProgressSpinner from 'primevue/progressspinner';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import Accordion from 'primevue/accordion';
+import AccordionPanel from 'primevue/accordionpanel';
+import AccordionHeader from 'primevue/accordionheader';
+import AccordionContent from 'primevue/accordioncontent';
+import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
+import ProcessModules from './modules/ProcessModules.vue';
+import PermitHeaderBand from './PermitHeaderBand.vue';
+import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
+import { useUserStore } from '@/bcap/stores/user.ts';
+import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
+import type {
+    PermitApplicationResourceAliasedData,
+    StringAliasedNodeData,
+} from '@/bcap/client/types.gen.ts';
+import {
+    fetchPermitDetails,
+    fetchDrafts,
+    deleteDraft,
+} from '@/bcap/apps/Permit/api.ts';
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import { routeNames } from '@/bcap/apps/Permit/routes.ts';
+import { isDraftOf } from '@/bcap/types.ts';
+import type { DraftOf } from '@/bcap/types.ts';
+import {
+    permitModules as permitModuleCatalogue,
+    modulesForFilingType,
+} from '../dashboard/permitModules.ts';
+import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
+import { inlineMessage } from '@/bcap/notify.ts';
+import InlineError from '@/bcap/components/InlineError.vue';
+const headerStore = usePermitHeaderStore();
+
+const userStore = useUserStore();
+const route = useRoute();
+const router = useRouter();
+const permitId = computed(() => route.params.id as string);
+// Staff view: enables the module reorder/add/remove controls.
+// Staff reaching a permit through /submissions/ get the applicant view.
+const isStaff = computed(
+    () => Boolean(route.meta.requiresInternal) && userStore.isInternal,
+);
+
+type PermitDraft =
+    DraftOf<GraphSlug.Investigation> | DraftOf<GraphSlug.DocumentSubmission>;
+
+// A draft resumes into its own module's workflow, chosen by its graph slug.
+const draftRouteName = (draft: PermitDraft): string =>
+    permitModuleCatalogue.find((mod) => mod.id === draft.graph_slug)
+        ?.routeName || routeNames.investigationModule;
+
+const draftTitle = (draft: PermitDraft) => {
+    if (draft.graph_slug === GraphSlug.DocumentSubmission) {
+        return 'Document Submission Draft';
+    }
+
+    if (draft.graph_slug === GraphSlug.Investigation) {
+        const ident = draft.data?.investigation_identification?.aliased_data
+            ?.investigation_identification as StringAliasedNodeData | undefined;
+
+        const name = ident?.node_value?.en?.value || ident?.display_value;
+
+        return name ? `Investigation - ${name}` : 'Untitled Investigation';
+    }
+
+    return 'Untitled Draft';
+};
+
+interface PermitHeaderData {
+    projectName: string;
+    applicationNumber: string;
+    submissionType: string;
+    sector: string;
+    submittedDate: string | null;
+}
+
+interface ModuleResponse {
+    status: 'completed' | 'review' | 'unstarted';
+}
+
+// Loaded permit view state, grouped so the async loaders update one object.
+const state = reactive({
+    isLoading: true,
+    loadError: '',
+    permitData: {
+        projectName: 'Loading...',
+        applicationNumber: '...',
+        submissionType: '',
+        sector: '...',
+        submittedDate: null,
+    } as PermitHeaderData,
+    adminTileMeta: { tileid: '', nodegroup: '' },
+    fetchedModuleData: {} as Record<string, ModuleResponse>,
+    rawPermitData: null as PermitApplicationResourceAliasedData | null,
+    permitDrafts: [] as PermitDraft[],
+    // Completed/existing investigations have no endpoint yet; wired in later.
+    completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
+});
+
+const bandHeader = computed(() => headerStore.state.header);
+
+const modulesAllowedForFilingType = computed(() =>
+    modulesForFilingType(
+        state.rawPermitData?.application_identification?.aliased_data
+            ?.filing_type?.display_value ?? '',
+    ),
+);
+
+const moduleFromQuery = route.query.module;
+const activeModuleId = ref(
+    typeof moduleFromQuery === 'string' &&
+        modulesAllowedForFilingType.value.some((m) => m.id === moduleFromQuery)
+        ? moduleFromQuery
+        : modulesAllowedForFilingType.value[0].id,
+);
+
+// ?draft=<id> opens that draft's panel, so a dashboard card lands on its section.
+const expandedDrafts = ref(
+    typeof route.query.draft === 'string' ? [route.query.draft] : [],
+);
+
+watch(modulesAllowedForFilingType, (mods) => {
+    if (mods.length && !mods.some((mod) => mod.id === activeModuleId.value)) {
+        activeModuleId.value = mods[0].id;
+    }
+});
+
+const activeModule = computed(() => {
+    return modulesAllowedForFilingType.value.find(
+        (m) => m.id === activeModuleId.value,
+    );
+});
+
+const basicInfoFields = computed<ReviewField[]>(() => {
+    return getBasicInfoFields(state.rawPermitData);
+});
+
+// The permit's process_module tiles; the modules panel filters these to the ones
+// with a submission date and renders them as a drag-reorderable accordion.
+const processModules = computed(
+    () =>
+        state.rawPermitData?.application_admin?.aliased_data?.process_module ??
+        [],
+);
+
+const getModuleStatus = (moduleId: string) => {
+    return state.fetchedModuleData[moduleId]?.status || 'unstarted';
+};
+
+const loadPermitDetails = async () => {
+    state.loadError = '';
+    try {
+        const aliased = await fetchPermitDetails(permitId.value);
+        if (!aliased) return;
+
+        state.rawPermitData = aliased;
+
+        const appIdent = aliased.application_identification?.aliased_data;
+        const appAdmin = aliased.application_admin;
+
+        state.adminTileMeta = {
+            tileid: appAdmin?.tileid || '',
+            nodegroup: appAdmin?.nodegroup || '',
+        };
+
+        state.permitData = headerStore.setFromAliased(permitId.value, aliased);
+
+        state.fetchedModuleData = {
+            [GraphSlug.PermitApplication]: {
+                status: appIdent?.project_name?.display_value
+                    ? 'completed'
+                    : 'unstarted',
+            },
+            // TODO fix in a bit
+            inspection: {
+                status: 'unstarted',
+            },
+            // TODO fix in a bit
+            investigation: {
+                status: 'unstarted',
+            },
+            // TODO fix in a bit
+            alteration: {
+                status: 'unstarted',
+            },
+        };
+    } catch (error) {
+        state.loadError = inlineMessage(error);
+    } finally {
+        state.isLoading = false;
+    }
+};
+
+const startNewModule = () => {
+    if (activeModule.value?.disabled) return;
+    if (activeModule.value && activeModule.value.routeName) {
+        router.push({
+            name: activeModule.value.routeName,
+            query: { permitId: permitId.value },
+        });
+    }
+};
+
+const {
+    state: deleteState,
+    open: confirmDelete,
+    confirm: performDelete,
+} = useConfirmAction<PermitDraft>(async (draft) => {
+    await deleteDraft(draft.graph_slug, draft.id);
+    await loadDraftsForPermitApp();
+});
+
+// This needs to be more generic in the future
+const loadDraftsForPermitApp = async () => {
+    let drafts;
+    try {
+        drafts = await fetchDrafts(permitId.value);
+    } catch (error) {
+        // The permit load reports the same outage; don't overwrite its message.
+        // The slot's title names the permit, so this one says what it was.
+        if (!state.loadError) {
+            state.loadError = `Your drafts could not be loaded. ${inlineMessage(error)}`;
+        }
+        return;
+    }
+
+    const isInv = isDraftOf(GraphSlug.Investigation);
+    const isDoc = isDraftOf(GraphSlug.DocumentSubmission);
+
+    state.permitDrafts = drafts.filter(
+        (d): d is PermitDraft => isInv(d) || isDoc(d),
+    );
+};
+
+onMounted(() => {
+    loadPermitDetails();
+    loadDraftsForPermitApp();
+});
+
+watch(permitId, () => {
+    state.isLoading = true;
+    loadPermitDetails();
+    loadDraftsForPermitApp();
+});
+
+watch(activeModuleId, (id) => {
+    if (id === GraphSlug.PermitApplication) {
+        loadDraftsForPermitApp();
+    }
+});
+</script>
+
+<template>
+    <Panel class="full-height">
+        <!-- Rendered from the store, so returning to the permit keeps the band
+             on screen instead of replacing it with the spinner. -->
+        <template
+            v-if="bandHeader"
+            #header
+        >
+            <PermitHeaderBand :header="bandHeader" />
+        </template>
+
+        <div
+            v-if="state.isLoading"
+            class="permit-loading"
+        >
+            <ProgressSpinner />
+        </div>
+
+        <InlineError
+            v-else-if="state.loadError"
+            title="This permit could not be loaded."
+            :detail="state.loadError"
+            class="permit-error"
+        />
+
+        <div
+            v-else
+            class="module-layout"
+        >
+            <div
+                v-if="!isStaff"
+                class="side-menu"
+            >
+                <Button
+                    v-for="mod in modulesAllowedForFilingType"
+                    :key="mod.id"
+                    class="menu-item"
+                    :class="{ active: activeModuleId === mod.id }"
+                    @click="activeModuleId = mod.id"
+                >
+                    <div class="status-icon-wrapper">
+                        <div
+                            v-if="getModuleStatus(mod.id) === 'review'"
+                            class="icon-review-wrapper"
+                        >
+                            <i
+                                class="fa-solid fa-magnifying-glass icon-review"
+                            ></i>
+                        </div>
+                        <!-- Nothing done yet on a module that starts a new
+                             workflow: the add affordance takes the same slot,
+                             so one icon column runs down the menu. -->
+                        <i
+                            v-else-if="
+                                getModuleStatus(mod.id) !== 'completed' &&
+                                mod.id !== GraphSlug.PermitApplication
+                            "
+                            class="fa-solid fa-plus menu-add"
+                            title="Start this module"
+                        ></i>
+                    </div>
+
+                    <span class="menu-label">
+                        {{ mod.menuLabel }}
+                    </span>
+                </Button>
+            </div>
+
+            <Transition
+                name="module-swap"
+                mode="out-in"
+            >
+                <div
+                    v-if="activeModule"
+                    :key="activeModule.id"
+                    class="content-area"
+                    :class="{
+                        'white-card': ['review'].includes(
+                            getModuleStatus(activeModule.id),
+                        ),
+                    }"
+                >
+                    <h1 class="content-title">{{ activeModule.title }}</h1>
+
+                    <template
+                        v-if="
+                            !['completed', 'review'].includes(
+                                getModuleStatus(activeModule.id),
+                            )
+                        "
+                    >
+                        <p class="content-description">
+                            {{ activeModule.description }}
+                        </p>
+
+                        <ul class="content-list">
+                            <li
+                                v-for="(item, index) in activeModule.listItems"
+                                :key="index"
+                            >
+                                {{ item }}
+                            </li>
+                        </ul>
+
+                        <div
+                            v-if="
+                                activeModule.id !== GraphSlug.PermitApplication
+                            "
+                            class="action-container"
+                        >
+                            <Button
+                                class="add-module-btn"
+                                icon="fa-solid fa-plus"
+                                :disabled="activeModule.disabled"
+                                :label="
+                                    activeModule.disabled
+                                        ? 'Coming soon'
+                                        : `Add ${activeModule.menuLabel} module`
+                                "
+                                @click="startNewModule"
+                            />
+                        </div>
+                    </template>
+
+                    <div
+                        v-if="activeModule.id === GraphSlug.PermitApplication"
+                        class="investigation-lists"
+                    >
+                        <section
+                            v-if="state.permitDrafts.length > 0"
+                            class="draft-modules"
+                        >
+                            <h2 class="list-heading">Draft modules</h2>
+                            <Accordion
+                                v-model:value="expandedDrafts"
+                                multiple
+                                class="draft-accordion"
+                            >
+                                <AccordionPanel
+                                    v-for="draft in state.permitDrafts"
+                                    :key="draft.id"
+                                    :value="draft.id"
+                                    class="draft-panel"
+                                >
+                                    <AccordionHeader>
+                                        <span class="draft-head">
+                                            <span class="draft-name">
+                                                {{ draftTitle(draft) }}
+                                            </span>
+                                            <span class="draft-meta">
+                                                <i
+                                                    class="fa-regular fa-clock"
+                                                ></i>
+                                                Last updated
+                                                {{
+                                                    formatDate(
+                                                        draft.updated ||
+                                                            draft.created,
+                                                    )
+                                                }}
+                                            </span>
+                                        </span>
+                                    </AccordionHeader>
+                                    <AccordionContent>
+                                        <div class="draft-actions">
+                                            <router-link
+                                                class="draft-resume"
+                                                :to="{
+                                                    name: draftRouteName(draft),
+                                                    query: {
+                                                        draftId: draft.id,
+                                                    },
+                                                }"
+                                            >
+                                                <i
+                                                    class="fa-solid"
+                                                    :class="
+                                                        isStaff
+                                                            ? 'fa-eye'
+                                                            : 'fa-pen'
+                                                    "
+                                                ></i>
+                                                {{
+                                                    isStaff
+                                                        ? 'View draft'
+                                                        : 'Resume draft'
+                                                }}
+                                            </router-link>
+                                            <Button
+                                                v-if="!isStaff"
+                                                class="draft-delete"
+                                                icon="fa-solid fa-trash"
+                                                label="Remove"
+                                                @click="confirmDelete(draft)"
+                                            />
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionPanel>
+                            </Accordion>
+                        </section>
+
+                        <ProcessModules
+                            :modules="processModules"
+                            :permit-id="permitId"
+                            :admin-tile-id="state.adminTileMeta.tileid"
+                            :is-staff="isStaff"
+                            :summary-fields="basicInfoFields"
+                            :application-id="state.permitData.applicationNumber"
+                            @changed="loadPermitDetails"
+                        />
+                    </div>
+                </div>
+            </Transition>
+        </div>
+    </Panel>
+
+    <Dialog
+        v-model:visible="deleteState.visible"
+        modal
+        :closable="false"
+        header="Remove draft?"
+        :style="{ width: '30rem' }"
+    >
+        <p>This permanently removes the draft. This action cannot be undone.</p>
+        <template #footer>
+            <Button
+                label="Cancel"
+                text
+                :disabled="deleteState.busy"
+                @click="deleteState.visible = false"
+            />
+            <Button
+                label="Remove"
+                severity="danger"
+                :loading="deleteState.busy"
+                @click="performDelete"
+            />
+        </template>
+    </Dialog>
+</template>
+
+<style scoped lang="css">
+.permit-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.permit-error {
+    margin: 2rem;
+}
+
+/* Header. PrimeVue wraps this in its own padded, bordered bar; that is stripped
+   so the navy band runs the full width of the panel. */
+.full-height :deep(.p-panel-header) {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.module-layout {
+    display: flex;
+    gap: 1.25rem;
+    padding: 2rem 1.5rem;
+    min-height: 500px;
+}
+
+/* Cross-fade the panel when a different module is picked. Opacity only: the
+   panels differ in height, so moving them as well reads as a jump. */
+.module-swap-enter-active {
+    transition: opacity 0.22s ease-out;
+}
+.module-swap-leave-active {
+    transition: opacity 0.1s ease-in;
+}
+.module-swap-enter-from,
+.module-swap-leave-to {
+    opacity: 0;
+}
+
+.side-menu {
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    flex-shrink: 0;
+    gap: 0.85rem;
+    /* Drops the first item level with the panel heading beside it. */
+    margin-top: 1.5rem;
+}
+
+.menu-item {
+    background-color: #ffffff;
+    color: #333333;
+    border: none;
+    border-radius: 6px;
+    padding: 1.3rem 1.5rem;
+    text-align: left;
+    font-size: 1.45rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+    font-family: inherit;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.menu-item:hover:not(.active) {
+    background-color: var(--bc-selected);
+    color: var(--bc-navy);
+}
+
+.menu-item.active {
+    background-color: #003366;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* A bare plus, lighter than the circled status glyphs it shares the column
+   with, so it reads as an affordance rather than a state. */
+.menu-add {
+    font-size: 1.2rem;
+    color: var(--bc-muted);
+}
+
+/* Grey disappears into the navy row. */
+.menu-item.active .menu-add {
+    color: #ffffff;
+}
+
+.menu-label {
+    flex: 1;
+}
+
+.status-icon-wrapper {
+    flex: 0 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-review-wrapper {
+    background-color: #fde047;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-review {
+    color: #000000;
+    font-size: 0.75rem;
+}
+
+.content-area {
+    flex-grow: 1;
+    width: 100%;
+    /* Cap only on very wide screens so long rows don't stretch edge to edge. */
+    max-width: 1500px;
+    padding: 1rem 2rem;
+}
+
+/* "paper" for finished modules */
+.content-area.white-card {
+    background-color: #ffffff;
+    padding: 3rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.content-title {
+    /* Top margin lines the heading up with the first side-menu button label.
+       The heading's larger line box means its top sits above equal-offset text,
+       so the offset is tuned by eye rather than summed from the paddings. */
+    margin: 1.1rem 0 2rem 0;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #26292e;
+}
+
+.print-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.print-btn:hover {
+    background-color: #0056b3;
+}
+
+/* The in-content Print button sits directly under the review fields; give it
+   room so it isn't crowding the last row. */
+.content-area .print-btn {
+    margin-top: 1.5rem;
+}
+
+.content-description {
+    margin: 0 0 1.5rem 0;
+    /* px, not rem: the root is 62%, so rem values land on fractional pixels
+       and the glyphs rasterize badly. */
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333333;
+}
+
+.content-list {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #333333;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.content-list li {
+    margin-bottom: 0.5rem;
+}
+
+.action-container {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #d1d5db;
+    display: flex;
+    gap: 1rem;
+}
+
+.add-module-btn {
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-module-btn:hover {
+    background-color: #002244;
+}
+
+.add-module-btn:disabled {
+    background-color: var(--bc-muted, #6b7280);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.investigation-lists {
+    margin-top: 2.5rem;
+}
+
+/* Same group label as the submitted-modules section title. */
+/* Matches the Submitted modules heading so the two sections read as peers. */
+.investigation-lists .list-heading {
+    margin: 0 0 1.4rem;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--bc-navy);
+}
+
+.draft-modules {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+
+.draft-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Drafts carry the least weight on the page, so they're light white cards with
+   a dashed muted border to signal "unfinished", not a solid brand-coloured bar. */
+.draft-panel {
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    overflow: hidden;
+    transition:
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.draft-panel:hover {
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+    border-color: #94a3b8;
+}
+
+.draft-modules :deep(.p-accordionheader) {
+    background-color: #ffffff;
+    color: #6b7280;
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+    padding: 1.9rem 1.5rem 1.9rem 2rem;
+    border-radius: 10px 10px 0 0;
+}
+
+.draft-modules :deep(.p-accordionheader) .draft-name,
+.draft-modules :deep(.p-accordionheader-toggle-icon) {
+    color: #6b7280;
+}
+
+/* PrimeVue hard-codes 14px on the chevron svg, so override the attributes. */
+.draft-modules :deep(.p-accordionheader-toggle-icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.draft-modules :deep(.p-accordionpanel-active .p-accordionheader) {
+    background-color: #f8fafc;
+}
+
+.draft-modules :deep(.p-accordionheader:hover) {
+    background-color: #f8fafc;
+}
+
+/* Match the submitted-modules content inset so both lists align. */
+.draft-modules :deep(.p-accordioncontent-content) {
+    padding: 1.5rem 2rem;
+}
+
+.draft-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding-right: 0.75rem;
+}
+
+.draft-name {
+    font-weight: 700;
+    font-size: max(16px, 1.25rem);
+    color: #6b7280;
+}
+
+.draft-meta {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.draft-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* BC Gov buttons: solid navy for the primary action, outlined red to remove. */
+.draft-resume,
+.draft-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.6rem;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.draft-resume {
+    background: var(--bc-navy);
+    border: 2px solid var(--bc-navy);
+    color: #ffffff;
+}
+
+.draft-resume:hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.draft-delete {
+    background: #ffffff;
+    border: 2px solid #c8102e;
+    color: #c8102e;
+}
+
+.draft-delete:hover {
+    background: #fdeaed;
+}
+
+.resource-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.resource-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.resource-list a {
+    color: #2e51dd;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.resource-list a:hover {
+    text-decoration: underline;
+}
+
+.list-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.remove-draft-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.remove-draft-btn:hover {
+    color: #c8102e;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+    padding: 0.5rem 0;
+}
+
+@media print {
+    .side-menu,
+    .print-btn,
+    .permit-header {
+        display: none !important;
+    }
+    .module-layout {
+        padding: 0 !important;
+    }
+    .content-area.white-card {
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+}
+</style>

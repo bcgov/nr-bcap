@@ -3,15 +3,18 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 
 const props = withDefaults(
-    defineProps<{ data: SiteVisitSchema | undefined; loading?: boolean }>(),
+    defineProps<{ data: SiteVisit | undefined; loading?: boolean }>(),
     { loading: false },
 );
 
 const remainsRows = computed(
-    () => props.data?.aliased_data?.ancestral_remains || [],
+    () =>
+        (props.data?.aliased_data?.ancestral_remains ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const hasRemains = computed(() => {

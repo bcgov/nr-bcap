@@ -1,16 +1,121 @@
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
+import type { LocationQueryValue } from 'vue-router';
 
+import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+
+import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
-    ReferenceSelectValue,
-    ReferenceSelectNodeValue,
-    ReferenceSelectDetails,
-} from '@/arches_controlled_lists/datatypes/reference-select/types.js';
+    AlterationResourceAliasedDataWritable,
+    ApiDashboardInternalRetrieveData,
+    DraftRecord,
+    InspectionResourceAliasedDataWritable,
+    InvestigationResourceAliasedDataWritable,
+    PermitApplicationResourceAliasedDataWritable,
+    ReferenceAliasedNodeDataWritable,
+    DocumentSubmissionResourceAliasedDataWritable,
+} from '@/bcap/client/types.gen.ts';
 
-export interface TileReference {
-    resourceinstance_id: string;
-    tileid: string;
-    nodegroupid: string;
-    data: object;
+export type DraftNode = AliasedNodeData & {
+    aliased_data?: Record<string, DraftNode | null>;
+    [index: number]: DraftNode;
+};
+
+export type DraftNodeGroup = {
+    aliased_data?: Record<string, DraftNode | null>;
+    [index: number]: DraftNodeGroup;
+};
+
+export type ArchesDraftData = Record<string, DraftNodeGroup>;
+
+export type DashboardStatus = NonNullable<
+    ApiDashboardInternalRetrieveData['query']
+>['status'];
+
+export type QueryParam = LocationQueryValue | LocationQueryValue[] | undefined;
+
+type Draft<S extends GraphSlug, D> = Omit<
+    DraftRecord,
+    'data' | 'graph_slug'
+> & {
+    graph_slug: S;
+    data?: D;
+};
+
+export type WorkflowDraft =
+    | Draft<
+          GraphSlug.PermitApplication,
+          PermitApplicationResourceAliasedDataWritable
+      >
+    | Draft<GraphSlug.Investigation, InvestigationResourceAliasedDataWritable>
+    | Draft<GraphSlug.Inspection, InspectionResourceAliasedDataWritable>
+    | Draft<GraphSlug.Alteration, AlterationResourceAliasedDataWritable>
+    | Draft<
+          GraphSlug.DocumentSubmission,
+          DocumentSubmissionResourceAliasedDataWritable
+      >;
+
+export type DraftOf<S extends WorkflowDraft['graph_slug']> = Extract<
+    WorkflowDraft,
+    { graph_slug: S }
+>;
+
+export const isDraftOf = <S extends WorkflowDraft['graph_slug']>(slug: S) => {
+    return (draft: WorkflowDraft): draft is DraftOf<S> =>
+        draft.graph_slug === slug;
+};
+
+export interface NewBcapMessage {
+    messageText: string;
+    recipientId: string;
+    resourceId: string;
+    threadId?: string;
+    topic?: string;
+    messageType?: ReferenceAliasedNodeDataWritable['node_value'];
+    files?: File[];
+}
+
+export interface RecipientOption {
+    label: string;
+    value: string;
+    // Staff writing to this recipient start an internal (staff only) thread.
+    isInternal: boolean;
+}
+
+export interface MessageAttachment {
+    name: string;
+    url: string;
+    size?: number;
+}
+
+export interface FormattedMessage {
+    id: string;
+    author: string;
+    authorIsStaff: boolean;
+    text: string;
+    date: string;
+    attachments: MessageAttachment[];
+}
+
+export const NEW_THREAD_ID = 'new';
+
+export enum ThreadSide {
+    Author = 'author',
+    Recipient = 'recipient',
+}
+
+export interface MessageThread {
+    id: string;
+    topic: string;
+    startedBy: string;
+    lastMessageDate: string;
+    isResolved: boolean;
+    onSide: boolean;
+    // The thread awaits the viewer; whoever started it waits on a reply first.
+    needsAction: boolean;
+    resolvedBy: string;
+    resolvedDate: string;
+    isInternal: boolean;
+    // Who the thread was first sent to.
+    to: string;
 }
 
 export interface DetailsData {
@@ -18,34 +123,6 @@ export interface DetailsData {
     displayname: string;
     graph_slug: string;
 }
-
-export interface NumberValue extends AliasedNodeData {
-    display_value: string;
-    node_value: number | null;
-    details: never[];
-}
-
-export interface BooleanValue extends AliasedNodeData {
-    display_value: string;
-    node_value: boolean | null;
-    details: never[];
-}
-
-export interface GeoJSONFeatureCollectionValue extends AliasedNodeData {
-    display_value: string;
-    node_value: {
-        type: 'FeatureCollection';
-        features: unknown[];
-    } | null;
-    details: never[];
-}
-
-export type NullableReferenceSelectValue =
-    | ReferenceSelectValue
-    | (Omit<ReferenceSelectValue, 'node_value'> & {
-          node_value: ReferenceSelectNodeValue[] | null;
-          details: ReferenceSelectDetails[] | [];
-      });
 
 export interface BcapURLs {
     add_resource: (graphid: string) => string;

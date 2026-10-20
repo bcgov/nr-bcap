@@ -4,15 +4,15 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import type {
-    GovernmentSchema,
-    GovernmentNameTile,
-    GovernmentLocationTile,
-} from '@/bcap/schema/GovernmentSchema.ts';
+    LocalGovernment,
+    LocalGovernmentGovernmentNameTile,
+    LocalGovernmentGovernmentLocationTile,
+} from '@/bcap/client/types.gen.ts';
 import 'primeicons/primeicons.css';
 
 const props = withDefaults(
     defineProps<{
-        data: GovernmentSchema | undefined;
+        data: LocalGovernment | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -23,12 +23,16 @@ const props = withDefaults(
     },
 );
 
-const governmentName = computed<GovernmentNameTile | undefined>(() => {
-    return props.data?.aliased_data?.government_name;
-});
+const governmentName = computed<LocalGovernmentGovernmentNameTile | undefined>(
+    () => {
+        return props.data?.aliased_data?.government_name ?? undefined;
+    },
+);
 
-const governmentLocation = computed<GovernmentLocationTile | undefined>(() => {
-    return props.data?.aliased_data?.government_location;
+const governmentLocation = computed<
+    LocalGovernmentGovernmentLocationTile | undefined
+>(() => {
+    return props.data?.aliased_data?.government_location ?? undefined;
 });
 
 const hasGovernmentDetails = computed(() => {
@@ -40,7 +44,8 @@ const hasGovernmentDetails = computed(() => {
 });
 
 const hasOfficeAddress = computed(() => {
-    const data = governmentLocation.value?.office_address?.aliased_data;
+    const data =
+        governmentLocation.value?.aliased_data?.office_address?.aliased_data;
     return (
         data &&
         (!isEmpty(data.street_address) ||
@@ -51,7 +56,9 @@ const hasOfficeAddress = computed(() => {
 });
 
 const hasGovernmentBoundary = computed(() => {
-    const data = governmentLocation.value?.government_boundary?.aliased_data;
+    const data =
+        governmentLocation.value?.aliased_data?.government_boundary
+            ?.aliased_data;
     return data && !isEmpty(data.government_boundary);
 });
 </script>
@@ -141,8 +148,9 @@ const hasGovernmentBoundary = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.street_address,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.street_address,
                                 )
                             "
                         >
@@ -151,15 +159,17 @@ const hasGovernmentBoundary = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.street_address,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.street_address,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.street_address,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.street_address,
                                 )
                             }}
                         </dd>
@@ -167,8 +177,8 @@ const hasGovernmentBoundary = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.city,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data?.city,
                                 )
                             "
                         >
@@ -177,15 +187,15 @@ const hasGovernmentBoundary = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.city,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data?.city,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.city,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data?.city,
                                 )
                             }}
                         </dd>
@@ -193,8 +203,9 @@ const hasGovernmentBoundary = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.province,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.province,
                                 )
                             "
                         >
@@ -203,15 +214,17 @@ const hasGovernmentBoundary = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.province,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.province,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.province,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.province,
                                 )
                             }}
                         </dd>
@@ -219,8 +232,9 @@ const hasGovernmentBoundary = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.postal_code,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.postal_code,
                                 )
                             "
                         >
@@ -229,15 +243,17 @@ const hasGovernmentBoundary = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.postal_code,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.postal_code,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    governmentLocation?.office_address
-                                        ?.aliased_data?.postal_code,
+                                    governmentLocation?.aliased_data
+                                        ?.office_address?.aliased_data
+                                        ?.postal_code,
                                 )
                             }}
                         </dd>
@@ -260,8 +276,9 @@ const hasGovernmentBoundary = computed(() => {
                         <dt
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.government_boundary
-                                        ?.aliased_data?.government_boundary,
+                                    governmentLocation?.aliased_data
+                                        ?.government_boundary?.aliased_data
+                                        ?.government_boundary,
                                 )
                             "
                         >
@@ -270,15 +287,17 @@ const hasGovernmentBoundary = computed(() => {
                         <dd
                             v-if="
                                 !isEmpty(
-                                    governmentLocation?.government_boundary
-                                        ?.aliased_data?.government_boundary,
+                                    governmentLocation?.aliased_data
+                                        ?.government_boundary?.aliased_data
+                                        ?.government_boundary,
                                 )
                             "
                         >
                             {{
                                 getDisplayValue(
-                                    governmentLocation?.government_boundary
-                                        ?.aliased_data?.government_boundary,
+                                    governmentLocation?.aliased_data
+                                        ?.government_boundary?.aliased_data
+                                        ?.government_boundary,
                                 )
                             }}
                         </dd>

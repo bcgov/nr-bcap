@@ -46,7 +46,6 @@ class OAuthProviderConfigCommandTests(TestCase):
     def test_update_existing_app_secret(self):
         hashed_secret = make_password("new_secret")
         """Test updating the client secret of an existing application"""
-        # Create initial application
         Application.objects.create(
             name=self.name,
             client_id=self.client_id,
