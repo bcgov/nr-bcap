@@ -20,6 +20,8 @@ from bcap.views.generated import (
     ArchaeologicalSiteView,
     BcapMessageListView,
     BcapMessageView,
+    BcapServiceRequestListView,
+    BcapServiceRequestView,
     ContributorListView,
     ContributorView,
     DocumentSubmissionListView,
@@ -74,6 +76,16 @@ urlpatterns = [
         "api/bcap_message/<uuid:pk>/",
         BcapMessageView.as_view(),
         name="api_bcap_message",
+    ),
+    path(
+        "api/bcap_service_request",
+        BcapServiceRequestListView.as_view(),
+        name="api_bcap_service_request_list",
+    ),
+    path(
+        "api/bcap_service_request/<uuid:pk>/",
+        BcapServiceRequestView.as_view(),
+        name="api_bcap_service_request",
     ),
     path(
         "api/contributor",

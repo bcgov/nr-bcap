@@ -22,9 +22,10 @@ import glob
 import json
 import os
 import re
+import shutil
 import subprocess
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from arches.app.models import models as arches_models
 
@@ -110,40 +111,48 @@ def _snake_to_camel(snake_str):
 
 
 def _regen_graph_ids():
-    """Regenerate the GraphIds class in bcap_aliases.py from the database.
+    """Regenerate the GraphSlugs and GraphIds classes in bcap_aliases.py from
+    the database.
 
-    Queries all graphs with a slug and writes ``SLUG = "uuid"`` constants.
-    Replaces an existing ``class GraphIds:`` block in-place, or appends one.
+    Queries all graphs with a slug and writes ``SLUG = "slug"`` / ``SLUG =
+    "uuid"`` constants. Replaces existing class blocks in-place, or appends
+    them when absent.
     """
     graphs = list(
         arches_models.Graph.objects.exclude(slug__isnull=True)
         .exclude(slug="")
+        .exclude(slug="arches_system_settings")
         .filter(source_identifier__isnull=True)
         .filter(isresource=True)
         .values("slug", "graphid")
         .order_by("slug")
     )
 
-    lines = ["class GraphIds:\n"]
-    for graph in graphs:
-        lines.append(f'    {graph["slug"].upper()} = "{graph["graphid"]}"\n')
-    class_block = "".join(lines)
+    slugs_block = "".join(
+        ["class GraphSlugs:\n"]
+        + [f'    {g["slug"].upper()} = "{g["slug"]}"\n' for g in graphs]
+    )
+    ids_block = "".join(
+        ["class GraphIds:\n"]
+        + [f'    {g["slug"].upper()} = "{g["graphid"]}"\n' for g in graphs]
+    )
 
     with open(_BCAP_ALIASES_PATH) as f:
         content = f.read()
 
-    pattern = r"class GraphIds:.*?(?=\n\nclass |\Z)"
-    if re.search(pattern, content, re.DOTALL):
-        new_content = re.sub(
-            pattern, class_block.rstrip("\n"), content, flags=re.DOTALL
-        )
-    else:
-        new_content = content.rstrip("\n") + "\n\n\n" + class_block
+    for block, cls in ((slugs_block, "GraphSlugs"), (ids_block, "GraphIds")):
+        pattern = rf"class {cls}:.*?(?=\n\nclass |\Z)"
+        if re.search(pattern, content, re.DOTALL):
+            content = re.sub(
+                pattern, block.rstrip("\n"), content, flags=re.DOTALL
+            )
+        else:
+            content = content.rstrip("\n") + "\n\n\n" + block
 
     with open(_BCAP_ALIASES_PATH, "w") as f:
-        f.write(new_content)
+        f.write(content)
 
-    print(f"GraphIds -> {_BCAP_ALIASES_PATH} ({len(graphs)} graphs)")
+    print(f"GraphSlugs + GraphIds -> {_BCAP_ALIASES_PATH} ({len(graphs)} graphs)")
 
 
 def _run_black(paths):
@@ -263,6 +272,14 @@ class Command(BaseCommand):
             help="Also create alias files for these graph slugs (new graphs that "
             "don't have a file yet)",
         )
+        parser.add_argument(
+            "--check",
+            action="store_true",
+            help=(
+                "After regenerating and formatting, fail if any alias file or "
+                "bcap_aliases.py differs from the git index (CI drift check)."
+            ),
+        )
 
     def handle(self, *args, **options):
         if options["target"] == "test":
@@ -297,3 +314,17 @@ class Command(BaseCommand):
                 print(f"SKIP {slug}: no graph with that slug in the DB")
         _run_black(written_files)
         _print_drift_fix(all_drift, orphan_nodegroups)
+
+        if options["check"]:
+            git = shutil.which("git")
+            if git is None:
+                raise CommandError("--check requires git on PATH.")
+            result = subprocess.run(
+                [git, "diff", "--exit-code", "--", *written_files],
+                cwd=_REPO_ROOT,
+            )
+            if result.returncode != 0:
+                raise CommandError(
+                    "Python alias files are stale. Run "
+                    "'python manage.py regen_python_aliases' and commit the changes."
+                )

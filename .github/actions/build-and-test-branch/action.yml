@@ -108,8 +108,7 @@ runs:
 
     - name: Check Python aliases are up to date
       run: |
-        python manage.py regen_python_aliases --target test
-        git diff --exit-code bcap/util/aliases/ bcap/util/bcap_aliases.py
+        python manage.py regen_python_aliases --target test --check
       shell: bash
 
     - name: Check API contract and Zod schemas are up to date
