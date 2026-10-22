@@ -21,7 +21,7 @@ DO $$ BEGIN RAISE WARNING 'TIMING repository.mv_contact_information start %', cl
 DROP MATERIALIZED VIEW IF EXISTS repository.mv_contact_information CASCADE;
 CREATE MATERIALIZED VIEW repository.mv_contact_information AS
 WITH geom_physical_location AS (
-    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 3005)) AS geom
     FROM public.geojson_geometries gg
     WHERE gg.nodeid = 'ba9252e2-14d5-11ec-a57a-5254008afee6'::uuid
     GROUP BY gg.tileid

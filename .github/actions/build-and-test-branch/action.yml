@@ -103,7 +103,17 @@ runs:
 
     - name: Run Python unit tests
       run: |
-        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings"
+        python -W default::DeprecationWarning -m coverage run manage.py test tests --settings="tests.test_settings" --keepdb
+      shell: bash
+
+    - name: Check Python aliases are up to date
+      run: |
+        python manage.py regen_python_aliases --target test --check
+      shell: bash
+
+    - name: Check API contract and Zod schemas are up to date
+      run: |
+        python manage.py regenerate_api --check
       shell: bash
 
     - name: Generate Python report coverage

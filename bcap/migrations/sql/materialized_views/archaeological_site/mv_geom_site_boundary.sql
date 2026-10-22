@@ -19,7 +19,7 @@ DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_site_boundary CASCA
 CREATE MATERIALIZED VIEW archaeological_site.mv_geom_site_boundary AS
 WITH per_tile AS (
     SELECT t.resourceinstanceid, t.tileid,
-           ST_Collect(ST_Transform(g.geom, 4326)) AS geom
+           ST_Collect(ST_Transform(g.geom, 3005)) AS geom
     FROM public.tiles t
     JOIN public.geojson_geometries g
       ON g.tileid = t.tileid AND g.nodeid = 'b18223c2-13ef-11f0-8695-0242ac170007'::uuid
@@ -36,15 +36,15 @@ fixed AS (
     FROM per_res
 )
 SELECT resourceinstanceid,
-       g::geometry(Geometry, 4326)   AS site_boundary_geom,
+       g::geometry(Geometry, 3005)   AS site_boundary_geom,
        ST_GeometryType(g)            AS site_boundary_geom_type,
        ST_IsValid(raw)               AS site_boundary_source_valid,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 1)) THEN NULL
-             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 4326)      AS site_boundary_points,
+             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 3005)      AS site_boundary_points,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 2)) THEN NULL
-             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS site_boundary_lines,
+             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 3005) AS site_boundary_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
-             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS site_boundary_polygons
+             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 3005)    AS site_boundary_polygons
 FROM fixed
 WITH NO DATA;
 
