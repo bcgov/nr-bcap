@@ -1,4 +1,4 @@
-drop view public.bc_labelled_site_visit_geometries;
+drop view if exists public.bc_labelled_site_visit_geometries;
 create or replace view public.bc_labelled_site_visit_geometries as
 (
 select

@@ -1,4 +1,4 @@
-drop view public.bc_labelled_sandcastle_geometries;
+drop view if exists public.bc_labelled_sandcastle_geometries;
 create or replace view public.bc_labelled_sandcastle_geometries as
 (
 select

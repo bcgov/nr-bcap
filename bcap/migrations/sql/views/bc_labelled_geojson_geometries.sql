@@ -1,4 +1,4 @@
-drop view public.bc_labelled_geojson_geometries;
+drop view if exists public.bc_labelled_geojson_geometries;
 create or replace view public.bc_labelled_geojson_geometries as
 (
 select
