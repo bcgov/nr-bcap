@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:arches="https://localhost/"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <skos:Concept rdf:about="https://localhost/1dc73635-a6a6-4924-b87b-179959c7d7e5">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/1dc73635-a6a6-4924-b87b-179959c7d7e5</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Not Confirmed</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/2e602165-9864-4a7e-a889-4c6ed474ae0c">
+        <dcterms:title>Copyright Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/d2cc750f-8e10-46a9-a135-f9df7690224c">
+    <skos:inScheme rdf:resource="https://localhost/2e602165-9864-4a7e-a889-4c6ed474ae0c"/>
+    <skos:prefLabel xml:lang="en">Partial</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/d2cc750f-8e10-46a9-a135-f9df7690224c</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/fae26172-2a4d-40c9-9773-6c8d5d225ca4">
+    <skos:prefLabel xml:lang="en">Refused</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/2e602165-9864-4a7e-a889-4c6ed474ae0c"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/fae26172-2a4d-40c9-9773-6c8d5d225ca4</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/af26bae8-7648-471c-a011-6b59897d4f87">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/af26bae8-7648-471c-a011-6b59897d4f87</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Received</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/2e602165-9864-4a7e-a889-4c6ed474ae0c"/>
+  </skos:Concept>
+</rdf:RDF>
