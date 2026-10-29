@@ -1,14 +1,18 @@
 """File downloads, narrowed to the resource the file hangs off."""
 
+import json
+
 from django.core.exceptions import PermissionDenied
 
-from arches.app.models.models import File
+from arches.app.models.models import File, TileModel
 from arches.app.utils.permission_backend import user_can_read_resource
 from arches.app.views.file import FileView
+from arches.app.views.tile import TileData
 
 from bcap.permissions.groups import is_anonymous_user, is_internal_user
 from bcap.services.message.message_context import MessageViewer
 from bcap.services.message.thread_service import ThreadService
+from bcap.services.records.audit import RecordsAuditService
 from bcap.util.bcap_aliases import GraphSlugs
 
 
@@ -27,6 +31,24 @@ class BCAPFileView(FileView):
     """
 
     def get(self, request, fileid=None):
+        try:
+            response = self.checked_get(request, fileid)
+        except PermissionDenied:
+            self.log_read(request, fileid, 403)
+            raise
+        self.log_read(request, fileid, response.status_code)
+        return response
+
+    @staticmethod
+    def log_read(request, fileid, status):
+        RecordsAuditService.log_read(
+            fileid,
+            request.user,
+            status,
+            thumbnail=request.GET.get("thumbnail", "false") != "false",
+        )
+
+    def checked_get(self, request, fileid):
         if is_anonymous_user(request.user):
             raise PermissionDenied
         if not is_internal_user(request.user) and not self.applicant_may_read(
@@ -55,3 +77,24 @@ class BCAPFileView(FileView):
                 as_representation=False,
             ).exists()
         return user_can_read_resource(user, resource.pk)
+
+
+class BCAPTileFileDownload(TileData):
+    """The file viewer's download: one file redirects straight to storage and
+    several are zipped, so neither passes through the file view's audit."""
+
+    def download_files(self, request):
+        response = super().download_files(request)
+        nodeid = request.GET.get("node")
+        tiles = TileModel.objects.filter(
+            pk__in=json.loads(request.GET.get("tiles") or "[]")
+        )
+        for tile in tiles:
+            for entry in (tile.data or {}).get(nodeid) or []:
+                RecordsAuditService.log_read(
+                    entry["file_id"],
+                    request.user,
+                    response.status_code,
+                    thumbnail=False,
+                )
+        return response

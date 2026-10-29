@@ -14,7 +14,7 @@ from bcap.views.api import (
 from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
 from bcap.views.auth import auth_callback
-from bcap.views.file import BCAPFileView
+from bcap.views.file import BCAPFileView, BCAPTileFileDownload
 from bcap.views.resource import ResourceReportView, ResourceEditLogView
 from bcap.views.search import export_results
 from bcap.views.translate_api import (
@@ -39,6 +39,11 @@ bcap_patterns = [
         "files/<uuid:fileid>",
         BCAPFileView.as_view(),
         name="files",
+    ),
+    path(
+        "tiles/download_files",
+        BCAPTileFileDownload.as_view(action="download_files"),
+        name="download_files",
     ),
     path(
         "bctileserver/",
