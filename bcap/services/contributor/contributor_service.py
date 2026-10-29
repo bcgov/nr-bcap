@@ -190,6 +190,14 @@ class ContributorService(AliasedDataReader):
         ids = self.login_linked_contributor_ids(
             all_referenced_resource_ids(resource_id, *permits)
         )
+        if not for_staff:
+            ids = {cid for cid in ids if self.contributor_is_internal(cid)}
+        else:
+            ids |= {
+                cid
+                for cid in self.login_linked_contributor_ids()
+                if self.contributor_is_internal(cid)
+            }
         if not ids:
             ids.add(self.archaeology_branch_id())
         proponents = set()
@@ -205,6 +213,8 @@ class ContributorService(AliasedDataReader):
         for option in options:
             option.is_proponent = option.id in proponents
             option.is_internal = for_staff and self.contributor_is_internal(option.id)
+        if for_staff:
+            options.sort(key=lambda o: (o.is_internal, o.name.lower()))
         return options
 
     def contributor_username(self, contributor_id):

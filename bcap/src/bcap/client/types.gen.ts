@@ -1630,6 +1630,26 @@ export type BcapMessage = {
     readonly principaluser: number | null;
 };
 
+export type BcapServiceRequest = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapServiceRequestResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
 export type BcapMessageArchivedByAliasedData = {
     archived_by?: ResourceInstanceAliasedNodeData | null;
 };
@@ -1720,6 +1740,247 @@ export type BcapMessageMessageContentTile = {
 export type BcapMessageResourceAliasedData = {
     archived_by?: Array<BcapMessageArchivedByTile> | null;
     message_content?: BcapMessageMessageContentTile | null;
+};
+
+export type BcapServiceRequestProcessModuleAliasedData = {
+    is_module_completed?: BooleanAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    module_completed_date?: DateAliasedNodeData | null;
+    /**
+     * Module ID if a copy of a Module Template
+     */
+    module_id?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter name of the Process Module
+     */
+    module_name: StringAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    module_order?: NumberAliasedNodeData | null;
+    process_requirement?: Array<BcapServiceRequestProcessRequirementTile> | null;
+};
+
+export type BcapServiceRequestProcessModuleTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessModuleAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProcessRequirementAliasedData = {
+    ministry_assignee?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    process_requirement_order: NumberAliasedNodeDataMin0 | null;
+    process_requirement?: ResourceInstanceAliasedNodeData | null;
+};
+
+export type BcapServiceRequestProcessRequirementTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessRequirementAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProposedProjectAliasedData = {
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    project_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    project_name?: StringAliasedNodeData | null;
+    /**
+     * Describe the scope of work to be competed as part of the proposed project
+     */
+    scope_of_work?: StringAliasedNodeData | null;
+    /**
+     * Enter project description
+     */
+    project_description?: StringAliasedNodeData | null;
+};
+
+export type BcapServiceRequestProposedProjectTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProposedProjectAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestResourceAliasedData = {
+    service_request_identification?: BcapServiceRequestServiceRequestIdentificationTile | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
+    proposed_project?: BcapServiceRequestProposedProjectTile | null;
+    service_request_admin?: BcapServiceRequestServiceRequestAdminTile | null;
+    service_request_messages?: BcapServiceRequestServiceRequestMessagesTile | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminAliasedData = {
+    /**
+     * Enter date
+     */
+    application_submission_date?: DateAliasedNodeData | null;
+    ministry_assignee_n1?: ResourceInstanceAliasedNodeData | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTile> | null;
+    /**
+     * Enter number of years requested
+     */
+    service_request_completion_target?: NumberAliasedNodeDataMin0Max10 | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestAdminAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsAliasedData = {
+    application_archaeologist?: ResourceInstanceAliasedNodeData | null;
+    application_proponent?: ResourceInstanceAliasedNodeData | null;
+    rationale_for_no_archaeologist?: StringAliasedNodeData | null;
+    has_retained_archaeologist?: BooleanAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestContactsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationAliasedData = {
+    /**
+     * Select an option
+     */
+    filing_type: ReferenceAliasedNodeDataRequired | null;
+    /**
+     * Enter application ID
+     */
+    service_request_id?: StringAliasedNodeData | null;
+    supplemental_information?: FileListAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesAliasedData = {
+    service_request_messages?: ResourceInstanceListAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestMessagesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type BooleanAliasedNodeData = {
@@ -4479,7 +4740,7 @@ export type NumberAliasedNodeDataMin0 = {
 
 export type NumberAliasedNodeDataMin0Max10 = {
     /**
-     * Permit Duration Requested
+     * Request Completion Target
      *
      * Enter number of years requested
      */
@@ -4495,6 +4756,13 @@ export type PaginatedArchaeologicalSiteList = {
     next?: string | null;
     previous?: string | null;
     results: Array<ArchaeologicalSite>;
+};
+
+export type PaginatedBcapServiceRequestList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapServiceRequest>;
 };
 
 export type PaginatedContributorList = {
@@ -9391,6 +9659,12 @@ export type BcapMessageWritable = {
     graph?: string | null;
 };
 
+export type BcapServiceRequestWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapServiceRequestResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
 export type BcapMessageArchivedByAliasedDataWritable = {
     archived_by?: ResourceInstanceAliasedNodeDataWritable | null;
 };
@@ -9481,6 +9755,248 @@ export type BcapMessageMessageContentTileWritable = {
 export type BcapMessageResourceAliasedDataWritable = {
     archived_by?: Array<BcapMessageArchivedByTileWritable> | null;
     message_content?: BcapMessageMessageContentTileWritable | null;
+};
+
+export type BcapServiceRequestProcessModuleAliasedDataWritable = {
+    is_module_completed?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    module_completed_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Module ID if a copy of a Module Template
+     */
+    module_id?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter name of the Process Module
+     */
+    module_name: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    module_order?: NumberAliasedNodeDataWritable | null;
+    process_requirement?: Array<BcapServiceRequestProcessRequirementTileWritable> | null;
+};
+
+export type BcapServiceRequestProcessModuleTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessModuleAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProcessRequirementAliasedDataWritable = {
+    ministry_assignee?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    process_requirement_order: NumberAliasedNodeDataMin0Writable | null;
+    process_requirement?: ResourceInstanceAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestProcessRequirementTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessRequirementAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProposedProjectAliasedDataWritable = {
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    project_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    project_name?: StringAliasedNodeDataWritable | null;
+    /**
+     * Describe the scope of work to be competed as part of the proposed project
+     */
+    scope_of_work?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter project description
+     */
+    project_description?: StringAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestProposedProjectTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProposedProjectAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestResourceAliasedDataWritable = {
+    service_request_identification?: BcapServiceRequestServiceRequestIdentificationTileWritable | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
+    proposed_project?: BcapServiceRequestProposedProjectTileWritable | null;
+    service_request_admin?: BcapServiceRequestServiceRequestAdminTileWritable | null;
+    service_request_messages?: BcapServiceRequestServiceRequestMessagesTileWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminAliasedDataWritable = {
+    /**
+     * Enter date
+     */
+    application_submission_date?: DateAliasedNodeDataWritable | null;
+    ministry_assignee_n1?: ResourceInstanceAliasedNodeDataWritable | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTileWritable> | null;
+    /**
+     * Enter number of years requested
+     */
+    service_request_completion_target?: NumberAliasedNodeDataMin0Max10Writable | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestAdminAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsAliasedDataWritable = {
+    application_archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
+    application_proponent?: ResourceInstanceAliasedNodeDataWritable | null;
+    rationale_for_no_archaeologist?: StringAliasedNodeDataWritable | null;
+    has_retained_archaeologist?: BooleanAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestContactsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationAliasedDataWritable =
+    {
+        /**
+         * Select an option
+         */
+        filing_type: ReferenceAliasedNodeDataRequiredWritable | null;
+        /**
+         * Enter application ID
+         */
+        service_request_id?: StringAliasedNodeDataWritable | null;
+        supplemental_information?: FileListAliasedNodeDataWritable | null;
+    };
+
+export type BcapServiceRequestServiceRequestIdentificationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesAliasedDataWritable = {
+    service_request_messages?: ResourceInstanceListAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestMessagesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type BooleanAliasedNodeDataWritable = {
@@ -11755,7 +12271,7 @@ export type NumberAliasedNodeDataMin0Writable = {
 
 export type NumberAliasedNodeDataMin0Max10Writable = {
     /**
-     * Permit Duration Requested
+     * Request Completion Target
      *
      * Enter number of years requested
      */
@@ -11767,6 +12283,13 @@ export type PaginatedArchaeologicalSiteListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<ArchaeologicalSiteWritable>;
+};
+
+export type PaginatedBcapServiceRequestListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapServiceRequestWritable>;
 };
 
 export type PaginatedContributorListWritable = {
@@ -14945,6 +15468,45 @@ export type ApiBcapMessageThreadsListResponses = {
 
 export type ApiBcapMessageThreadsListResponse =
     ApiBcapMessageThreadsListResponses[keyof ApiBcapMessageThreadsListResponses];
+
+export type ApiBcapServiceRequestListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/bcap/api/bcap_service_request';
+};
+
+export type ApiBcapServiceRequestListResponses = {
+    200: PaginatedBcapServiceRequestList;
+};
+
+export type ApiBcapServiceRequestListResponse =
+    ApiBcapServiceRequestListResponses[keyof ApiBcapServiceRequestListResponses];
+
+export type ApiBcapServiceRequestRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bcap/api/bcap_service_request/{id}/';
+};
+
+export type ApiBcapServiceRequestRetrieveResponses = {
+    200: BcapServiceRequest;
+};
+
+export type ApiBcapServiceRequestRetrieveResponse =
+    ApiBcapServiceRequestRetrieveResponses[keyof ApiBcapServiceRequestRetrieveResponses];
 
 export type ApiContributorListData = {
     body?: never;

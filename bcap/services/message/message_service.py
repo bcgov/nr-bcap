@@ -39,11 +39,16 @@ class MessageService:
 
     def recipient_options(self, resource_id, user):
         """Contributors the user may address on a readable resource. Staff also
-        get the proponent."""
+        get the proponent. The user's own Contributor is always excluded."""
         PermitAccess.require_view(user, str(resource_id))
-        return ContributorService().contributors_for_resource(
+        svc = ContributorService()
+        options = svc.contributors_for_resource(
             str(resource_id), for_staff=is_internal_user(user)
         )
+        self_id = svc.username_contributor_id(user.username)
+        if self_id:
+            options = [o for o in options if o.id != self_id]
+        return options
 
     def prepare_create_payload(self, data, user):
         """Ready a POST body for saving: stamp the author, clear any client-sent
