@@ -39,4 +39,10 @@
     <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
   </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/68703bbe-43cb-4d3e-9db9-d81bcabd39e0">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/68703bbe-43cb-4d3e-9db9-d81bcabd39e0</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">On Hold</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/99a3bf8d-3e68-5f82-af38-34f6959b6ac6"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
 </rdf:RDF>
