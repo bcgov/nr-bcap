@@ -143,9 +143,7 @@ def _regen_graph_ids():
     for block, cls in ((slugs_block, "GraphSlugs"), (ids_block, "GraphIds")):
         pattern = rf"class {cls}:.*?(?=\n\nclass |\Z)"
         if re.search(pattern, content, re.DOTALL):
-            content = re.sub(
-                pattern, block.rstrip("\n"), content, flags=re.DOTALL
-            )
+            content = re.sub(pattern, block.rstrip("\n"), content, flags=re.DOTALL)
         else:
             content = content.rstrip("\n") + "\n\n\n" + block
 
