@@ -50,17 +50,17 @@ _PER_BRANCHES = [
 _PER_GEOMS = []
 _PER_GRAIN_FLATS = []
 
-# publication dependency lists
-_PUB_BRANCHES = [
-    ("bcap", "pub_mv_reference_link"),
-    ("bcap", "pub_mv_information_carrier"),
-    ("bcap", "pub_mv_copyright_type"),
-    ("bcap", "pub_mv_keyword"),
-    ("bcap", "pub_mv_authors"),
-    ("bcap", "pub_mv_publication_details"),
+# document dependency lists
+_DOC_BRANCHES = [
+    ("bcap", "doc_mv_reference_link"),
+    ("bcap", "doc_mv_information_carrier"),
+    ("bcap", "doc_mv_copyright_type"),
+    ("bcap", "doc_mv_keyword"),
+    ("bcap", "doc_mv_authors"),
+    ("bcap", "doc_mv_document_details"),
 ]
-_PUB_GEOMS = []
-_PUB_GRAIN_FLATS = []
+_DOC_GEOMS = []
+_DOC_GRAIN_FLATS = []
 
 # repository dependency lists
 _REP_BRANCHES = [
@@ -426,97 +426,97 @@ sql_items = [
         dependencies=[("bcap", "per_mv_resource_flat")],
     ),
     # -------------------------------------------------------------------
-    # publication
+    # document
     # -------------------------------------------------------------------
     SQLItem(
-        "pub_mv_reference_link",
-        format_sql("sql/materialized_views/publication/mv_reference_link.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_reference_link CASCADE;",
+        "doc_mv_reference_link",
+        format_sql("sql/materialized_views/document/mv_reference_link.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_reference_link CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_information_carrier",
-        format_sql("sql/materialized_views/publication/mv_information_carrier.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_information_carrier CASCADE;",
+        "doc_mv_information_carrier",
+        format_sql("sql/materialized_views/document/mv_information_carrier.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_information_carrier CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_copyright_type",
-        format_sql("sql/materialized_views/publication/mv_copyright_type.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_copyright_type CASCADE;",
+        "doc_mv_copyright_type",
+        format_sql("sql/materialized_views/document/mv_copyright_type.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_copyright_type CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_keyword",
-        format_sql("sql/materialized_views/publication/mv_keyword.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_keyword CASCADE;",
+        "doc_mv_keyword",
+        format_sql("sql/materialized_views/document/mv_keyword.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_keyword CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_authors",
-        format_sql("sql/materialized_views/publication/mv_authors.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_authors CASCADE;",
+        "doc_mv_authors",
+        format_sql("sql/materialized_views/document/mv_authors.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_authors CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_publication_details",
-        format_sql("sql/materialized_views/publication/mv_publication_details.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_publication_details CASCADE;",
+        "doc_mv_document_details",
+        format_sql("sql/materialized_views/document/mv_document_details.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_document_details CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_mv_resource",
-        format_sql("sql/materialized_views/publication/mv_resource.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource CASCADE;",
-        dependencies=_PUB_BRANCHES,
+        "doc_mv_resource",
+        format_sql("sql/materialized_views/document/mv_resource.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_resource CASCADE;",
+        dependencies=_DOC_BRANCHES,
     ),
     SQLItem(
-        "pub_resource_view",
-        format_sql("sql/materialized_views/publication/resource_view.sql"),
-        reverse_sql="DROP VIEW IF EXISTS publication.resource;",
+        "doc_resource_view",
+        format_sql("sql/materialized_views/document/resource_view.sql"),
+        reverse_sql="DROP VIEW IF EXISTS document.resource;",
         replace=True,
-        dependencies=[("bcap", "pub_mv_resource")],
+        dependencies=[("bcap", "doc_mv_resource")],
     ),
     SQLItem(
-        "pub_refresh_resource",
-        format_sql("sql/materialized_views/publication/refresh_resource.sql"),
-        reverse_sql="DROP PROCEDURE IF EXISTS publication.refresh_resource(boolean);",
+        "doc_refresh_resource",
+        format_sql("sql/materialized_views/document/refresh_resource.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS document.refresh_resource(boolean);",
         replace=True,
-        dependencies=[("bcap", "pub_mv_resource")],
+        dependencies=[("bcap", "doc_mv_resource")],
     ),
     SQLItem(
-        "pub_mv_resource_flat",
-        format_sql("sql/materialized_views/publication/mv_resource_flat.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource_flat CASCADE;",
-        dependencies=[("bcap", "pub_mv_resource")],
+        "doc_mv_resource_flat",
+        format_sql("sql/materialized_views/document/mv_resource_flat.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_resource_flat CASCADE;",
+        dependencies=[("bcap", "doc_mv_resource")],
     ),
     SQLItem(
-        "pub_mv_file_attachments",
-        format_sql("sql/materialized_views/publication/mv_file_attachments.sql"),
-        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS publication.mv_file_attachments CASCADE;",
+        "doc_mv_file_attachments",
+        format_sql("sql/materialized_views/document/mv_file_attachments.sql"),
+        reverse_sql="DROP MATERIALIZED VIEW IF EXISTS document.mv_file_attachments CASCADE;",
         dependencies=[("bcap", "databc_arches_util")],
     ),
     SQLItem(
-        "pub_flat_views",
-        format_sql("sql/materialized_views/publication/flat_views.sql"),
+        "doc_flat_views",
+        format_sql("sql/materialized_views/document/flat_views.sql"),
         reverse_sql=(
-            "DROP VIEW IF EXISTS publication.resource_flat;\n"
-            "DROP VIEW IF EXISTS publication.file_attachments;\n"
+            "DROP VIEW IF EXISTS document.resource_flat;\n"
+            "DROP VIEW IF EXISTS document.file_attachments;\n"
         ),
         replace=True,
         dependencies=[
-            ("bcap", "pub_mv_resource_flat"),
-            ("bcap", "pub_mv_file_attachments"),
+            ("bcap", "doc_mv_resource_flat"),
+            ("bcap", "doc_mv_file_attachments"),
         ],
     ),
     SQLItem(
-        "pub_refresh_flat",
-        format_sql("sql/materialized_views/publication/refresh_flat.sql"),
-        reverse_sql="DROP PROCEDURE IF EXISTS publication.refresh_flat(boolean);",
+        "doc_refresh_flat",
+        format_sql("sql/materialized_views/document/refresh_flat.sql"),
+        reverse_sql="DROP PROCEDURE IF EXISTS document.refresh_flat(boolean);",
         replace=True,
         dependencies=[
-            ("bcap", "pub_mv_resource_flat"),
-            ("bcap", "pub_mv_file_attachments"),
+            ("bcap", "doc_mv_resource_flat"),
+            ("bcap", "doc_mv_file_attachments"),
         ],
     ),
     # -------------------------------------------------------------------
@@ -618,11 +618,11 @@ sql_items = [
         dependencies=[("bcap", "per_flat_views")],
     ),
     SQLItem(
-        "databc_publication",
-        format_sql("sql/views/databc/vw_publication.sql"),
-        reverse_sql=("DROP VIEW IF EXISTS databc.vw_publication;\n"),
+        "databc_document",
+        format_sql("sql/views/databc/vw_document.sql"),
+        reverse_sql=("DROP VIEW IF EXISTS databc.vw_document;\n"),
         replace=True,
-        dependencies=[("bcap", "pub_flat_views")],
+        dependencies=[("bcap", "doc_flat_views")],
     ),
     SQLItem(
         "databc_repository",
@@ -642,7 +642,7 @@ sql_items = [
         dependencies=[
             ("bcap", "sv_mv_file_attachments"),
             ("bcap", "as_mv_file_attachments"),
-            ("bcap", "pub_mv_file_attachments"),
+            ("bcap", "doc_mv_file_attachments"),
         ],
     ),
 ]

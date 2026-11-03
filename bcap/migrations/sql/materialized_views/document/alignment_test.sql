@@ -6,27 +6,27 @@ WITH v AS (
          ARRAY[arches_util.nslots(information_carrier),
                arches_util.nslots(information_carrier_file_ids)] AS slots,
          ARRAY['information_carrier', 'information_carrier_file_ids']::text[] AS colnames
-  FROM publication.mv_resource_flat WHERE information_carrier_count > 0
+  FROM document.mv_resource_flat WHERE information_carrier_count > 0
   UNION ALL
   SELECT resourceinstanceid, keyword_count AS n, 'resource_flat.keyword' AS grp,
          ARRAY[arches_util.nslots(keyword),
                arches_util.nslots(keyword_ids)] AS slots,
          ARRAY['keyword', 'keyword_ids']::text[] AS colnames
-  FROM publication.mv_resource_flat WHERE keyword_count > 0
+  FROM document.mv_resource_flat WHERE keyword_count > 0
   UNION ALL
   SELECT resourceinstanceid, authors_count AS n, 'resource_flat.authors' AS grp,
          ARRAY[arches_util.nslots(other_authors_unlisted),
                arches_util.nslots(authors),
                arches_util.nslots(authors_ids)] AS slots,
          ARRAY['other_authors_unlisted', 'authors', 'authors_ids']::text[] AS colnames
-  FROM publication.mv_resource_flat WHERE authors_count > 0
+  FROM document.mv_resource_flat WHERE authors_count > 0
   UNION ALL
-  SELECT resourceinstanceid, publication_identifier_count AS n, 'resource_flat.publication_identifier' AS grp,
-         ARRAY[arches_util.nslots(publication_identifier_type),
-               arches_util.nslots(publication_identifier_type_ids),
-               arches_util.nslots(publication_identifier)] AS slots,
-         ARRAY['publication_identifier_type', 'publication_identifier_type_ids', 'publication_identifier']::text[] AS colnames
-  FROM publication.mv_resource_flat WHERE publication_identifier_count > 0
+  SELECT resourceinstanceid, document_identifier_count AS n, 'resource_flat.document_identifier' AS grp,
+         ARRAY[arches_util.nslots(document_identifier_type),
+               arches_util.nslots(document_identifier_type_ids),
+               arches_util.nslots(document_identifier)] AS slots,
+         ARRAY['document_identifier_type', 'document_identifier_type_ids', 'document_identifier']::text[] AS colnames
+  FROM document.mv_resource_flat WHERE document_identifier_count > 0
 )
 SELECT grp, colname,
        count(DISTINCT resourceinstanceid) AS rows_affected,

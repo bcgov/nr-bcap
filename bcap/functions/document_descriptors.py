@@ -9,11 +9,11 @@ details = {
     "functionid": "60000000-0000-0000-0000-000000001004",
     "name": "Publication Descriptors",
     "type": "primarydescriptors",
-    "modulename": "publication_descriptors.py",
+    "modulename": "document_descriptors.py",
     "description": "Function that provides the primary descriptors for BCAP Publications",
     "defaultconfig": {
-        "module": "bcap.functions.publication_descriptors",
-        "class_name": "PublicationDescriptors",
+        "module": "bcap.functions.document_descriptors",
+        "class_name": "DocumentDescriptors",
         "descriptor_types": {
             "name": {},
             "description": {},
@@ -21,12 +21,12 @@ details = {
         },
         "triggering_nodegroups": [],
     },
-    "classname": "PublicationDescriptors",
+    "classname": "DocumentDescriptors",
     "component": "views/components/functions/publication-descriptors",
 }
 
 
-class PublicationDescriptors(BCPrimaryDescriptorsFunction):
+class DocumentDescriptors(BCPrimaryDescriptorsFunction):
     # For Name part of descriptor
     _graph_slug = GraphSlugs.PUBLICATION
     _graph_lookup = None
@@ -35,10 +35,10 @@ class PublicationDescriptors(BCPrimaryDescriptorsFunction):
     _card_nodes = [aliases.AUTHORS, aliases.PUBLICATION_TYPE]
 
     def __init__(self):
-        super(PublicationDescriptors).__init__()
+        super(DocumentDescriptors).__init__()
         self._graph_lookup = GraphLookup(
-            PublicationDescriptors._graph_slug,
-            PublicationDescriptors._name_nodes + PublicationDescriptors._card_nodes,
+            DocumentDescriptors._graph_slug,
+            DocumentDescriptors._name_nodes + DocumentDescriptors._card_nodes,
         )
 
     def get_primary_descriptor_from_nodes(

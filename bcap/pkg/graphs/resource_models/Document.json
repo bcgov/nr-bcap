@@ -50,7 +50,7 @@
                         "en": ""
                     },
                     "name": {
-                        "en": "Publication Identifier"
+                        "en": "Document Identifier"
                     },
                     "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "sortorder": 0,
@@ -68,16 +68,16 @@
                     "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                     "helpenabled": true,
                     "helptext": {
-                        "en": "<p><strong>Publication Type</strong> -&nbsp;When you pick the Publication Type &ldquo;Volume / Publication Number&rdquo;, you can enter the volume number in the &ldquo;Title of the Work&rdquo;</p>\n\n<p><strong>Other Journal or Publication Name</strong> &ndash; if the name of the publication does not exist in Journal or Publication Name list, enter the full name here.</p>\n<strong>Publication Identifier</strong> &ndash; once you have selected a Journal of Publication Name, enter the Report Number (e.g., enter the Bulletin number if it is a GSC Bulletin), or enter the URL, or enter a DOI with character string divided into a prefix and a suffix separated by a slash (e.g., 10.000/123).<br />\n&nbsp;"
+                        "en": "<p><strong>Document Type</strong> -&nbsp;When you pick the Document Type &ldquo;Volume / Document Number&rdquo;, you can enter the volume number in the &ldquo;Title of the Work&rdquo;</p>\n\n<p><strong>Other Journal or Document Name</strong> &ndash; if the name of the document does not exist in Journal or Document Name list, enter the full name here.</p>\n<strong>Document Identifier</strong> &ndash; once you have selected a Journal of Document Name, enter the Report Number (e.g., enter the Bulletin number if it is a GSC Bulletin), or enter the URL, or enter a DOI with character string divided into a prefix and a suffix separated by a slash (e.g., 10.000/123).<br />\n&nbsp;"
                     },
                     "helptitle": {
-                        "en": "Publication Help Guide"
+                        "en": "Document Help Guide"
                     },
                     "instructions": {
                         "en": "Enter a description for the reference."
                     },
                     "name": {
-                        "en": "Publication Details"
+                        "en": "Document Details"
                     },
                     "nodegroup_id": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "sortorder": 0,
@@ -133,7 +133,7 @@
                         "en": "Upload pdf(s) of the reference."
                     },
                     "name": {
-                        "en": "Publication File"
+                        "en": "Document File"
                     },
                     "nodegroup_id": "9f210d2d-e74a-11e6-84a6-026d961c88e6",
                     "sortorder": 2,
@@ -242,7 +242,7 @@
                     "config": {
                         "dateFormat": "YYYY",
                         "defaultValue": "",
-                        "label": "Publication or Report Year",
+                        "label": "Document or Report Year",
                         "maxDate": false,
                         "minDate": false,
                         "placeholder": "Enter date",
@@ -250,7 +250,7 @@
                     },
                     "id": "1328ed10-1fb4-4db2-871d-d6ebd4c4ce98",
                     "label": {
-                        "en": "Publication or Report Year"
+                        "en": "Document or Report Year"
                     },
                     "node_id": "45216022-c409-11ed-81a5-5254004d77d3",
                     "sortorder": 2,
@@ -326,14 +326,14 @@
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
                         "i18n_properties": ["placeholder"],
-                        "label": "Publication Type",
+                        "label": "Document Type",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "5df689fb-d110-463c-860b-85ff8afbd329",
                     "label": {
-                        "en": "Publication Type"
+                        "en": "Document Type"
                     },
                     "node_id": "83f08723-772b-456c-b693-863b0f84cb07",
                     "sortorder": 1,
@@ -428,7 +428,7 @@
                             }
                         },
                         "i18n_properties": ["placeholder"],
-                        "label": "Publication Identifier",
+                        "label": "Document Identifier",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter Report Number, URL or Digital Object Identifier"
@@ -438,7 +438,7 @@
                     },
                     "id": "86a29c4f-7516-493d-95bc-233f1a2280d3",
                     "label": {
-                        "en": "Publication Identifier"
+                        "en": "Document Identifier"
                     },
                     "node_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "sortorder": 2,
@@ -450,14 +450,14 @@
                     "card_id": "28a2d308-2ac6-44ac-86ea-02b537b88acf",
                     "config": {
                         "i18n_properties": ["placeholder"],
-                        "label": "Publication Identifier Type",
+                        "label": "Document Identifier Type",
                         "placeholder": {
                             "en": "Select an option"
                         }
                     },
                     "id": "a109d97e-c063-45da-b328-71a1f906f633",
                     "label": {
-                        "en": "Publication Identifier Type"
+                        "en": "Document Identifier Type"
                     },
                     "node_id": "3604650c-2978-464a-83bb-fd559f7b9ea8",
                     "sortorder": 1,
@@ -470,13 +470,13 @@
                     "config": {
                         "acceptedFiles": "",
                         "defaultValue": [],
-                        "label": "Publication File",
+                        "label": "Document File",
                         "maxFilesize": "200",
                         "rerender": true
                     },
                     "id": "a41054eb-e371-4c68-bda9-8d5d3e727885",
                     "label": {
-                        "en": "Publication File"
+                        "en": "Document File"
                     },
                     "node_id": "9f210d2d-e74a-11e6-84a6-026d961c88e6",
                     "sortorder": 0,
@@ -541,7 +541,7 @@
                             }
                         },
                         "i18n_properties": ["placeholder"],
-                        "label": "Publication Remarks",
+                        "label": "Document Remarks",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -551,7 +551,7 @@
                     },
                     "id": "bfe8af14-7cb2-4749-a072-0720a0245095",
                     "label": {
-                        "en": "Publication Remarks"
+                        "en": "Document Remarks"
                     },
                     "node_id": "289599a4-e307-4635-959e-7e415b0e8ec4",
                     "sortorder": 7,
@@ -637,14 +637,14 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Journal or Volume the Publication was published in",
+                        "label": "Journal or Volume the Document was published in",
                         "placeholder": {
                             "en": "Select Journal or Publication Name"
                         }
                     },
                     "id": "ed5ea949-a03f-4a91-b193-6fbecb67ef87",
                     "label": {
-                        "en": "Journal or Volume the Publication was published in"
+                        "en": "Journal or Volume the Document was published in"
                     },
                     "node_id": "c89a294c-bc35-11ed-9b80-5254004d77d3",
                     "sortorder": 3,
@@ -907,13 +907,13 @@
             "functions_x_graphs": [
                 {
                     "config": {
-                        "class_name": "PublicationDescriptors",
+                        "class_name": "DocumentDescriptors",
                         "descriptor_types": {
                             "description": {},
                             "map_popup": {},
                             "name": {}
                         },
-                        "module": "bcap.functions.publication_descriptors",
+                        "module": "bcap.functions.document_descriptors",
                         "triggering_nodegroups": []
                     },
                     "function_id": "60000000-0000-0000-0000-000000001004",
@@ -930,7 +930,7 @@
             "isresource": true,
             "jsonldcontext": null,
             "name": {
-                "en": "Publication"
+                "en": "Document"
             },
             "nodegroups": [
                 {
@@ -1107,7 +1107,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "publication_remarks",
+                    "alias": "document_remarks",
                     "config": {},
                     "datatype": "string",
                     "description": null,
@@ -1120,7 +1120,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Publication Remarks",
+                    "name": "Document Remarks",
                     "nodegroup_id": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "nodeid": "289599a4-e307-4635-959e-7e415b0e8ec4",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
@@ -1155,7 +1155,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "publication_identifier_type",
+                    "alias": "document_identifier_type",
                     "config": {
                         "controlledList": "82d2b088-5de3-4b4b-8102-602950365a25",
                         "multiValue": false
@@ -1171,7 +1171,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Publication Identifier Type",
+                    "name": "Document Identifier Type",
                     "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "nodeid": "3604650c-2978-464a-83bb-fd559f7b9ea8",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
@@ -1181,7 +1181,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "bc_information_resource_model",
+                    "alias": "document",
                     "config": {},
                     "datatype": "semantic",
                     "description": "",
@@ -1194,7 +1194,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": true,
-                    "name": "Publication",
+                    "name": "Document",
                     "nodegroup_id": null,
                     "nodeid": "3caf329e-b8f7-11e6-84a5-026d961c88e6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
@@ -1254,7 +1254,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "publication_identifier",
+                    "alias": "document_identifier",
                     "config": {
                         "en": ""
                     },
@@ -1269,7 +1269,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Publication Identifier",
+                    "name": "Document Identifier",
                     "nodegroup_id": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "nodeid": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
@@ -1345,7 +1345,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "publication_type",
+                    "alias": "document_type",
                     "config": {
                         "controlledList": "74e02e4f-8587-5cfa-93b4-d81539f023dd",
                         "multiValue": false
@@ -1361,7 +1361,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Publication Type",
+                    "name": "Document Type",
                     "nodegroup_id": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "nodeid": "83f08723-772b-456c-b693-863b0f84cb07",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
@@ -1602,7 +1602,7 @@
                             {
                                 "graphid": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                                 "inverseRelationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
-                                "name": "Publication",
+                                "name": "Document",
                                 "relationshipCollection": "00000000-0000-0000-0000-000000000005",
                                 "relationshipConcept": "ac41d9be-79db-4256-b368-2f4559cfbe55",
                                 "useOntologyRelationship": false
@@ -1657,7 +1657,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "publication_details",
+                    "alias": "document_details",
                     "config": {
                         "en": ""
                     },
@@ -1672,7 +1672,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Publication Details",
+                    "name": "Document Details",
                     "nodegroup_id": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "nodeid": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
@@ -1767,7 +1767,7 @@
                 "isrequired": false,
                 "issearchable": true,
                 "istopnode": true,
-                "name": "Publication",
+                "name": "Document",
                 "nodegroup_id": null,
                 "nodeid": "3caf329e-b8f7-11e6-84a5-026d961c88e6",
                 "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
@@ -1775,7 +1775,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": "publication",
+            "slug": "document",
             "source_identifier_id": null,
             "spatial_views": [],
             "subtitle": {

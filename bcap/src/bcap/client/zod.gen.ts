@@ -141,6 +141,27 @@ export const zArchaeologicalSiteRestrictedDocumentTile = z.object({
     })).nullish()
 });
 
+export const zDocumentInformationCarrierAliasedData = z.object({
+    information_carrier: zFileListAliasedNodeData.nullish()
+});
+
+export const zDocumentInformationCarrierTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentInformationCarrierAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zFileListAliasedNodeDataRequired = z.object({
     node_value: z.array(z.object({
         name: z.string().optional(),
@@ -497,27 +518,6 @@ export const zProcessRequirementRequirementExecutionDurationTile = z.object({
     })).nullish()
 });
 
-export const zPublicationInformationCarrierAliasedData = z.object({
-    information_carrier: zFileListAliasedNodeData.nullish()
-});
-
-export const zPublicationInformationCarrierTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationInformationCarrierAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zReferenceAliasedNodeData = z.object({
     node_value: z.array(z.object({
         uri: z.string().optional(),
@@ -556,16 +556,16 @@ export const zArchaeologicalSiteSiteRecordAdminTile = z.object({
     })).nullish()
 });
 
-export const zPublicationKeywordAliasedData = z.object({
+export const zDocumentKeywordAliasedData = z.object({
     keyword: zReferenceAliasedNodeData.nullish()
 });
 
-export const zPublicationKeywordTile = z.object({
+export const zDocumentKeywordTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationKeywordAliasedData.optional(),
+    aliased_data: zDocumentKeywordAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -843,6 +843,28 @@ export const zProcessRequirementSubmissionDataTile = z.object({
     })).nullish()
 });
 
+export const zProjectEngagementEngagementDocumentAliasedData = z.object({
+    should_be_delivered: zBooleanAliasedNodeData.nullish(),
+    engagement_document: zResourceInstanceAliasedNodeData.nullable()
+});
+
+export const zProjectEngagementEngagementDocumentTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProjectEngagementEngagementDocumentAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zResourceInstanceListAliasedNodeData = z.object({
     node_value: z.array(z.object({
         resourceId: z.uuid().optional(),
@@ -885,6 +907,29 @@ export const zBcapServiceRequestServiceRequestMessagesTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zBcapServiceRequestServiceRequestMessagesAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentReferenceLinkAliasedData = z.object({
+    archaeological_sites: zResourceInstanceListAliasedNodeData.nullish(),
+    site_visits: zResourceInstanceListAliasedNodeData.nullish(),
+    repositories: zResourceInstanceListAliasedNodeData.nullish()
+});
+
+export const zDocumentReferenceLinkTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentReferenceLinkAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -972,29 +1017,6 @@ export const zPermitApplicationPermitMessagesTile = z.object({
     })).nullish()
 });
 
-export const zPublicationReferenceLinkAliasedData = z.object({
-    archaeological_sites: zResourceInstanceListAliasedNodeData.nullish(),
-    site_visits: zResourceInstanceListAliasedNodeData.nullish(),
-    repositories: zResourceInstanceListAliasedNodeData.nullish()
-});
-
-export const zPublicationReferenceLinkTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationReferenceLinkAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zResourceInstanceListAliasedNodeDataRequired = z.object({
     node_value: z.array(z.object({
         resourceId: z.uuid().optional(),
@@ -1006,17 +1028,17 @@ export const zResourceInstanceListAliasedNodeDataRequired = z.object({
     details: z.array(zResourceInstanceDetail).readonly().optional()
 });
 
-export const zPublicationAuthorsAliasedData = z.object({
+export const zDocumentAuthorsAliasedData = z.object({
     other_authors_unlisted: zBooleanAliasedNodeData.nullish(),
     authors: zResourceInstanceListAliasedNodeDataRequired.nullable()
 });
 
-export const zPublicationAuthorsTile = z.object({
+export const zDocumentAuthorsTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationAuthorsAliasedData.optional(),
+    aliased_data: zDocumentAuthorsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -1891,6 +1913,110 @@ export const zContributorMailingAddressTile = z.object({
         timestamp: z.string().nullish(),
         reviewtimestamp: z.string().nullish()
     })).nullish()
+});
+
+export const zDocumentCopyrightTypeAliasedData = z.object({
+    agreement_text: zStringAliasedNodeData.nullish(),
+    distribution_permitted: zBooleanAliasedNodeData.nullish(),
+    signed_agreement: zFileListAliasedNodeData.nullish(),
+    copyright_type: zReferenceAliasedNodeDataRequired.nullable()
+});
+
+export const zDocumentCopyrightTypeTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentCopyrightTypeAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentDocumentIdentifierAliasedData = z.object({
+    document_identifier_type: zReferenceAliasedNodeData.nullish(),
+    document_identifier: zStringAliasedNodeData.nullish()
+});
+
+export const zDocumentDocumentIdentifierTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentDocumentIdentifierAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentDocumentDetailsAliasedData = z.object({
+    other_journal_or_volume_name: zStringAliasedNodeData.nullish(),
+    page_range_end: zNumberAliasedNodeData.nullish(),
+    title: zStringAliasedNodeData.nullable(),
+    journal_or_volume_name: zResourceInstanceAliasedNodeData.nullish(),
+    document_type: zReferenceAliasedNodeData.nullish(),
+    document_identifier: z.array(zDocumentDocumentIdentifierTile).nullish(),
+    page_range_start: zNumberAliasedNodeData.nullish(),
+    year_of_publication: zDateAliasedNodeData.nullable(),
+    document_remarks: zStringAliasedNodeData.nullish()
+});
+
+export const zDocumentDocumentDetailsTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentDocumentDetailsAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentResourceAliasedData = z.object({
+    document_details: zDocumentDocumentDetailsTile.nullish(),
+    authors: z.array(zDocumentAuthorsTile).nullish(),
+    information_carrier: z.array(zDocumentInformationCarrierTile).nullish(),
+    copyright_type: zDocumentCopyrightTypeTile.nullish(),
+    keyword: z.array(zDocumentKeywordTile).nullish(),
+    reference_link: zDocumentReferenceLinkTile.nullish()
+});
+
+export const zDocument = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zDocumentResourceAliasedData.optional(),
+    graph_has_different_publication: z.boolean().readonly(),
+    name: z.string().readonly().nullable(),
+    descriptors: z.object({
+        en: z.object({
+            name: z.string().optional(),
+            description: z.string().optional(),
+            map_popup: z.string().optional()
+        }).optional()
+    }).readonly().nullable(),
+    legacyid: z.string().readonly().nullable(),
+    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
+    graph: z.uuid().nullish(),
+    graph_publication: z.uuid().readonly().nullable(),
+    resource_instance_lifecycle_state: z.uuid().readonly(),
+    principaluser: z.int().readonly().nullable()
 });
 
 export const zDocumentSubmissionSubmissionAssessmentAliasedData = z.object({
@@ -2861,6 +2987,13 @@ export const zPaginatedBcapServiceRequestList = z.object({
     results: z.array(zBcapServiceRequest)
 });
 
+export const zPaginatedDocumentList = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zDocument)
+});
+
 export const zPaginatedLocalGovernmentList = z.object({
     count: z.int(),
     next: z.url().nullish(),
@@ -3299,98 +3432,13 @@ export const zProcessRequirementRequirementDataTile = z.object({
     })).nullish()
 });
 
-export const zProjectEngagementDeliveryAttemptIncludedDocumentAliasedData = z.object({
-    included_document_identifier_snapshot: zNonLocalizedStringAliasedNodeData.nullish(),
-    included_document_title_snapshot: zStringAliasedNodeData.nullish()
-});
-
-export const zProjectEngagementDeliveryAttemptIncludedDocumentTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDeliveryAttemptIncludedDocumentAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleN1AliasedData = z.object({
-    attempt_recipient_contributor_reference: zResourceInstanceAliasedNodeData.nullish(),
-    attempt_recipient_email_address: zNonLocalizedStringAliasedNodeData.nullish(),
-    delivery_attempt_identifier: zNonLocalizedStringAliasedNodeData.nullish(),
-    attempt_recipient_name_as_provided: zStringAliasedNodeData.nullish(),
-    attempt_recipient_phone_number: zNonLocalizedStringAliasedNodeData.nullish(),
-    delivery_attempt_date: zDateAliasedNodeData.nullish(),
-    attempt_recipient_portal_url: zNonLocalizedStringAliasedNodeData.nullish(),
-    delivery_attempt_method: zReferenceAliasedNodeData.nullish(),
-    delivery_attempt_outcome: zReferenceAliasedNodeData.nullish(),
-    delivery_attempt_included_document: z.array(zProjectEngagementDeliveryAttemptIncludedDocumentTile).nullish(),
-    delivered_bundle_files: zFileListAliasedNodeData.nullish(),
-    delivery_attempt_confirmation_files: zFileListAliasedNodeData.nullish(),
-    delivery_attempt_notes: zStringAliasedNodeData.nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleN1Tile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDocumentDeliveryBundleN1AliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleAliasedData = z.object({
-    bundle_identifier: zNonLocalizedStringAliasedNodeData.nullish(),
-    recipient_contributor_reference: zResourceInstanceAliasedNodeData.nullish(),
-    recipient_email_address: zNonLocalizedStringAliasedNodeData.nullish(),
-    bundle_status: zReferenceAliasedNodeData.nullish(),
-    recipient_name_as_provided: zStringAliasedNodeData.nullish(),
-    recipient_phone_number: zNonLocalizedStringAliasedNodeData.nullish(),
-    bundle_intended_delivery_method: zReferenceAliasedNodeData.nullish(),
-    recipient_portal_url: zNonLocalizedStringAliasedNodeData.nullish(),
-    bundle_required_delivery_date: zDateAliasedNodeData.nullish(),
-    bundle_delivery_instructions: zStringAliasedNodeData.nullish(),
-    document_delivery_bundle_n1: zProjectEngagementDocumentDeliveryBundleN1Tile.nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDocumentDeliveryBundleAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zProjectEngagementEngagementDetailsAliasedData = z.object({
     engagement_start_date: zDateAliasedNodeData.nullish(),
     engagement_target_length: zNumberAliasedNodeData.nullish(),
     engagement_type: zReferenceAliasedNodeData.nullish(),
     engagement_status: zReferenceAliasedNodeData.nullish(),
     engagement_end_date: zDateAliasedNodeData.nullish(),
+    is_mandatory: zBooleanAliasedNodeData.nullish(),
     engagement_steps_taken: zStringAliasedNodeData.nullish(),
     engagement_outcome_summary: zStringAliasedNodeData.nullish()
 });
@@ -3412,40 +3460,14 @@ export const zProjectEngagementEngagementDetailsTile = z.object({
     })).nullish()
 });
 
-export const zProjectEngagementEngagementDocumentAliasedData = z.object({
-    document_identifier: zStringAliasedNodeData.nullish(),
-    document_title: zStringAliasedNodeData.nullish(),
-    document_type: zReferenceAliasedNodeData.nullish(),
-    document_description: zStringAliasedNodeData.nullish(),
-    should_be_delivered: zBooleanAliasedNodeData.nullish(),
-    document_file: zFileListAliasedNodeData.nullish()
-});
-
-export const zProjectEngagementEngagementDocumentTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementEngagementDocumentAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zProjectEngagementEngagementParticipantAliasedData = z.object({
-    other_participant: zStringAliasedNodeData.nullish(),
-    participant_email_address: zNonLocalizedStringAliasedNodeData.nullish(),
-    participant_type: zReferenceAliasedNodeData.nullish(),
-    participant_phone_number: zNonLocalizedStringAliasedNodeData.nullish(),
-    participant_role: zReferenceAliasedNodeData.nullish(),
     contributor_reference: zResourceInstanceAliasedNodeData.nullish(),
+    participant_email_address: zNonLocalizedStringAliasedNodeData.nullish(),
+    other_participant: zStringAliasedNodeData.nullish(),
+    participant_phone_number: zNonLocalizedStringAliasedNodeData.nullish(),
     participant_portal_url: zNonLocalizedStringAliasedNodeData.nullish(),
+    participant_type: zReferenceAliasedNodeData.nullish(),
+    participant_role: zReferenceAliasedNodeData.nullish(),
     participant_notes: zStringAliasedNodeData.nullish()
 });
 
@@ -3466,11 +3488,38 @@ export const zProjectEngagementEngagementParticipantTile = z.object({
     })).nullish()
 });
 
+export const zProjectEngagementReferralPackageAliasedData = z.object({
+    package_delivery_method: zReferenceAliasedNodeData.nullish(),
+    package_target_delivery_date: zDateAliasedNodeData.nullish(),
+    package_delivery_date: zDateAliasedNodeData.nullish(),
+    package_delivery_status: zReferenceAliasedNodeData.nullish(),
+    package_documents: zResourceInstanceListAliasedNodeData.nullish(),
+    package_delivery_notes: zStringAliasedNodeData.nullish(),
+    package_confirmation_files: zFileListAliasedNodeData.nullish()
+});
+
+export const zProjectEngagementReferralPackageTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProjectEngagementReferralPackageAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zProjectEngagementEngagementAliasedData = z.object({
     engagement_details: zProjectEngagementEngagementDetailsTile.nullish(),
     engagement_participant: z.array(zProjectEngagementEngagementParticipantTile).nullish(),
     engagement_document: z.array(zProjectEngagementEngagementDocumentTile).nullish(),
-    document_delivery_bundle: zProjectEngagementDocumentDeliveryBundleTile.nullish()
+    referral_package: zProjectEngagementReferralPackageTile.nullish()
 });
 
 export const zProjectEngagementEngagementTile = z.object({
@@ -3519,117 +3568,6 @@ export const zPaginatedProjectEngagementList = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zProjectEngagement)
-});
-
-export const zPublicationCopyrightTypeAliasedData = z.object({
-    agreement_text: zStringAliasedNodeData.nullish(),
-    distribution_permitted: zBooleanAliasedNodeData.nullish(),
-    signed_agreement: zFileListAliasedNodeData.nullish(),
-    copyright_type: zReferenceAliasedNodeDataRequired.nullable()
-});
-
-export const zPublicationCopyrightTypeTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationCopyrightTypeAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationPublicationIdentifierAliasedData = z.object({
-    publication_identifier_type: zReferenceAliasedNodeData.nullish(),
-    publication_identifier: zStringAliasedNodeData.nullish()
-});
-
-export const zPublicationPublicationIdentifierTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationPublicationIdentifierAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationPublicationDetailsAliasedData = z.object({
-    other_journal_or_volume_name: zStringAliasedNodeData.nullish(),
-    page_range_end: zNumberAliasedNodeData.nullish(),
-    title: zStringAliasedNodeData.nullable(),
-    journal_or_volume_name: zResourceInstanceAliasedNodeData.nullish(),
-    publication_type: zReferenceAliasedNodeData.nullish(),
-    publication_identifier: z.array(zPublicationPublicationIdentifierTile).nullish(),
-    page_range_start: zNumberAliasedNodeData.nullish(),
-    year_of_publication: zDateAliasedNodeData.nullable(),
-    publication_remarks: zStringAliasedNodeData.nullish()
-});
-
-export const zPublicationPublicationDetailsTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationPublicationDetailsAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationResourceAliasedData = z.object({
-    publication_details: zPublicationPublicationDetailsTile.nullish(),
-    authors: z.array(zPublicationAuthorsTile).nullish(),
-    information_carrier: z.array(zPublicationInformationCarrierTile).nullish(),
-    copyright_type: zPublicationCopyrightTypeTile.nullish(),
-    keyword: z.array(zPublicationKeywordTile).nullish(),
-    reference_link: zPublicationReferenceLinkTile.nullish()
-});
-
-export const zPublication = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zPublicationResourceAliasedData.optional(),
-    graph_has_different_publication: z.boolean().readonly(),
-    name: z.string().readonly().nullable(),
-    descriptors: z.object({
-        en: z.object({
-            name: z.string().optional(),
-            description: z.string().optional(),
-            map_popup: z.string().optional()
-        }).optional()
-    }).readonly().nullable(),
-    legacyid: z.string().readonly().nullable(),
-    createdtime: z.iso.datetime({ offset: true, local: true }).readonly(),
-    graph: z.uuid().nullish(),
-    graph_publication: z.uuid().readonly().nullable(),
-    resource_instance_lifecycle_state: z.uuid().readonly(),
-    principaluser: z.int().readonly().nullable()
-});
-
-export const zPaginatedPublicationList = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zPublication)
 });
 
 export const zRepositoryAlternateIdentifiersAliasedData = z.object({
@@ -5810,6 +5748,27 @@ export const zArchaeologicalSiteRestrictedDocumentTileWritable = z.object({
     })).nullish()
 });
 
+export const zDocumentInformationCarrierAliasedDataWritable = z.object({
+    information_carrier: zFileListAliasedNodeDataWritable.nullish()
+});
+
+export const zDocumentInformationCarrierTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentInformationCarrierAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zFileListAliasedNodeDataRequiredWritable = z.object({
     node_value: z.array(z.object({
         name: z.string().optional(),
@@ -5968,27 +5927,6 @@ export const zProcessRequirementRequirementExecutionDurationTileWritable = z.obj
     })).nullish()
 });
 
-export const zPublicationInformationCarrierAliasedDataWritable = z.object({
-    information_carrier: zFileListAliasedNodeDataWritable.nullish()
-});
-
-export const zPublicationInformationCarrierTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationInformationCarrierAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zReferenceAliasedNodeDataWritable = z.object({
     node_value: z.array(z.object({
         uri: z.string().optional(),
@@ -6025,16 +5963,16 @@ export const zArchaeologicalSiteSiteRecordAdminTileWritable = z.object({
     })).nullish()
 });
 
-export const zPublicationKeywordAliasedDataWritable = z.object({
+export const zDocumentKeywordAliasedDataWritable = z.object({
     keyword: zReferenceAliasedNodeDataWritable.nullish()
 });
 
-export const zPublicationKeywordTileWritable = z.object({
+export const zDocumentKeywordTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationKeywordAliasedDataWritable.optional(),
+    aliased_data: zDocumentKeywordAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -6289,6 +6227,28 @@ export const zProcessRequirementSubmissionDataTileWritable = z.object({
     })).nullish()
 });
 
+export const zProjectEngagementEngagementDocumentAliasedDataWritable = z.object({
+    should_be_delivered: zBooleanAliasedNodeDataWritable.nullish(),
+    engagement_document: zResourceInstanceAliasedNodeDataWritable.nullable()
+});
+
+export const zProjectEngagementEngagementDocumentTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProjectEngagementEngagementDocumentAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zResourceInstanceListAliasedNodeDataWritable = z.object({
     node_value: z.array(z.object({
         resourceId: z.uuid().optional(),
@@ -6329,6 +6289,29 @@ export const zBcapServiceRequestServiceRequestMessagesTileWritable = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zBcapServiceRequestServiceRequestMessagesAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentReferenceLinkAliasedDataWritable = z.object({
+    archaeological_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    site_visits: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    repositories: zResourceInstanceListAliasedNodeDataWritable.nullish()
+});
+
+export const zDocumentReferenceLinkTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentReferenceLinkAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -6402,29 +6385,6 @@ export const zPermitApplicationPermitMessagesTileWritable = z.object({
     })).nullish()
 });
 
-export const zPublicationReferenceLinkAliasedDataWritable = z.object({
-    archaeological_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
-    site_visits: zResourceInstanceListAliasedNodeDataWritable.nullish(),
-    repositories: zResourceInstanceListAliasedNodeDataWritable.nullish()
-});
-
-export const zPublicationReferenceLinkTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationReferenceLinkAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zResourceInstanceListAliasedNodeDataRequiredWritable = z.object({
     node_value: z.array(z.object({
         resourceId: z.uuid().optional(),
@@ -6434,17 +6394,17 @@ export const zResourceInstanceListAliasedNodeDataRequiredWritable = z.object({
     })).min(1).nullable()
 });
 
-export const zPublicationAuthorsAliasedDataWritable = z.object({
+export const zDocumentAuthorsAliasedDataWritable = z.object({
     other_authors_unlisted: zBooleanAliasedNodeDataWritable.nullish(),
     authors: zResourceInstanceListAliasedNodeDataRequiredWritable.nullable()
 });
 
-export const zPublicationAuthorsTileWritable = z.object({
+export const zDocumentAuthorsTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationAuthorsAliasedDataWritable.optional(),
+    aliased_data: zDocumentAuthorsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -7275,6 +7235,96 @@ export const zContributorMailingAddressTileWritable = z.object({
         timestamp: z.string().nullish(),
         reviewtimestamp: z.string().nullish()
     })).nullish()
+});
+
+export const zDocumentCopyrightTypeAliasedDataWritable = z.object({
+    agreement_text: zStringAliasedNodeDataWritable.nullish(),
+    distribution_permitted: zBooleanAliasedNodeDataWritable.nullish(),
+    signed_agreement: zFileListAliasedNodeDataWritable.nullish(),
+    copyright_type: zReferenceAliasedNodeDataRequiredWritable.nullable()
+});
+
+export const zDocumentCopyrightTypeTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentCopyrightTypeAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentDocumentIdentifierAliasedDataWritable = z.object({
+    document_identifier_type: zReferenceAliasedNodeDataWritable.nullish(),
+    document_identifier: zStringAliasedNodeDataWritable.nullish()
+});
+
+export const zDocumentDocumentIdentifierTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentDocumentIdentifierAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentDocumentDetailsAliasedDataWritable = z.object({
+    other_journal_or_volume_name: zStringAliasedNodeDataWritable.nullish(),
+    page_range_end: zNumberAliasedNodeDataWritable.nullish(),
+    title: zStringAliasedNodeDataWritable.nullable(),
+    journal_or_volume_name: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    document_type: zReferenceAliasedNodeDataWritable.nullish(),
+    document_identifier: z.array(zDocumentDocumentIdentifierTileWritable).nullish(),
+    page_range_start: zNumberAliasedNodeDataWritable.nullish(),
+    year_of_publication: zDateAliasedNodeDataWritable.nullable(),
+    document_remarks: zStringAliasedNodeDataWritable.nullish()
+});
+
+export const zDocumentDocumentDetailsTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zDocumentDocumentDetailsAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
+export const zDocumentResourceAliasedDataWritable = z.object({
+    document_details: zDocumentDocumentDetailsTileWritable.nullish(),
+    authors: z.array(zDocumentAuthorsTileWritable).nullish(),
+    information_carrier: z.array(zDocumentInformationCarrierTileWritable).nullish(),
+    copyright_type: zDocumentCopyrightTypeTileWritable.nullish(),
+    keyword: z.array(zDocumentKeywordTileWritable).nullish(),
+    reference_link: zDocumentReferenceLinkTileWritable.nullish()
+});
+
+export const zDocumentWritable = z.object({
+    resourceinstanceid: z.uuid().nullish(),
+    aliased_data: zDocumentResourceAliasedDataWritable.optional(),
+    graph: z.uuid().nullish()
 });
 
 export const zDocumentSubmissionSubmissionAssessmentAliasedDataWritable = z.object({
@@ -8189,6 +8239,13 @@ export const zPaginatedBcapServiceRequestListWritable = z.object({
     results: z.array(zBcapServiceRequestWritable)
 });
 
+export const zPaginatedDocumentListWritable = z.object({
+    count: z.int(),
+    next: z.url().nullish(),
+    previous: z.url().nullish(),
+    results: z.array(zDocumentWritable)
+});
+
 export const zPaginatedLocalGovernmentListWritable = z.object({
     count: z.int(),
     next: z.url().nullish(),
@@ -8599,98 +8656,13 @@ export const zProcessRequirementRequirementDataTileWritable = z.object({
     })).nullish()
 });
 
-export const zProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable = z.object({
-    included_document_identifier_snapshot: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    included_document_title_snapshot: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zProjectEngagementDeliveryAttemptIncludedDocumentTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable = z.object({
-    attempt_recipient_contributor_reference: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    attempt_recipient_email_address: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    delivery_attempt_identifier: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    attempt_recipient_name_as_provided: zStringAliasedNodeDataWritable.nullish(),
-    attempt_recipient_phone_number: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    delivery_attempt_date: zDateAliasedNodeDataWritable.nullish(),
-    attempt_recipient_portal_url: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    delivery_attempt_method: zReferenceAliasedNodeDataWritable.nullish(),
-    delivery_attempt_outcome: zReferenceAliasedNodeDataWritable.nullish(),
-    delivery_attempt_included_document: z.array(zProjectEngagementDeliveryAttemptIncludedDocumentTileWritable).nullish(),
-    delivered_bundle_files: zFileListAliasedNodeDataWritable.nullish(),
-    delivery_attempt_confirmation_files: zFileListAliasedNodeDataWritable.nullish(),
-    delivery_attempt_notes: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleN1TileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleAliasedDataWritable = z.object({
-    bundle_identifier: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    recipient_contributor_reference: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    recipient_email_address: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    bundle_status: zReferenceAliasedNodeDataWritable.nullish(),
-    recipient_name_as_provided: zStringAliasedNodeDataWritable.nullish(),
-    recipient_phone_number: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    bundle_intended_delivery_method: zReferenceAliasedNodeDataWritable.nullish(),
-    recipient_portal_url: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    bundle_required_delivery_date: zDateAliasedNodeDataWritable.nullish(),
-    bundle_delivery_instructions: zStringAliasedNodeDataWritable.nullish(),
-    document_delivery_bundle_n1: zProjectEngagementDocumentDeliveryBundleN1TileWritable.nullish()
-});
-
-export const zProjectEngagementDocumentDeliveryBundleTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementDocumentDeliveryBundleAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zProjectEngagementEngagementDetailsAliasedDataWritable = z.object({
     engagement_start_date: zDateAliasedNodeDataWritable.nullish(),
     engagement_target_length: zNumberAliasedNodeDataWritable.nullish(),
     engagement_type: zReferenceAliasedNodeDataWritable.nullish(),
     engagement_status: zReferenceAliasedNodeDataWritable.nullish(),
     engagement_end_date: zDateAliasedNodeDataWritable.nullish(),
+    is_mandatory: zBooleanAliasedNodeDataWritable.nullish(),
     engagement_steps_taken: zStringAliasedNodeDataWritable.nullish(),
     engagement_outcome_summary: zStringAliasedNodeDataWritable.nullish()
 });
@@ -8712,40 +8684,14 @@ export const zProjectEngagementEngagementDetailsTileWritable = z.object({
     })).nullish()
 });
 
-export const zProjectEngagementEngagementDocumentAliasedDataWritable = z.object({
-    document_identifier: zStringAliasedNodeDataWritable.nullish(),
-    document_title: zStringAliasedNodeDataWritable.nullish(),
-    document_type: zReferenceAliasedNodeDataWritable.nullish(),
-    document_description: zStringAliasedNodeDataWritable.nullish(),
-    should_be_delivered: zBooleanAliasedNodeDataWritable.nullish(),
-    document_file: zFileListAliasedNodeDataWritable.nullish()
-});
-
-export const zProjectEngagementEngagementDocumentTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zProjectEngagementEngagementDocumentAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zProjectEngagementEngagementParticipantAliasedDataWritable = z.object({
-    other_participant: zStringAliasedNodeDataWritable.nullish(),
-    participant_email_address: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    participant_type: zReferenceAliasedNodeDataWritable.nullish(),
-    participant_phone_number: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    participant_role: zReferenceAliasedNodeDataWritable.nullish(),
     contributor_reference: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    participant_email_address: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
+    other_participant: zStringAliasedNodeDataWritable.nullish(),
+    participant_phone_number: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
     participant_portal_url: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
+    participant_type: zReferenceAliasedNodeDataWritable.nullish(),
+    participant_role: zReferenceAliasedNodeDataWritable.nullish(),
     participant_notes: zStringAliasedNodeDataWritable.nullish()
 });
 
@@ -8766,11 +8712,38 @@ export const zProjectEngagementEngagementParticipantTileWritable = z.object({
     })).nullish()
 });
 
+export const zProjectEngagementReferralPackageAliasedDataWritable = z.object({
+    package_delivery_method: zReferenceAliasedNodeDataWritable.nullish(),
+    package_target_delivery_date: zDateAliasedNodeDataWritable.nullish(),
+    package_delivery_date: zDateAliasedNodeDataWritable.nullish(),
+    package_delivery_status: zReferenceAliasedNodeDataWritable.nullish(),
+    package_documents: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    package_delivery_notes: zStringAliasedNodeDataWritable.nullish(),
+    package_confirmation_files: zFileListAliasedNodeDataWritable.nullish()
+});
+
+export const zProjectEngagementReferralPackageTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zProjectEngagementReferralPackageAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zProjectEngagementEngagementAliasedDataWritable = z.object({
     engagement_details: zProjectEngagementEngagementDetailsTileWritable.nullish(),
     engagement_participant: z.array(zProjectEngagementEngagementParticipantTileWritable).nullish(),
     engagement_document: z.array(zProjectEngagementEngagementDocumentTileWritable).nullish(),
-    document_delivery_bundle: zProjectEngagementDocumentDeliveryBundleTileWritable.nullish()
+    referral_package: zProjectEngagementReferralPackageTileWritable.nullish()
 });
 
 export const zProjectEngagementEngagementTileWritable = z.object({
@@ -8805,103 +8778,6 @@ export const zPaginatedProjectEngagementListWritable = z.object({
     next: z.url().nullish(),
     previous: z.url().nullish(),
     results: z.array(zProjectEngagementWritable)
-});
-
-export const zPublicationCopyrightTypeAliasedDataWritable = z.object({
-    agreement_text: zStringAliasedNodeDataWritable.nullish(),
-    distribution_permitted: zBooleanAliasedNodeDataWritable.nullish(),
-    signed_agreement: zFileListAliasedNodeDataWritable.nullish(),
-    copyright_type: zReferenceAliasedNodeDataRequiredWritable.nullable()
-});
-
-export const zPublicationCopyrightTypeTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationCopyrightTypeAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationPublicationIdentifierAliasedDataWritable = z.object({
-    publication_identifier_type: zReferenceAliasedNodeDataWritable.nullish(),
-    publication_identifier: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zPublicationPublicationIdentifierTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationPublicationIdentifierAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationPublicationDetailsAliasedDataWritable = z.object({
-    other_journal_or_volume_name: zStringAliasedNodeDataWritable.nullish(),
-    page_range_end: zNumberAliasedNodeDataWritable.nullish(),
-    title: zStringAliasedNodeDataWritable.nullable(),
-    journal_or_volume_name: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    publication_type: zReferenceAliasedNodeDataWritable.nullish(),
-    publication_identifier: z.array(zPublicationPublicationIdentifierTileWritable).nullish(),
-    page_range_start: zNumberAliasedNodeDataWritable.nullish(),
-    year_of_publication: zDateAliasedNodeDataWritable.nullable(),
-    publication_remarks: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zPublicationPublicationDetailsTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zPublicationPublicationDetailsAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zPublicationResourceAliasedDataWritable = z.object({
-    publication_details: zPublicationPublicationDetailsTileWritable.nullish(),
-    authors: z.array(zPublicationAuthorsTileWritable).nullish(),
-    information_carrier: z.array(zPublicationInformationCarrierTileWritable).nullish(),
-    copyright_type: zPublicationCopyrightTypeTileWritable.nullish(),
-    keyword: z.array(zPublicationKeywordTileWritable).nullish(),
-    reference_link: zPublicationReferenceLinkTileWritable.nullish()
-});
-
-export const zPublicationWritable = z.object({
-    resourceinstanceid: z.uuid().nullish(),
-    aliased_data: zPublicationResourceAliasedDataWritable.optional(),
-    graph: z.uuid().nullish()
-});
-
-export const zPaginatedPublicationListWritable = z.object({
-    count: z.int(),
-    next: z.url().nullish(),
-    previous: z.url().nullish(),
-    results: z.array(zPublicationWritable)
 });
 
 export const zRepositoryAlternateIdentifiersAliasedDataWritable = z.object({
@@ -10914,6 +10790,19 @@ export const zApiDashboardInternalRetrieveQuery = z.object({
 
 export const zApiDashboardInternalRetrieveResponse = zInternalDashboardPage;
 
+export const zApiDocumentListQuery = z.object({
+    limit: z.int().optional(),
+    offset: z.int().optional()
+});
+
+export const zApiDocumentListResponse = zPaginatedDocumentList;
+
+export const zApiDocumentRetrievePath = z.object({
+    id: z.uuid()
+});
+
+export const zApiDocumentRetrieveResponse = zDocument;
+
 export const zApiDocumentSubmissionListQuery = z.object({
     limit: z.int().optional(),
     offset: z.int().optional()
@@ -11196,19 +11085,6 @@ export const zApiProjectEngagementRetrievePath = z.object({
 });
 
 export const zApiProjectEngagementRetrieveResponse = zProjectEngagement;
-
-export const zApiPublicationListQuery = z.object({
-    limit: z.int().optional(),
-    offset: z.int().optional()
-});
-
-export const zApiPublicationListResponse = zPaginatedPublicationList;
-
-export const zApiPublicationRetrievePath = z.object({
-    id: z.uuid()
-});
-
-export const zApiPublicationRetrieveResponse = zPublication;
 
 export const zApiRegistrationLinkCreateBody = zRegistrationLinkRequest;
 

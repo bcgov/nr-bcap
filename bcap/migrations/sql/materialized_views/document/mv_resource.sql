@@ -12,11 +12,11 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_resource CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_resource AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_resource start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_resource CASCADE;
+CREATE MATERIALIZED VIEW document.mv_resource AS
 -- resource_instances is the row driver: one row per resource including
 -- resources with zero tiles; carries the graphid filter.
 SELECT
@@ -26,7 +26,7 @@ SELECT
     b2.copyright_type,
     COALESCE(b3.keyword, '[]'::jsonb) AS keyword,
     COALESCE(b4.authors, '[]'::jsonb) AS authors,
-    b5.publication_details,
+    b5.document_details,
     jsonb_build_object(
         'resourceinstanceid', r.resourceinstanceid,
         'reference_link', b0.reference_link,
@@ -34,18 +34,18 @@ SELECT
         'copyright_type', b2.copyright_type,
         'keyword', COALESCE(b3.keyword, '[]'::jsonb),
         'authors', COALESCE(b4.authors, '[]'::jsonb),
-        'publication_details', b5.publication_details
+        'document_details', b5.document_details
     ) AS resource
 FROM public.resource_instances r
-LEFT JOIN publication.mv_reference_link b0 ON b0.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN publication.mv_information_carrier b1 ON b1.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN publication.mv_copyright_type b2 ON b2.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN publication.mv_keyword b3 ON b3.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN publication.mv_authors b4 ON b4.resourceinstanceid = r.resourceinstanceid
-LEFT JOIN publication.mv_publication_details b5 ON b5.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_reference_link b0 ON b0.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_information_carrier b1 ON b1.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_copyright_type b2 ON b2.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_keyword b3 ON b3.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_authors b4 ON b4.resourceinstanceid = r.resourceinstanceid
+LEFT JOIN document.mv_document_details b5 ON b5.resourceinstanceid = r.resourceinstanceid
 WHERE r.graphid = '3caf329f-b8f7-11e6-84a5-026d961c88e6'::uuid
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_resource_pk  ON publication.mv_resource (resourceinstanceid);
-CREATE INDEX mv_resource_res        ON publication.mv_resource USING GIN (resource jsonb_path_ops);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_resource done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_resource_pk  ON document.mv_resource (resourceinstanceid);
+CREATE INDEX mv_resource_res        ON document.mv_resource USING GIN (resource jsonb_path_ops);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_resource done %', clock_timestamp(); END $$;

@@ -1,17 +1,17 @@
--- DataBC export view for the Publication resource model.
--- Source: publication.resource_flat
+-- DataBC export view for the Document resource model.
+-- Source: document.resource_flat
 --
 -- Rules applied for Oracle compatibility:
 --   * resourceinstanceid cast to text
 --   * All text columns wrapped with LEFT(col, 4000)
 --   * Reference/concept _ids columns removed (internal list-item UUIDs)
 --   * File _ids columns removed (not resource links)
---   * File paths: see companion view vw_publication_file_attachments (one row per file)
+--   * File paths: see companion view vw_document_file_attachments (one row per file)
 --   * resource-instance and resource-instance-list _id/_ids retained as join keys
 
 CREATE SCHEMA IF NOT EXISTS databc;
 
-CREATE OR REPLACE VIEW databc.vw_publication AS
+CREATE OR REPLACE VIEW databc.vw_document AS
 SELECT
     resourceinstanceid::text                        AS resourceinstanceid,
 
@@ -40,26 +40,26 @@ SELECT
     -- Keyword
     LEFT(keyword, 4000)                             AS keyword,
 
-    -- Publication Details
+    -- Document Details
     LEFT(title, 4000)                               AS title,
     LEFT(other_journal_or_volume_name, 4000)        AS other_journal_or_volume_name,
     page_range_start,                                                               -- numeric
     page_range_end,                                                                 -- numeric
     LEFT(journal_or_volume_name, 4000)              AS journal_or_volume_name,
     LEFT(journal_or_volume_name_id, 4000)           AS journal_or_volume_name_id,  -- resource-instance
-    LEFT(publication_type, 4000)                    AS publication_type,
+    LEFT(document_type, 4000)                    AS document_type,
     year_of_publication,                                                            -- date
-    LEFT(publication_remarks, 4000)                 AS publication_remarks,
+    LEFT(document_remarks, 4000)                 AS document_remarks,
 
-    -- Publication Identifier
-    LEFT(publication_identifier_type, 4000)         AS publication_identifier_type,
-    LEFT(publication_identifier, 4000)              AS publication_identifier
+    -- Document Identifier
+    LEFT(document_identifier_type, 4000)         AS document_identifier_type,
+    LEFT(document_identifier, 4000)              AS document_identifier
 
-FROM publication.resource_flat;
+FROM document.resource_flat;
 
-COMMENT ON VIEW databc.vw_publication IS
-'DataBC export subset for the Publication resource model. '
-'One row per publication. All text columns are capped at 4000 characters for '
+COMMENT ON VIEW databc.vw_document IS
+'DataBC export subset for the Document resource model. '
+'One row per document. All text columns are capped at 4000 characters for '
 'Oracle VARCHAR2 compatibility. _ids columns link to resource instances.';
 
 -- ============================================================
@@ -74,31 +74,31 @@ BEGIN
     SELECT c.relispopulated INTO _populated
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE n.nspname = 'publication'
+    WHERE n.nspname = 'document'
       AND c.relname = 'mv_resource_flat'
       AND c.relkind = 'm';
 
     IF NOT FOUND OR NOT _populated THEN
-        RAISE WARNING 'Length check skipped for publication.resource_flat (not yet populated)';
+        RAISE WARNING 'Length check skipped for document.resource_flat (not yet populated)';
     ELSE
         FOR r IN
             SELECT column_name
             FROM information_schema.columns
-            WHERE table_schema = 'publication'
+            WHERE table_schema = 'document'
               AND table_name   = 'resource_flat'
               AND data_type    = 'text'
             ORDER BY ordinal_position
         LOOP
             EXECUTE format(
-                $q$SELECT max(length(%I)) FROM publication.resource_flat$q$,
+                $q$SELECT max(length(%I)) FROM document.resource_flat$q$,
                 r.column_name
             ) INTO v_max;
             IF v_max IS NOT NULL AND v_max > 4000 THEN
                 RAISE WARNING
-                    'publication.resource_flat.% max length = % — truncated in databc.vw_publication',
+                    'document.resource_flat.% max length = % — truncated in databc.vw_document',
                     r.column_name, v_max;
             END IF;
         END LOOP;
-        RAISE NOTICE 'Length check complete for publication.resource_flat';
+        RAISE NOTICE 'Length check complete for document.resource_flat';
     END IF;
 END $$;

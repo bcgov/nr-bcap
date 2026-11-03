@@ -32,6 +32,13 @@ from .contributor import (
     ContributorView,
 )
 
+from .document import (
+    DocumentSerializer,
+    DocumentViewMixin,
+    DocumentListView,
+    DocumentView,
+)
+
 from .document_submission import (
     DocumentSubmissionSerializer,
     DocumentSubmissionViewMixin,
@@ -109,13 +116,6 @@ from .project_engagement import (
     ProjectEngagementView,
 )
 
-from .publication import (
-    PublicationSerializer,
-    PublicationViewMixin,
-    PublicationListView,
-    PublicationView,
-)
-
 from .repository import (
     RepositorySerializer,
     RepositoryViewMixin,
@@ -154,10 +154,14 @@ __all__ = [
     "ContributorSerializer",
     "ContributorView",
     "ContributorViewMixin",
+    "DocumentListView",
+    "DocumentSerializer",
     "DocumentSubmissionListView",
     "DocumentSubmissionSerializer",
     "DocumentSubmissionView",
     "DocumentSubmissionViewMixin",
+    "DocumentView",
+    "DocumentViewMixin",
     "HcaPermitListView",
     "HcaPermitSerializer",
     "HcaPermitView",
@@ -198,10 +202,6 @@ __all__ = [
     "ProjectEngagementSerializer",
     "ProjectEngagementView",
     "ProjectEngagementViewMixin",
-    "PublicationListView",
-    "PublicationSerializer",
-    "PublicationView",
-    "PublicationViewMixin",
     "RepositoryListView",
     "RepositorySerializer",
     "RepositoryView",
