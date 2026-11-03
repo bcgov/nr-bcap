@@ -51,6 +51,7 @@ PERMISSION_DEFAULTS = {
     # The inventory and the reference data behind it: staff record it, an
     # applicant never files one.
     GraphIds.ARCHAEOLOGICAL_SITE: grants(STAFF),
+    GraphIds.DOCUMENT: grants(STAFF),
     GraphIds.SITE_VISIT: grants(STAFF),
     GraphIds.SITE_SUBMISSION: grants(STAFF),
     GraphIds.LEGISLATIVE_ACT: grants(STAFF),
@@ -59,7 +60,6 @@ PERMISSION_DEFAULTS = {
     GraphIds.PROJECT_ENGAGEMENT: grants(STAFF),
     GraphIds.PROJECT_SANDBOX: grants(STAFF),
     GraphIds.HRIA_DISCONTINUED_DATA: grants(STAFF),
-    GraphIds.PUBLICATION: grants(STAFF),
     GraphIds.REPOSITORY: grants(STAFF),
     # The issued permit, written by staff once a decision is made.
     GraphIds.HCA_PERMIT: grants(STAFF),
@@ -75,6 +75,8 @@ PERMISSION_DEFAULTS = {
     GraphIds.BCAP_MESSAGE: grants(STAFF, APPLICANT),
     GraphIds.PROCESS_REQUIREMENT: grants(STAFF, APPLICANT),
     GraphIds.DOCUMENT_SUBMISSION: grants(STAFF, APPLICANT),
+    # Service requests submitted by applicants.
+    GraphIds.BCAP_SERVICE_REQUEST: grants(STAFF, APPLICANT),
     # The person or company behind an account, edited from either side.
     GraphIds.CONTRIBUTOR: grants(STAFF, APPLICANT),
 }

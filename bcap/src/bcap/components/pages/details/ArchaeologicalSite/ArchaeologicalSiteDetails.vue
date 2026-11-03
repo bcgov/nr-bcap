@@ -20,7 +20,7 @@ import type { DetailsData } from '@/bcap/types.ts';
 import type {
     ArchaeologicalSite,
     SiteVisit,
-    Publication,
+    Document,
     HriaDiscontinuedData,
 } from '@/bcap/client/types.gen.ts';
 import DataTable from 'primevue/datatable';
@@ -59,10 +59,10 @@ const {
 } = useRelatedResourceData<SiteVisit>('site_visit', resourceId);
 
 const {
-    data: publicationData,
-    loading: publicationDataLoading,
-    error: publicationError,
-} = useRelatedResourceData<Publication>('publication', resourceId);
+    data: documentData,
+    loading: documentDataLoading,
+    error: documentError,
+} = useRelatedResourceData<Document>('document', resourceId);
 
 const {
     data: childSiteData,
@@ -87,8 +87,8 @@ const loadError = computed(
     () =>
         siteError.value ||
         siteVisitError.value ||
-        publicationError.value ||
-        siteVisitPublicationError.value ||
+        documentError.value ||
+        siteVisitDocumentError.value ||
         childSiteError.value ||
         hriaError.value,
 );
@@ -118,8 +118,8 @@ const typedHriaData = computed(
     () => hriaDiscontinuedData.value as HriaDiscontinuedData | undefined,
 );
 
-const typedPublicationData = computed(
-    () => publicationData.value as Publication[] | undefined,
+const typedDocumentData = computed(
+    () => documentData.value as Document[] | undefined,
 );
 
 const siteVisitIds = computed(() =>
@@ -129,13 +129,13 @@ const siteVisitIds = computed(() =>
 );
 
 const {
-    data: siteVisitPublicationData,
-    loading: siteVisitPublicationLoading,
-    error: siteVisitPublicationError,
-} = useRelatedResourceData<Publication>('publication', siteVisitIds);
+    data: siteVisitDocumentData,
+    loading: siteVisitDocumentLoading,
+    error: siteVisitDocumentError,
+} = useRelatedResourceData<Document>('document', siteVisitIds);
 
-const typedSiteVisitPublicationData = computed(
-    () => siteVisitPublicationData.value as Publication[] | undefined,
+const typedSiteVisitDocumentData = computed(
+    () => siteVisitDocumentData.value as Document[] | undefined,
 );
 </script>
 
@@ -238,13 +238,13 @@ const typedSiteVisitPublicationData = computed(
             "
             :site-visit-data="typedSiteVisitData"
             :hria-data="typedHriaData"
-            :publication-data="typedPublicationData"
-            :site-visit-publication-data="typedSiteVisitPublicationData"
+            :document-data="typedDocumentData"
+            :site-visit-document-data="typedSiteVisitDocumentData"
             :loading="
                 siteDataLoading ||
                 hriaDataLoading ||
-                publicationDataLoading ||
-                siteVisitPublicationLoading
+                documentDataLoading ||
+                siteVisitDocumentLoading
             "
             :force-collapsed="props.forceCollapsed"
             :show-audit-fields="props.showAuditFields"

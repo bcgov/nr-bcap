@@ -1,5 +1,5 @@
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.aliases.publication import PublicationAliases as aliases
+from bcap.util.aliases.document import DocumentAliases as aliases
 from bcgov_arches_common.util.bc_primary_descriptors_function import (
     BCPrimaryDescriptorsFunction,
 )
@@ -7,10 +7,10 @@ from bcgov_arches_common.util.graph_lookup import GraphLookup
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001004",
-    "name": "Publication Descriptors",
+    "name": "Document Descriptors",
     "type": "primarydescriptors",
     "modulename": "document_descriptors.py",
-    "description": "Function that provides the primary descriptors for BCAP Publications",
+    "description": "Function that provides the primary descriptors for BCAP Documents",
     "defaultconfig": {
         "module": "bcap.functions.document_descriptors",
         "class_name": "DocumentDescriptors",
@@ -22,17 +22,17 @@ details = {
         "triggering_nodegroups": [],
     },
     "classname": "DocumentDescriptors",
-    "component": "views/components/functions/publication-descriptors",
+    "component": "views/components/functions/document-descriptors",
 }
 
 
 class DocumentDescriptors(BCPrimaryDescriptorsFunction):
     # For Name part of descriptor
-    _graph_slug = GraphSlugs.PUBLICATION
+    _graph_slug = GraphSlugs.DOCUMENT
     _graph_lookup = None
 
     _name_nodes = [aliases.TITLE, aliases.JOURNAL_OR_VOLUME_NAME]
-    _card_nodes = [aliases.AUTHORS, aliases.PUBLICATION_TYPE]
+    _card_nodes = [aliases.AUTHORS, aliases.DOCUMENT_TYPE]
 
     def __init__(self):
         super(DocumentDescriptors).__init__()
@@ -70,8 +70,8 @@ class DocumentDescriptors(BCPrimaryDescriptorsFunction):
         parent_publication_name = ""
 
         publication_type = self.get_value_from_node(
-            self._graph_lookup.get_node(aliases.PUBLICATION_TYPE),
-            self._graph_lookup.get_datatype(aliases.PUBLICATION_TYPE),
+            self._graph_lookup.get_node(aliases.DOCUMENT_TYPE),
+            self._graph_lookup.get_datatype(aliases.DOCUMENT_TYPE),
             resource,
         )
         if publication_type == "Volume / Publication Number":

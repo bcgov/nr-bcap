@@ -32,7 +32,7 @@ BRANCHES = [
 # Every resource_model JSON in the package EXCEPT these will be (re)imported.
 EXCLUDED_RESOURCE_MODELS = {
     "arches_system_settings",
-    "publication",
+    "document",
     "legislative_act",
     "contributor",
     "project_sandbox",

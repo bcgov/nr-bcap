@@ -55,10 +55,10 @@ _API_VIEWS = {
         "vw_file": "vw_hca_permit",
         "drops": ["databc.vw_hca_permit"],
     },
-    "publication": {
-        "item_name": "databc_publication",
-        "vw_file": "vw_publication",
-        "drops": ["databc.vw_publication"],
+    "document": {
+        "item_name": "databc_document",
+        "vw_file": "vw_document",
+        "drops": ["databc.vw_document"],
     },
     "repository": {
         "item_name": "databc_repository",
