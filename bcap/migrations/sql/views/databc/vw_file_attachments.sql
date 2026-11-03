@@ -48,7 +48,7 @@ UNION ALL
 UNION ALL
     SELECT
         resourceinstanceid::text,
-        'publication'::text,
+        'document'::text,
         LEFT(field, 4000),
         file_index,
         file_id::text,
@@ -58,7 +58,7 @@ UNION ALL
         size,
         LEFT(mime_type, 4000),
         LEFT(status, 4000)
-    FROM publication.mv_file_attachments;
+    FROM document.mv_file_attachments;
 
 COMMENT ON VIEW databc.vw_file_attachments IS
 'Unified file attachments across all DataBC resource models. '

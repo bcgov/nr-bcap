@@ -12,14 +12,14 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
 -- ---------------------------------------------------------------------
 -- keyword  (cardinality n)
 -- ---------------------------------------------------------------------
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_keyword start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_keyword CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_keyword AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_keyword start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_keyword CASCADE;
+CREATE MATERIALIZED VIEW document.mv_keyword AS
 WITH keyword AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
@@ -32,5 +32,5 @@ WITH keyword AS (
 SELECT resourceinstanceid, arr AS keyword FROM keyword
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_keyword_pk ON publication.mv_keyword (resourceinstanceid);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_keyword done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_keyword_pk ON document.mv_keyword (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_keyword done %', clock_timestamp(); END $$;

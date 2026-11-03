@@ -12,14 +12,14 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
 -- ---------------------------------------------------------------------
 -- information_carrier  (cardinality n)
 -- ---------------------------------------------------------------------
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_information_carrier start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_information_carrier CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_information_carrier AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_information_carrier start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_information_carrier CASCADE;
+CREATE MATERIALIZED VIEW document.mv_information_carrier AS
 WITH information_carrier AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
@@ -32,5 +32,5 @@ WITH information_carrier AS (
 SELECT resourceinstanceid, arr AS information_carrier FROM information_carrier
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_information_carrier_pk ON publication.mv_information_carrier (resourceinstanceid);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_information_carrier done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_information_carrier_pk ON document.mv_information_carrier (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_information_carrier done %', clock_timestamp(); END $$;

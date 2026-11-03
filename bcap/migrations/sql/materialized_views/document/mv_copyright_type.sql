@@ -12,14 +12,14 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
 -- ---------------------------------------------------------------------
 -- copyright_type  (cardinality 1)
 -- ---------------------------------------------------------------------
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_copyright_type start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_copyright_type CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_copyright_type AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_copyright_type start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_copyright_type CASCADE;
+CREATE MATERIALIZED VIEW document.mv_copyright_type AS
 WITH copyright_type AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
@@ -35,5 +35,5 @@ WITH copyright_type AS (
 SELECT resourceinstanceid, obj AS copyright_type FROM copyright_type
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_copyright_type_pk ON publication.mv_copyright_type (resourceinstanceid);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_copyright_type done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_copyright_type_pk ON document.mv_copyright_type (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_copyright_type done %', clock_timestamp(); END $$;

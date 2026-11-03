@@ -37,6 +37,7 @@ LEFT JOIN public.files f ON f.fileid = (e.item ->> 'file_id')::uuid
 WHERE r.graphid = '2da1c15f-1ab6-4122-9dbc-d10da693ac79'::uuid
 WITH NO DATA;
 
-CREATE INDEX mv_file_attachments_res    ON site_visit.mv_file_attachments (resourceinstanceid);
-CREATE INDEX mv_file_attachments_fileid ON site_visit.mv_file_attachments (file_id);
+CREATE UNIQUE INDEX mv_file_attachments_pk     ON site_visit.mv_file_attachments (tileid, field, file_index);
+CREATE INDEX mv_file_attachments_res           ON site_visit.mv_file_attachments (resourceinstanceid);
+CREATE INDEX mv_file_attachments_fileid        ON site_visit.mv_file_attachments (file_id);
 DO $$ BEGIN RAISE WARNING 'TIMING site_visit.mv_file_attachments done %', clock_timestamp(); END $$;
