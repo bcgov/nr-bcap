@@ -12,14 +12,14 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
 -- ---------------------------------------------------------------------
 -- reference_link  (cardinality 1)
 -- ---------------------------------------------------------------------
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_reference_link start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_reference_link CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_reference_link AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_reference_link start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_reference_link CASCADE;
+CREATE MATERIALIZED VIEW document.mv_reference_link AS
 WITH reference_link AS (
     SELECT DISTINCT ON (t.resourceinstanceid) t.resourceinstanceid AS resourceinstanceid,
            jsonb_build_object(
@@ -34,5 +34,5 @@ WITH reference_link AS (
 SELECT resourceinstanceid, obj AS reference_link FROM reference_link
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_reference_link_pk ON publication.mv_reference_link (resourceinstanceid);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_reference_link done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_reference_link_pk ON document.mv_reference_link (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_reference_link done %', clock_timestamp(); END $$;

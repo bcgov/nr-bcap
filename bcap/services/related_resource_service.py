@@ -14,7 +14,7 @@ class RelatedResourceService:
     @staticmethod
     def base_query(graph_slug, resource_ids):
         """The rows hanging off these parents: a site by its parent_site, a
-        publication through the reference table, every other graph by its
+        document through the reference table, every other graph by its
         archaeological_site link. Takes no caller, unlike the other services':
         this is a staff-only route, so there is nothing to narrow to."""
         ids = [str(resource_id) for resource_id in resource_ids]
@@ -24,9 +24,9 @@ class RelatedResourceService:
 
         if graph_slug == GraphSlugs.ARCHAEOLOGICAL_SITE:
             return queryset.filter(parent_site__id__in=ids)
-        if graph_slug == GraphSlugs.PUBLICATION:
-            publication_ids = ResourceXResource.objects.filter(
+        if graph_slug == GraphSlugs.DOCUMENT:
+            document_ids = ResourceXResource.objects.filter(
                 from_resource_id__in=ids
             ).values("to_resource_id")
-            return queryset.filter(resourceinstanceid__in=publication_ids)
+            return queryset.filter(resourceinstanceid__in=document_ids)
         return queryset.filter(archaeological_site__id__in=ids)

@@ -1,4 +1,4 @@
-"""Publication API, scoped to the requesting user's own resources: a
+"""BCAP Service Request API, scoped to the requesting user's own resources: a
 collection endpoint and a by-id detail endpoint. Verbs (GET)
 come from generated/generate.json -- edit that file and regenerate to change
 which methods each endpoint exposes.
@@ -21,23 +21,23 @@ from arches_zod_validation.views.mixins import (
 )
 
 
-class PublicationSerializer(BCAPResourceSerializer):
+class BcapServiceRequestSerializer(BCAPResourceSerializer):
     class Meta(BCAPResourceSerializer.Meta):
-        graph_slug = "publication"
+        graph_slug = "bcap_service_request"
 
 
-class PublicationViewMixin(ArchesResourceViewMixin):
-    serializer_class = PublicationSerializer
+class BcapServiceRequestViewMixin(ArchesResourceViewMixin):
+    serializer_class = BcapServiceRequestSerializer
 
 
-@extend_schema(tags=["External: publication"])
-class PublicationListView(
-    PublicationViewMixin,
+@extend_schema(tags=["External: bcap_service_request"])
+class BcapServiceRequestListView(
+    BcapServiceRequestViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
     ListAPIView,
 ):
-    """Collection endpoint for the requesting user's Publication resources.
+    """Collection endpoint for the requesting user's BCAP Service Request resources.
 
     Owner-scoped: only the resources the user created. Declared verbs:
     GET (from generated/generate.json); the ListAPIView base
@@ -50,14 +50,14 @@ class PublicationListView(
     pagination_class = ArchesLimitOffsetPagination
 
 
-@extend_schema(tags=["External: publication"])
-class PublicationView(
-    PublicationViewMixin,
+@extend_schema(tags=["External: bcap_service_request"])
+class BcapServiceRequestView(
+    BcapServiceRequestViewMixin,
     UserOwnedResourceMixin,
     ArchesModelAPIMixin,
     RetrieveAPIView,
 ):
-    """Detail endpoint for a single Publication resource and its nested tiles.
+    """Detail endpoint for a single BCAP Service Request resource and its nested tiles.
 
     Owner-scoped: requesting one created by another user returns 404. Declared
     verbs: GET (from generated/generate.json); the

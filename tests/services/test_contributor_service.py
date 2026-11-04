@@ -223,11 +223,14 @@ class ContributorsForResourceTests(TestCase):
         ct = reference_value("contributor", "contributor_type")
 
         # Referenced on the permit and login-linked: in via the linked source.
+        # Ministry staff (internal) so the internal-only applicant filter passes.
+        make_user("ola", internal=True)
         cls.officer = builder.make_contributor(
             ContributorSpec(ct, "Ola", "Officer", bcap_username="ola")
         )
         # A ministry assignee, referenced on a nested process_module child:
         # in via the scan reaching nested tiles, not just the top-level group.
+        make_user("ash", internal=True)
         cls.assignee = builder.make_contributor(
             ContributorSpec(ct, "Ash", "Assignee", bcap_username="ash")
         )
@@ -271,6 +274,15 @@ class ContributorsForResourceTests(TestCase):
         cls.permit = permit
         cls.req = req
         cls.plain = builder.make_resource("permit_application")
+        # A permit referencing only the external bystander as project_officer,
+        # used to verify the internal filter hides external contributors from
+        # applicants.
+        cls.external_permit = builder.new_resource("permit_application")
+        cls.external_permit.append_tile("application_admin")
+        ext_admin = cls.external_permit.aliased_data.application_admin
+        ext_admin.aliased_data.project_officer = cls.bystander
+        builder.prune_blank_tiles(ext_admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
+        cls.external_permit.save(**builder.save_kwargs)
         # The bystander filed the permit: offered only to staff.
         cls.proponent = make_user("bea")
         ResourceInstance.objects.filter(pk=permit.pk).update(
@@ -343,7 +355,7 @@ class ContributorsForResourceTests(TestCase):
         )
         self.assertEqual(
             {r.id for r in rows if r.is_internal},
-            {self.service.archaeology_branch_id()},
+            {str(self.officer.pk), str(self.assignee.pk)},
         )
         applicant_rows = self.service.contributors_for_resource(str(self.plain.pk))
         self.assertFalse(any(r.is_internal for r in applicant_rows))
@@ -355,16 +367,31 @@ class ContributorsForResourceTests(TestCase):
         self.assertNotIn(str(self.bystander.pk), self._ids(self.permit))
         self.assertNotIn(str(self.bystander.pk), self._ids(self.req))
 
-    def test_a_permit_with_no_proponent_adds_nobody(self):
+    def test_a_permit_with_no_proponent_shows_global_internal(self):
+        # The else block adds all login-linked internal contributors globally,
+        # so staff still see internal colleagues even on an unassigned permit.
         self.assertEqual(
-            self._for_staff(self.plain), {self.service.archaeology_branch_id()}
+            self._for_staff(self.plain),
+            {str(self.officer.pk), str(self.assignee.pk)},
         )
 
-    def test_the_proponent_alone_still_gets_the_branch(self):
+    def test_the_proponent_is_added_alongside_global_internal(self):
+        # When a permit has a proponent but no assigned contributors, the else
+        # block adds global internal staff and the proponent is added on top —
+        # the branch is not injected because ids is already non-empty.
         ResourceInstance.objects.filter(pk=self.plain.pk).update(
             principaluser=self.proponent
         )
         self.assertEqual(
             self._for_staff(self.plain),
-            {str(self.bystander.pk), self.service.archaeology_branch_id()},
+            {str(self.officer.pk), str(self.assignee.pk), str(self.bystander.pk)},
         )
+
+    def test_external_contributor_is_not_shown_to_applicants(self):
+        # An external login-linked Contributor referenced on a permit's tiles is
+        # stripped by the internal filter for applicants; they fall back to the
+        # Archaeology Branch instead.
+        branch_id = self.service.archaeology_branch_id()
+        self.assertEqual(self._ids(self.external_permit), {branch_id})
+        # Staff still see the external contributor along with any global internals.
+        self.assertIn(str(self.bystander.pk), self._for_staff(self.external_permit))

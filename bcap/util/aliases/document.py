@@ -1,12 +1,16 @@
 from bcap.util.bcap_aliases import AbstractAliases
 
 
-class PublicationAliases(AbstractAliases):
+class DocumentAliases(AbstractAliases):
     AGREEMENT_TEXT = "agreement_text"
     ARCHAEOLOGICAL_SITES = "archaeological_sites"
     AUTHORS = "authors"
     COPYRIGHT_TYPE = "copyright_type"
     DISTRIBUTION_PERMITTED = "distribution_permitted"
+    DOCUMENT_IDENTIFIER = "document_identifier"
+    DOCUMENT_IDENTIFIER_TYPE = "document_identifier_type"
+    DOCUMENT_REMARKS = "document_remarks"
+    DOCUMENT_TYPE = "document_type"
     INFORMATION_CARRIER = "information_carrier"
     JOURNAL_OR_VOLUME_NAME = "journal_or_volume_name"
     KEYWORD = "keyword"
@@ -14,10 +18,6 @@ class PublicationAliases(AbstractAliases):
     OTHER_JOURNAL_OR_VOLUME_NAME = "other_journal_or_volume_name"
     PAGE_RANGE_END = "page_range_end"
     PAGE_RANGE_START = "page_range_start"
-    PUBLICATION_IDENTIFIER = "publication_identifier"
-    PUBLICATION_IDENTIFIER_TYPE = "publication_identifier_type"
-    PUBLICATION_REMARKS = "publication_remarks"
-    PUBLICATION_TYPE = "publication_type"
     REPOSITORIES = "repositories"
     SIGNED_AGREEMENT = "signed_agreement"
     SITE_VISITS = "site_visits"
@@ -26,13 +26,13 @@ class PublicationAliases(AbstractAliases):
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(PublicationAliases)
+        return AbstractAliases.get_dict(DocumentAliases)
 
 
-class PublicationGroupAliases(AbstractAliases):
-    PUBLICATION_DETAILS = "publication_details"
+class DocumentGroupAliases(AbstractAliases):
+    DOCUMENT_DETAILS = "document_details"
     REFERENCE_LINK = "reference_link"
 
     @staticmethod
     def get_aliases():
-        return AbstractAliases.get_dict(PublicationGroupAliases)
+        return AbstractAliases.get_dict(DocumentGroupAliases)

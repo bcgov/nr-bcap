@@ -102,6 +102,10 @@ ELASTICSEARCH_HOSTS = [
 # per save). Same inline-index result the fallback already produces.
 CELERY_BROKER_URL = ""
 
+# Fix the cookie name to the production value so regenerate_api --check
+# produces a stable schema.yml regardless of the developer's APP_SUFFIX.
+SESSION_COOKIE_NAME = "bcap"
+
 # Do not use on prod, just for unit test performance.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 

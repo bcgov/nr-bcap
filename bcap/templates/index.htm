@@ -181,6 +181,12 @@ along with this program. if not, see <http://www.gnu.org/licenses/>.
                                         <a href="{% url 'search_home' %}">{% trans "search sites" %}</a>
                                     </li>
                                 {% endif %}
+                                {% if user|has_group:"Submitter" %}
+                                <li>
+                                    <a href="{% url 'plugins' slug='submissions' %}">{% trans "submissions" %}</a>
+                                </li>
+                                {% endif %}
+
                                 {% if user|can_create_resource_instance %}
                                     <li>
                                         <a

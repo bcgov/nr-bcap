@@ -54,8 +54,8 @@ GRAPHS = {
         "flat_grains": [],
         "view_names": {},
     },
-    "pub": {
-        "arches_slug": "publication",
+    "doc": {
+        "arches_slug": "document",
         "flat_grains": [],
         "view_names": {},
     },

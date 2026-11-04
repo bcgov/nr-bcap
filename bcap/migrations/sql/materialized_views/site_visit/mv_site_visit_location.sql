@@ -41,7 +41,7 @@ location_and_access AS (
     ORDER BY t.parenttileid, COALESCE(t.sortorder, 2147483647), t.tileid
 ),
 geom_proposed_unprotected_area AS (
-    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 3005)) AS geom
     FROM public.geojson_geometries gg
     WHERE gg.nodeid = '06d29c75-37f8-4b32-9e9d-6e57c260fa88'::uuid
     GROUP BY gg.tileid
@@ -59,7 +59,7 @@ proposed_unprotected_area AS (
     GROUP BY t.parenttileid
 ),
 geom_spatial_location AS (
-    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 3005)) AS geom
     FROM public.geojson_geometries gg
     WHERE gg.nodeid = '36b6d091-a8d0-483e-ad5b-18f433f67311'::uuid
     GROUP BY gg.tileid

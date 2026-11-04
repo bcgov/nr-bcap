@@ -1630,6 +1630,26 @@ export type BcapMessage = {
     readonly principaluser: number | null;
 };
 
+export type BcapServiceRequest = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapServiceRequestResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
 export type BcapMessageArchivedByAliasedData = {
     archived_by?: ResourceInstanceAliasedNodeData | null;
 };
@@ -1720,6 +1740,247 @@ export type BcapMessageMessageContentTile = {
 export type BcapMessageResourceAliasedData = {
     archived_by?: Array<BcapMessageArchivedByTile> | null;
     message_content?: BcapMessageMessageContentTile | null;
+};
+
+export type BcapServiceRequestProcessModuleAliasedData = {
+    is_module_completed?: BooleanAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    module_completed_date?: DateAliasedNodeData | null;
+    /**
+     * Module ID if a copy of a Module Template
+     */
+    module_id?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter name of the Process Module
+     */
+    module_name: StringAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    module_order?: NumberAliasedNodeData | null;
+    process_requirement?: Array<BcapServiceRequestProcessRequirementTile> | null;
+};
+
+export type BcapServiceRequestProcessModuleTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessModuleAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProcessRequirementAliasedData = {
+    ministry_assignee?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    process_requirement_order: NumberAliasedNodeDataMin0 | null;
+    process_requirement?: ResourceInstanceAliasedNodeData | null;
+};
+
+export type BcapServiceRequestProcessRequirementTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessRequirementAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProposedProjectAliasedData = {
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    project_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    project_name?: StringAliasedNodeData | null;
+    /**
+     * Describe the scope of work to be competed as part of the proposed project
+     */
+    scope_of_work?: StringAliasedNodeData | null;
+    /**
+     * Enter project description
+     */
+    project_description?: StringAliasedNodeData | null;
+};
+
+export type BcapServiceRequestProposedProjectTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProposedProjectAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestResourceAliasedData = {
+    service_request_identification?: BcapServiceRequestServiceRequestIdentificationTile | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
+    proposed_project?: BcapServiceRequestProposedProjectTile | null;
+    service_request_admin?: BcapServiceRequestServiceRequestAdminTile | null;
+    service_request_messages?: BcapServiceRequestServiceRequestMessagesTile | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminAliasedData = {
+    /**
+     * Enter date
+     */
+    application_submission_date?: DateAliasedNodeData | null;
+    ministry_assignee_n1?: ResourceInstanceAliasedNodeData | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTile> | null;
+    /**
+     * Enter number of years requested
+     */
+    service_request_completion_target?: NumberAliasedNodeDataMin0Max10 | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestAdminAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsAliasedData = {
+    application_archaeologist?: ResourceInstanceAliasedNodeData | null;
+    application_proponent?: ResourceInstanceAliasedNodeData | null;
+    rationale_for_no_archaeologist?: StringAliasedNodeData | null;
+    has_retained_archaeologist?: BooleanAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestContactsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationAliasedData = {
+    /**
+     * Select an option
+     */
+    filing_type: ReferenceAliasedNodeDataRequired | null;
+    /**
+     * Enter application ID
+     */
+    service_request_id?: StringAliasedNodeData | null;
+    supplemental_information?: FileListAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesAliasedData = {
+    service_request_messages?: ResourceInstanceListAliasedNodeData | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestMessagesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type BooleanAliasedNodeData = {
@@ -1956,6 +2217,26 @@ export type DateAliasedNodeData = {
     }>;
 };
 
+export type Document = {
+    resourceinstanceid?: string | null;
+    aliased_data?: DocumentResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
 export type DocumentSubmission = {
     resourceinstanceid?: string | null;
     aliased_data?: DocumentSubmissionResourceAliasedData;
@@ -1974,6 +2255,244 @@ export type DocumentSubmission = {
     readonly graph_publication: string | null;
     readonly resource_instance_lifecycle_state: string;
     readonly principaluser: number | null;
+};
+
+export type DocumentAuthorsAliasedData = {
+    other_authors_unlisted?: BooleanAliasedNodeData | null;
+    /**
+     * Select author
+     */
+    authors: ResourceInstanceListAliasedNodeDataRequired | null;
+};
+
+export type DocumentAuthorsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentAuthorsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentCopyrightTypeAliasedData = {
+    /**
+     * Enter text
+     */
+    agreement_text?: StringAliasedNodeData | null;
+    distribution_permitted?: BooleanAliasedNodeData | null;
+    signed_agreement?: FileListAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    copyright_type: ReferenceAliasedNodeDataRequired | null;
+};
+
+export type DocumentCopyrightTypeTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentCopyrightTypeAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentDocumentDetailsAliasedData = {
+    /**
+     * Enter text
+     */
+    other_journal_or_volume_name?: StringAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    page_range_end?: NumberAliasedNodeData | null;
+    /**
+     * Enter the full title of published article or book, or unpublished report or thesis
+     */
+    title: StringAliasedNodeData | null;
+    /**
+     * Select Journal or Publication Name
+     */
+    journal_or_volume_name?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    document_type?: ReferenceAliasedNodeData | null;
+    document_identifier?: Array<DocumentDocumentIdentifierTile> | null;
+    /**
+     * Enter number
+     */
+    page_range_start?: NumberAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    year_of_publication: DateAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    document_remarks?: StringAliasedNodeData | null;
+};
+
+export type DocumentDocumentDetailsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentDocumentDetailsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentDocumentIdentifierAliasedData = {
+    /**
+     * Select an option
+     */
+    document_identifier_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter Report Number, URL or Digital Object Identifier
+     */
+    document_identifier?: StringAliasedNodeData | null;
+};
+
+export type DocumentDocumentIdentifierTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentDocumentIdentifierAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentInformationCarrierAliasedData = {
+    information_carrier?: FileListAliasedNodeData | null;
+};
+
+export type DocumentInformationCarrierTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentInformationCarrierAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentKeywordAliasedData = {
+    keyword?: ReferenceAliasedNodeData | null;
+};
+
+export type DocumentKeywordTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentKeywordAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentReferenceLinkAliasedData = {
+    archaeological_sites?: ResourceInstanceListAliasedNodeData | null;
+    site_visits?: ResourceInstanceListAliasedNodeData | null;
+    repositories?: ResourceInstanceListAliasedNodeData | null;
+};
+
+export type DocumentReferenceLinkTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentReferenceLinkAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentResourceAliasedData = {
+    document_details?: DocumentDocumentDetailsTile | null;
+    authors?: Array<DocumentAuthorsTile> | null;
+    information_carrier?: Array<DocumentInformationCarrierTile> | null;
+    copyright_type?: DocumentCopyrightTypeTile | null;
+    keyword?: Array<DocumentKeywordTile> | null;
+    reference_link?: DocumentReferenceLinkTile | null;
 };
 
 export type DocumentSubmissionDocumentSubmissionProcessAliasedData = {
@@ -4479,7 +4998,7 @@ export type NumberAliasedNodeDataMin0 = {
 
 export type NumberAliasedNodeDataMin0Max10 = {
     /**
-     * Permit Duration Requested
+     * Request Completion Target
      *
      * Enter number of years requested
      */
@@ -4497,11 +5016,25 @@ export type PaginatedArchaeologicalSiteList = {
     results: Array<ArchaeologicalSite>;
 };
 
+export type PaginatedBcapServiceRequestList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapServiceRequest>;
+};
+
 export type PaginatedContributorList = {
     count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<Contributor>;
+};
+
+export type PaginatedDocumentList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Document>;
 };
 
 export type PaginatedDocumentSubmissionList = {
@@ -4579,13 +5112,6 @@ export type PaginatedProjectEngagementList = {
     next?: string | null;
     previous?: string | null;
     results: Array<ProjectEngagement>;
-};
-
-export type PaginatedPublicationList = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<Publication>;
 };
 
 export type PaginatedRepositoryList = {
@@ -5548,178 +6074,42 @@ export type ProjectEngagement = {
     readonly principaluser: number | null;
 };
 
-export type ProjectEngagementDeliveryAttemptIncludedDocumentAliasedData = {
-    /**
-     * Enter text
-     */
-    included_document_identifier_snapshot?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    included_document_title_snapshot?: StringAliasedNodeData | null;
-};
-
-export type ProjectEngagementDeliveryAttemptIncludedDocumentTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDeliveryAttemptIncludedDocumentAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleAliasedData = {
-    /**
-     * Enter text
-     */
-    bundle_identifier?: NonLocalizedStringAliasedNodeData | null;
-    recipient_contributor_reference?: ResourceInstanceAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    recipient_email_address?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    bundle_status?: ReferenceAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    recipient_name_as_provided?: StringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    recipient_phone_number?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    bundle_intended_delivery_method?: ReferenceAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    recipient_portal_url?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter date
-     */
-    bundle_required_delivery_date?: DateAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    bundle_delivery_instructions?: StringAliasedNodeData | null;
-    document_delivery_bundle_n1?: ProjectEngagementDocumentDeliveryBundleN1Tile | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleN1AliasedData = {
-    attempt_recipient_contributor_reference?: ResourceInstanceAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_email_address?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    delivery_attempt_identifier?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_name_as_provided?: StringAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_phone_number?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter date
-     */
-    delivery_attempt_date?: DateAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_portal_url?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    delivery_attempt_method?: ReferenceAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    delivery_attempt_outcome?: ReferenceAliasedNodeData | null;
-    delivery_attempt_included_document?: Array<ProjectEngagementDeliveryAttemptIncludedDocumentTile> | null;
-    delivered_bundle_files?: FileListAliasedNodeData | null;
-    delivery_attempt_confirmation_files?: FileListAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    delivery_attempt_notes?: StringAliasedNodeData | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleN1Tile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDocumentDeliveryBundleN1AliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDocumentDeliveryBundleAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type ProjectEngagementEngagementAliasedData = {
     engagement_details?: ProjectEngagementEngagementDetailsTile | null;
     engagement_participant?: Array<ProjectEngagementEngagementParticipantTile> | null;
     engagement_document?: Array<ProjectEngagementEngagementDocumentTile> | null;
-    document_delivery_bundle?: ProjectEngagementDocumentDeliveryBundleTile | null;
+    referral_package?: ProjectEngagementReferralPackageTile | null;
 };
 
 export type ProjectEngagementEngagementDetailsAliasedData = {
+    /**
+     * Enter date
+     */
     engagement_start_date?: DateAliasedNodeData | null;
+    /**
+     * Enter number
+     */
     engagement_target_length?: NumberAliasedNodeData | null;
+    /**
+     * Select an option
+     */
     engagement_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
     engagement_status?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter date
+     */
     engagement_end_date?: DateAliasedNodeData | null;
+    is_mandatory?: BooleanAliasedNodeData | null;
+    /**
+     * Enter text
+     */
     engagement_steps_taken?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
     engagement_outcome_summary?: StringAliasedNodeData | null;
 };
 
@@ -5745,12 +6135,8 @@ export type ProjectEngagementEngagementDetailsTile = {
 };
 
 export type ProjectEngagementEngagementDocumentAliasedData = {
-    document_identifier?: StringAliasedNodeData | null;
-    document_title?: StringAliasedNodeData | null;
-    document_type?: ReferenceAliasedNodeData | null;
-    document_description?: StringAliasedNodeData | null;
     should_be_delivered?: BooleanAliasedNodeData | null;
-    document_file?: FileListAliasedNodeData | null;
+    engagement_document: ResourceInstanceAliasedNodeData | null;
 };
 
 export type ProjectEngagementEngagementDocumentTile = {
@@ -5775,13 +6161,34 @@ export type ProjectEngagementEngagementDocumentTile = {
 };
 
 export type ProjectEngagementEngagementParticipantAliasedData = {
-    other_participant?: StringAliasedNodeData | null;
-    participant_email_address?: NonLocalizedStringAliasedNodeData | null;
-    participant_type?: ReferenceAliasedNodeData | null;
-    participant_phone_number?: NonLocalizedStringAliasedNodeData | null;
-    participant_role?: ReferenceAliasedNodeData | null;
     contributor_reference?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    participant_email_address?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    other_participant?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    participant_phone_number?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
     participant_portal_url?: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    participant_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    participant_role?: ReferenceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
     participant_notes?: StringAliasedNodeData | null;
 };
 
@@ -5827,217 +6234,37 @@ export type ProjectEngagementEngagementTile = {
     } | null;
 };
 
-export type ProjectEngagementResourceAliasedData = {
-    engagement?: Array<ProjectEngagementEngagementTile> | null;
-};
-
-export type Publication = {
-    resourceinstanceid?: string | null;
-    aliased_data?: PublicationResourceAliasedData;
-    readonly graph_has_different_publication: boolean;
-    readonly name: string | null;
-    readonly descriptors: {
-        en?: {
-            name?: string;
-            description?: string;
-            map_popup?: string;
-        };
-    } | null;
-    readonly legacyid: string | null;
-    readonly createdtime: string;
-    graph?: string | null;
-    readonly graph_publication: string | null;
-    readonly resource_instance_lifecycle_state: string;
-    readonly principaluser: number | null;
-};
-
-export type PublicationAuthorsAliasedData = {
-    other_authors_unlisted?: BooleanAliasedNodeData | null;
-    /**
-     * Select author
-     */
-    authors: ResourceInstanceListAliasedNodeDataRequired | null;
-};
-
-export type PublicationAuthorsTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationAuthorsAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationCopyrightTypeAliasedData = {
-    /**
-     * Enter text
-     */
-    agreement_text?: StringAliasedNodeData | null;
-    distribution_permitted?: BooleanAliasedNodeData | null;
-    signed_agreement?: FileListAliasedNodeData | null;
+export type ProjectEngagementReferralPackageAliasedData = {
     /**
      * Select an option
      */
-    copyright_type: ReferenceAliasedNodeDataRequired | null;
-};
-
-export type PublicationCopyrightTypeTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationCopyrightTypeAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationInformationCarrierAliasedData = {
-    information_carrier?: FileListAliasedNodeData | null;
-};
-
-export type PublicationInformationCarrierTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationInformationCarrierAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationKeywordAliasedData = {
-    keyword?: ReferenceAliasedNodeData | null;
-};
-
-export type PublicationKeywordTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationKeywordAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationPublicationDetailsAliasedData = {
-    /**
-     * Enter text
-     */
-    other_journal_or_volume_name?: StringAliasedNodeData | null;
-    /**
-     * Enter number
-     */
-    page_range_end?: NumberAliasedNodeData | null;
-    /**
-     * Enter the full title of published article or book, or unpublished report or thesis
-     */
-    title: StringAliasedNodeData | null;
-    /**
-     * Select Journal or Publication Name
-     */
-    journal_or_volume_name?: ResourceInstanceAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    publication_type?: ReferenceAliasedNodeData | null;
-    publication_identifier?: Array<PublicationPublicationIdentifierTile> | null;
-    /**
-     * Enter number
-     */
-    page_range_start?: NumberAliasedNodeData | null;
+    package_delivery_method?: ReferenceAliasedNodeData | null;
     /**
      * Enter date
      */
-    year_of_publication: DateAliasedNodeData | null;
+    package_target_delivery_date?: DateAliasedNodeData | null;
     /**
-     * Enter text
+     * Enter date
      */
-    publication_remarks?: StringAliasedNodeData | null;
-};
-
-export type PublicationPublicationDetailsTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationPublicationDetailsAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationPublicationIdentifierAliasedData = {
+    package_delivery_date?: DateAliasedNodeData | null;
     /**
      * Select an option
      */
-    publication_identifier_type?: ReferenceAliasedNodeData | null;
+    package_delivery_status?: ReferenceAliasedNodeData | null;
+    package_documents?: ResourceInstanceListAliasedNodeData | null;
     /**
-     * Enter Report Number, URL or Digital Object Identifier
+     * Enter text
      */
-    publication_identifier?: StringAliasedNodeData | null;
+    package_delivery_notes?: StringAliasedNodeData | null;
+    package_confirmation_files?: FileListAliasedNodeData | null;
 };
 
-export type PublicationPublicationIdentifierTile = {
+export type ProjectEngagementReferralPackageTile = {
     tileid?: string | null;
     resourceinstance?: string | null;
     nodegroup?: string | null;
     parenttile?: string | null;
-    aliased_data?: PublicationPublicationIdentifierAliasedData;
+    aliased_data?: ProjectEngagementReferralPackageAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -6053,40 +6280,8 @@ export type PublicationPublicationIdentifierTile = {
     } | null;
 };
 
-export type PublicationReferenceLinkAliasedData = {
-    archaeological_sites?: ResourceInstanceListAliasedNodeData | null;
-    site_visits?: ResourceInstanceListAliasedNodeData | null;
-    repositories?: ResourceInstanceListAliasedNodeData | null;
-};
-
-export type PublicationReferenceLinkTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationReferenceLinkAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationResourceAliasedData = {
-    publication_details?: PublicationPublicationDetailsTile | null;
-    authors?: Array<PublicationAuthorsTile> | null;
-    information_carrier?: Array<PublicationInformationCarrierTile> | null;
-    copyright_type?: PublicationCopyrightTypeTile | null;
-    keyword?: Array<PublicationKeywordTile> | null;
-    reference_link?: PublicationReferenceLinkTile | null;
+export type ProjectEngagementResourceAliasedData = {
+    engagement?: Array<ProjectEngagementEngagementTile> | null;
 };
 
 export type ReferenceAliasedNodeData = {
@@ -9391,6 +9586,12 @@ export type BcapMessageWritable = {
     graph?: string | null;
 };
 
+export type BcapServiceRequestWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: BcapServiceRequestResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
 export type BcapMessageArchivedByAliasedDataWritable = {
     archived_by?: ResourceInstanceAliasedNodeDataWritable | null;
 };
@@ -9481,6 +9682,248 @@ export type BcapMessageMessageContentTileWritable = {
 export type BcapMessageResourceAliasedDataWritable = {
     archived_by?: Array<BcapMessageArchivedByTileWritable> | null;
     message_content?: BcapMessageMessageContentTileWritable | null;
+};
+
+export type BcapServiceRequestProcessModuleAliasedDataWritable = {
+    is_module_completed?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    module_completed_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Module ID if a copy of a Module Template
+     */
+    module_id?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter name of the Process Module
+     */
+    module_name: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    module_order?: NumberAliasedNodeDataWritable | null;
+    process_requirement?: Array<BcapServiceRequestProcessRequirementTileWritable> | null;
+};
+
+export type BcapServiceRequestProcessModuleTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessModuleAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProcessRequirementAliasedDataWritable = {
+    ministry_assignee?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    process_requirement_order: NumberAliasedNodeDataMin0Writable | null;
+    process_requirement?: ResourceInstanceAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestProcessRequirementTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProcessRequirementAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestProposedProjectAliasedDataWritable = {
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    project_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    project_name?: StringAliasedNodeDataWritable | null;
+    /**
+     * Describe the scope of work to be competed as part of the proposed project
+     */
+    scope_of_work?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter project description
+     */
+    project_description?: StringAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestProposedProjectTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProposedProjectAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestResourceAliasedDataWritable = {
+    service_request_identification?: BcapServiceRequestServiceRequestIdentificationTileWritable | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
+    proposed_project?: BcapServiceRequestProposedProjectTileWritable | null;
+    service_request_admin?: BcapServiceRequestServiceRequestAdminTileWritable | null;
+    service_request_messages?: BcapServiceRequestServiceRequestMessagesTileWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminAliasedDataWritable = {
+    /**
+     * Enter date
+     */
+    application_submission_date?: DateAliasedNodeDataWritable | null;
+    ministry_assignee_n1?: ResourceInstanceAliasedNodeDataWritable | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTileWritable> | null;
+    /**
+     * Enter number of years requested
+     */
+    service_request_completion_target?: NumberAliasedNodeDataMin0Max10Writable | null;
+};
+
+export type BcapServiceRequestServiceRequestAdminTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestAdminAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsAliasedDataWritable = {
+    application_archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
+    application_proponent?: ResourceInstanceAliasedNodeDataWritable | null;
+    rationale_for_no_archaeologist?: StringAliasedNodeDataWritable | null;
+    has_retained_archaeologist?: BooleanAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestContactsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestContactsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestIdentificationAliasedDataWritable =
+    {
+        /**
+         * Select an option
+         */
+        filing_type: ReferenceAliasedNodeDataRequiredWritable | null;
+        /**
+         * Enter application ID
+         */
+        service_request_id?: StringAliasedNodeDataWritable | null;
+        supplemental_information?: FileListAliasedNodeDataWritable | null;
+    };
+
+export type BcapServiceRequestServiceRequestIdentificationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesAliasedDataWritable = {
+    service_request_messages?: ResourceInstanceListAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestMessagesTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestMessagesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type BooleanAliasedNodeDataWritable = {
@@ -9659,10 +10102,254 @@ export type DateAliasedNodeDataWritable = {
     node_value: string | null;
 };
 
+export type DocumentWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: DocumentResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
 export type DocumentSubmissionWritable = {
     resourceinstanceid?: string | null;
     aliased_data?: DocumentSubmissionResourceAliasedDataWritable;
     graph?: string | null;
+};
+
+export type DocumentAuthorsAliasedDataWritable = {
+    other_authors_unlisted?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Select author
+     */
+    authors: ResourceInstanceListAliasedNodeDataRequiredWritable | null;
+};
+
+export type DocumentAuthorsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentAuthorsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentCopyrightTypeAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    agreement_text?: StringAliasedNodeDataWritable | null;
+    distribution_permitted?: BooleanAliasedNodeDataWritable | null;
+    signed_agreement?: FileListAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    copyright_type: ReferenceAliasedNodeDataRequiredWritable | null;
+};
+
+export type DocumentCopyrightTypeTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentCopyrightTypeAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentDocumentDetailsAliasedDataWritable = {
+    /**
+     * Enter text
+     */
+    other_journal_or_volume_name?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    page_range_end?: NumberAliasedNodeDataWritable | null;
+    /**
+     * Enter the full title of published article or book, or unpublished report or thesis
+     */
+    title: StringAliasedNodeDataWritable | null;
+    /**
+     * Select Journal or Publication Name
+     */
+    journal_or_volume_name?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    document_type?: ReferenceAliasedNodeDataWritable | null;
+    document_identifier?: Array<DocumentDocumentIdentifierTileWritable> | null;
+    /**
+     * Enter number
+     */
+    page_range_start?: NumberAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    year_of_publication: DateAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    document_remarks?: StringAliasedNodeDataWritable | null;
+};
+
+export type DocumentDocumentDetailsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentDocumentDetailsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentDocumentIdentifierAliasedDataWritable = {
+    /**
+     * Select an option
+     */
+    document_identifier_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter Report Number, URL or Digital Object Identifier
+     */
+    document_identifier?: StringAliasedNodeDataWritable | null;
+};
+
+export type DocumentDocumentIdentifierTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentDocumentIdentifierAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentInformationCarrierAliasedDataWritable = {
+    information_carrier?: FileListAliasedNodeDataWritable | null;
+};
+
+export type DocumentInformationCarrierTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentInformationCarrierAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentKeywordAliasedDataWritable = {
+    keyword?: ReferenceAliasedNodeDataWritable | null;
+};
+
+export type DocumentKeywordTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentKeywordAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentReferenceLinkAliasedDataWritable = {
+    archaeological_sites?: ResourceInstanceListAliasedNodeDataWritable | null;
+    site_visits?: ResourceInstanceListAliasedNodeDataWritable | null;
+    repositories?: ResourceInstanceListAliasedNodeDataWritable | null;
+};
+
+export type DocumentReferenceLinkTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: DocumentReferenceLinkAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type DocumentResourceAliasedDataWritable = {
+    document_details?: DocumentDocumentDetailsTileWritable | null;
+    authors?: Array<DocumentAuthorsTileWritable> | null;
+    information_carrier?: Array<DocumentInformationCarrierTileWritable> | null;
+    copyright_type?: DocumentCopyrightTypeTileWritable | null;
+    keyword?: Array<DocumentKeywordTileWritable> | null;
+    reference_link?: DocumentReferenceLinkTileWritable | null;
 };
 
 export type DocumentSubmissionDocumentSubmissionProcessAliasedDataWritable = {
@@ -11755,7 +12442,7 @@ export type NumberAliasedNodeDataMin0Writable = {
 
 export type NumberAliasedNodeDataMin0Max10Writable = {
     /**
-     * Permit Duration Requested
+     * Request Completion Target
      *
      * Enter number of years requested
      */
@@ -11769,11 +12456,25 @@ export type PaginatedArchaeologicalSiteListWritable = {
     results: Array<ArchaeologicalSiteWritable>;
 };
 
+export type PaginatedBcapServiceRequestListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BcapServiceRequestWritable>;
+};
+
 export type PaginatedContributorListWritable = {
     count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<ContributorWritable>;
+};
+
+export type PaginatedDocumentListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<DocumentWritable>;
 };
 
 export type PaginatedDocumentSubmissionListWritable = {
@@ -11851,13 +12552,6 @@ export type PaginatedProjectEngagementListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<ProjectEngagementWritable>;
-};
-
-export type PaginatedPublicationListWritable = {
-    count: number;
-    next?: string | null;
-    previous?: string | null;
-    results: Array<PublicationWritable>;
 };
 
 export type PaginatedRepositoryListWritable = {
@@ -12678,179 +13372,42 @@ export type ProjectEngagementWritable = {
     graph?: string | null;
 };
 
-export type ProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable =
-    {
-        /**
-         * Enter text
-         */
-        included_document_identifier_snapshot?: NonLocalizedStringAliasedNodeDataWritable | null;
-        /**
-         * Enter text
-         */
-        included_document_title_snapshot?: StringAliasedNodeDataWritable | null;
-    };
-
-export type ProjectEngagementDeliveryAttemptIncludedDocumentTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDeliveryAttemptIncludedDocumentAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleAliasedDataWritable = {
-    /**
-     * Enter text
-     */
-    bundle_identifier?: NonLocalizedStringAliasedNodeDataWritable | null;
-    recipient_contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    recipient_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    bundle_status?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    recipient_name_as_provided?: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    recipient_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    bundle_intended_delivery_method?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    recipient_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Enter date
-     */
-    bundle_required_delivery_date?: DateAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    bundle_delivery_instructions?: StringAliasedNodeDataWritable | null;
-    document_delivery_bundle_n1?: ProjectEngagementDocumentDeliveryBundleN1TileWritable | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable = {
-    attempt_recipient_contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    delivery_attempt_identifier?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_name_as_provided?: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Enter date
-     */
-    delivery_attempt_date?: DateAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    attempt_recipient_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    delivery_attempt_method?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    delivery_attempt_outcome?: ReferenceAliasedNodeDataWritable | null;
-    delivery_attempt_included_document?: Array<ProjectEngagementDeliveryAttemptIncludedDocumentTileWritable> | null;
-    delivered_bundle_files?: FileListAliasedNodeDataWritable | null;
-    delivery_attempt_confirmation_files?: FileListAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    delivery_attempt_notes?: StringAliasedNodeDataWritable | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleN1TileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDocumentDeliveryBundleN1AliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type ProjectEngagementDocumentDeliveryBundleTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: ProjectEngagementDocumentDeliveryBundleAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type ProjectEngagementEngagementAliasedDataWritable = {
     engagement_details?: ProjectEngagementEngagementDetailsTileWritable | null;
     engagement_participant?: Array<ProjectEngagementEngagementParticipantTileWritable> | null;
     engagement_document?: Array<ProjectEngagementEngagementDocumentTileWritable> | null;
-    document_delivery_bundle?: ProjectEngagementDocumentDeliveryBundleTileWritable | null;
+    referral_package?: ProjectEngagementReferralPackageTileWritable | null;
 };
 
 export type ProjectEngagementEngagementDetailsAliasedDataWritable = {
+    /**
+     * Enter date
+     */
     engagement_start_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
     engagement_target_length?: NumberAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
     engagement_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
     engagement_status?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
     engagement_end_date?: DateAliasedNodeDataWritable | null;
+    is_mandatory?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
     engagement_steps_taken?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
     engagement_outcome_summary?: StringAliasedNodeDataWritable | null;
 };
 
@@ -12876,12 +13433,8 @@ export type ProjectEngagementEngagementDetailsTileWritable = {
 };
 
 export type ProjectEngagementEngagementDocumentAliasedDataWritable = {
-    document_identifier?: StringAliasedNodeDataWritable | null;
-    document_title?: StringAliasedNodeDataWritable | null;
-    document_type?: ReferenceAliasedNodeDataWritable | null;
-    document_description?: StringAliasedNodeDataWritable | null;
     should_be_delivered?: BooleanAliasedNodeDataWritable | null;
-    document_file?: FileListAliasedNodeDataWritable | null;
+    engagement_document: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type ProjectEngagementEngagementDocumentTileWritable = {
@@ -12906,13 +13459,34 @@ export type ProjectEngagementEngagementDocumentTileWritable = {
 };
 
 export type ProjectEngagementEngagementParticipantAliasedDataWritable = {
-    other_participant?: StringAliasedNodeDataWritable | null;
-    participant_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
-    participant_type?: ReferenceAliasedNodeDataWritable | null;
-    participant_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
-    participant_role?: ReferenceAliasedNodeDataWritable | null;
     contributor_reference?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    participant_email_address?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    other_participant?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    participant_phone_number?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
     participant_portal_url?: NonLocalizedStringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    participant_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    participant_role?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
     participant_notes?: StringAliasedNodeDataWritable | null;
 };
 
@@ -12958,203 +13532,37 @@ export type ProjectEngagementEngagementTileWritable = {
     } | null;
 };
 
-export type ProjectEngagementResourceAliasedDataWritable = {
-    engagement?: Array<ProjectEngagementEngagementTileWritable> | null;
-};
-
-export type PublicationWritable = {
-    resourceinstanceid?: string | null;
-    aliased_data?: PublicationResourceAliasedDataWritable;
-    graph?: string | null;
-};
-
-export type PublicationAuthorsAliasedDataWritable = {
-    other_authors_unlisted?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Select author
-     */
-    authors: ResourceInstanceListAliasedNodeDataRequiredWritable | null;
-};
-
-export type PublicationAuthorsTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationAuthorsAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationCopyrightTypeAliasedDataWritable = {
-    /**
-     * Enter text
-     */
-    agreement_text?: StringAliasedNodeDataWritable | null;
-    distribution_permitted?: BooleanAliasedNodeDataWritable | null;
-    signed_agreement?: FileListAliasedNodeDataWritable | null;
+export type ProjectEngagementReferralPackageAliasedDataWritable = {
     /**
      * Select an option
      */
-    copyright_type: ReferenceAliasedNodeDataRequiredWritable | null;
-};
-
-export type PublicationCopyrightTypeTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationCopyrightTypeAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationInformationCarrierAliasedDataWritable = {
-    information_carrier?: FileListAliasedNodeDataWritable | null;
-};
-
-export type PublicationInformationCarrierTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationInformationCarrierAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationKeywordAliasedDataWritable = {
-    keyword?: ReferenceAliasedNodeDataWritable | null;
-};
-
-export type PublicationKeywordTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationKeywordAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationPublicationDetailsAliasedDataWritable = {
-    /**
-     * Enter text
-     */
-    other_journal_or_volume_name?: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter number
-     */
-    page_range_end?: NumberAliasedNodeDataWritable | null;
-    /**
-     * Enter the full title of published article or book, or unpublished report or thesis
-     */
-    title: StringAliasedNodeDataWritable | null;
-    /**
-     * Select Journal or Publication Name
-     */
-    journal_or_volume_name?: ResourceInstanceAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    publication_type?: ReferenceAliasedNodeDataWritable | null;
-    publication_identifier?: Array<PublicationPublicationIdentifierTileWritable> | null;
-    /**
-     * Enter number
-     */
-    page_range_start?: NumberAliasedNodeDataWritable | null;
+    package_delivery_method?: ReferenceAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
-    year_of_publication: DateAliasedNodeDataWritable | null;
+    package_target_delivery_date?: DateAliasedNodeDataWritable | null;
     /**
-     * Enter text
+     * Enter date
      */
-    publication_remarks?: StringAliasedNodeDataWritable | null;
-};
-
-export type PublicationPublicationDetailsTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationPublicationDetailsAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationPublicationIdentifierAliasedDataWritable = {
+    package_delivery_date?: DateAliasedNodeDataWritable | null;
     /**
      * Select an option
      */
-    publication_identifier_type?: ReferenceAliasedNodeDataWritable | null;
+    package_delivery_status?: ReferenceAliasedNodeDataWritable | null;
+    package_documents?: ResourceInstanceListAliasedNodeDataWritable | null;
     /**
-     * Enter Report Number, URL or Digital Object Identifier
+     * Enter text
      */
-    publication_identifier?: StringAliasedNodeDataWritable | null;
+    package_delivery_notes?: StringAliasedNodeDataWritable | null;
+    package_confirmation_files?: FileListAliasedNodeDataWritable | null;
 };
 
-export type PublicationPublicationIdentifierTileWritable = {
+export type ProjectEngagementReferralPackageTileWritable = {
     tileid?: string | null;
     resourceinstance?: string | null;
     nodegroup?: string | null;
     parenttile?: string | null;
-    aliased_data?: PublicationPublicationIdentifierAliasedDataWritable;
+    aliased_data?: ProjectEngagementReferralPackageAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -13170,40 +13578,8 @@ export type PublicationPublicationIdentifierTileWritable = {
     } | null;
 };
 
-export type PublicationReferenceLinkAliasedDataWritable = {
-    archaeological_sites?: ResourceInstanceListAliasedNodeDataWritable | null;
-    site_visits?: ResourceInstanceListAliasedNodeDataWritable | null;
-    repositories?: ResourceInstanceListAliasedNodeDataWritable | null;
-};
-
-export type PublicationReferenceLinkTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: PublicationReferenceLinkAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type PublicationResourceAliasedDataWritable = {
-    publication_details?: PublicationPublicationDetailsTileWritable | null;
-    authors?: Array<PublicationAuthorsTileWritable> | null;
-    information_carrier?: Array<PublicationInformationCarrierTileWritable> | null;
-    copyright_type?: PublicationCopyrightTypeTileWritable | null;
-    keyword?: Array<PublicationKeywordTileWritable> | null;
-    reference_link?: PublicationReferenceLinkTileWritable | null;
+export type ProjectEngagementResourceAliasedDataWritable = {
+    engagement?: Array<ProjectEngagementEngagementTileWritable> | null;
 };
 
 export type ReferenceAliasedNodeDataWritable = {
@@ -14946,6 +15322,45 @@ export type ApiBcapMessageThreadsListResponses = {
 export type ApiBcapMessageThreadsListResponse =
     ApiBcapMessageThreadsListResponses[keyof ApiBcapMessageThreadsListResponses];
 
+export type ApiBcapServiceRequestListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/bcap/api/bcap_service_request';
+};
+
+export type ApiBcapServiceRequestListResponses = {
+    200: PaginatedBcapServiceRequestList;
+};
+
+export type ApiBcapServiceRequestListResponse =
+    ApiBcapServiceRequestListResponses[keyof ApiBcapServiceRequestListResponses];
+
+export type ApiBcapServiceRequestRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bcap/api/bcap_service_request/{id}/';
+};
+
+export type ApiBcapServiceRequestRetrieveResponses = {
+    200: BcapServiceRequest;
+};
+
+export type ApiBcapServiceRequestRetrieveResponse =
+    ApiBcapServiceRequestRetrieveResponses[keyof ApiBcapServiceRequestRetrieveResponses];
+
 export type ApiContributorListData = {
     body?: never;
     path?: never;
@@ -15062,6 +15477,45 @@ export type ApiDashboardInternalRetrieveResponses = {
 
 export type ApiDashboardInternalRetrieveResponse =
     ApiDashboardInternalRetrieveResponses[keyof ApiDashboardInternalRetrieveResponses];
+
+export type ApiDocumentListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/bcap/api/document';
+};
+
+export type ApiDocumentListResponses = {
+    200: PaginatedDocumentList;
+};
+
+export type ApiDocumentListResponse =
+    ApiDocumentListResponses[keyof ApiDocumentListResponses];
+
+export type ApiDocumentRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bcap/api/document/{id}/';
+};
+
+export type ApiDocumentRetrieveResponses = {
+    200: Document;
+};
+
+export type ApiDocumentRetrieveResponse =
+    ApiDocumentRetrieveResponses[keyof ApiDocumentRetrieveResponses];
 
 export type ApiDocumentSubmissionListData = {
     body?: never;
@@ -15763,45 +16217,6 @@ export type ApiProjectEngagementRetrieveResponses = {
 
 export type ApiProjectEngagementRetrieveResponse =
     ApiProjectEngagementRetrieveResponses[keyof ApiProjectEngagementRetrieveResponses];
-
-export type ApiPublicationListData = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Number of results to return per page.
-         */
-        limit?: number;
-        /**
-         * The initial index from which to return the results.
-         */
-        offset?: number;
-    };
-    url: '/bcap/api/publication';
-};
-
-export type ApiPublicationListResponses = {
-    200: PaginatedPublicationList;
-};
-
-export type ApiPublicationListResponse =
-    ApiPublicationListResponses[keyof ApiPublicationListResponses];
-
-export type ApiPublicationRetrieveData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/bcap/api/publication/{id}/';
-};
-
-export type ApiPublicationRetrieveResponses = {
-    200: Publication;
-};
-
-export type ApiPublicationRetrieveResponse =
-    ApiPublicationRetrieveResponses[keyof ApiPublicationRetrieveResponses];
 
 export type ApiRegistrationLinkCreateData = {
     body?: RegistrationLinkRequest;

@@ -18,11 +18,25 @@ from .bcap_message import (
     BcapMessageView,
 )
 
+from .bcap_service_request import (
+    BcapServiceRequestSerializer,
+    BcapServiceRequestViewMixin,
+    BcapServiceRequestListView,
+    BcapServiceRequestView,
+)
+
 from .contributor import (
     ContributorSerializer,
     ContributorViewMixin,
     ContributorListView,
     ContributorView,
+)
+
+from .document import (
+    DocumentSerializer,
+    DocumentViewMixin,
+    DocumentListView,
+    DocumentView,
 )
 
 from .document_submission import (
@@ -102,13 +116,6 @@ from .project_engagement import (
     ProjectEngagementView,
 )
 
-from .publication import (
-    PublicationSerializer,
-    PublicationViewMixin,
-    PublicationListView,
-    PublicationView,
-)
-
 from .repository import (
     RepositorySerializer,
     RepositoryViewMixin,
@@ -139,14 +146,22 @@ __all__ = [
     "BcapMessageSerializer",
     "BcapMessageView",
     "BcapMessageViewMixin",
+    "BcapServiceRequestListView",
+    "BcapServiceRequestSerializer",
+    "BcapServiceRequestView",
+    "BcapServiceRequestViewMixin",
     "ContributorListView",
     "ContributorSerializer",
     "ContributorView",
     "ContributorViewMixin",
+    "DocumentListView",
+    "DocumentSerializer",
     "DocumentSubmissionListView",
     "DocumentSubmissionSerializer",
     "DocumentSubmissionView",
     "DocumentSubmissionViewMixin",
+    "DocumentView",
+    "DocumentViewMixin",
     "HcaPermitListView",
     "HcaPermitSerializer",
     "HcaPermitView",
@@ -187,10 +202,6 @@ __all__ = [
     "ProjectEngagementSerializer",
     "ProjectEngagementView",
     "ProjectEngagementViewMixin",
-    "PublicationListView",
-    "PublicationSerializer",
-    "PublicationView",
-    "PublicationViewMixin",
     "RepositoryListView",
     "RepositorySerializer",
     "RepositoryView",

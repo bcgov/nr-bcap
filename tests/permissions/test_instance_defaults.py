@@ -14,7 +14,7 @@ from arches.app.utils.permission_backend import user_can_read_resource
 from bcap.permissions.groups import Groups
 from bcap.util.bcap_aliases import GraphSlugs
 
-GRANTED = GraphSlugs.PUBLICATION  # Archaeology Branch reaches every graph
+GRANTED = GraphSlugs.DOCUMENT  # Archaeology Branch reaches every graph
 OMITTED = GraphSlugs.ARCHAEOLOGICAL_SITE  # an applicant files no inventory
 APPLICANT = GraphSlugs.PERMIT_APPLICATION  # granted to Submitter as a graph
 

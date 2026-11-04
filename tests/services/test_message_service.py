@@ -273,6 +273,9 @@ class BcapMessageAddressableTests(TestCase):
         cls.staff, cls.staff_contrib = make_party(
             builder, "addrstaff", "Sam", "Staff", internal=True
         )
+        cls.staff2, cls.staff2_contrib = make_party(
+            builder, "addrstaff2", "Bob", "Backstaf", internal=True
+        )
         cls.permit = build_permit(builder, "Addressed", organization=cls.acme)
         cls.requirement = make_requirement(builder, "Addressed req")
         cls.permit_with_req = build_permit(
@@ -290,9 +293,10 @@ class BcapMessageAddressableTests(TestCase):
         resource = resource or self.permit
         return {c.id for c in self.service.recipient_options(str(resource.pk), user)}
 
-    def test_staff_can_write_to_the_filer_and_the_branch(self):
+    def test_staff_can_write_to_the_filer_and_other_internal_staff(self):
         self.assertLessEqual(
-            {str(self.applicant_contrib.pk), self.branch}, self._ids(self.staff)
+            {str(self.applicant_contrib.pk), str(self.staff2_contrib.pk)},
+            self._ids(self.staff),
         )
 
     def test_a_requirement_offers_its_permits_filer(self):
@@ -305,9 +309,19 @@ class BcapMessageAddressableTests(TestCase):
         self.assertIn(self.branch, ids)
         self.assertNotIn(str(self.applicant_contrib.pk), ids)
 
-    def test_a_permit_with_no_filer_adds_nobody(self):
+    def test_a_permit_with_no_filer_offers_only_other_internal(self):
+        # Without a proponent, global internal staff still appear (minus self),
+        # but the branch is not added because ids is already non-empty.
         ResourceInstance.objects.filter(pk=self.permit.pk).update(principaluser=None)
-        self.assertEqual(self._ids(self.staff), {self.branch})
+        self.assertEqual(self._ids(self.staff), {str(self.staff2_contrib.pk)})
+
+    def test_staff_always_see_other_internal_staff(self):
+        # The for_staff else block adds all login-linked internal contributors
+        # globally, so staff can reach internal colleagues on any permit.
+        ids = self._ids(self.staff)
+        self.assertIn(str(self.staff2_contrib.pk), ids)
+        # Staff's own contributor is excluded from the picker.
+        self.assertNotIn(str(self.staff_contrib.pk), ids)
 
     def test_the_branch_and_staff_count_as_internal(self):
         contributors = ContributorService()

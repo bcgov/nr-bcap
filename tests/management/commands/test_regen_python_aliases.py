@@ -148,7 +148,7 @@ class TestPrintDriftFix(SimpleTestCase):
 def _mock_graph_queryset(graphs, mock_am):
     """Wire up the Graph queryset chain with the given list of {slug, graphid} dicts."""
     (
-        mock_am.Graph.objects.exclude.return_value.exclude.return_value.filter.return_value.filter.return_value.values.return_value.order_by.return_value
+        mock_am.Graph.objects.exclude.return_value.exclude.return_value.exclude.return_value.filter.return_value.filter.return_value.values.return_value.order_by.return_value
     ) = graphs
 
 

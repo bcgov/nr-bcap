@@ -11,9 +11,9 @@ import type {
 import type { AliasedTileData } from '@/arches_vue_components/types.ts';
 import 'primeicons/primeicons.css';
 import type {
-    PublicationPublicationDetailsTile,
-    Publication,
-    PublicationAuthorsTile,
+    DocumentDocumentDetailsTile,
+    Document,
+    DocumentAuthorsTile,
     ArchaeologicalSiteRelatedDocumentsTile,
     ArchaeologicalSiteRelatedDocumentsAliasedData,
     SiteVisit,
@@ -31,8 +31,8 @@ const props = withDefaults(
         data: ArchaeologicalSiteRelatedDocumentsTile | undefined;
         siteVisitData: SiteVisit[];
         hriaData?: HriaDiscontinuedData;
-        publicationData?: Publication[] | undefined;
-        siteVisitPublicationData?: Publication[] | undefined;
+        documentData?: Document[] | undefined;
+        siteVisitDocumentData?: Document[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -46,8 +46,8 @@ const props = withDefaults(
         editLogData: () => ({}),
         showAuditFields: false,
         hriaData: undefined,
-        publicationData: undefined,
-        siteVisitPublicationData: undefined,
+        documentData: undefined,
+        siteVisitDocumentData: undefined,
     },
 );
 
@@ -89,46 +89,44 @@ watchEffect(() =>
     console.log('relatedDocumentsData', relatedDocumentsData.value.length),
 );
 
-type PublicationDetailsTileWithAuthors = AliasedTileDataWithAudit &
-    PublicationPublicationDetailsTile & {
-        aliased_data: PublicationPublicationDetailsTile['aliased_data'] & {
-            authors: PublicationAuthorsTile[] | undefined;
+type DocumentDetailsTileWithAuthors = AliasedTileDataWithAudit &
+    DocumentDocumentDetailsTile & {
+        aliased_data: DocumentDocumentDetailsTile['aliased_data'] & {
+            authors: DocumentAuthorsTile[] | undefined;
         };
     };
 
-const publicationReferencesData = computed<PublicationDetailsTileWithAuthors[]>(
+const documentReferencesData = computed<DocumentDetailsTileWithAuthors[]>(
     () => {
-        let publications: Publication[] = [];
+        let documents: Document[] = [];
 
-        if (props.siteVisitPublicationData?.length) {
-            publications = [...props.siteVisitPublicationData];
+        if (props.siteVisitDocumentData?.length) {
+            documents = [...props.siteVisitDocumentData];
         }
 
-        if (props.publicationData?.length) {
-            const seenIds = new Set(
-                publications.map((p) => p.resourceinstanceid),
-            );
-            publications = [
-                ...publications,
-                ...props.publicationData.filter(
+        if (props.documentData?.length) {
+            const seenIds = new Set(documents.map((p) => p.resourceinstanceid));
+            documents = [
+                ...documents,
+                ...props.documentData.filter(
                     (p) => !seenIds.has(p.resourceinstanceid),
                 ),
             ];
         }
 
-        return publications.map((publication) => {
-            let data = publication.aliased_data
-                ?.publication_details as PublicationDetailsTileWithAuthors;
+        return documents.map((document) => {
+            let data = document.aliased_data
+                ?.document_details as DocumentDetailsTileWithAuthors;
             data.aliased_data.authors =
-                publication.aliased_data?.authors ?? undefined;
+                document.aliased_data?.authors ?? undefined;
             return data;
         });
     },
 );
 
-const publicationColumns: ColumnDefinition[] = [
+const documentColumns: ColumnDefinition[] = [
     {
-        field: 'publication_type',
+        field: 'document_type',
         label: 'Reference Type',
     },
     { field: 'title', label: 'Title' },
@@ -140,13 +138,13 @@ const publicationColumns: ColumnDefinition[] = [
         field: 'authors.0.aliased_data.authors',
         label: 'Author(s)',
         displayFunction: (value: AliasedTileDataWithAudit) =>
-            (value.aliased_data?.authors as PublicationAuthorsTile[])
+            (value.aliased_data?.authors as DocumentAuthorsTile[])
                 ?.map((author) => author?.aliased_data?.authors?.display_value)
                 .join(', '),
     },
     {
         label: 'Remarks',
-        field: 'publication_remarks',
+        field: 'document_remarks',
         isHtml: true,
     },
 ];
@@ -278,8 +276,8 @@ const hasOtherMaps = computed(() => {
                 <template #sectionContent>
                     <StandardDataTable
                         v-if="hasReferences"
-                        :table-data="publicationReferencesData"
-                        :column-definitions="publicationColumns"
+                        :table-data="documentReferencesData"
+                        :column-definitions="documentColumns"
                         :initial-sort-field-index="2"
                     />
                     <EmptyState

@@ -19,7 +19,7 @@ DROP MATERIALIZED VIEW IF EXISTS site_visit.mv_geom_spatial_location CASCADE;
 CREATE MATERIALIZED VIEW site_visit.mv_geom_spatial_location AS
 WITH per_tile AS (
     SELECT t.resourceinstanceid, t.tileid,
-           ST_Collect(ST_Transform(g.geom, 4326)) AS geom
+           ST_Collect(ST_Transform(g.geom, 3005)) AS geom
     FROM public.tiles t
     JOIN public.geojson_geometries g
       ON g.tileid = t.tileid AND g.nodeid = '36b6d091-a8d0-483e-ad5b-18f433f67311'::uuid
@@ -36,15 +36,15 @@ fixed AS (
     FROM per_res
 )
 SELECT resourceinstanceid,
-       g::geometry(Geometry, 4326)   AS spatial_location_geom,
+       g::geometry(Geometry, 3005)   AS spatial_location_geom,
        ST_GeometryType(g)            AS spatial_location_geom_type,
        ST_IsValid(raw)               AS spatial_location_source_valid,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 1)) THEN NULL
-             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 4326)      AS spatial_location_points,
+             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 3005)      AS spatial_location_points,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 2)) THEN NULL
-             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS spatial_location_lines,
+             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 3005) AS spatial_location_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
-             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS spatial_location_polygons
+             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 3005)    AS spatial_location_polygons
 FROM fixed
 WITH NO DATA;
 

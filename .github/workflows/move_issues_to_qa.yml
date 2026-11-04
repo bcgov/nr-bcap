@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write # Needed to read issue links
+      issues: read
       pull-requests: read
       
     steps:

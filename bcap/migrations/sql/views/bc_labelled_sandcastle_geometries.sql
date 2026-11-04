@@ -1,3 +1,4 @@
+drop view if exists public.bc_labelled_sandcastle_geometries;
 create or replace view public.bc_labelled_sandcastle_geometries as
 (
 select
@@ -7,10 +8,10 @@ select
     g.resourceinstanceid,
     g.nodeid,
     g.featureid,
-    ST_Transform(g.geom, 3005) as geom
+    ST_Transform(g.geom, 3005)::geometry(Geometry, 3005) as geom
 from geojson_geometries g
          join (select re2.*
                from resource_instances re2
                         join graphs gr on re2.graphid = gr.graphid and
-                                          gr.slug = 'sandcastle') re
+                                          gr.slug = 'project_sandbox') re
               on g.resourceinstanceid = re.resourceinstanceid);

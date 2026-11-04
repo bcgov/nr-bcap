@@ -20,8 +20,12 @@ from bcap.views.generated import (
     ArchaeologicalSiteView,
     BcapMessageListView,
     BcapMessageView,
+    BcapServiceRequestListView,
+    BcapServiceRequestView,
     ContributorListView,
     ContributorView,
+    DocumentListView,
+    DocumentView,
     DocumentSubmissionListView,
     DocumentSubmissionView,
     HcaPermitListView,
@@ -44,8 +48,6 @@ from bcap.views.generated import (
     ProcessRequirementView,
     ProjectEngagementListView,
     ProjectEngagementView,
-    PublicationListView,
-    PublicationView,
     RepositoryListView,
     RepositoryView,
     SiteSubmissionListView,
@@ -76,6 +78,16 @@ urlpatterns = [
         name="api_bcap_message",
     ),
     path(
+        "api/bcap_service_request",
+        BcapServiceRequestListView.as_view(),
+        name="api_bcap_service_request_list",
+    ),
+    path(
+        "api/bcap_service_request/<uuid:pk>/",
+        BcapServiceRequestView.as_view(),
+        name="api_bcap_service_request",
+    ),
+    path(
         "api/contributor",
         ContributorListView.as_view(),
         name="api_contributor_list",
@@ -84,6 +96,16 @@ urlpatterns = [
         "api/contributor/<uuid:pk>/",
         ContributorView.as_view(),
         name="api_contributor",
+    ),
+    path(
+        "api/document",
+        DocumentListView.as_view(),
+        name="api_document_list",
+    ),
+    path(
+        "api/document/<uuid:pk>/",
+        DocumentView.as_view(),
+        name="api_document",
     ),
     path(
         "api/document_submission",
@@ -194,16 +216,6 @@ urlpatterns = [
         "api/project_engagement/<uuid:pk>/",
         ProjectEngagementView.as_view(),
         name="api_project_engagement",
-    ),
-    path(
-        "api/publication",
-        PublicationListView.as_view(),
-        name="api_publication_list",
-    ),
-    path(
-        "api/publication/<uuid:pk>/",
-        PublicationView.as_view(),
-        name="api_publication",
     ),
     path(
         "api/repository",

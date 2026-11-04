@@ -21,7 +21,7 @@ DO $$ BEGIN RAISE WARNING 'TIMING archaeological_site.mv_site_boundary start %',
 DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_site_boundary CASCADE;
 CREATE MATERIALIZED VIEW archaeological_site.mv_site_boundary AS
 WITH geom_unprotected_area AS (
-    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 3005)) AS geom
     FROM public.geojson_geometries gg
     WHERE gg.nodeid = '7c8eb1f8-44e2-4239-afaa-9cbf1fadf160'::uuid
     GROUP BY gg.tileid
@@ -40,7 +40,7 @@ unprotected_area AS (
     GROUP BY t.parenttileid
 ),
 geom_site_boundary AS (
-    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 4326)) AS geom
+    SELECT gg.tileid, ST_Collect(ST_Transform(gg.geom, 3005)) AS geom
     FROM public.geojson_geometries gg
     WHERE gg.nodeid = 'b18223c2-13ef-11f0-8695-0242ac170007'::uuid
     GROUP BY gg.tileid

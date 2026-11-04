@@ -1,5 +1,5 @@
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.aliases.publication import PublicationAliases as aliases
+from bcap.util.aliases.document import DocumentAliases as aliases
 from bcgov_arches_common.util.bc_primary_descriptors_function import (
     BCPrimaryDescriptorsFunction,
 )
@@ -7,13 +7,13 @@ from bcgov_arches_common.util.graph_lookup import GraphLookup
 
 details = {
     "functionid": "60000000-0000-0000-0000-000000001004",
-    "name": "Publication Descriptors",
+    "name": "Document Descriptors",
     "type": "primarydescriptors",
-    "modulename": "publication_descriptors.py",
-    "description": "Function that provides the primary descriptors for BCAP Publications",
+    "modulename": "document_descriptors.py",
+    "description": "Function that provides the primary descriptors for BCAP Documents",
     "defaultconfig": {
-        "module": "bcap.functions.publication_descriptors",
-        "class_name": "PublicationDescriptors",
+        "module": "bcap.functions.document_descriptors",
+        "class_name": "DocumentDescriptors",
         "descriptor_types": {
             "name": {},
             "description": {},
@@ -21,24 +21,24 @@ details = {
         },
         "triggering_nodegroups": [],
     },
-    "classname": "PublicationDescriptors",
-    "component": "views/components/functions/publication-descriptors",
+    "classname": "DocumentDescriptors",
+    "component": "views/components/functions/document-descriptors",
 }
 
 
-class PublicationDescriptors(BCPrimaryDescriptorsFunction):
+class DocumentDescriptors(BCPrimaryDescriptorsFunction):
     # For Name part of descriptor
-    _graph_slug = GraphSlugs.PUBLICATION
+    _graph_slug = GraphSlugs.DOCUMENT
     _graph_lookup = None
 
     _name_nodes = [aliases.TITLE, aliases.JOURNAL_OR_VOLUME_NAME]
-    _card_nodes = [aliases.AUTHORS, aliases.PUBLICATION_TYPE]
+    _card_nodes = [aliases.AUTHORS, aliases.DOCUMENT_TYPE]
 
     def __init__(self):
-        super(PublicationDescriptors).__init__()
+        super(DocumentDescriptors).__init__()
         self._graph_lookup = GraphLookup(
-            PublicationDescriptors._graph_slug,
-            PublicationDescriptors._name_nodes + PublicationDescriptors._card_nodes,
+            DocumentDescriptors._graph_slug,
+            DocumentDescriptors._name_nodes + DocumentDescriptors._card_nodes,
         )
 
     def get_primary_descriptor_from_nodes(
@@ -70,8 +70,8 @@ class PublicationDescriptors(BCPrimaryDescriptorsFunction):
         parent_publication_name = ""
 
         publication_type = self.get_value_from_node(
-            self._graph_lookup.get_node(aliases.PUBLICATION_TYPE),
-            self._graph_lookup.get_datatype(aliases.PUBLICATION_TYPE),
+            self._graph_lookup.get_node(aliases.DOCUMENT_TYPE),
+            self._graph_lookup.get_datatype(aliases.DOCUMENT_TYPE),
             resource,
         )
         if publication_type == "Volume / Publication Number":

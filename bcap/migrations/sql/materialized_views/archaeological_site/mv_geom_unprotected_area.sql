@@ -19,7 +19,7 @@ DROP MATERIALIZED VIEW IF EXISTS archaeological_site.mv_geom_unprotected_area CA
 CREATE MATERIALIZED VIEW archaeological_site.mv_geom_unprotected_area AS
 WITH per_tile AS (
     SELECT t.resourceinstanceid, t.tileid,
-           ST_Collect(ST_Transform(g.geom, 4326)) AS geom
+           ST_Collect(ST_Transform(g.geom, 3005)) AS geom
     FROM public.tiles t
     JOIN public.geojson_geometries g
       ON g.tileid = t.tileid AND g.nodeid = '7c8eb1f8-44e2-4239-afaa-9cbf1fadf160'::uuid
@@ -36,15 +36,15 @@ fixed AS (
     FROM per_res
 )
 SELECT resourceinstanceid,
-       g::geometry(Geometry, 4326)   AS unprotected_area_geom,
+       g::geometry(Geometry, 3005)   AS unprotected_area_geom,
        ST_GeometryType(g)            AS unprotected_area_geom_type,
        ST_IsValid(raw)               AS unprotected_area_source_valid,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 1)) THEN NULL
-             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 4326)      AS unprotected_area_points,
+             ELSE ST_CollectionExtract(g, 1) END)::geometry(MultiPoint, 3005)      AS unprotected_area_points,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 2)) THEN NULL
-             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 4326) AS unprotected_area_lines,
+             ELSE ST_CollectionExtract(g, 2) END)::geometry(MultiLineString, 3005) AS unprotected_area_lines,
        (CASE WHEN ST_IsEmpty(ST_CollectionExtract(g, 3)) THEN NULL
-             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 4326)    AS unprotected_area_polygons
+             ELSE ST_CollectionExtract(g, 3) END)::geometry(MultiPolygon, 3005)    AS unprotected_area_polygons
 FROM fixed
 WITH NO DATA;
 

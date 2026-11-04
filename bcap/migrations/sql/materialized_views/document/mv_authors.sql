@@ -12,14 +12,14 @@ SET client_min_messages = warning;
 SET maintenance_work_mem = '512MB';
 SET work_mem             = '128MB';
 
-CREATE SCHEMA IF NOT EXISTS publication;
+CREATE SCHEMA IF NOT EXISTS document;
 
 -- ---------------------------------------------------------------------
 -- authors  (cardinality n)
 -- ---------------------------------------------------------------------
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_authors start %', clock_timestamp(); END $$;
-DROP MATERIALIZED VIEW IF EXISTS publication.mv_authors CASCADE;
-CREATE MATERIALIZED VIEW publication.mv_authors AS
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_authors start %', clock_timestamp(); END $$;
+DROP MATERIALIZED VIEW IF EXISTS document.mv_authors CASCADE;
+CREATE MATERIALIZED VIEW document.mv_authors AS
 WITH authors AS (
     SELECT t.resourceinstanceid AS resourceinstanceid,
            jsonb_agg(jsonb_build_object(
@@ -33,5 +33,5 @@ WITH authors AS (
 SELECT resourceinstanceid, arr AS authors FROM authors
 WITH NO DATA;
 
-CREATE UNIQUE INDEX mv_authors_pk ON publication.mv_authors (resourceinstanceid);
-DO $$ BEGIN RAISE WARNING 'TIMING publication.mv_authors done %', clock_timestamp(); END $$;
+CREATE UNIQUE INDEX mv_authors_pk ON document.mv_authors (resourceinstanceid);
+DO $$ BEGIN RAISE WARNING 'TIMING document.mv_authors done %', clock_timestamp(); END $$;
