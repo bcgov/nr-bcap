@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/"
+>
+  <skos:Concept rdf:about="https://localhost/ecbf6d03-0c64-46fa-88a2-06cdc42e10d2">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/267c4298-6277-4291-a474-db8e7f595ed3">
+        <dcterms:title>Contributor Document Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Information Sharing Agreement</skos:prefLabel>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/ecbf6d03-0c64-46fa-88a2-06cdc42e10d2</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

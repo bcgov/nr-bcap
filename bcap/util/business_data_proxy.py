@@ -151,7 +151,7 @@ class ArchaeologicalSiteDataProxy(BusinessDataProxy):
             )
             and (
                 self.get_value_from_node(
-                    BCAPSiteAliases.REGISTRATION_STATUS,
+                    BCAPSiteAliases.DECISION_REGISTRATION_STATUS,
                     resourceinstanceid=resourceinstance.resourceinstanceid,
                 )
                 in ["Registered", "Federal Jurisdiction"]

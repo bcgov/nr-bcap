@@ -1,37 +1,36 @@
-import type { ArchaeologySiteSchema } from '@/bcap/schema/ArchaeologySiteSchema.ts';
+import arches from 'arches';
+import { apiFetchJson } from '@/bcap/api.ts';
 import type {
-    SiteVisitResponse,
-    SiteVisitSchema,
-} from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+    ArchaeologicalSite,
+    SiteVisit,
+    PaginatedSiteVisitList,
+} from '@/bcap/client/types.gen.ts';
+import type { HriaDiscontinuedData } from '@/bcap/client/types.gen.ts';
 
 export const getResourceData = async (
     graph_slug: string,
     resource_id: string,
-): Promise<
-    ArchaeologySiteSchema | SiteVisitSchema | HriaDiscontinuedDataSchema
-> => {
-    const response = await fetch(
-        `/bcap/api/resource/${graph_slug}/${resource_id}`,
+): Promise<ArchaeologicalSite | SiteVisit | HriaDiscontinuedData> =>
+    apiFetchJson(arches.urls.api_resource(graph_slug, resource_id));
+
+export const getResourceList = async (
+    graph_slug: string,
+    resource_ids: string[],
+): Promise<ArchaeologicalSite | SiteVisit | HriaDiscontinuedData> => {
+    const url: URL = new URL(
+        arches.urls.api_resource_list(graph_slug),
+        window.location.origin,
     );
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || response.statusText);
-    }
-    return await response.json();
+    url.searchParams.append('resource_ids', resource_ids.join(','));
+    return apiFetchJson(url.toString());
 };
 
 export const getRelatedResourceData = async (
     graph_slug: string,
     resource_id: string,
-): Promise<SiteVisitSchema[] | HriaDiscontinuedDataSchema[]> => {
-    const response = await fetch(
-        `/bcap/api/arch_site_related_resources/${graph_slug}/${resource_id}`,
+): Promise<SiteVisit[] | HriaDiscontinuedData[]> => {
+    const parsed = await apiFetchJson<PaginatedSiteVisitList>(
+        arches.urls.api_site_related_resources(graph_slug, resource_id),
     );
-    if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || response.statusText);
-    }
-    const parsed: SiteVisitResponse = await response.json();
     return parsed.results;
 };

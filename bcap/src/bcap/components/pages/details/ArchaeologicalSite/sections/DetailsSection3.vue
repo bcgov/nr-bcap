@@ -4,12 +4,12 @@ import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue'
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import 'primeicons/primeicons.css';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+import type { SiteVisit } from '@/bcap/client/types.gen.ts';
 import SiteVisitDetailsSection3 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection3.vue';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema[] | undefined;
+        data: SiteVisit[] | undefined;
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -25,8 +25,8 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<SiteVisitSchema[] | undefined>(
-    (): SiteVisitSchema[] | undefined => {
+const currentData = computed<SiteVisit[] | undefined>(
+    (): SiteVisit[] | undefined => {
         return props.data?.toSorted((a, b) =>
             (
                 a.aliased_data?.site_visit_details?.aliased_data
@@ -35,12 +35,12 @@ const currentData = computed<SiteVisitSchema[] | undefined>(
                 b.aliased_data?.site_visit_details?.aliased_data
                     ?.last_date_of_site_visit?.display_value ?? '',
             ),
-        ) as SiteVisitSchema[] | undefined;
+        );
     },
 );
 
-const sectionTitle = function (siteVisit: SiteVisitSchema): string {
-    return siteVisit.descriptors.en.name;
+const sectionTitle = function (siteVisit: SiteVisit): string {
+    return siteVisit.descriptors?.en?.name ?? '';
 };
 
 const hasSiteVisits = computed(() => {
@@ -66,7 +66,7 @@ const hasSiteVisits = computed(() => {
                     <div v-if="hasSiteVisits">
                         <SiteVisitDetailsSection3
                             v-for="visit in currentData"
-                            :key="visit.resourceinstanceid"
+                            :key="visit.resourceinstanceid ?? ''"
                             variant="subsection"
                             :data="visit"
                             :visible="false"

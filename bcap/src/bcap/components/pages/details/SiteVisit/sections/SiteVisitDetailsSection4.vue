@@ -3,13 +3,16 @@ import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
+import type { AliasedTileDataWithAudit } from '@/bcgov_arches_common/types.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: SiteVisitSchema | undefined;
-        hriaData: HriaDiscontinuedDataSchema | undefined;
+        data: SiteVisit | undefined;
+        hriaData: HriaDiscontinuedData | undefined;
         loading?: boolean;
     }>(),
     { loading: false },
@@ -18,23 +21,39 @@ const props = withDefaults(
 const arch = computed(() => props.data?.aliased_data?.archaeological_data);
 
 const cultureRows = computed(
-    () => arch.value?.aliased_data?.archaeological_culture || [],
+    () =>
+        (arch.value?.aliased_data?.archaeological_culture ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 const featureRows = computed(
-    () => arch.value?.aliased_data?.archaeological_feature || [],
+    () =>
+        (arch.value?.aliased_data?.archaeological_feature ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 const materialRows = computed(
-    () => arch.value?.aliased_data?.cultural_material || [],
+    () =>
+        (arch.value?.aliased_data?.cultural_material ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
-const stratRows = computed(() => arch.value?.aliased_data?.stratigraphy || []);
+const stratRows = computed(
+    () =>
+        (arch.value?.aliased_data?.stratigraphy ||
+            []) as unknown as AliasedTileDataWithAudit[],
+);
 const chronologyRows = computed(
-    () => arch.value?.aliased_data?.chronology || [],
+    () =>
+        (arch.value?.aliased_data?.chronology ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 const hriaChronologyRows = computed(
-    () => props.hriaData?.aliased_data?.chronology || [],
+    () =>
+        (props.hriaData?.aliased_data?.chronology ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 const disturbRows = computed(
-    () => arch.value?.aliased_data?.site_disturbance || [],
+    () =>
+        (arch.value?.aliased_data?.site_disturbance ||
+            []) as unknown as AliasedTileDataWithAudit[],
 );
 
 const hasFeatures = computed(() => featureRows.value.length > 0);

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/"
+>
+  <skos:Concept rdf:about="https://localhost/ad4ead72-ef2e-4ef5-9aef-8cfb3d176812">
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/ad4ead72-ef2e-4ef5-9aef-8cfb3d176812</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Notice of Project Intent</skos:prefLabel>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/e0c6a7a0-cf36-420a-b112-a3541fde4a1e">
+        <dcterms:title>Document Submission Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/a171f134-42e5-4ca8-98a2-b1e35bf37ff4">
+    <skos:prefLabel xml:lang="en">Final Report</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/e0c6a7a0-cf36-420a-b112-a3541fde4a1e"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/a171f134-42e5-4ca8-98a2-b1e35bf37ff4</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/e3eaecd5-6549-44c6-972d-962f24245180">
+    <skos:inScheme rdf:resource="https://localhost/e0c6a7a0-cf36-420a-b112-a3541fde4a1e"/>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/e3eaecd5-6549-44c6-972d-962f24245180</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Letter of Support</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/17f3974a-50f9-4916-8733-9eee89a12386">
+    <skos:prefLabel xml:lang="en">Interim Report</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/e0c6a7a0-cf36-420a-b112-a3541fde4a1e"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+    <dcterms:identifier>https://localhost/plugins/controlled-list-manager/item/17f3974a-50f9-4916-8733-9eee89a12386</dcterms:identifier>
+  </skos:Concept>
+</rdf:RDF>

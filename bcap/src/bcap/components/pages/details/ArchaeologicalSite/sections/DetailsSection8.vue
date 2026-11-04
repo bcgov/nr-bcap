@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
 import { getDisplayValue } from '@/bcap/util.ts';
@@ -8,13 +8,18 @@ import type { EditLogData } from '@/bcgov_arches_common/types.ts';
 import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
-import type { AliasedNodeData } from '@/arches_component_lab/types.ts';
 import type {
-    RemarksAndRestrictedInformationTile,
-    ContraventionDocumentTile,
-    RestrictedDocumentTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
+    AliasedNodeData,
+    AliasedTileData,
+} from '@/arches_vue_components/types.ts';
+import type {
+    ArchaeologicalSiteRemarksAndRestrictedInformationTile,
+    ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData,
+    ArchaeologicalSiteGeneralRemarkInformationTile,
+    SiteVisit,
+    SiteVisitGeneralRemarkTile,
+    SiteVisitRecommendationTile,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 import { formatFilenameUrl } from '@/bcgov_arches_common/datatypes/file-list/utils.ts';
 import {
@@ -24,8 +29,8 @@ import {
 
 const props = withDefaults(
     defineProps<{
-        data: RemarksAndRestrictedInformationTile | undefined;
-        siteVisitData?: SiteVisitSchema[];
+        data: ArchaeologicalSiteRemarksAndRestrictedInformationTile | undefined;
+        siteVisitData?: SiteVisit[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -42,11 +47,13 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<RemarksAndRestrictedInformationTile | undefined>(
-    (): RemarksAndRestrictedInformationTile | undefined => {
-        return props.data?.aliased_data as
-            | RemarksAndRestrictedInformationTile
-            | undefined;
+const currentData = computed<
+    ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData | undefined
+>(
+    ():
+        | ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData
+        | undefined => {
+        return props.data?.aliased_data;
     },
 );
 
@@ -70,7 +77,11 @@ const generalRemarkColumns = computed<ColumnDefinition[]>(() => {
 
 const restrictedRemarkColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'restricted_remark', label: 'Restricted Remarks' },
+        {
+            field: 'restricted_remark',
+            label: 'Restricted Remarks',
+            isHtml: true,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
@@ -128,7 +139,7 @@ const restrictedDocumentColumns = computed<ColumnDefinition[]>(() => {
 
 const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
     return [
-        { field: 'inventory_remark', label: 'Inventory Remarks' },
+        { field: 'inventory_remark', label: 'Inventory Remarks', isHtml: true },
         { field: 'contravention_address', label: 'Address' },
         { field: 'contravention_pid', label: 'PID' },
         { field: 'nros_file_number', label: 'NROS File #' },
@@ -148,7 +159,11 @@ const hcaContraventionColumns = computed<ColumnDefinition[]>(() => {
 const convictionColumns = computed<ColumnDefinition[]>(() => {
     return [
         { field: 'conviction_date', label: 'Conviction Date' },
-        { field: 'conviction_details', label: 'Inventory Remarks' },
+        {
+            field: 'conviction_details',
+            label: 'Inventory Remarks',
+            isHtml: true,
+        },
         {
             field: EDIT_LOG_FIELDS.ENTERED_ON,
             label: 'Entered On',
@@ -162,9 +177,70 @@ const convictionColumns = computed<ColumnDefinition[]>(() => {
     ];
 });
 
-const generalRemarksData = computed(
-    () => currentData.value?.general_remark_information || [],
+const toArchSiteRemark = (
+    tile: SiteVisitGeneralRemarkTile,
+): ArchaeologicalSiteGeneralRemarkInformationTile => ({
+    ...tile,
+    aliased_data: {
+        general_remark_source: tile.aliased_data?.remark_source ?? null,
+        general_remark_date: tile.aliased_data?.remark_date ?? null,
+        general_remark: tile.aliased_data?.remark ?? null,
+    },
+});
+
+const remarksFromSiteVisit = (
+    sv: SiteVisit,
+): ArchaeologicalSiteGeneralRemarkInformationTile[] =>
+    sv.aliased_data?.remarks_and_recommendations?.aliased_data?.general_remark?.map(
+        toArchSiteRemark,
+    ) ?? [];
+
+const recommendationColumns = computed<ColumnDefinition[]>(() => [
+    {
+        field: 'recorders_recommendation',
+        label: "Recorder's Recommendation",
+        isHtml: true,
+    },
+    {
+        field: 'archaeology_branch_recommendation',
+        label: 'Archaeology Branch Recommendation',
+        isHtml: true,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_ON,
+        label: 'Entered On',
+        visible: props.showAuditFields,
+    },
+    {
+        field: EDIT_LOG_FIELDS.ENTERED_BY,
+        label: 'Entered By',
+        visible: props.showAuditFields,
+    },
+]);
+
+const recommendationsSource = computed(() =>
+    props.siteVisitData.flatMap(
+        (sv): SiteVisitRecommendationTile[] =>
+            sv.aliased_data?.remarks_and_recommendations?.aliased_data
+                ?.recommendation ?? [],
+    ),
 );
+
+const { processedData: recommendationsTableData } = useTileEditLog(
+    recommendationsSource as unknown as Ref<AliasedTileData[]>,
+    toRef(props, 'editLogData'),
+);
+
+const hasRecommendations = computed(
+    () => recommendationsTableData.value.length > 0,
+);
+
+const generalRemarksData = computed<
+    ArchaeologicalSiteGeneralRemarkInformationTile[]
+>(() => [
+    ...(currentData.value?.general_remark_information ?? []),
+    ...props.siteVisitData.flatMap(remarksFromSiteVisit),
+]);
 const hcaContraventionsData = computed(
     () => currentData.value?.hca_contravention || [],
 );
@@ -175,18 +251,18 @@ const restrictedInfoDataRaw = computed(
 const keywordsData = computed(() => {
     const keywords = currentData.value?.remark_keyword;
     if (!keywords) return [];
-    const keywordsArray = Array.isArray(keywords) ? keywords : [keywords];
-    return keywordsArray
+    return keywords
         .map((tile) => tile.aliased_data?.remark_keyword)
-        .filter((keyword): keyword is AliasedNodeData => !!keyword);
+        .filter(
+            (keyword): keyword is NonNullable<typeof keyword> => !!keyword,
+        ) as unknown as AliasedNodeData[];
 });
 
 const contraventionDocumentsExpanded = computed(() => {
     const docs = currentData.value?.contravention_document;
     if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as ContraventionDocumentTile[],
+        docs as unknown as AliasedTileData[],
         'contravention_document',
     );
 });
@@ -194,40 +270,39 @@ const contraventionDocumentsExpanded = computed(() => {
 const restrictedDocumentsExpanded = computed(() => {
     const docs = currentData.value?.restricted_document;
     if (!docs) return [];
-    const docsArray = Array.isArray(docs) ? docs : [docs];
     return expandDocumentRows(
-        docsArray as RestrictedDocumentTile[],
+        docs as unknown as AliasedTileData[],
         'restricted_document',
     );
 });
 
 const { processedData: generalRemarksTableData } = useTileEditLog(
-    generalRemarksData,
+    generalRemarksData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: hcaContraventionsTableData } = useTileEditLog(
-    hcaContraventionsData,
+    hcaContraventionsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: convictionsTableData } = useTileEditLog(
-    convictionsData,
+    convictionsData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedInfoData } = useTileEditLog(
-    restrictedInfoDataRaw,
+    restrictedInfoDataRaw as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: contraventionDocumentsProcessed } = useTileEditLog(
-    contraventionDocumentsExpanded,
+    contraventionDocumentsExpanded as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: restrictedDocumentsProcessed } = useTileEditLog(
-    restrictedDocumentsExpanded,
+    restrictedDocumentsExpanded as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
@@ -295,6 +370,25 @@ const hasHcaContraventionsSection = computed(
                     <EmptyState
                         v-else
                         message="No keywords available."
+                    />
+                </template>
+            </DetailsSection>
+
+            <DetailsSection
+                section-title="Recommendations"
+                variant="subsection"
+                :visible="true"
+                :class="{ 'empty-section': !hasRecommendations }"
+            >
+                <template #sectionContent>
+                    <StandardDataTable
+                        v-if="hasRecommendations"
+                        :table-data="recommendationsTableData"
+                        :column-definitions="recommendationColumns"
+                    />
+                    <EmptyState
+                        v-else
+                        message="No recommendations available."
                     />
                 </template>
             </DetailsSection>

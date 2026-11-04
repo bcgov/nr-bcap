@@ -1,0 +1,24 @@
+{
+    "id": "REQ-DOC-TEMPLATE-000",
+    "name": "Document Submission",
+    "type": "Module",
+    "internal": true,
+    "resource": null,
+    "due": null,
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [],
+    "requirements": [
+        {
+            "id": "REQ-DOC-TEMPLATE-001",
+            "name": "Submit Documents",
+            "type": "Document Submission",
+            "internal": false,
+            "resource": "document_submission",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        }
+    ]
+}

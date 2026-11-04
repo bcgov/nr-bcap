@@ -1,0 +1,61 @@
+[
+    {
+        "name": "Simple 1 - Description of test",
+        "filters": [
+            {
+                "graph_name": "Graph Name",
+                "card_name": "Card Name",
+                "node_name": "Node Name",
+                "value": "filter-value",
+                "operator": "eq"
+            },
+            {
+                "graph_name": "Graph Name",
+                "card_name": "Card Name",
+                "node_name": "Node Name",
+                "value": "filter-value"
+            }
+        ],
+        "intersection_targets": [
+            "Target Graph A",
+            "Target Graph B"
+        ]
+    },
+    {
+        "name": "Complex 1 - Multi-graph with date range",
+        "filters": [
+            {
+                "graph_name": "Graph A",
+                "card_name": "Card Name",
+                "node_name": "Node Name",
+                "value": "some-value"
+            },
+            {
+                "graph_name": "Graph B",
+                "card_name": "Card Name",
+                "node_name": "Date Node",
+                "value": ">2021-01-01"
+            }
+        ],
+        "intersection_targets": [
+            "Target Graph A",
+            "Target Graph B",
+            "Target Graph C"
+        ]
+    },
+    {
+        "name": "NEQ operator example",
+        "filters": [
+            {
+                "graph_name": "Graph Name",
+                "card_name": "Card Name",
+                "node_name": "Node Name",
+                "value": "excluded-value",
+                "operator": "!eq"
+            }
+        ],
+        "intersection_targets": [
+            "Target Graph A"
+        ]
+    }
+]

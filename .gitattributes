@@ -1,6 +1,9 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
-
+# Jupyter notebooks - strip outputs/execution counts before committing.
+# Requires nbstripout: run `nbstripout --install` after cloning (jupyter deps group).
+*.ipynb filter=nbstripout diff=ipynb
+*.zpln filter=nbstripout
 # Known binary formats
 *.png binary
 *.jpg binary

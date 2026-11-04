@@ -6,7 +6,7 @@ import 'primeicons/primeicons.css';
 import Section1 from '@/bcap/components/pages/details/HcaPermit/sections/DetailsSection1.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { HcaPermitSchema } from '@/bcap/schema/HcaPermitSchema.ts';
+import type { HcaPermit } from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -21,7 +21,7 @@ const props = withDefaults(
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
-const { data: current, loading } = useResourceData<HcaPermitSchema>(
+const { data: current, loading } = useResourceData<HcaPermit>(
     'hca_permit',
     resourceId,
 );

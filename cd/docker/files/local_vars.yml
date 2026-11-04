@@ -16,6 +16,9 @@ bcrhp_api_client_id: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_ID') }}
 # This is the hashed version for DB injection
 bcrhp_api_client_secret: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_SECRET') }}"
 
+restart_s6_services: True
+reconfigure_s6_services: False
+
 # Required for 7.6.x
 python_executable: /usr/bin/python3.12
 

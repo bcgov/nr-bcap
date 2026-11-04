@@ -6,7 +6,7 @@ import 'primeicons/primeicons.css';
 import Section1 from '@/bcap/components/pages/details/Contributor/sections/DetailsSection1.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { ContributorSchema } from '@/bcap/schema/ContributorSchema.ts';
+import type { Contributor } from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -21,7 +21,7 @@ const props = withDefaults(
 );
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
-const { data: current, loading } = useResourceData<ContributorSchema>(
+const { data: current, loading } = useResourceData<Contributor>(
     'contributor',
     resourceId,
 );

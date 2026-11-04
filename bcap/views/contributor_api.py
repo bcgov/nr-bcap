@@ -1,0 +1,39 @@
+"""Contributor lookups that aren't plain graph reads: the pick-lists staff
+screens need. The owner-scoped resource routes are generated (see
+bcap.views.generated.contributor)."""
+
+from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from bcap.permissions.route_guards import Internal
+from bcap.serializers.contributor_serializers import ContributorSummarySerializer
+from bcap.services.contributor.contributor_service import ContributorService
+
+
+@extend_schema(tags=["Internal: contributor"])
+class AssignableContributorsView(APIView):
+    """GET the Contributors work can be assigned to."""
+
+    permission_classes = [Internal]
+
+    @extend_schema(responses=ContributorSummarySerializer(many=True))
+    def get(self, request):
+        options = ContributorService().assignable_contributors()
+        return Response(ContributorSummarySerializer(options, many=True).data)
+
+
+@extend_schema(tags=["Admin: registration"])
+class UnlinkedContributorsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    @extend_schema(
+        responses=ContributorSummarySerializer(many=True),
+        description="Contributors not yet linked to a user account.",
+    )
+    def get(self, request):
+        options = ContributorService().invitable_contributors(
+            request.GET.get("search", "")
+        )
+        return Response(ContributorSummarySerializer(options, many=True).data)

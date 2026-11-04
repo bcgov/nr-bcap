@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import _ from 'underscore';
 import mapPopupProvider from 'utils/map-popup-provider';
 import mapFilterUtils from 'utils/map-filter-utils';
+import { sanitizeHtml } from '@/bcap/util.ts';
 
 import type {
     DescriptorsType,
@@ -40,7 +41,6 @@ function advanceFeature(direction: string) {
                 : activeFeatureOffset.value + 1;
     }
     visibleFeature.value = features[activeFeatureOffset.value].value;
-    // emit("advance-feature", direction);
 }
 
 const currentDisplayValues = computed<Partial<DescriptorsType>>(() => {
@@ -95,11 +95,7 @@ const descriptionProperties = [
 ];
 function setDisplayValues() {
     props.popupFeatures.forEach((raw_feature: PopupFeatureType, index) => {
-        // raw_feature.displayValues = isRef(raw_feature.displayValues)
-        //     ? raw_feature.displayValues
-        //     : ref(raw_feature.displayValues);
         const feature: Ref<PopupFeatureType> = ref(raw_feature);
-        // const feature = raw_feature;
         features.push(feature);
         if (feature.value.active()) {
             visibleFeature.value = feature.value;
@@ -115,9 +111,6 @@ function setDisplayValues() {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Got display values from server');
-                    // const displayValues: Ref<Partial<DescriptorsType>> = ref(
-                    //     {},
-                    // );
                     const keys = descriptionProperties as DescriptorKey[];
 
                     keys.forEach((prop: keyof DescriptorsType) => {
@@ -205,7 +198,7 @@ onMounted(() => {
                             ? 'scroll'
                             : 'hidden',
                     }"
-                    v-html="currentDisplayValues.map_popup"
+                    v-html="sanitizeHtml(currentDisplayValues.map_popup)"
                 ></div>
 
                 <div
@@ -307,6 +300,5 @@ onMounted(() => {
 
 <style scoped>
 .hover-feature-body {
-    /* Your styling here */
 }
 </style>

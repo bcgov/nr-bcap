@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import {
     useResourceData,
     useRelatedResourceData,
@@ -15,8 +16,10 @@ import Section6 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVis
 import Section7 from '@/bcap/components/pages/details/SiteVisit/sections/SiteVisitDetailsSection7.vue';
 import DataTable from 'primevue/datatable';
 import type { DetailsData } from '@/bcap/types.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
+import type {
+    SiteVisit,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -39,16 +42,20 @@ const props = withDefaults(
 
 const resourceId = computed(() => props.data?.resourceinstance_id);
 
-const { data: current, loading } = useResourceData<SiteVisitSchema>(
-    'site_visit',
-    resourceId,
-);
+const {
+    data: current,
+    loading,
+    error: visitError,
+} = useResourceData<SiteVisit>('site_visit', resourceId);
 
-const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
-    'hria_discontinued_data',
-    resourceId,
-    true,
-);
+const { data: hriaData, error: hriaError } =
+    useRelatedResourceData<HriaDiscontinuedData>(
+        'hria_discontinued_data',
+        resourceId,
+        true,
+    );
+
+const loadError = computed(() => visitError.value || hriaError.value);
 </script>
 
 <template>
@@ -61,6 +68,11 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
     </div>
 
     <div class="container">
+        <InlineError
+            v-if="loadError"
+            title="Some of this record could not be loaded."
+            :detail="loadError"
+        />
         <Section1
             :data="current || undefined"
             :loading="loading"
@@ -82,7 +94,9 @@ const { data: hriaData } = useRelatedResourceData<HriaDiscontinuedDataSchema>(
         />
         <Section4
             :data="current || undefined"
-            :hria-data="(hriaData as HriaDiscontinuedDataSchema) || undefined"
+            :hria-data="
+                (hriaData as HriaDiscontinuedData | undefined) || undefined
+            "
             :loading="loading"
             :force-collapsed="props.forceCollapsed"
         />

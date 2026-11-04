@@ -1,0 +1,14 @@
+{
+    "id": "FN-001",
+    "name": "Verify First Nation Consultation",
+    "notes": "",
+    "satisfied": false,
+    "sub_requirements": [
+        {
+            "name": "Review FN Consultation documents",
+            "description": "Review FN consultation documents satisfy consultation requirements",
+            "sort_order": 1,
+            "sub_satisfied": false
+        }
+    ]
+}

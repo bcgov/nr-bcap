@@ -35,9 +35,7 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HCA Permit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -56,9 +54,7 @@
                 {
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Issuing Agency",
                         "placeholder": {
                             "en": "Select an option"
@@ -78,9 +74,7 @@
                     "card_id": "e6bceab2-0805-4bf8-a117-aff28e1ed741",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Permit Number",
                         "maxLength": null,
                         "placeholder": {
@@ -218,7 +212,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"22f3e2b1-a0a3-4c2e-adfb-51be822ed8e2\",\"language_id\":\"en\",\"list_item_id\":\"72b30f11-a739-529f-9858-665166bb1a30\",\"value\":\"Permit Holder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"/bcap/plugins/controlled-list-manager/item/72b30f11-a739-529f-9858-665166bb1a30\"}]}}]"
+                        "searchString": "/bcap/search?language=*&advanced-search=[{\"op\":\"and\",\"e2f1c29a-c500-11ed-9089-5254004d77d3\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"22f3e2b1-a0a3-4c2e-adfb-51be822ed8e2\",\"language_id\":\"en\",\"list_item_id\":\"72b30f11-a739-529f-9858-665166bb1a30\",\"value\":\"Permit Holder\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/72b30f11-a739-529f-9858-665166bb1a30\"}]}}]"
                     },
                     "datatype": "resource-instance-list",
                     "description": null,

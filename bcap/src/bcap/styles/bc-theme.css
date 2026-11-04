@@ -1,0 +1,441 @@
+/* Shared BC-government look for the dashboard and admin pages.
+
+   - Design tokens (:root) and the page header (.title-row / .page-title) are
+     global: import this file and they apply.
+   - Form-widget theming is gated under .bc-form, so a page can import this for
+     the header/tokens alone without restyling its PrimeVue widgets. Add
+     class="bc-form" to a form's root to opt in, and overlay-class="bc-overlay"
+     on teleported Select/MultiSelect panels. */
+
+@import url('./bc-toast.css');
+
+:root {
+    --bc-navy: #003366;
+    --bc-navy-dark: #00264d;
+    --bc-gold: #fcba19;
+    --bc-link: #1a5a96;
+    --bc-border: #9ca3af;
+    --bc-muted: #6b7280;
+    --bc-grey: #606060;
+    --bc-panel: #f3f4f6;
+    --bc-selected: #e6eef5;
+    --bc-text: #222222;
+    --internal-bg: #fef1d8;
+    --internal-text: #6c4a00;
+    --external-bg: #e3ecf7;
+    --external-text: #1f4a7a;
+    --resolved-bg: #e3f1e6;
+    --resolved-text: #2e6b3a;
+}
+
+/* ---------------------------------------------------------------------------
+   PrimeVue/Arches overrides: applied app-wide so components don't each repeat them.
+   --------------------------------------------------------------------------- */
+
+* :focus,
+* :focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* Arches' accessibility indicator (base-manager.css) rings a focused control in
+   black over an inset yellow shadow, which reads as an alert against this
+   palette. It is per-element, so it outranks the reset above; the same ring the
+   app draws elsewhere replaces it, rather than leaving keyboard focus invisible. */
+.bcgov-main-content a[href]:focus-visible,
+.bcgov-main-content button:focus-visible,
+.bcgov-main-content input:focus-visible,
+.bcgov-main-content select:focus-visible,
+.bcgov-main-content textarea:focus-visible,
+.bcgov-main-content *[tabindex]:focus-visible,
+.bcgov-main-content *[contenteditable]:focus-visible {
+    outline: 0px !important;
+    outline-offset: -2px !important;
+    box-shadow: none !important;
+}
+
+/* PrimeVue's own ring is off in the preset (see primevue-bcgov-preset.ts). What
+   remains here is the browser's default focus ring on the widgets and popups it
+   lands on. Controls that need a focus indicator draw their own. */
+.p-select:focus-visible,
+.p-select *:focus-visible,
+.p-multiselect *:focus-visible,
+.p-menu *:focus-visible,
+.p-select-overlay *:focus-visible,
+.p-multiselect-overlay *:focus-visible {
+    outline: none !important;
+}
+
+/* A popup menu focuses its list (it carries the tabindex), so the ring lands on
+   the list and reads as a box around the whole panel. */
+.p-menu-list,
+.p-menu-list:focus,
+.p-menu-list:focus-visible,
+.p-select-list,
+.p-select-list:focus,
+.p-select-list:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* A popup takes focus when it opens, so the container itself draws a ring
+   around the whole panel. The items inside show their own hover/focus state. */
+.p-menu,
+.p-menu:focus,
+.p-menu:focus-visible,
+.p-select-overlay,
+.p-select-overlay:focus,
+.p-select-overlay:focus-visible,
+.p-treeselect-overlay,
+.p-treeselect-overlay:focus,
+.p-treeselect-overlay:focus-visible,
+.p-multiselect-overlay,
+.p-multiselect-overlay:focus,
+.p-multiselect-overlay:focus-visible {
+    outline: none !important;
+}
+
+/* The select's chevron button ships with its own background and border, which
+   read as a coloured block beside the value. */
+.p-select-dropdown,
+.p-select-dropdown:hover,
+.p-select-dropdown:focus,
+.p-select-dropdown:focus-visible {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: inherit !important;
+}
+
+/* Focused inputs (the select's filter box included) keep the form's border
+   rather than switching to the theme's primary colour, which reads as a ring
+   around the field. */
+.p-inputtext:focus,
+.p-inputtext:focus-visible,
+.p-select-overlay .p-inputtext:focus,
+.p-multiselect-overlay .p-inputtext:focus,
+.p-iconfield:focus-within .p-inputtext {
+    border-color: var(--bc-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Open or focused, a select keeps the form's border rather than switching to
+   the theme's primary colour. */
+.p-select.p-focus,
+.p-select.p-select-open,
+.p-select:focus,
+.p-select:focus-within {
+    border-color: var(--bc-border) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* --------------------------- end PrimeVue overrides --------------------- */
+
+/* Buttons read at one size across the app; a component that needs another size
+   overrides it on its own class. */
+.p-button {
+    font-size: 14px !important;
+}
+
+/* Scoped to the app's content root: a bare `a` selector reaches the Arches
+   chrome around the mounted app and recolours the top nav links. */
+.bcgov-main-content a {
+    color: var(--bc-link);
+    text-decoration: none;
+}
+.bcgov-main-content a:hover,
+.bcgov-main-content a:focus {
+    text-decoration: underline;
+}
+
+.title-row {
+    border-bottom: 3px solid #333;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.page-title {
+    color: var(--bc-navy);
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* PrimeVue renders in the preset's own font; force the shared one on the form,
+   but keep icon elements on their icon font or the glyphs blank out. */
+.bc-form * {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+.bc-form .pi {
+    font-family: 'primeicons';
+}
+.bc-form .fa,
+.bc-form .fas,
+.bc-form .far {
+    font-family: 'Font Awesome 6 Free';
+}
+
+.bc-form .p-inputtext,
+.bc-form .p-select,
+.bc-form .p-multiselect,
+.bc-form .p-select.p-focus,
+.bc-form .p-multiselect.p-focus,
+.bc-form .p-select.p-overlay-open,
+.bc-form .p-multiselect.p-overlay-open {
+    width: 100%;
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    background: #ffffff;
+}
+.bc-form .p-inputtext,
+.bc-form .p-select-label,
+.bc-form .p-multiselect-label {
+    font-size: 1.15rem;
+    color: var(--bc-text);
+}
+.bc-form .p-inputtext::placeholder,
+.bc-form .p-select-label.p-placeholder,
+.bc-form .p-multiselect-label.p-placeholder {
+    color: var(--bc-muted);
+}
+.bc-form .p-inputtext:focus,
+.bc-form .p-select.p-focus,
+.bc-form .p-multiselect.p-focus {
+    outline: none;
+    border-color: var(--bc-border);
+    box-shadow: none;
+}
+
+.bc-form .p-selectbutton {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid var(--bc-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.bc-form .p-togglebutton {
+    background: #ffffff;
+    color: #374151;
+    border: none;
+    border-radius: 0;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+}
+.bc-form .p-togglebutton + .p-togglebutton {
+    border-left: none;
+}
+.bc-form .p-togglebutton-label {
+    background: transparent;
+    color: inherit;
+}
+.bc-form .p-togglebutton.p-togglebutton-checked,
+.bc-form .p-togglebutton.p-togglebutton-checked .p-togglebutton-label {
+    background: var(--bc-navy);
+    color: #ffffff;
+}
+/* Drop the preset's sliding highlight and the inner content box. */
+.bc-form .p-togglebutton::before {
+    display: none;
+}
+.bc-form .p-togglebutton,
+.bc-form .p-togglebutton * {
+    outline: none !important;
+    box-shadow: none !important;
+    --p-focus-ring-width: 0 !important;
+    --p-focus-ring-color: transparent !important;
+    --p-focus-ring-offset: 0 !important;
+    --p-focus-ring-shadow: none !important;
+}
+.bc-form .p-togglebutton-content,
+.bc-form .p-togglebutton-checked .p-togglebutton-content,
+.bc-form .p-togglebutton-label {
+    background: transparent !important;
+    border-radius: 0;
+}
+
+.bc-form .p-multiselect-chip-item {
+    background: var(--bc-navy);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 1.15rem;
+}
+.bc-form .p-multiselect-chip-icon {
+    color: #ffffff;
+}
+.bc-form .p-multiselect.p-disabled {
+    opacity: 1;
+    background: var(--bc-panel);
+}
+
+/* The preset's checkbox square is black; make it white/navy here and in the
+   teleported overlay. */
+.bc-form .p-checkbox-box,
+.bc-overlay .p-checkbox-box {
+    background: #ffffff;
+    border: 1px solid var(--bc-border);
+}
+.bc-form .p-checkbox-checked .p-checkbox-box,
+.bc-overlay .p-checkbox-checked .p-checkbox-box {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+}
+.bc-form .p-checkbox-icon,
+.bc-overlay .p-checkbox-icon {
+    color: #ffffff;
+}
+
+.bc-form .p-button.cta {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
+    white-space: nowrap;
+}
+.bc-form .p-button.cta:not(:disabled):hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}
+.bc-form .p-button.cta:disabled {
+    background: var(--bc-muted);
+    border-color: var(--bc-muted);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.bc-form .p-button.copy-btn {
+    background: var(--bc-panel);
+    border: 1px solid var(--bc-border);
+    color: var(--bc-navy);
+}
+.bc-form .p-button.copy-btn:not(:disabled):hover {
+    background: #e5e7eb;
+    border-color: var(--bc-muted);
+}
+
+/* Select/MultiSelect panels are teleported to <body>, so they are themed via
+   their overlay class rather than the .bc-form wrapper. */
+.bc-overlay {
+    background: #ffffff;
+    color: var(--bc-text);
+    border: 1px solid #d1d5db;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+.bc-overlay,
+.bc-overlay * {
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+    font-size: 1.15rem;
+}
+.bc-overlay .pi {
+    font-family: 'primeicons';
+}
+.bc-overlay .p-select-option,
+.bc-overlay .p-multiselect-option {
+    color: var(--bc-text);
+}
+.bc-overlay .p-select-option.p-focus,
+.bc-overlay .p-multiselect-option.p-focus {
+    background: var(--bc-panel);
+}
+.bc-overlay .p-select-option.p-select-option-selected,
+.bc-overlay .p-multiselect-option.p-multiselect-option-selected {
+    background: var(--bc-selected);
+    color: var(--bc-navy);
+}
+.bc-overlay .p-select-filter,
+.bc-overlay .p-multiselect-filter {
+    background: #ffffff;
+    color: var(--bc-text);
+    border: 1px solid var(--bc-border);
+}
+.bc-overlay .p-multiselect-header,
+.bc-overlay .p-select-list-container,
+.bc-overlay .p-select-list,
+.bc-overlay .p-multiselect-list-container,
+.bc-overlay .p-multiselect-list,
+.bc-overlay .p-virtualscroller {
+    background: #ffffff;
+}
+.bc-overlay *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.bc-overlay *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.bc-overlay *::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 5px;
+}
+
+/* Dialogs teleport to <body>, so they are themed globally rather than through
+   .bc-form. Navy header + gold rule is the BC Gov header signature. */
+.p-dialog {
+    border-radius: 4px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    font-family: 'BCSans', 'Noto Sans', Verdana, Arial, sans-serif;
+}
+.p-dialog .p-dialog-header {
+    background: var(--bc-navy);
+    color: #ffffff;
+    border-bottom: 3px solid var(--bc-gold);
+    border-radius: 4px 4px 0 0;
+    padding: 1rem 1.5rem;
+}
+.p-dialog .p-dialog-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+.p-dialog .p-dialog-header-actions .p-button {
+    color: #ffffff;
+}
+.p-dialog .p-dialog-content {
+    padding: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    color: var(--bc-text);
+}
+.p-dialog .p-button-label {
+    font-size: 1.4rem;
+}
+.p-dialog .p-dialog-footer {
+    padding: 0 1.5rem 1.25rem;
+    gap: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+}
+/* BC Gov buttons are square-ish and full-weight; the danger red is the
+   standard #d8292f rather than the preset's brighter red. */
+.p-dialog .p-dialog-footer .p-button {
+    border-radius: 4px;
+    font-weight: 700;
+    padding: 0.55rem 1.25rem;
+}
+.p-dialog .p-dialog-footer .p-button-text {
+    color: var(--bc-navy);
+}
+.p-dialog .p-dialog-footer .p-button-text:not(:disabled):hover {
+    background: var(--bc-panel);
+}
+.p-dialog .p-dialog-footer .p-button-danger {
+    background: #d8292f;
+    border-color: #d8292f;
+    color: #ffffff;
+}
+.p-dialog .p-dialog-footer .p-button-danger:not(:disabled):hover {
+    background: #a91d22;
+    border-color: #a91d22;
+}
+/* Non-danger footer buttons are the navy primary action. */
+.p-dialog .p-dialog-footer .p-button:not(.p-button-text):not(.p-button-danger) {
+    background: var(--bc-navy);
+    border-color: var(--bc-navy);
+    color: #ffffff;
+}
+.p-dialog
+    .p-dialog-footer
+    .p-button:not(.p-button-text):not(.p-button-danger):not(:disabled):hover {
+    background: var(--bc-navy-dark);
+    border-color: var(--bc-navy-dark);
+}

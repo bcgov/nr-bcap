@@ -16,13 +16,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os
-import uuid
-from arches.management.commands import utils
-from arches.app.models import models
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+import json
 
 
 class Command(BaseCommand):
@@ -96,9 +93,9 @@ class Command(BaseCommand):
 
     def get_profiles(self):
         try:
-            from ..data.test_user_list import get_user_list
+            with open("bcap/management/data/test_user_list.json", "r") as f:
+                return json.load(f)
 
-            return get_user_list()
         except Exception:
             print("Failed to get user list - returning empty list")
             return ()

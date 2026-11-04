@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRef, type Ref } from 'vue';
 import DetailsSection from '@/bcap/components/DetailsSection/DetailsSection.vue';
 import EmptyState from '@/bcap/components/EmptyState.vue';
+import InlineError from '@/bcap/components/InlineError.vue';
 import { getDisplayValue, isEmpty } from '@/bcap/util.ts';
 import { useHierarchicalData } from '@/bcap/composables/useHierarchicalData.ts';
 import { useTileEditLog } from '@/bcgov_arches_common/composables/useTileEditLog.ts';
@@ -10,24 +11,29 @@ import { EDIT_LOG_FIELDS } from '@/bcgov_arches_common/constants.ts';
 import type {
     AliasedNodeData,
     AliasedTileData,
-} from '@/arches_component_lab/types.ts';
+} from '@/arches_vue_components/types.ts';
 import StandardDataTable from '@/bcgov_arches_common/components/StandardDataTable/StandardDataTable.vue';
 import 'primeicons/primeicons.css';
 import type {
-    ArchaeologySiteSchema,
-    IdentificationAndRegistrationTile,
-} from '@/bcap/schema/ArchaeologySiteSchema.ts';
-import type { HriaDiscontinuedDataSchema } from '@/bcap/schema/HriaDiscontinuedDataSchema.ts';
-import type { SiteVisitSchema } from '@/bcap/schema/SiteVisitSchema.ts';
-import type { TemporaryNumberTile } from '@/bcap/schema/SiteVisitSchema.ts';
+    ArchaeologicalSite,
+    ArchaeologicalSiteIdentificationAndRegistrationTile,
+    ArchaeologicalSiteIdentificationAndRegistrationAliasedData,
+    ArchaeologicalSiteSiteAlertTile,
+    SiteVisit,
+    SiteVisitTemporaryNumberTile,
+    HriaDiscontinuedData,
+} from '@/bcap/client/types.gen.ts';
 import type { ColumnDefinition } from '@/bcgov_arches_common/components/StandardDataTable/types.ts';
 
 const props = withDefaults(
     defineProps<{
-        data: IdentificationAndRegistrationTile | undefined;
-        hriaData: HriaDiscontinuedDataSchema | undefined;
-        childSiteData: ArchaeologySiteSchema[] | undefined;
-        siteVisitData?: SiteVisitSchema[];
+        data:
+            | ArchaeologicalSiteIdentificationAndRegistrationTile
+            | null
+            | undefined;
+        hriaData: HriaDiscontinuedData | undefined;
+        childSiteData: ArchaeologicalSite[] | undefined;
+        siteVisitData?: SiteVisit[];
         loading?: boolean;
         languageCode?: string;
         forceCollapsed?: boolean;
@@ -43,23 +49,25 @@ const props = withDefaults(
     },
 );
 
-const currentData = computed<IdentificationAndRegistrationTile | undefined>(
-    (): AliasedTileData | undefined => {
-        return props.data?.aliased_data as
-            | IdentificationAndRegistrationTile
-            | undefined;
+const currentData = computed<
+    ArchaeologicalSiteIdentificationAndRegistrationAliasedData | undefined
+>(
+    ():
+        | ArchaeologicalSiteIdentificationAndRegistrationAliasedData
+        | undefined => {
+        return props.data?.aliased_data;
     },
 );
 
-const currentHriaData = computed<HriaDiscontinuedDataSchema | undefined>(
-    (): HriaDiscontinuedDataSchema | undefined => {
-        return props.hriaData as HriaDiscontinuedDataSchema | undefined;
+const currentHriaData = computed<HriaDiscontinuedData | undefined>(
+    (): HriaDiscontinuedData | undefined => {
+        return props.hriaData as HriaDiscontinuedData | undefined;
     },
 );
 
-const currentChildSiteData = computed<ArchaeologySiteSchema[] | undefined>(
-    (): ArchaeologySiteSchema[] | undefined => {
-        return props.childSiteData as ArchaeologySiteSchema[] | undefined;
+const currentChildSiteData = computed<ArchaeologicalSite[] | undefined>(
+    (): ArchaeologicalSite[] | undefined => {
+        return props.childSiteData as ArchaeologicalSite[] | undefined;
     },
 );
 
@@ -89,14 +97,15 @@ const siteDecisionColumns = [
 ];
 
 const authorityColumns = computed(() => [
-    { field: 'responsible_government', label: 'Government' },
-    { field: 'authority_legal_instrument', label: 'Legal Instrument' },
-    { field: 'legislative_act', label: 'Act/Section' },
+    {
+        field: 'legislative_act',
+        label: 'Government / Instrument / Act / Section',
+    },
     { field: 'authority_protection_type', label: 'Protection Type' },
     { field: 'reference_number', label: 'Reference #' },
     { field: 'authority_start_date', label: 'Start Date' },
     { field: 'authority_end_date', label: 'Expiry Date' },
-    { field: 'authority_description', label: 'Description' },
+    { field: 'authority_description', label: 'Description', isHtml: true },
     {
         field: EDIT_LOG_FIELDS.ENTERED_ON,
         label: 'Entered On',
@@ -112,7 +121,7 @@ const authorityColumns = computed(() => [
 const siteNamesColumns = computed(() => [
     { field: 'name', label: 'Site Name' },
     { field: 'name_type', label: 'Site Name Type' },
-    { field: 'name_remarks', label: 'Site Name Remarks' },
+    { field: 'name_remarks', label: 'Site Name Remarks', isHtml: true },
     { field: 'assigned_or_reported_date', label: 'Date Assigned or Reported' },
     { field: 'assigned_or_reported_by', label: 'Assigned or Reported By' },
     {
@@ -167,12 +176,15 @@ type IdFieldKey = (typeof id_fields)[number];
 const labelize = (key: string) =>
     key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
-const decisionData = computed(() => currentData.value?.site_decision);
+const decisionData = computed(
+    () => currentData.value?.site_decision ?? undefined,
+);
 
 const {
     processedData: decisionTableData,
     isProcessing: isProcessingDecisions,
-} = useHierarchicalData(decisionData, {
+    error: decisionError,
+} = useHierarchicalData(decisionData as Ref<AliasedTileData[]>, {
     sourceField: 'site_decision',
     hierarchicalFields: ['site_decision', 'decision_criteria'],
     flatFields: [
@@ -188,7 +200,7 @@ const {
 const authorityData = computed(() => currentData.value?.authority || []);
 const siteNamesData = computed(() => currentData.value?.site_names || []);
 
-const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
+const temporaryNumbersData = computed((): SiteVisitTemporaryNumberTile[] => {
     const all = (props.siteVisitData ?? [])
         .map(
             (visit) =>
@@ -196,7 +208,7 @@ const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
                     ?.temporary_number,
         )
         .filter(
-            (tile): tile is TemporaryNumberTile =>
+            (tile): tile is SiteVisitTemporaryNumberTile =>
                 !!tile?.aliased_data?.temporary_number?.node_value,
         );
 
@@ -216,30 +228,30 @@ const temporaryNumbersData = computed((): TemporaryNumberTile[] => {
     });
 });
 
-const siteAlertDataRaw = computed(() => {
+const siteAlertDataRaw = computed((): ArchaeologicalSiteSiteAlertTile[] => {
     const alert = currentData.value?.site_alert;
     if (!alert) return [];
 
-    return Array.isArray(alert) ? alert : [alert];
+    return [alert];
 });
 
 const { processedData: authorityTableData } = useTileEditLog(
-    authorityData,
+    authorityData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: siteNamesTableData } = useTileEditLog(
-    siteNamesData,
+    siteNamesData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: temporaryNumbersTableData } = useTileEditLog(
-    temporaryNumbersData,
+    temporaryNumbersData as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
 const { processedData: alertTableData } = useTileEditLog(
-    siteAlertDataRaw,
+    siteAlertDataRaw as Ref<AliasedTileData[]>,
     toRef(props, 'editLogData'),
 );
 
@@ -254,7 +266,7 @@ const hasBasicInfo = computed(() => {
 
 const hasAdifRecord = computed(() => {
     return currentHriaData.value?.aliased_data?.unreviewed_adif_record
-        ?.aliased_data?.unreviewed_adif_record.node_value;
+        ?.aliased_data?.unreviewed_adif_record?.node_value;
 });
 
 const hasAuthority = computed(() => {
@@ -463,8 +475,13 @@ const parentSite = computed(() => {
                 :class="{ 'empty-section': !hasDecisionHistory }"
             >
                 <template #sectionContent>
+                    <InlineError
+                        v-if="decisionError"
+                        title="The registration status history could not be loaded."
+                        :detail="decisionError"
+                    />
                     <StandardDataTable
-                        v-if="hasDecisionHistory"
+                        v-else-if="hasDecisionHistory"
                         :table-data="decisionTableData"
                         :column-definitions="siteDecisionColumns"
                         :initial-sort-field-index="0"
