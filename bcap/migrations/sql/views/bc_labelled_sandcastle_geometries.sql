@@ -13,5 +13,5 @@ from geojson_geometries g
          join (select re2.*
                from resource_instances re2
                         join graphs gr on re2.graphid = gr.graphid and
-                                          gr.slug = 'sandcastle') re
+                                          gr.slug = 'project_sandbox') re
               on g.resourceinstanceid = re.resourceinstanceid);
