@@ -18971,4 +18971,4 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: bcap_dev
+      name: bcap
