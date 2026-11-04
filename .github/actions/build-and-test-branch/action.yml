@@ -113,9 +113,8 @@ runs:
 
     - name: Check API contract and Zod schemas are up to date
       run: |
+        python manage.py migrate
         python manage.py regenerate_api --check
-      env:
-        DJANGO_SETTINGS_MODULE: tests.regenerate_api_settings
       shell: bash
 
     - name: Generate Python report coverage

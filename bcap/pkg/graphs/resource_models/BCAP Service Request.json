@@ -203,9 +203,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Application ID",
                         "maxLength": null,
                         "placeholder": {
@@ -228,9 +226,7 @@
                     "card_id": "f0cf4b3a-3210-4dff-963a-28c49ceed570",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Application Requirement",
                         "placeholder": {
                             "en": ""
@@ -276,9 +272,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Scope of Work",
                         "maxLength": null,
                         "placeholder": {
@@ -306,9 +300,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Name",
                         "maxLength": null,
                         "placeholder": {
@@ -331,9 +323,7 @@
                     "card_id": "74ac34f5-cee2-4646-8dad-78d49fd7b3a1",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Permit Messages",
                         "placeholder": {
                             "en": ""
@@ -352,9 +342,7 @@
                 {
                     "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Filing Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -379,9 +367,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Module Name",
                         "maxLength": null,
                         "placeholder": {
@@ -404,9 +390,7 @@
                     "card_id": "470f52c8-c9d3-4f45-bd5f-dae896efdeba",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Module ID",
                         "maxLength": null,
                         "placeholder": {
@@ -429,9 +413,7 @@
                     "card_id": "6b282b01-b545-41a9-aded-49368cd89d38",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Ministry Assignee",
                         "placeholder": {
                             "en": ""
@@ -450,9 +432,7 @@
                 {
                     "card_id": "9d2809dd-f04e-4ec6-93b3-0e2de592833a",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -472,9 +452,7 @@
                     "card_id": "f0cf4b3a-3210-4dff-963a-28c49ceed570",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Ministry Assignee",
                         "placeholder": {
                             "en": ""
@@ -511,11 +489,7 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Process Requirement Order",
                         "max": "",
                         "min": "0",
@@ -552,9 +526,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -599,11 +571,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Request Completion Target",
                         "max": "10",
                         "min": "0",
@@ -636,11 +604,7 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Module Order",
                         "max": "",
                         "min": "",
@@ -1435,10 +1399,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1917,10 +1878,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
