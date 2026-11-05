@@ -37,6 +37,7 @@
      bcap_message_thread_messages='(thread_id) => {return "{% url "bcap_message_thread_messages" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", thread_id)}'
      bcap_message_detail='(message_id) => {return "{% url "bcap_message_detail" "00000000-0000-0000-0000-000000000000" %}".replace("00000000-0000-0000-0000-000000000000", message_id)}'
      wfs_intersect="{% url 'wfs_intersect' %}"
+     pmbc_parcel='(pid) => {return "{% url "pmbc-parcel-data" "000000000" %}".replace("000000000", pid)}'
      >
 </div>
 

@@ -453,6 +453,44 @@ export const saveChecklist = async (
     });
 };
 
+// ----- PMBC Parcel Lookup -----
+
+export interface PmbcFeature {
+    id?: string;
+    type: 'Feature';
+    properties: {
+        PARCEL_FABRIC_POLY_ID?: number;
+        PARCEL_NAME?: string;
+        PLAN_NUMBER?: string;
+        PIN?: number;
+        PID?: string;
+        PID_FORMATTED?: string;
+        PID_NUMBER?: number;
+        PARCEL_STATUS?: string;
+        PARCEL_CLASS?: string;
+        OWNER_TYPE?: string;
+        PARCEL_START_DATE?: string;
+        MUNICIPALITY?: string;
+        REGIONAL_DISTRICT?: string;
+        WHEN_UPDATED?: string;
+        FEATURE_AREA_SQM?: number;
+        FEATURE_LENGTH_M?: number;
+        OBJECTID?: number;
+        SE_ANNO_CAD_DATA?: string | null;
+    };
+    geometry: object;
+}
+
+export const fetchPmbcParcel = async (pid: string): Promise<PmbcFeature[]> => {
+    const url = (
+        arches.urls as Record<string, (p: string) => string>
+    ).pmbc_parcel(pid);
+    const result = await apiFetchJson<{ data: { features?: PmbcFeature[] } }>(
+        url,
+    );
+    return result.data?.features ?? [];
+};
+
 // ----- WFS Intersects -----
 
 export interface CrownTenureFeature {

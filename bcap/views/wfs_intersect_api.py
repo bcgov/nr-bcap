@@ -2,11 +2,15 @@
 so the browser does not have to reach the external service directly and the
 request travels through the application's outbound proxy when configured."""
 
+import logging
+
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+logger = logging.getLogger(__name__)
 
 from bcap.permissions.route_guards import SubmitterOrInternal
 from bcap.services.wfs.wfs_intersect_service import (
@@ -72,8 +76,14 @@ class WfsIntersectView(APIView):
                 geometry_property=geometry_property,
             )
         except MissingGeometryError as exc:
-            raise ValidationError({"geometry": str(exc)}) from exc
+            logger.warning("WFS intersect: no usable geometry in request", exc_info=exc)
+            raise ValidationError(
+                {"geometry": "No usable geometry could be resolved from the request."}
+            ) from exc
         except WfsError as exc:
-            raise ValidationError({"detail": str(exc)}) from exc
+            logger.error("WFS intersect: upstream query failed", exc_info=exc)
+            raise ValidationError(
+                {"detail": "The WFS query failed. Please try again later."}
+            ) from exc
 
         return Response(result)
