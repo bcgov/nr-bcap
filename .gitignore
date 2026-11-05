@@ -44,3 +44,8 @@ venv.bak/
 
 # Dev tools
 .idea/
+.~lock.*#
+
+# ORCS classifier output; the spreadsheet names sites and documents
+tools/one_time/orcs-*.xlsx
+tools/one_time/orcs-rules-*.html

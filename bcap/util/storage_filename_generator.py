@@ -3,6 +3,8 @@ import os
 from arches.app.models import models
 from arches.app import datatypes
 
+from bcap.services.records.classification import ClassificationService
+
 logger = logging.getLogger(__name__)
 
 borden_number_node = None
@@ -75,6 +77,10 @@ def generate_filename(instance, filename):
     )
     logger.debug("Paths: %s", str(paths))
     root, ext = os.path.splitext(filename)
+    # The records storage writes these as the object's S3 tags.
+    instance.path.file.records_tags = ClassificationService.tags_for(
+        instance, ext, graph_slug
+    )
     path = os.path.join(
         graph_slug,
         *paths,
