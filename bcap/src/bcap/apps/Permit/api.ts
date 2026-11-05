@@ -453,6 +453,57 @@ export const saveChecklist = async (
     });
 };
 
+// ----- WFS Intersects -----
+
+export interface CrownTenureFeature {
+    type: 'Feature';
+    properties: {
+        INTRID_SID?: number;
+        TENURE_STAGE?: string;
+        TENURE_STATUS?: string;
+        TENURE_TYPE?: string;
+        TENURE_SUBTYPE?: string;
+        TENURE_PURPOSE?: string;
+        TENURE_SUBPURPOSE?: string;
+        CROWN_LANDS_FILE?: string;
+        APPLICATION_TYPE_CDE?: string;
+        TENURE_DOCUMENT?: string;
+        TENURE_EXPIRY?: string;
+        TENURE_LOCATION?: string;
+        TENURE_LEGAL_DESCRIPTION?: string;
+        TENURE_AREA_DERIVATION?: string;
+        TENURE_AREA_IN_HECTARES?: number;
+        RESPONSIBLE_BUSINESS_UNIT?: string;
+        DISPOSITION_TRANSACTION_SID?: number;
+        CODE_CHR_STAGE?: string;
+        FEATURE_CODE?: string;
+        FEATURE_AREA_SQM?: number;
+        FEATURE_LENGTH_M?: number;
+        OBJECTID?: number;
+        SE_ANNO_CAD_DATA?: string | null;
+    };
+    geometry: object;
+}
+
+/**
+ * POST a GeoJSON geometry to the WFS Intersects proxy and receive back the
+ * features from `layer` that intersect it.
+ */
+export const fetchWfsIntersect = async (
+    layer: string,
+    geometry: object,
+    geometryProperty = 'geometry',
+): Promise<CrownTenureFeature[]> => {
+    const result = await apiFetchJson<{ features?: CrownTenureFeature[] }>(
+        arches.urls.wfs_intersect,
+        {
+            method: HttpMethod.Post,
+            body: { layer, geometry, geometry_property: geometryProperty },
+        },
+    );
+    return result.features ?? [];
+};
+
 export const createBcapMessage = async ({
     messageText,
     recipientId,
