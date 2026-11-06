@@ -343,34 +343,6 @@
             ],
             "cards_x_nodes_x_widgets": [
                 {
-                    "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Service Request ID",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter application ID"
-                        },
-                        "uneditable": true,
-                        "width": "100%"
-                    },
-                    "id": "0c44a5dc-9926-400f-a2f2-96f2bc1a7d51",
-                    "label": {
-                        "en": "Service Request ID"
-                    },
-                    "node_id": "93370c9d-5451-43a3-b896-2804844b968c",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "f0cf4b3a-3210-4dff-963a-28c49ceed570",
                     "config": {
                         "defaultResourceInstance": [],
@@ -601,6 +573,31 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Service Request ID",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "reportTypeAbbreviation": "REQ",
+                        "sequenceDigits": 4,
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "4a118a5a-ed6a-4fa7-8ef4-fc1ad323546b",
+                    "label": {
+                        "en": "Service Request ID"
+                    },
+                    "node_id": "0b2ab6d0-8817-47d4-aad4-ee937c326ea7",
+                    "sortorder": null,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000001006"
                 },
                 {
                     "card_id": "74ac34f5-cee2-4646-8dad-78d49fd7b3a1",
@@ -1267,6 +1264,16 @@
                 },
                 {
                     "description": null,
+                    "domainnode_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
+                    "edgeid": "5a5e662f-eac7-4125-81ce-b5c1398e5a59",
+                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "0b2ab6d0-8817-47d4-aad4-ee937c326ea7",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
                     "domainnode_id": "8298a276-36c9-4427-b8aa-36c157258d6a",
                     "edgeid": "63c4f685-ae3a-49b9-8086-7e432a14e3fc",
                     "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
@@ -1363,16 +1370,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
                     "rangenode_id": "3a9a16e4-2675-4d13-af93-a7176ab58cd1",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                    "edgeid": "9962d33a-06b7-4357-9818-bf7ac5d6e9c4",
-                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "rangenode_id": "93370c9d-5451-43a3-b896-2804844b968c",
                     "source_identifier_id": null
                 },
                 {
@@ -1750,6 +1747,29 @@
                     "nodeid": "09fc6557-3a16-4054-82d4-827e6378f756",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "service_request_id",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Service Request ID",
+                    "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
+                    "nodeid": "0b2ab6d0-8817-47d4-aad4-ee937c326ea7",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -2329,29 +2349,6 @@
                     "nodeid": "8ad3ef68-1f93-4fe1-b875-e503e4815f53",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "service_request_id",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Service Request ID",
-                    "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                    "nodeid": "93370c9d-5451-43a3-b896-2804844b968c",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -3041,9 +3038,9 @@
             "publication": {
                 "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
                 "most_recent_edit_id": null,
-                "notes": "Updates as per requirements",
-                "publicationid": "0ef681c8-c57e-44b4-a7cd-092fa81531af",
-                "published_time": "2026-11-05T20:41:48.052"
+                "notes": "Use new common reference-number-widget",
+                "publicationid": "af2a9c9b-6917-4a58-a413-c9bd649ad305",
+                "published_time": "2026-11-05T22:48:17.220"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
