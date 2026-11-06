@@ -1033,25 +1033,6 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
-                    "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
-                    "config": {
-                        "acceptedFiles": "",
-                        "defaultValue": [],
-                        "label": "Supplemental Information",
-                        "maxFilesize": "200",
-                        "rerender": true
-                    },
-                    "id": "eca234fe-66e3-4eec-81c5-f0da6e921db9",
-                    "label": {
-                        "en": "Supplemental Information"
-                    },
-                    "node_id": "7a3f2602-36f4-49b9-a813-1059f193472e",
-                    "sortorder": 2,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000019"
                 }
             ],
             "color": "#04ae12",
@@ -1340,16 +1321,6 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "rangenode_id": "f7a47245-fdf8-48cf-bb58-0f42f618fc9e",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
-                    "domainnode_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                    "edgeid": "92e071ba-b18c-4789-a7a1-20b68e2fe6b3",
-                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "rangenode_id": "7a3f2602-36f4-49b9-a813-1059f193472e",
                     "source_identifier_id": null
                 },
                 {
@@ -2211,34 +2182,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "supplemental_information",
-                    "config": {
-                        "activateMax": false,
-                        "imagesOnly": false,
-                        "maxFileSize": null,
-                        "maxFiles": 5
-                    },
-                    "datatype": "file-list",
-                    "description": "Appendix A - Supplemental Info",
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Supplemental Information",
-                    "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                    "nodeid": "7a3f2602-36f4-49b9-a813-1059f193472e",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "module_order",
                     "config": {},
                     "datatype": "number",
@@ -3038,9 +2981,9 @@
             "publication": {
                 "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
                 "most_recent_edit_id": null,
-                "notes": "Use new common reference-number-widget",
-                "publicationid": "af2a9c9b-6917-4a58-a413-c9bd649ad305",
-                "published_time": "2026-11-05T22:48:17.220"
+                "notes": "Remove files from model",
+                "publicationid": "3f834b7b-49eb-40e7-b50d-3c1567665cb3",
+                "published_time": "2026-11-05T23:12:38.160"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
