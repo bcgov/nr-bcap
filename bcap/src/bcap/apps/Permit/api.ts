@@ -481,12 +481,20 @@ export interface PmbcFeature {
     geometry: object;
 }
 
+const _pmbcUrls = arches.urls as Record<string, (p: string) => string>;
+
 export const fetchPmbcParcel = async (pid: string): Promise<PmbcFeature[]> => {
-    const url = (
-        arches.urls as Record<string, (p: string) => string>
-    ).pmbc_parcel(pid);
     const result = await apiFetchJson<{ data: { features?: PmbcFeature[] } }>(
-        url,
+        _pmbcUrls.pmbc_parcel(pid),
+    );
+    return result.data?.features ?? [];
+};
+
+export const fetchPmbcParcelByPin = async (
+    pin: string,
+): Promise<PmbcFeature[]> => {
+    const result = await apiFetchJson<{ data: { features?: PmbcFeature[] } }>(
+        _pmbcUrls.pmbc_parcel_by_pin(pin),
     );
     return result.data?.features ?? [];
 };
