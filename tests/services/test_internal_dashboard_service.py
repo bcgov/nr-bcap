@@ -136,7 +136,7 @@ def build_permit_graph():
             RequirementRow(assessment, 2, grace),
         ],
         # Pinned by label so the card's submission_type is assertable.
-        filing_type="Site Visit",
+        filing_type="Submit a Site Visit",
         organization=acme,
         related_permit=hca_permit,
         admin_values={pa.PROJECT_OFFICER: alan},

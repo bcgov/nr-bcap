@@ -49,7 +49,7 @@ def build_external_permit(
         name,
         submission_date="2026-06-18",
         # Pinned by label so the card's submission_type is assertable.
-        filing_type="Site Visit",
+        filing_type="Submit a Site Visit",
         organization=organization,
         related_permit=hca_permit,
     )
@@ -312,7 +312,7 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(card.permit_application_id, str(self.permit.pk))
         self.assertEqual(card.project_name, "Parent Project")
         self.assertRegex(card.application_number, r"^APP-\d+$")
-        self.assertEqual(card.submission_type, "Site Visit")
+        self.assertEqual(card.submission_type, "Submit a Site Visit")
         self.assertEqual(card.organization, "Parent Corp")
 
     def test_a_parentless_draft_names_no_organization(self):
@@ -516,7 +516,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
 
         self.assertEqual(card.project_name, "Parent Project")
         # Fields the draft doesn't carry come from the parent too.
-        self.assertEqual(card.submission_type, "Site Visit")
+        self.assertEqual(card.submission_type, "Submit a Site Visit")
 
     def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
         gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")

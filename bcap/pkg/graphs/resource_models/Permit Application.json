@@ -450,7 +450,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Applicant Name",
                         "maxLength": null,
                         "placeholder": {
@@ -478,7 +480,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Module Name",
                         "maxLength": null,
                         "placeholder": {
@@ -501,7 +505,9 @@
                     "card_id": "262b7728-8453-4dd2-a994-0ee37dfbb4b1",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Application Requirement",
                         "placeholder": {
                             "en": ""
@@ -520,7 +526,9 @@
                 {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Industrial Sector",
                         "placeholder": {
                             "en": "Select an option"
@@ -556,7 +564,9 @@
                     "card_id": "371f55ab-7d98-4f78-a52a-b5a211e9513b",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Module ID",
                         "maxLength": null,
                         "placeholder": {
@@ -600,7 +610,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Scope of Work",
                         "maxLength": null,
                         "placeholder": {
@@ -640,7 +652,11 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Permit Duration Requested",
                         "max": "10",
                         "min": "0",
@@ -672,7 +688,9 @@
                     "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "placeholder": {
                             "en": ""
                         }
@@ -690,7 +708,9 @@
                 {
                     "card_id": "7fc79758-9d05-486f-91bb-e1ecb856f9f3",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Application Priority Level",
                         "placeholder": {
                             "en": "Select an option"
@@ -710,7 +730,9 @@
                     "card_id": "918189f9-4f66-49f5-a93e-031170d17a76",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Responsible External Archaeologist",
                         "placeholder": {
                             "en": ""
@@ -735,7 +757,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Scope of Work",
                         "maxLength": null,
                         "placeholder": {
@@ -763,7 +787,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Name",
                         "maxLength": null,
                         "placeholder": {
@@ -785,7 +811,9 @@
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Filing Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -868,7 +896,9 @@
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "MAP or HIP",
                         "placeholder": {
                             "en": "Select an option"
@@ -888,7 +918,9 @@
                     "card_id": "637becfb-29bf-4b72-a595-f7ce5b6dd0c5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "MZA Requirement",
                         "placeholder": {
                             "en": ""
@@ -927,7 +959,9 @@
                     "card_id": "637becfb-29bf-4b72-a595-f7ce5b6dd0c5",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "MZA Requirement Ministry Asignee",
                         "placeholder": {
                             "en": ""
@@ -952,7 +986,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -991,7 +1027,9 @@
                     "card_id": "7fc79758-9d05-486f-91bb-e1ecb856f9f3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Officer",
                         "placeholder": {
                             "en": ""
@@ -1052,7 +1090,9 @@
                 {
                     "card_id": "79ef3bc7-4c2d-4c30-89f7-f329b324569f",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Industrial Sector",
                         "placeholder": {
                             "en": "Select an option"
@@ -1072,7 +1112,9 @@
                     "card_id": "262b7728-8453-4dd2-a994-0ee37dfbb4b1",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Ministry Assignee",
                         "placeholder": {
                             "en": ""
@@ -1093,7 +1135,11 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Process Requirement Order",
                         "max": "",
                         "min": "0",
@@ -1124,7 +1170,9 @@
                 {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1149,7 +1197,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Application ID",
                         "maxLength": null,
                         "placeholder": {
@@ -1171,7 +1221,9 @@
                 {
                     "card_id": "79ef3bc7-4c2d-4c30-89f7-f329b324569f",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -1196,7 +1248,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1224,7 +1278,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "FN File Numbers",
                         "maxLength": null,
                         "placeholder": {
@@ -1247,7 +1303,9 @@
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Owning Organization",
                         "placeholder": {
                             "en": ""
@@ -1331,7 +1389,9 @@
                     "card_id": "af97e025-497b-4b02-a59a-4c157f4058d8",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Permit Messages",
                         "placeholder": {
                             "en": ""
@@ -1352,7 +1412,11 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Module Order",
                         "max": "",
                         "min": "",
@@ -2323,7 +2387,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2441,7 +2508,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2869,7 +2939,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3001,7 +3074,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3064,7 +3140,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3173,7 +3252,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3464,7 +3546,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3495,7 +3580,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -4111,7 +4199,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -4191,9 +4282,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Fix duplicate node name causing relational view problems",
-                "publicationid": "20f94c05-d92b-48f5-94aa-555010514079",
-                "published_time": "2026-09-28T10:34:07.035"
+                "notes": "Update request type controlled list",
+                "publicationid": "6f5ccb58-dba7-4278-9c91-de8c56d25ff5",
+                "published_time": "2026-11-06T10:56:39.808"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -4295,6 +4386,6 @@
         "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
         "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
         "os": "Linux",
-        "os version": "6.12.76-linuxkit"
+        "os version": "7.0.14-linuxkit"
     }
 }
