@@ -5848,6 +5848,281 @@ components:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
           nullable: true
+    Bcap_Service_Request_Bc_Property_Address_Aliased_Data:
+      type: object
+      properties:
+        address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Location Description
+          description: Describe the location of sites with no civic address.
+        street_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
+          nullable: true
+        street_number:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax50'
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
+          nullable: true
+        postal_code:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax7'
+          nullable: true
+        bc_property_legal_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Tile'
+          nullable: true
+    Bcap_Service_Request_Bc_Property_Address_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Bc_Property_Legal_Description_Aliased_Data:
+      type: object
+      properties:
+        pid:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeDataMax9'
+          nullable: true
+          description: E.g., 123456789
+        pin:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeDataMax10'
+          nullable: true
+          description: E.g., 0123456789
+        legal_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeDataMax2000'
+          nullable: true
+        legal_address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Address and Legal Description Remarks
+          description: Enter text
+    Bcap_Service_Request_Bc_Property_Legal_Description_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Crown_Land_Survey_Information_Aliased_Data:
+      type: object
+      properties:
+        districts:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        land_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        pin_n1:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+    Bcap_Service_Request_Crown_Land_Survey_Information_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Crown_Land_Tenure_Type_Aliased_Data:
+      type: object
+      properties:
+        crown_land_survey_information:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Tile'
+          nullable: true
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        tenure_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Bcap_Service_Request_Crown_Land_Tenure_Type_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Bcap_Service_Request_Process_Module_Aliased_Data:
       type: object
       properties:
@@ -5997,13 +6272,73 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Bcap_Service_Request_Proposed_Project_Aliased_Data:
+    Bcap_Service_Request_Project_Location_Aliased_Data:
       type: object
       properties:
-        project_boundary:
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
+          nullable: true
+        service_request_boundary:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
           nullable: true
+        bc_property_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Tile'
+          nullable: true
+    Bcap_Service_Request_Project_Location_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Proposed_Project_Aliased_Data:
+      type: object
+      properties:
         project_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
@@ -6087,6 +6422,10 @@ components:
         proposed_project:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Proposed_Project_Tile'
+          nullable: true
+        project_location:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Tile'
           nullable: true
         service_request_admin:
           allOf:
@@ -6238,23 +6577,19 @@ components:
     Bcap_Service_Request_Service_Request_Identification_Aliased_Data:
       type: object
       properties:
-        filing_type:
+        service_request_id:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        service_request_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           description: Select an option
-        service_request_id:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Application ID
-          description: Enter application ID
-        supplemental_information:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
       required:
-      - filing_type
+      - service_request_id
+      - service_request_type
     Bcap_Service_Request_Service_Request_Identification_Tile:
       type: object
       properties:
@@ -14176,13 +14511,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
           nullable: true
-        proposed_project:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_Tile'
-          nullable: true
         archaeological_assessment_plan:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Tile'
+          nullable: true
+        proposed_project:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_Tile'
           nullable: true
         multi_zone_area_addition:
           type: array
@@ -14950,16 +15285,18 @@ components:
     Project_Engagement_Engagement_Document_Aliased_Data:
       type: object
       properties:
-        should_be_delivered:
+        is_part_of_referral_package:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
+          title: Include in Referral Package
         engagement_document:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
       required:
       - engagement_document
+      - is_part_of_referral_package
     Project_Engagement_Engagement_Document_Tile:
       type: object
       properties:
@@ -15024,6 +15361,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          title: Participant Name
           description: Enter text
         participant_phone_number:
           allOf:
@@ -15037,19 +15375,16 @@ components:
           description: Enter text
         participant_type:
           allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          description: Select an option
-        participant_role:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           description: Select an option
         participant_notes:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Enter text
+          description: Enter any relvant details about the participant
+      required:
+      - participant_type
     Project_Engagement_Engagement_Participant_Tile:
       type: object
       properties:
