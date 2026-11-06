@@ -49,7 +49,7 @@
                         "en": ""
                     },
                     "instructions": {
-                        "en": "Select Participant in Contributors list, otherwise enter name in Participant Name field"
+                        "en": ""
                     },
                     "name": {
                         "en": "Engagement Participant"
@@ -167,7 +167,9 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Contributor Reference",
                         "placeholder": {
                             "en": ""
@@ -178,7 +180,7 @@
                         "en": "Contributor Reference"
                     },
                     "node_id": "501ef972-e20d-4ca8-bd88-455c47cf892f",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -192,7 +194,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Engagement Outcome Summary",
                         "maxLength": null,
                         "placeholder": {
@@ -214,7 +218,9 @@
                 {
                     "card_id": "d1156827-a4eb-4b52-9d33-804fa2a475fe",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Engagement Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -250,7 +256,9 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Participant Portal URL",
                         "maxLength": null,
                         "placeholder": {
@@ -320,7 +328,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Package Delivery Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -337,7 +347,7 @@
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
@@ -361,7 +371,9 @@
                 {
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Package Delivery Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -372,26 +384,10 @@
                         "en": "Package Delivery Status"
                     },
                     "node_id": "e16a1112-b54a-4285-b8bf-16a39e218afa",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
-                },
-                {
-                    "card_id": "1d16cde8-12b5-4e60-aaa6-2672e3f23dff",
-                    "config": {
-                        "defaultValue": null,
-                        "label": "Include in Referral Package"
-                    },
-                    "id": "88d289f2-1c75-4ecd-8dea-d2685de6b561",
-                    "label": {
-                        "en": "Include in Referral Package"
-                    },
-                    "node_id": "a8148399-500a-4a52-a66c-8f7580d0bc9e",
-                    "sortorder": 1,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
@@ -402,11 +398,13 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Participant Notes",
                         "maxLength": null,
                         "placeholder": {
-                            "en": "Enter any relvant details about the participant"
+                            "en": "Enter text"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -425,7 +423,9 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Participant Email Address",
                         "maxLength": null,
                         "placeholder": {
@@ -439,7 +439,7 @@
                         "en": "Participant Email Address"
                     },
                     "node_id": "e35fcca4-7bae-41e2-b04c-7d76cb0dbc81",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
@@ -447,22 +447,9 @@
                 {
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
-                        "defaultValue": [
-                            {
-                                "labels": [
-                                    {
-                                        "id": "92b5bd6f-383e-4305-9f98-0ebb51ac9270",
-                                        "language_id": "en",
-                                        "list_item_id": "0b42e4a9-f35a-51eb-b121-17bb9399bab5",
-                                        "value": "First Nations Contact",
-                                        "valuetype_id": "prefLabel"
-                                    }
-                                ],
-                                "list_id": "22643975-8422-520a-b152-71f0fb6fcad1",
-                                "uri": "https://localhost/bcap/plugins/controlled-list-manager/item/0b42e4a9-f35a-51eb-b121-17bb9399bab5"
-                            }
+                        "i18n_properties": [
+                            "placeholder"
                         ],
-                        "i18n_properties": ["placeholder"],
                         "label": "Participant Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -473,7 +460,7 @@
                         "en": "Participant Type"
                     },
                     "node_id": "f208dc21-8913-40b8-b5d9-c3d54f102530",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -487,8 +474,10 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Participant Name",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Other Participant Name",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -498,10 +487,10 @@
                     },
                     "id": "bead5f0c-40d7-41a4-a1fd-b8a5cbdbffb3",
                     "label": {
-                        "en": "Participant Name"
+                        "en": "Other Participant Name"
                     },
                     "node_id": "46938fb8-f3bf-4e39-993a-e06b3c8c5917",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -510,7 +499,9 @@
                     "card_id": "1d16cde8-12b5-4e60-aaa6-2672e3f23dff",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Engagement Document",
                         "placeholder": {
                             "en": ""
@@ -530,7 +521,9 @@
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Package Documents",
                         "placeholder": {
                             "en": ""
@@ -550,7 +543,9 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Participant Phone Number",
                         "maxLength": null,
                         "placeholder": {
@@ -595,18 +590,22 @@
                     "config": {
                         "defaultValue": "90",
                         "format": "",
-                        "i18n_properties": ["placeholder", "prefix", "suffix"],
+                        "i18n_properties": [
+                            "placeholder",
+                            "prefix",
+                            "suffix"
+                        ],
                         "label": "Engagement Target Length",
                         "max": "",
-                        "min": "",
+                        "min": "0",
                         "placeholder": {
-                            "en": "Enter number"
+                            "en": "Number of Days"
                         },
                         "precision": "0",
                         "prefix": {
                             "en": ""
                         },
-                        "step": "1",
+                        "step": "",
                         "suffix": {
                             "en": ""
                         },
@@ -626,7 +625,9 @@
                 {
                     "card_id": "d1156827-a4eb-4b52-9d33-804fa2a475fe",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Engagement Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -645,7 +646,9 @@
                 {
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Package Delivery Method",
                         "placeholder": {
                             "en": "Select an option"
@@ -656,7 +659,7 @@
                         "en": "Package Delivery Method"
                     },
                     "node_id": "f6c22311-886b-4dd8-8345-c67656d2f175",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -670,7 +673,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Engagement Steps Taken",
                         "maxLength": null,
                         "placeholder": {
@@ -800,16 +805,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "dc283308-0db7-4a4d-a850-7f471ed3b324",
-                    "edgeid": "514d9e11-ac2e-43f0-9703-f9d7163f9da8",
-                    "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "rangenode_id": "a8148399-500a-4a52-a66c-8f7580d0bc9e",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "6e5ccb00-2851-413e-ba64-0f4aff553a81",
                     "edgeid": "53f1f848-b33f-4e85-a5ba-ac991d06061e",
                     "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
@@ -896,6 +891,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "9335f6b9-daf5-42a3-bc1b-8b36382f0668",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "dc283308-0db7-4a4d-a850-7f471ed3b324",
+                    "edgeid": "bca5cf0a-d1a8-4a24-9067-15dd19525e5a",
+                    "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P101_had_as_general_use",
+                    "rangenode_id": "85479242-92a3-4fa8-8273-b845aaa38594",
                     "source_identifier_id": null
                 },
                 {
@@ -1214,7 +1219,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1472,6 +1480,40 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "is_part_of_package",
+                    "config": {
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Is Part of Package",
+                    "nodegroup_id": "dc283308-0db7-4a4d-a850-7f471ed3b324",
+                    "nodeid": "85479242-92a3-4fa8-8273-b845aaa38594",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P101_had_as_general_use",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "participant_notes",
                     "config": {},
                     "datatype": "string",
@@ -1560,37 +1602,6 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
                     "sortorder": 5,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
-                    "alias": "is_part_of_referral_package",
-                    "config": {
-                        "falseLabel": {
-                            "en": "No"
-                        },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
-                        "trueLabel": {
-                            "en": "Yes"
-                        }
-                    },
-                    "datatype": "boolean",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": true,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Is Part of Referral Package",
-                    "nodegroup_id": "dc283308-0db7-4a4d-a850-7f471ed3b324",
-                    "nodeid": "a8148399-500a-4a52-a66c-8f7580d0bc9e",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1742,7 +1753,7 @@
                     "hascustomalias": false,
                     "is_collector": false,
                     "is_immutable": false,
-                    "isrequired": true,
+                    "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Participant Type",
@@ -1808,9 +1819,9 @@
             "publication": {
                 "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
                 "most_recent_edit_id": null,
-                "notes": "Minor tweaks to participants and referral package sections",
-                "publicationid": "ab9c7abb-607d-4365-8a8e-c39e02fbccd5",
-                "published_time": "2026-11-04T13:00:38.181"
+                "notes": "Tweaks",
+                "publicationid": "b43d3559-37a8-48f0-85b4-7e47f9201f59",
+                "published_time": "2026-11-06T10:26:21.647"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
