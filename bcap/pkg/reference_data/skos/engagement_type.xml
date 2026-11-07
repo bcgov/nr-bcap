@@ -21,12 +21,6 @@
     <skos:inScheme rdf:resource="https://localhost/bcap/6e85db26-7cc7-5b86-9531-81950835156d"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
   </skos:Concept>
-  <skos:Concept rdf:about="https://localhost/bcap/963fe456-2abd-5248-ab8e-9e04c6d4eb90">
-    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/963fe456-2abd-5248-ab8e-9e04c6d4eb90</dcterms:identifier>
-    <skos:prefLabel xml:lang="en">Pre-engagement</skos:prefLabel>
-    <skos:inScheme rdf:resource="https://localhost/bcap/6e85db26-7cc7-5b86-9531-81950835156d"/>
-    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
-  </skos:Concept>
   <skos:Concept rdf:about="https://localhost/bcap/6328862e-dbac-5272-8484-eefc312ec7fc">
     <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/6328862e-dbac-5272-8484-eefc312ec7fc</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Information Sharing</skos:prefLabel>
@@ -44,11 +38,5 @@
     <skos:prefLabel xml:lang="en">Follow-up</skos:prefLabel>
     <skos:inScheme rdf:resource="https://localhost/bcap/6e85db26-7cc7-5b86-9531-81950835156d"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
-  </skos:Concept>
-  <skos:Concept rdf:about="https://localhost/bcap/415d8cf5-606c-566a-9dde-ad6805f01f08">
-    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/415d8cf5-606c-566a-9dde-ad6805f01f08</dcterms:identifier>
-    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
-    <skos:inScheme rdf:resource="https://localhost/bcap/6e85db26-7cc7-5b86-9531-81950835156d"/>
-    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
   </skos:Concept>
 </rdf:RDF>

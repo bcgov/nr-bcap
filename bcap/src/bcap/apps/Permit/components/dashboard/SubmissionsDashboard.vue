@@ -251,7 +251,7 @@ const openResourceReport = (resourceId: string) => {
                     :to="{ name: routeNames.baseModule }"
                 >
                     <i class="fa-solid fa-plus"></i>
-                    {{ $gettext('New HCA permit application') }}
+                    {{ $gettext('Start Service Request') }}
                 </router-link>
             </div>
 

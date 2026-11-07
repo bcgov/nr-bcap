@@ -18,7 +18,14 @@ const passthrough = { template: '<div><slot /></div>' };
 
 const mountStep = (component: unknown) =>
     mount(component as never, {
-        global: { stubs: { Form: passthrough, FieldSet: passthrough } },
+        global: {
+            stubs: {
+                Form: passthrough,
+                FieldSet: passthrough,
+                InputText: true,
+                Button: true,
+            },
+        },
     });
 
 const edit = (value: string) =>

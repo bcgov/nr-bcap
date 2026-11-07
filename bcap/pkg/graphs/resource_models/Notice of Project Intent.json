@@ -28,7 +28,7 @@
                         "en": "Engagement Document"
                     },
                     "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -57,7 +57,7 @@
                         "en": "Notification"
                     },
                     "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -86,7 +86,7 @@
                         "en": "First Nation"
                     },
                     "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },

@@ -1742,23 +1742,123 @@ export type BcapMessageResourceAliasedData = {
     message_content?: BcapMessageMessageContentTile | null;
 };
 
+export type BcapServiceRequestBcPropertyAddressAliasedData = {
+    address_remarks?: StringAliasedNodeData | null;
+    street_name?: StringAliasedNodeData | null;
+    street_number?: StringAliasedNodeData | null;
+    city?: StringAliasedNodeData | null;
+    postal_code?: StringAliasedNodeData | null;
+    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTile> | null;
+};
+
+export type BcapServiceRequestBcPropertyAddressTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestBcPropertyAddressAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestBcPropertyLegalDescriptionAliasedData = {
+    pid?: NonLocalizedStringAliasedNodeData | null;
+    pin?: NonLocalizedStringAliasedNodeData | null;
+    legal_description?: StringAliasedNodeData | null;
+    legal_address_remarks?: StringAliasedNodeData | null;
+};
+
+export type BcapServiceRequestBcPropertyLegalDescriptionTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestBcPropertyLegalDescriptionAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestCrownLandSurveyInformationAliasedData = {
+    districts?: StringAliasedNodeData | null;
+    land_title?: StringAliasedNodeData | null;
+    pin_n1?: NonLocalizedStringAliasedNodeData | null;
+};
+
+export type BcapServiceRequestCrownLandSurveyInformationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestCrownLandSurveyInformationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestCrownLandTenureTypeAliasedData = {
+    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTile | null;
+    crown_land_tenure_type?: StringAliasedNodeData | null;
+    tenure_description?: StringAliasedNodeData | null;
+};
+
+export type BcapServiceRequestCrownLandTenureTypeTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestCrownLandTenureTypeAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type BcapServiceRequestProcessModuleAliasedData = {
     is_module_completed?: BooleanAliasedNodeData | null;
-    /**
-     * Enter date
-     */
     module_completed_date?: DateAliasedNodeData | null;
-    /**
-     * Module ID if a copy of a Module Template
-     */
     module_id?: NonLocalizedStringAliasedNodeData | null;
-    /**
-     * Enter name of the Process Module
-     */
     module_name: StringAliasedNodeData | null;
-    /**
-     * Enter number
-     */
     module_order?: NumberAliasedNodeData | null;
     process_requirement?: Array<BcapServiceRequestProcessRequirementTile> | null;
 };
@@ -1786,10 +1886,7 @@ export type BcapServiceRequestProcessModuleTile = {
 
 export type BcapServiceRequestProcessRequirementAliasedData = {
     ministry_assignee?: ResourceInstanceAliasedNodeData | null;
-    /**
-     * Enter number
-     */
-    process_requirement_order: NumberAliasedNodeDataMin0 | null;
+    process_requirement_order: NumberAliasedNodeData | null;
     process_requirement?: ResourceInstanceAliasedNodeData | null;
 };
 
@@ -1814,23 +1911,37 @@ export type BcapServiceRequestProcessRequirementTile = {
     } | null;
 };
 
+export type BcapServiceRequestProjectLocationAliasedData = {
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTile | null;
+    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
+    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTile> | null;
+};
+
+export type BcapServiceRequestProjectLocationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProjectLocationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type BcapServiceRequestProposedProjectAliasedData = {
-    project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
-    /**
-     * Select an option
-     */
     project_type?: ReferenceAliasedNodeData | null;
-    /**
-     * Enter text
-     */
     project_name?: StringAliasedNodeData | null;
-    /**
-     * Describe the scope of work to be competed as part of the proposed project
-     */
     scope_of_work?: StringAliasedNodeData | null;
-    /**
-     * Enter project description
-     */
     project_description?: StringAliasedNodeData | null;
 };
 
@@ -1859,21 +1970,16 @@ export type BcapServiceRequestResourceAliasedData = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTile | null;
     service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
     proposed_project?: BcapServiceRequestProposedProjectTile | null;
+    project_location?: BcapServiceRequestProjectLocationTile | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTile | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTile | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedData = {
-    /**
-     * Enter date
-     */
     application_submission_date?: DateAliasedNodeData | null;
     ministry_assignee_n1?: ResourceInstanceAliasedNodeData | null;
     process_module?: Array<BcapServiceRequestProcessModuleTile> | null;
-    /**
-     * Enter number of years requested
-     */
-    service_request_completion_target?: NumberAliasedNodeDataMin0Max10 | null;
+    service_request_completion_target?: NumberAliasedNodeData | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminTile = {
@@ -1926,15 +2032,8 @@ export type BcapServiceRequestServiceRequestContactsTile = {
 };
 
 export type BcapServiceRequestServiceRequestIdentificationAliasedData = {
-    /**
-     * Select an option
-     */
-    filing_type: ReferenceAliasedNodeDataRequired | null;
-    /**
-     * Enter application ID
-     */
-    service_request_id?: StringAliasedNodeData | null;
-    supplemental_information?: FileListAliasedNodeData | null;
+    service_request_id: NonLocalizedStringAliasedNodeData | null;
+    service_request_type: ReferenceAliasedNodeDataRequired | null;
 };
 
 export type BcapServiceRequestServiceRequestIdentificationTile = {
@@ -4998,7 +5097,7 @@ export type NumberAliasedNodeDataMin0 = {
 
 export type NumberAliasedNodeDataMin0Max10 = {
     /**
-     * Request Completion Target
+     * Permit Duration Requested
      *
      * Enter number of years requested
      */
@@ -5790,8 +5889,8 @@ export type PermitApplicationRelatedPermitTile = {
 export type PermitApplicationResourceAliasedData = {
     application_identification?: PermitApplicationApplicationIdentificationTile | null;
     application_contacts?: PermitApplicationApplicationContactsTile | null;
-    proposed_project?: PermitApplicationProposedProjectTile | null;
     archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
+    proposed_project?: PermitApplicationProposedProjectTile | null;
     multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTile> | null;
     project_engagements?: PermitApplicationProjectEngagementsTile | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTile | null;
@@ -6087,9 +6186,9 @@ export type ProjectEngagementEngagementDetailsAliasedData = {
      */
     engagement_start_date?: DateAliasedNodeData | null;
     /**
-     * Enter number
+     * Number of Days
      */
-    engagement_target_length?: NumberAliasedNodeData | null;
+    engagement_target_length?: NumberAliasedNodeDataMin0 | null;
     /**
      * Select an option
      */
@@ -6135,7 +6234,7 @@ export type ProjectEngagementEngagementDetailsTile = {
 };
 
 export type ProjectEngagementEngagementDocumentAliasedData = {
-    should_be_delivered?: BooleanAliasedNodeData | null;
+    is_part_of_package: BooleanAliasedNodeData | null;
     engagement_document: ResourceInstanceAliasedNodeData | null;
 };
 
@@ -6182,10 +6281,6 @@ export type ProjectEngagementEngagementParticipantAliasedData = {
      * Select an option
      */
     participant_type?: ReferenceAliasedNodeData | null;
-    /**
-     * Select an option
-     */
-    participant_role?: ReferenceAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -8027,6 +8122,21 @@ export type UserResponse = {
     is_superuser: boolean;
 };
 
+export type WfsIntersectRequest = {
+    /**
+     * GeoJSON FeatureCollection, Feature, or bare Geometry.
+     */
+    geometry: unknown;
+    /**
+     * WFS type name, e.g. 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW'.
+     */
+    layer: string;
+    /**
+     * Geometry property name on the WFS layer (default: 'geometry').
+     */
+    geometry_property?: string;
+};
+
 export type AlterationWritable = {
     resourceinstanceid?: string | null;
     aliased_data?: AlterationResourceAliasedDataWritable;
@@ -9684,23 +9794,123 @@ export type BcapMessageResourceAliasedDataWritable = {
     message_content?: BcapMessageMessageContentTileWritable | null;
 };
 
+export type BcapServiceRequestBcPropertyAddressAliasedDataWritable = {
+    address_remarks?: StringAliasedNodeDataWritable | null;
+    street_name?: StringAliasedNodeDataWritable | null;
+    street_number?: StringAliasedNodeDataWritable | null;
+    city?: StringAliasedNodeDataWritable | null;
+    postal_code?: StringAliasedNodeDataWritable | null;
+    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTileWritable> | null;
+};
+
+export type BcapServiceRequestBcPropertyAddressTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestBcPropertyAddressAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestBcPropertyLegalDescriptionAliasedDataWritable = {
+    pid?: NonLocalizedStringAliasedNodeDataWritable | null;
+    pin?: NonLocalizedStringAliasedNodeDataWritable | null;
+    legal_description?: StringAliasedNodeDataWritable | null;
+    legal_address_remarks?: StringAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestBcPropertyLegalDescriptionTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestBcPropertyLegalDescriptionAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestCrownLandSurveyInformationAliasedDataWritable = {
+    districts?: StringAliasedNodeDataWritable | null;
+    land_title?: StringAliasedNodeDataWritable | null;
+    pin_n1?: NonLocalizedStringAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestCrownLandSurveyInformationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestCrownLandSurveyInformationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestCrownLandTenureTypeAliasedDataWritable = {
+    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTileWritable | null;
+    crown_land_tenure_type?: StringAliasedNodeDataWritable | null;
+    tenure_description?: StringAliasedNodeDataWritable | null;
+};
+
+export type BcapServiceRequestCrownLandTenureTypeTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestCrownLandTenureTypeAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type BcapServiceRequestProcessModuleAliasedDataWritable = {
     is_module_completed?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Enter date
-     */
     module_completed_date?: DateAliasedNodeDataWritable | null;
-    /**
-     * Module ID if a copy of a Module Template
-     */
     module_id?: NonLocalizedStringAliasedNodeDataWritable | null;
-    /**
-     * Enter name of the Process Module
-     */
     module_name: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter number
-     */
     module_order?: NumberAliasedNodeDataWritable | null;
     process_requirement?: Array<BcapServiceRequestProcessRequirementTileWritable> | null;
 };
@@ -9728,10 +9938,7 @@ export type BcapServiceRequestProcessModuleTileWritable = {
 
 export type BcapServiceRequestProcessRequirementAliasedDataWritable = {
     ministry_assignee?: ResourceInstanceAliasedNodeDataWritable | null;
-    /**
-     * Enter number
-     */
-    process_requirement_order: NumberAliasedNodeDataMin0Writable | null;
+    process_requirement_order: NumberAliasedNodeDataWritable | null;
     process_requirement?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
@@ -9756,23 +9963,37 @@ export type BcapServiceRequestProcessRequirementTileWritable = {
     } | null;
 };
 
+export type BcapServiceRequestProjectLocationAliasedDataWritable = {
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTileWritable | null;
+    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTileWritable> | null;
+};
+
+export type BcapServiceRequestProjectLocationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestProjectLocationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type BcapServiceRequestProposedProjectAliasedDataWritable = {
-    project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
     project_type?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
     project_name?: StringAliasedNodeDataWritable | null;
-    /**
-     * Describe the scope of work to be competed as part of the proposed project
-     */
     scope_of_work?: StringAliasedNodeDataWritable | null;
-    /**
-     * Enter project description
-     */
     project_description?: StringAliasedNodeDataWritable | null;
 };
 
@@ -9801,21 +10022,16 @@ export type BcapServiceRequestResourceAliasedDataWritable = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTileWritable | null;
     service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
     proposed_project?: BcapServiceRequestProposedProjectTileWritable | null;
+    project_location?: BcapServiceRequestProjectLocationTileWritable | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTileWritable | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTileWritable | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedDataWritable = {
-    /**
-     * Enter date
-     */
     application_submission_date?: DateAliasedNodeDataWritable | null;
     ministry_assignee_n1?: ResourceInstanceAliasedNodeDataWritable | null;
     process_module?: Array<BcapServiceRequestProcessModuleTileWritable> | null;
-    /**
-     * Enter number of years requested
-     */
-    service_request_completion_target?: NumberAliasedNodeDataMin0Max10Writable | null;
+    service_request_completion_target?: NumberAliasedNodeDataWritable | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminTileWritable = {
@@ -9869,15 +10085,8 @@ export type BcapServiceRequestServiceRequestContactsTileWritable = {
 
 export type BcapServiceRequestServiceRequestIdentificationAliasedDataWritable =
     {
-        /**
-         * Select an option
-         */
-        filing_type: ReferenceAliasedNodeDataRequiredWritable | null;
-        /**
-         * Enter application ID
-         */
-        service_request_id?: StringAliasedNodeDataWritable | null;
-        supplemental_information?: FileListAliasedNodeDataWritable | null;
+        service_request_id: NonLocalizedStringAliasedNodeDataWritable | null;
+        service_request_type: ReferenceAliasedNodeDataRequiredWritable | null;
     };
 
 export type BcapServiceRequestServiceRequestIdentificationTileWritable = {
@@ -12442,7 +12651,7 @@ export type NumberAliasedNodeDataMin0Writable = {
 
 export type NumberAliasedNodeDataMin0Max10Writable = {
     /**
-     * Request Completion Target
+     * Permit Duration Requested
      *
      * Enter number of years requested
      */
@@ -13115,8 +13324,8 @@ export type PermitApplicationRelatedPermitTileWritable = {
 export type PermitApplicationResourceAliasedDataWritable = {
     application_identification?: PermitApplicationApplicationIdentificationTileWritable | null;
     application_contacts?: PermitApplicationApplicationContactsTileWritable | null;
-    proposed_project?: PermitApplicationProposedProjectTileWritable | null;
     archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
+    proposed_project?: PermitApplicationProposedProjectTileWritable | null;
     multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTileWritable> | null;
     project_engagements?: PermitApplicationProjectEngagementsTileWritable | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTileWritable | null;
@@ -13385,9 +13594,9 @@ export type ProjectEngagementEngagementDetailsAliasedDataWritable = {
      */
     engagement_start_date?: DateAliasedNodeDataWritable | null;
     /**
-     * Enter number
+     * Number of Days
      */
-    engagement_target_length?: NumberAliasedNodeDataWritable | null;
+    engagement_target_length?: NumberAliasedNodeDataMin0Writable | null;
     /**
      * Select an option
      */
@@ -13433,7 +13642,7 @@ export type ProjectEngagementEngagementDetailsTileWritable = {
 };
 
 export type ProjectEngagementEngagementDocumentAliasedDataWritable = {
-    should_be_delivered?: BooleanAliasedNodeDataWritable | null;
+    is_part_of_package: BooleanAliasedNodeDataWritable | null;
     engagement_document: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
@@ -13480,10 +13689,6 @@ export type ProjectEngagementEngagementParticipantAliasedDataWritable = {
      * Select an option
      */
     participant_type?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Select an option
-     */
-    participant_role?: ReferenceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
@@ -16362,6 +16567,20 @@ export type ApiUserRetrieveResponses = {
 
 export type ApiUserRetrieveResponse =
     ApiUserRetrieveResponses[keyof ApiUserRetrieveResponses];
+
+export type ApiWfsIntersectCreateData = {
+    body: WfsIntersectRequest;
+    path?: never;
+    query?: never;
+    url: '/bcap/api/wfs/intersect';
+};
+
+export type ApiWfsIntersectCreateResponses = {
+    /**
+     * No response body
+     */
+    200: unknown;
+};
 
 export type ApiWorkflowDraftListAllData = {
     body?: never;

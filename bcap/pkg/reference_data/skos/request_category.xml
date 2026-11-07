@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:arches="https://localhost/bcap/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/357f2bb7-47cb-4340-9a51-2ce6128bedd4">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/357f2bb7-47cb-4340-9a51-2ce6128bedd4</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275">
+        <dcterms:title>Request Category</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Submit a Site Visit</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/6576fbb7-948a-4064-bc8f-2e5ab788c27c">
+    <skos:prefLabel xml:lang="en">Request Access to an additional resource</skos:prefLabel>
+    <skos:example xml:lang="en">e.g. report library or something else from the Info Sharing Agreement</skos:example>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/6576fbb7-948a-4064-bc8f-2e5ab788c27c</dcterms:identifier>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab">
+    <skos:prefLabel xml:lang="en">Ask a question</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <skos:definition xml:lang="en">Submission of a document without a larger context</skos:definition>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/6dad6fc7-9bc4-4f25-9e50-20c4eb2be6ab</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/69f170e3-6dfd-4af8-a32c-c124d19c3e26">
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/69f170e3-6dfd-4af8-a32c-c124d19c3e26</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Start a New Project (Permit)</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/c3bc6606-c643-4776-bab3-0a10c0aadc34">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/c3bc6606-c643-4776-bab3-0a10c0aadc34</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Submit a non-Project report</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+    <skos:example xml:lang="en">an investigation, a reconnaissance</skos:example>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8">
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+    <skos:editorialNote xml:lang="en">This may come from just selecting an existing permit application from the dashboard.</skos:editorialNote>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/7c3b5f74-e68b-49ae-ba6e-2125fc7a4da8</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Update an exisiting Project (Permit)</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/20f204a6-7a49-432a-8734-eb1fdff2e570">
+    <skos:prefLabel xml:lang="en">Request Information about a property, area, or site</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/20f204a6-7a49-432a-8734-eb1fdff2e570</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/bcap/cfda6f18-56a4-4946-becf-fdf86994f275"/>
+  </skos:Concept>
+</rdf:RDF>

@@ -49,6 +49,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageThreadView,
 )
 from bcap.views.user_api import BCAPUserView
+from bcap.views.wfs_intersect_api import WfsIntersectView
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
     RegistrationLinkView,
@@ -208,6 +209,12 @@ documented_api_patterns = [
         "api/bcap_message/<uuid:pk>/",
         BcapMessageDetailView.as_view(),
         name="bcap_message_detail",
+    ),
+    # WFS Intersects proxy: POST a geometry, get back intersecting WFS features.
+    path(
+        "api/wfs/intersect",
+        WfsIntersectView.as_view(),
+        name="wfs_intersect",
     ),
 ]
 

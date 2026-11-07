@@ -2042,6 +2042,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserResponse'
           description: ''
+  /bcap/api/wfs/intersect:
+    post:
+      operationId: api_wfs_intersect_create
+      description: |-
+        POST a GeoJSON geometry and receive the WFS features that intersect it.
+
+        The request is forwarded to the configured DataBC WFS endpoint via the
+        application's outbound proxy (``TILESERVER_OUTBOUND_PROXY``) when set.
+        Returns the raw GeoJSON FeatureCollection from the WFS server.
+      tags:
+      - 'External: wfs'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WfsIntersectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WfsIntersectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WfsIntersectRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
   /bcap/api/workflow_draft:
     get:
       operationId: api_workflow_draft_list_all
@@ -5848,6 +5876,275 @@ components:
           allOf:
           - $ref: '#/components/schemas/Bcap_Message_Message_Content_Tile'
           nullable: true
+    Bcap_Service_Request_Bc_Property_Address_Aliased_Data:
+      type: object
+      properties:
+        address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        street_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        street_number:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        postal_code:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        bc_property_legal_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Tile'
+          nullable: true
+    Bcap_Service_Request_Bc_Property_Address_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Bc_Property_Legal_Description_Aliased_Data:
+      type: object
+      properties:
+        pid:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        pin:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        legal_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        legal_address_remarks:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Bcap_Service_Request_Bc_Property_Legal_Description_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Crown_Land_Survey_Information_Aliased_Data:
+      type: object
+      properties:
+        districts:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        land_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        pin_n1:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+    Bcap_Service_Request_Crown_Land_Survey_Information_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Crown_Land_Tenure_Type_Aliased_Data:
+      type: object
+      properties:
+        crown_land_survey_information:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Tile'
+          nullable: true
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        tenure_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Bcap_Service_Request_Crown_Land_Tenure_Type_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Bcap_Service_Request_Process_Module_Aliased_Data:
       type: object
       properties:
@@ -5859,22 +6156,18 @@ components:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
-          description: Enter date
         module_id:
           allOf:
           - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
-          description: Module ID if a copy of a Module Template
         module_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Enter name of the Process Module
         module_order:
           allOf:
           - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
-          description: Enter number
         process_requirement:
           type: array
           items:
@@ -5939,14 +6232,12 @@ components:
           nullable: true
         process_requirement_order:
           allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
-          description: Enter number
         process_requirement:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-          title: Application Requirement
       required:
       - process_requirement_order
     Bcap_Service_Request_Process_Requirement_Tile:
@@ -5997,34 +6288,89 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Bcap_Service_Request_Proposed_Project_Aliased_Data:
+    Bcap_Service_Request_Project_Location_Aliased_Data:
       type: object
       properties:
-        project_boundary:
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
+          nullable: true
+        service_request_boundary:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
           nullable: true
+        bc_property_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Tile'
+          nullable: true
+    Bcap_Service_Request_Project_Location_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Proposed_Project_Aliased_Data:
+      type: object
+      properties:
         project_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
-          description: Select an option
         project_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Enter text
         scope_of_work:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Describe the scope of work to be competed as part of the proposed
-            project
         project_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Enter project description
     Bcap_Service_Request_Proposed_Project_Tile:
       type: object
       properties:
@@ -6088,6 +6434,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Proposed_Project_Tile'
           nullable: true
+        project_location:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Tile'
+          nullable: true
         service_request_admin:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Admin_Tile'
@@ -6103,12 +6453,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
-          description: Enter date
         ministry_assignee_n1:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-          title: Ministry Assignee
         process_module:
           type: array
           items:
@@ -6116,10 +6464,8 @@ components:
           nullable: true
         service_request_completion_target:
           allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0Max10'
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
-          title: Request Completion Target
-          description: Enter number of years requested
     Bcap_Service_Request_Service_Request_Admin_Tile:
       type: object
       properties:
@@ -6238,23 +6584,17 @@ components:
     Bcap_Service_Request_Service_Request_Identification_Aliased_Data:
       type: object
       properties:
-        filing_type:
+        service_request_id:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+        service_request_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
-          description: Select an option
-        service_request_id:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Application ID
-          description: Enter application ID
-        supplemental_information:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
       required:
-      - filing_type
+      - service_request_id
+      - service_request_type
     Bcap_Service_Request_Service_Request_Identification_Tile:
       type: object
       properties:
@@ -6310,7 +6650,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
-          title: Permit Messages
     Bcap_Service_Request_Service_Request_Messages_Tile:
       type: object
       properties:
@@ -12367,7 +12706,7 @@ components:
           type: number
           format: double
           nullable: true
-          title: Request Completion Target
+          title: Permit Duration Requested
           description: Enter number of years requested
           minimum: 0
           maximum: 10
@@ -14176,13 +14515,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
           nullable: true
-        proposed_project:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_Tile'
-          nullable: true
         archaeological_assessment_plan:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Tile'
+          nullable: true
+        proposed_project:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_Tile'
           nullable: true
         multi_zone_area_addition:
           type: array
@@ -14867,9 +15206,9 @@ components:
           description: Enter date
         engagement_target_length:
           allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeData'
+          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
           nullable: true
-          description: Enter number
+          description: Number of Days
         engagement_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
@@ -14950,7 +15289,7 @@ components:
     Project_Engagement_Engagement_Document_Aliased_Data:
       type: object
       properties:
-        should_be_delivered:
+        is_part_of_package:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
@@ -14960,6 +15299,7 @@ components:
           nullable: true
       required:
       - engagement_document
+      - is_part_of_package
     Project_Engagement_Engagement_Document_Tile:
       type: object
       properties:
@@ -15024,6 +15364,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          title: Other Participant Name
           description: Enter text
         participant_phone_number:
           allOf:
@@ -15036,11 +15377,6 @@ components:
           nullable: true
           description: Enter text
         participant_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          description: Select an option
-        participant_role:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
@@ -18967,6 +19303,21 @@ components:
       - is_superuser
       - last_name
       - username
+    WfsIntersectRequest:
+      type: object
+      properties:
+        geometry:
+          description: GeoJSON FeatureCollection, Feature, or bare Geometry.
+        layer:
+          type: string
+          description: WFS type name, e.g. 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW'.
+        geometry_property:
+          type: string
+          default: geometry
+          description: 'Geometry property name on the WFS layer (default: ''geometry'').'
+      required:
+      - geometry
+      - layer
   securitySchemes:
     cookieAuth:
       type: apiKey
