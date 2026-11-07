@@ -139,7 +139,7 @@
                         "en": "Submission Data"
                     },
                     "nodegroup_id": "03da909d-d9de-4f3b-a1f8-f4a20bb16ebd",
-                    "sortorder": null,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -168,7 +168,7 @@
                         "en": "Is Template Requirement"
                     },
                     "nodegroup_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
-                    "sortorder": null,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true
                 },

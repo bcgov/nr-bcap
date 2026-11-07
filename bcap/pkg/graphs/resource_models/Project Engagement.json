@@ -28,7 +28,7 @@
                         "en": "Engagement"
                     },
                     "nodegroup_id": "f1c1d167-f998-4e3d-b909-91575658dfb9",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -167,9 +167,7 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Reference",
                         "placeholder": {
                             "en": ""
@@ -194,9 +192,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Engagement Outcome Summary",
                         "maxLength": null,
                         "placeholder": {
@@ -218,9 +214,7 @@
                 {
                     "card_id": "d1156827-a4eb-4b52-9d33-804fa2a475fe",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Engagement Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -256,9 +250,7 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Participant Portal URL",
                         "maxLength": null,
                         "placeholder": {
@@ -328,9 +320,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Package Delivery Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -371,9 +361,7 @@
                 {
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Package Delivery Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -398,9 +386,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Participant Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -423,9 +409,7 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Participant Email Address",
                         "maxLength": null,
                         "placeholder": {
@@ -447,9 +431,7 @@
                 {
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Participant Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -474,9 +456,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Other Participant Name",
                         "maxLength": null,
                         "placeholder": {
@@ -499,9 +479,7 @@
                     "card_id": "1d16cde8-12b5-4e60-aaa6-2672e3f23dff",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Engagement Document",
                         "placeholder": {
                             "en": ""
@@ -521,9 +499,7 @@
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Package Documents",
                         "placeholder": {
                             "en": ""
@@ -543,9 +519,7 @@
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Participant Phone Number",
                         "maxLength": null,
                         "placeholder": {
@@ -590,11 +564,7 @@
                     "config": {
                         "defaultValue": "90",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Engagement Target Length",
                         "max": "",
                         "min": "0",
@@ -625,9 +595,7 @@
                 {
                     "card_id": "d1156827-a4eb-4b52-9d33-804fa2a475fe",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Engagement Status",
                         "placeholder": {
                             "en": "Select an option"
@@ -646,9 +614,7 @@
                 {
                     "card_id": "598fd860-8850-4c40-8363-0cf2c402bfbd",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Package Delivery Method",
                         "placeholder": {
                             "en": "Select an option"
@@ -673,9 +639,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Engagement Steps Taken",
                         "maxLength": null,
                         "placeholder": {
@@ -1219,10 +1183,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1485,10 +1446,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

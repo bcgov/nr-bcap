@@ -26,7 +26,7 @@
                         "en": "Serivce Request Location"
                     },
                     "nodegroup_id": "5e479f06-37f3-4c7b-8506-e76e45cc009e",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -80,7 +80,7 @@
                         "en": "Process Module"
                     },
                     "nodegroup_id": "d505be54-43d1-47ad-b624-c869d4af6d15",
-                    "sortorder": null,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -107,7 +107,7 @@
                         "en": "Crown Land Survey Information"
                     },
                     "nodegroup_id": "d572f202-f1b1-4746-8b08-c9abca8a604a",
-                    "sortorder": null,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -280,7 +280,7 @@
                         "en": "Crown Land Tenure Type"
                     },
                     "nodegroup_id": "bfc7d4e2-11ba-4dfe-b0c7-9034f48cf3bf",
-                    "sortorder": null,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -336,7 +336,7 @@
                         "en": "Process Requirement"
                     },
                     "nodegroup_id": "5fe11f27-b1d2-4ad5-bd7d-f094a65c3cef",
-                    "sortorder": null,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true
                 }
@@ -1440,10 +1440,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1988,10 +1985,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

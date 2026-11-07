@@ -28,7 +28,7 @@
                         "en": "System Info"
                     },
                     "nodegroup_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -57,7 +57,7 @@
                         "en": "Filing Info"
                     },
                     "nodegroup_id": "b7d2e419-6c33-4f88-a0d5-91e4c6b8a742",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -86,7 +86,7 @@
                         "en": "Draft Payload"
                     },
                     "nodegroup_id": "d41a7c58-63b9-4e27-9f0a-8c5d2b41e930",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 }
