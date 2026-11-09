@@ -230,7 +230,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         card = page.results[0]
         self.assertEqual(card.id, self.permit_id)
         self.assertEqual(card.project_name, "My Project")
-        self.assertRegex(card.application_number, r"^APP-\d+$")
+        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card.requirement_name, "Field Assessment")
         self.assertEqual(card.requirement_due_date, "2026-02-15")

@@ -114,7 +114,7 @@ def build_permit(
         pa_groups.APPLICATION_IDENTIFICATION,
         {
             pa.PROJECT_NAME: builder.localized(name),
-            pa.APPLICATION_ID: builder.localized(name),
+            pa.APPLICATION_ID: name,
             pa.FILING_TYPE: reference_value(
                 "permit_application", pa.FILING_TYPE, filing_type
             ),
