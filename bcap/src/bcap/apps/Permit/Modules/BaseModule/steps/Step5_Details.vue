@@ -32,8 +32,8 @@ const mapOverrides = {
 
 const boundaryHectares = computed(() => {
     const geom =
-        draftData.value?.proposed_project?.aliased_data?.project_boundary
-            ?.node_value;
+        draftData.value?.project_location?.aliased_data
+            ?.service_request_boundary?.node_value;
     if (!geom) return null;
     try {
         return turfArea(geom as Parameters<typeof turfArea>[0]) / 10000;
@@ -60,7 +60,8 @@ function normalizePid(raw: string): string {
 }
 
 function currentBoundary() {
-    return draftData.value?.proposed_project?.aliased_data?.project_boundary;
+    return draftData.value?.project_location?.aliased_data
+        ?.service_request_boundary;
 }
 
 function currentFeatures(): unknown[] {
@@ -80,8 +81,8 @@ function setBoundaryFeatures(features: unknown[]) {
             ...(existing ?? { display_value: '', details: [] }),
             node_value: newGeom,
         } as AliasedNodeData,
-        'project_boundary',
-        'proposed_project',
+        'service_request_boundary',
+        'project_location',
     );
 }
 
@@ -135,7 +136,9 @@ const tenuresLoading = ref(false);
 const tenuresError = ref('');
 
 watch(
-    () => draftData.value?.proposed_project?.aliased_data?.project_boundary,
+    () =>
+        draftData.value?.project_location?.aliased_data
+            ?.service_request_boundary,
     async (boundary) => {
         const geom = boundary?.node_value as
             { type?: string; features?: unknown[] } | null | undefined;
@@ -173,29 +176,18 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.proposed_project?.aliased_data
-                    ?.development_project_details?.aliased_data
-                    ?.industrial_sector
-            "
-            graph-slug="permit_application"
-            node-alias="industrial_sector"
-            @update:aliased-node-data="
-                updateValue($event, 'industrial_sector', [
-                    'proposed_project',
-                    'development_project_details',
-                ])
-            "
-        />
-        <GenericWidget
-            :mode="EDIT"
-            :aliased-node-data="
-                draftData?.proposed_project?.aliased_data?.project_boundary
+                draftData?.project_location?.aliased_data
+                    ?.service_request_boundary
             "
             :card-x-node-x-widget-data-overrides="mapOverrides"
-            graph-slug="permit_application"
-            node-alias="project_boundary"
+            graph-slug="bcap_service_request"
+            node-alias="service_request_boundary"
             @update:aliased-node-data="
-                updateValue($event, 'project_boundary', 'proposed_project')
+                updateValue(
+                    $event,
+                    'service_request_boundary',
+                    'project_location',
+                )
             "
         />
         <p
@@ -280,7 +272,7 @@ defineExpose({ isValid });
             <p class="tenures-count">
                 {{ tenures.length }}
                 Crown Tenure{{ tenures.length === 1 ? '' : 's' }} found within
-                the project boundary.
+                the service request boundary.
             </p>
             <DataTable
                 :value="tenures"

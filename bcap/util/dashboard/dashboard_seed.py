@@ -432,7 +432,7 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
             pa_groups.APPLICATION_IDENTIFICATION,
             {
                 pa.PROJECT_NAME: self.localized(spec.project_name),
-                pa.APPLICATION_ID: self.localized(spec.application_id),
+                pa.APPLICATION_ID: spec.application_id,
                 pa.FILING_TYPE: random_reference_value(
                     GraphSlugs.PERMIT_APPLICATION, pa.FILING_TYPE
                 ),

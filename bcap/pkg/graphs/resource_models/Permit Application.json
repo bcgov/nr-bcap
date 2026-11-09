@@ -26,7 +26,7 @@
                         "en": "Process Requirement"
                     },
                     "nodegroup_id": "0a4d02c6-82a7-4013-a99e-9bd0796b9a78",
-                    "sortorder": 11,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -80,7 +80,7 @@
                         "en": "Process Module"
                     },
                     "nodegroup_id": "f780b695-0897-41fc-89c6-2cd753574ea5",
-                    "sortorder": 12,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -107,7 +107,7 @@
                         "en": "MZA Project Details"
                     },
                     "nodegroup_id": "44cb22cc-13cb-4dac-a7dd-60943f26e764",
-                    "sortorder": 13,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -300,7 +300,7 @@
                         "en": "Project Engagement"
                     },
                     "nodegroup_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
-                    "sortorder": 14,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -354,7 +354,7 @@
                         "en": "Permit Messages"
                     },
                     "nodegroup_id": "cef85a5d-80e4-47f9-948a-8d07612e1472",
-                    "sortorder": 15,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -381,7 +381,7 @@
                         "en": "Application Contacts"
                     },
                     "nodegroup_id": "534c3214-48d1-47f5-a4ad-c3cec5c03667",
-                    "sortorder": 16,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -435,7 +435,7 @@
                         "en": "Development Project Details"
                     },
                     "nodegroup_id": "859edaa1-c07e-48b9-a74a-2ab087fa35f1",
-                    "sortorder": 17,
+                    "sortorder": null,
                     "source_identifier_id": null,
                     "visible": true
                 }
@@ -777,10 +777,35 @@
                         "en": "Project Name"
                     },
                     "node_id": "47064904-4bf4-49c6-a9ea-61915a5d512b",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Application ID",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "prefix": "APP",
+                        "sequenceDigits": 4,
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "5d4db22a-e1b4-4e76-a1f1-642ae771c511",
+                    "label": {
+                        "en": "Application ID"
+                    },
+                    "node_id": "b73db679-0759-48f6-83be-99e458b2d583",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000001006"
                 },
                 {
                     "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
@@ -796,7 +821,7 @@
                         "en": "Filing Type"
                     },
                     "node_id": "c4506124-e2d8-4fc9-8bc5-c6fa564d0bdf",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -860,7 +885,7 @@
                         "en": "Is Replacement"
                     },
                     "node_id": "aabddd33-2476-4572-b8b6-50766004772d",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -879,7 +904,7 @@
                         "en": "MAP or HIP"
                     },
                     "node_id": "9f846e12-abac-48d5-b6c6-b325b9616c8c",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -918,7 +943,7 @@
                         "en": "Supplemental Information"
                     },
                     "node_id": "3794179e-c749-4c12-9060-4a974a710e83",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -1141,34 +1166,6 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "2cecb3b6-f430-4e6a-a597-a9b70823c58d",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "label": "Application ID",
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter application ID"
-                        },
-                        "uneditable": true,
-                        "width": "100%"
-                    },
-                    "id": "99d76e1a-75ad-4e84-a7b5-889cce23fee4",
-                    "label": {
-                        "en": "Application ID"
-                    },
-                    "node_id": "6256c464-bc9a-4b37-8b07-993fc213baf3",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
-                },
-                {
                     "card_id": "79ef3bc7-4c2d-4c30-89f7-f329b324569f",
                     "config": {
                         "i18n_properties": ["placeholder"],
@@ -1258,7 +1255,7 @@
                         "en": "Owning Organization"
                     },
                     "node_id": "17da504c-184c-43f4-9e5d-486ccd31cce2",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -1642,16 +1639,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
-                    "edgeid": "45156877-6147-452f-a904-e0fd03214745",
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "rangenode_id": "6256c464-bc9a-4b37-8b07-993fc213baf3",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "c9b090b8-fe7a-4aaa-abaf-fa2c79c88a32",
                     "edgeid": "456152aa-460b-4142-a6c8-7f87637d847d",
                     "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
@@ -1968,6 +1955,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at",
                     "rangenode_id": "27570b89-ce35-4434-a7af-03066283a9d4",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "edgeid": "cdb72065-f36d-4a64-96a9-97d3dfc81448",
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
+                    "rangenode_id": "b73db679-0759-48f6-83be-99e458b2d583",
                     "source_identifier_id": null
                 },
                 {
@@ -3090,29 +3087,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "application_id",
-                    "config": {},
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Application ID",
-                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
-                    "nodeid": "6256c464-bc9a-4b37-8b07-993fc213baf3",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "sortorder": 0,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "mza_requirement_ministry_asignee",
                     "config": {
                         "graphs": [
@@ -3613,6 +3587,29 @@
                     "nodeid": "b6e2636f-aa5d-4405-ab59-33ce1a89f900",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4i_is_time-span_of",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "application_id",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": true,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Application ID",
+                    "nodegroup_id": "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c",
+                    "nodeid": "b73db679-0759-48f6-83be-99e458b2d583",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -4191,9 +4188,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Update request type controlled list",
-                "publicationid": "6f5ccb58-dba7-4278-9c91-de8c56d25ff5",
-                "published_time": "2026-11-06T10:56:39.808"
+                "notes": "Update application ID to be non-localized string w/ reference number widget",
+                "publicationid": "a90aa53d-72bc-420c-972a-5bbf76e23bda",
+                "published_time": "2026-11-08T09:59:21.287"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],

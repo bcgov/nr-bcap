@@ -2032,7 +2032,13 @@ export type BcapServiceRequestServiceRequestContactsTile = {
 };
 
 export type BcapServiceRequestServiceRequestIdentificationAliasedData = {
+    /**
+     * Enter text
+     */
     service_request_id: NonLocalizedStringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
     service_request_type: ReferenceAliasedNodeDataRequired | null;
 };
 
@@ -5446,9 +5452,9 @@ export type PermitApplicationApplicationContactsTile = {
 
 export type PermitApplicationApplicationIdentificationAliasedData = {
     /**
-     * Enter application ID
+     * Enter text
      */
-    application_id?: StringAliasedNodeData | null;
+    application_id: NonLocalizedStringAliasedNodeData | null;
     /**
      * Select an option
      */
@@ -10085,7 +10091,13 @@ export type BcapServiceRequestServiceRequestContactsTileWritable = {
 
 export type BcapServiceRequestServiceRequestIdentificationAliasedDataWritable =
     {
+        /**
+         * Enter text
+         */
         service_request_id: NonLocalizedStringAliasedNodeDataWritable | null;
+        /**
+         * Select an option
+         */
         service_request_type: ReferenceAliasedNodeDataRequiredWritable | null;
     };
 
@@ -12901,9 +12913,9 @@ export type PermitApplicationApplicationContactsTileWritable = {
 
 export type PermitApplicationApplicationIdentificationAliasedDataWritable = {
     /**
-     * Enter application ID
+     * Enter text
      */
-    application_id?: StringAliasedNodeDataWritable | null;
+    application_id: NonLocalizedStringAliasedNodeDataWritable | null;
     /**
      * Select an option
      */
@@ -15549,6 +15561,20 @@ export type ApiBcapServiceRequestListResponses = {
 
 export type ApiBcapServiceRequestListResponse =
     ApiBcapServiceRequestListResponses[keyof ApiBcapServiceRequestListResponses];
+
+export type ApiBcapServiceRequestCreateData = {
+    body?: BcapServiceRequestWritable;
+    path?: never;
+    query?: never;
+    url: '/bcap/api/bcap_service_request';
+};
+
+export type ApiBcapServiceRequestCreateResponses = {
+    201: BcapServiceRequest;
+};
+
+export type ApiBcapServiceRequestCreateResponse =
+    ApiBcapServiceRequestCreateResponses[keyof ApiBcapServiceRequestCreateResponses];
 
 export type ApiBcapServiceRequestRetrieveData = {
     body?: never;

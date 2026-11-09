@@ -173,7 +173,7 @@
                         "placeholder": {
                             "en": "Enter text"
                         },
-                        "reportTypeAbbreviation": "",
+                        "prefix": "",
                         "submissionTypeNodeAlias": "submission_type",
                         "uneditable": false,
                         "width": "100%"
