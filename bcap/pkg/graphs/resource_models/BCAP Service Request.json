@@ -892,15 +892,15 @@
                         "descriptor_types": {
                             "description": {
                                 "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                                "string_template": "<Application ID>, <Application Identification>, <Project Name>, <MAP or HIP>, <Is Replacement>, <Supplemental Information>"
+                                "string_template": "<Service Request ID>, <Service Request Type>"
                             },
                             "map_popup": {
                                 "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                                "string_template": "<Application ID>, <Application Identification>, <Project Name>, <MAP or HIP>, <Is Replacement>, <Supplemental Information>"
+                                "string_template": "<Service Request ID>, <Service Request Type>"
                             },
                             "name": {
                                 "nodegroup_id": "cd450656-6555-42ac-a37a-f6e2157a4b51",
-                                "string_template": "<Application ID>"
+                                "string_template": "<Service Request ID>"
                             }
                         },
                         "triggering_nodegroups": []
