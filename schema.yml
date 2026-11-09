@@ -3361,6 +3361,11 @@ components:
           nullable: true
           title: Location Description
           description: Describe the location of sites with no civic address.
+        bc_property_legal_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Bc_Property_Legal_Description_Tile'
+          nullable: true
         street_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
@@ -3376,11 +3381,6 @@ components:
         postal_code:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax7'
-          nullable: true
-        bc_property_legal_description:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Bc_Property_Legal_Description_Tile'
           nullable: true
     Archaeological_Site_Bc_Property_Address_Tile:
       type: object
@@ -3878,6 +3878,12 @@ components:
     Archaeological_Site_General_Remark_Information_Aliased_Data:
       type: object
       properties:
+        general_remark:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: General Remarks
+          description: Enter text
         general_remark_source:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
@@ -3888,12 +3894,6 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
-        general_remark:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: General Remarks
-          description: Enter text
       required:
       - general_remark
       - general_remark_date
@@ -4099,6 +4099,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/BordenNumberDatatypeAliasedNodeDataMax13'
           nullable: true
+        authority:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Authority_Tile'
+          nullable: true
         borden_number_issuance_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
@@ -4110,25 +4115,20 @@ components:
           nullable: true
           title: Parcel Owner Type(s)
           description: Enter text
-        site_alert:
-          allOf:
-          - $ref: '#/components/schemas/Archaeological_Site_Site_Alert_Tile'
-          nullable: true
         register_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           title: Register Type(s)
+        site_alert:
+          allOf:
+          - $ref: '#/components/schemas/Archaeological_Site_Site_Alert_Tile'
+          nullable: true
         parent_site:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
           description: Select parent site (if applicable)
-        authority:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Authority_Tile'
-          nullable: true
         site_decision:
           type: array
           items:
@@ -4245,15 +4245,15 @@ components:
     Archaeological_Site_Related_Documents_Aliased_Data:
       type: object
       properties:
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
-          nullable: true
         related_site_documents:
           type: array
           items:
             $ref: '#/components/schemas/Archaeological_Site_Related_Site_Documents_Tile'
+          nullable: true
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
           nullable: true
         site_images:
           type: array
@@ -4461,15 +4461,15 @@ components:
           items:
             $ref: '#/components/schemas/Archaeological_Site_Hca_Contravention_Tile'
           nullable: true
-        conviction:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Conviction_Tile'
-          nullable: true
         contravention_document:
           type: array
           items:
             $ref: '#/components/schemas/Archaeological_Site_Contravention_Document_Tile'
+          nullable: true
+        conviction:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Conviction_Tile'
           nullable: true
     Archaeological_Site_Remarks_And_Restricted_Information_Tile:
       type: object
@@ -4539,16 +4539,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/Archaeological_Site_Archaeological_Data_Tile'
           nullable: true
-        site_record_admin:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Site_Record_Admin_Tile'
-          nullable: true
-        external_url:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_External_Url_Tile'
-          nullable: true
         ancestral_remains:
           allOf:
           - $ref: '#/components/schemas/Archaeological_Site_Ancestral_Remains_Tile'
@@ -4560,6 +4550,16 @@ components:
         related_documents:
           allOf:
           - $ref: '#/components/schemas/Archaeological_Site_Related_Documents_Tile'
+          nullable: true
+        external_url:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_External_Url_Tile'
+          nullable: true
+        site_record_admin:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Site_Record_Admin_Tile'
           nullable: true
     Archaeological_Site_Restricted_Ancestral_Remains_Remark_Aliased_Data:
       type: object
@@ -5039,11 +5039,6 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-          title: Site Image
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -5070,6 +5065,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+          title: Site Image
     Archaeological_Site_Site_Images_Tile:
       type: object
       properties:
@@ -5914,6 +5914,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+        bc_property_legal_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Tile'
+          nullable: true
         street_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -5929,11 +5934,6 @@ components:
         postal_code:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-        bc_property_legal_description:
-          type: array
-          items:
-            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Legal_Description_Tile'
           nullable: true
     Bcap_Service_Request_Bc_Property_Address_Tile:
       type: object
@@ -6116,17 +6116,17 @@ components:
     Bcap_Service_Request_Crown_Land_Tenure_Type_Aliased_Data:
       type: object
       properties:
-        crown_land_survey_information:
+        tenure_description:
           allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Tile'
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
         crown_land_tenure_type:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-        tenure_description:
+        crown_land_survey_information:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Tile'
           nullable: true
     Bcap_Service_Request_Crown_Land_Tenure_Type_Tile:
       type: object
@@ -6322,10 +6322,6 @@ components:
     Bcap_Service_Request_Project_Location_Aliased_Data:
       type: object
       properties:
-        crown_land_tenure_type:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
-          nullable: true
         service_request_boundary:
           allOf:
           - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
@@ -6334,6 +6330,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Tile'
+          nullable: true
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
           nullable: true
     Bcap_Service_Request_Project_Location_Tile:
       type: object
@@ -6457,17 +6457,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Identification_Tile'
           nullable: true
-        service_request_contacts:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Contacts_Tile'
-          nullable: true
         proposed_project:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Proposed_Project_Tile'
           nullable: true
-        project_location:
+        service_request_contacts:
           allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Tile'
+          - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Contacts_Tile'
           nullable: true
         service_request_admin:
           allOf:
@@ -6476,6 +6472,10 @@ components:
         service_request_messages:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Messages_Tile'
+          nullable: true
+        project_location:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Tile'
           nullable: true
     Bcap_Service_Request_Service_Request_Admin_Aliased_Data:
       type: object
@@ -6488,14 +6488,14 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
+        service_request_completion_target:
+          allOf:
+          - $ref: '#/components/schemas/NumberAliasedNodeData'
+          nullable: true
         process_module:
           type: array
           items:
             $ref: '#/components/schemas/Bcap_Service_Request_Process_Module_Tile'
-          nullable: true
-        service_request_completion_target:
-          allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
     Bcap_Service_Request_Service_Request_Admin_Tile:
       type: object
@@ -6910,16 +6910,16 @@ components:
     Contributor_Associated_Organization_Aliased_Data:
       type: object
       properties:
-        associated_organization:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          description: Select Organization Name if applicable
         start_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
+        associated_organization:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          description: Select Organization Name if applicable
         end_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
@@ -6976,11 +6976,6 @@ components:
     Contributor_Contributor_Aliased_Data:
       type: object
       properties:
-        associated_organization:
-          type: array
-          items:
-            $ref: '#/components/schemas/Contributor_Associated_Organization_Tile'
-          nullable: true
         bcap_username:
           allOf:
           - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
@@ -7017,15 +7012,20 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
+        mailing_address:
+          allOf:
+          - $ref: '#/components/schemas/Contributor_Mailing_Address_Tile'
+          nullable: true
+        associated_organization:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contributor_Associated_Organization_Tile'
+          nullable: true
         contact_email:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax125'
           nullable: true
           description: Enter text
-        mailing_address:
-          allOf:
-          - $ref: '#/components/schemas/Contributor_Mailing_Address_Tile'
-          nullable: true
       required:
       - contributor_name
       - contributor_type
@@ -7504,6 +7504,11 @@ components:
     Document_Document_Details_Aliased_Data:
       type: object
       properties:
+        document_identifier:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_Document_Identifier_Tile'
+          nullable: true
         other_journal_or_volume_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -7533,11 +7538,6 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
-        document_identifier:
-          type: array
-          items:
-            $ref: '#/components/schemas/Document_Document_Identifier_Tile'
-          nullable: true
         page_range_start:
           allOf:
           - $ref: '#/components/schemas/NumberAliasedNodeData'
@@ -7608,16 +7608,16 @@ components:
     Document_Document_Identifier_Aliased_Data:
       type: object
       properties:
-        document_identifier_type:
-          allOf:
-          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
-          nullable: true
-          description: Select an option
         document_identifier:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter Report Number, URL or Digital Object Identifier
+        document_identifier_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
     Document_Document_Identifier_Tile:
       type: object
       properties:
@@ -9136,40 +9136,40 @@ components:
     Hria_Discontinued_Data_Resource_Aliased_Data:
       type: object
       properties:
-        other_maps:
+        archaeological_site:
           allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Other_Maps_Tile'
-          nullable: true
-        unreviewed_adif_record:
-          allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Unreviewed_Adif_Record_Tile'
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Archaeological_Site_Tile'
           nullable: true
         site_boundary_annotations:
           type: array
           items:
             $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Boundary_Annotations_Tile'
           nullable: true
-        archaeological_site:
+        unreviewed_adif_record:
           allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Archaeological_Site_Tile'
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Unreviewed_Adif_Record_Tile'
           nullable: true
         hria_jursidiction_and_tenure:
           type: array
           items:
             $ref: '#/components/schemas/Hria_Discontinued_Data_Hria_Jursidiction_And_Tenure_Tile'
           nullable: true
-        biogeography:
+        other_maps:
           allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Tile'
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Other_Maps_Tile'
+          nullable: true
+        site_dimensions:
+          allOf:
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Dimensions_Tile'
           nullable: true
         chronology:
           type: array
           items:
             $ref: '#/components/schemas/Hria_Discontinued_Data_Chronology_Tile'
           nullable: true
-        site_dimensions:
+        biogeography:
           allOf:
-          - $ref: '#/components/schemas/Hria_Discontinued_Data_Site_Dimensions_Tile'
+          - $ref: '#/components/schemas/Hria_Discontinued_Data_Biogeography_Tile'
           nullable: true
     Hria_Discontinued_Data_Site_Boundary_Annotations_Aliased_Data:
       type: object
@@ -9348,16 +9348,16 @@ components:
           nullable: true
           title: Entered By
           description: Enter text
-        unreviewed_adif_record:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
         site_entry_date:
           allOf:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           title: Entered On
           description: Enter date
+        unreviewed_adif_record:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
     Hria_Discontinued_Data_Unreviewed_Adif_Record_Tile:
       type: object
       properties:
@@ -11506,13 +11506,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Legislative_Act_Act_Status_Tile'
           nullable: true
-        document:
-          allOf:
-          - $ref: '#/components/schemas/Legislative_Act_Document_Tile'
-          nullable: true
         authority:
           allOf:
           - $ref: '#/components/schemas/Legislative_Act_Authority_Tile'
+          nullable: true
+        document:
+          allOf:
+          - $ref: '#/components/schemas/Legislative_Act_Document_Tile'
           nullable: true
     LgPerson:
       type: object
@@ -11642,15 +11642,15 @@ components:
     Lg_Person_Government_Association_Aliased_Data:
       type: object
       properties:
-        government_association:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
         government_position:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        government_association:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
     Lg_Person_Government_Association_Tile:
       type: object
       properties:
@@ -11763,21 +11763,21 @@ components:
     Lg_Person_Resource_Aliased_Data:
       type: object
       properties:
-        contact_information:
-          allOf:
-          - $ref: '#/components/schemas/Lg_Person_Contact_Information_Tile'
-          nullable: true
-        government_association:
-          allOf:
-          - $ref: '#/components/schemas/Lg_Person_Government_Association_Tile'
-          nullable: true
         government_person_name:
           allOf:
           - $ref: '#/components/schemas/Lg_Person_Government_Person_Name_Tile'
           nullable: true
+        contact_information:
+          allOf:
+          - $ref: '#/components/schemas/Lg_Person_Contact_Information_Tile'
+          nullable: true
         username:
           allOf:
           - $ref: '#/components/schemas/Lg_Person_Username_Tile'
+          nullable: true
+        government_association:
+          allOf:
+          - $ref: '#/components/schemas/Lg_Person_Government_Association_Tile'
           nullable: true
     Lg_Person_Username_Aliased_Data:
       type: object
@@ -12152,13 +12152,13 @@ components:
     Local_Government_Resource_Aliased_Data:
       type: object
       properties:
-        government_location:
-          allOf:
-          - $ref: '#/components/schemas/Local_Government_Government_Location_Tile'
-          nullable: true
         government_name:
           allOf:
           - $ref: '#/components/schemas/Local_Government_Government_Name_Tile'
+          nullable: true
+        government_location:
+          allOf:
+          - $ref: '#/components/schemas/Local_Government_Government_Location_Tile'
           nullable: true
     ModuleHost:
       oneOf:
@@ -12426,10 +12426,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        notification:
-          allOf:
-          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Tile'
-          nullable: true
         perliminary_terms:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -12439,6 +12435,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Notice_Of_Project_Intent_Engagement_Document_Tile'
+          nullable: true
+        notification:
+          allOf:
+          - $ref: '#/components/schemas/Notice_Of_Project_Intent_Notification_Tile'
           nullable: true
         first_nation:
           allOf:
@@ -13467,14 +13467,14 @@ components:
           nullable: true
           title: Permit Duration Requested
           description: Enter number of years requested
+        project_officer:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
         process_module:
           type: array
           items:
             $ref: '#/components/schemas/Permit_Application_Process_Module_Tile'
-          nullable: true
-        project_officer:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
     Permit_Application_Application_Admin_Tile:
       type: object
@@ -13868,13 +13868,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        proposed_project_n1:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_N1_Tile'
-          nullable: true
         mza_requirement:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        proposed_project_n1:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Proposed_Project_N1_Tile'
           nullable: true
     Permit_Application_Multi_Zone_Area_Addition_Tile:
       type: object
@@ -14316,15 +14316,15 @@ components:
     Permit_Application_Proposed_Project_Aliased_Data:
       type: object
       properties:
-        project_boundary:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
         project_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
+        project_boundary:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
         scope_of_work:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -14545,26 +14545,22 @@ components:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Identification_Tile'
           nullable: true
-        application_contacts:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
-          nullable: true
-        archaeological_assessment_plan:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Tile'
-          nullable: true
         proposed_project:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Proposed_Project_Tile'
+          nullable: true
+        project_engagements:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Project_Engagements_Tile'
           nullable: true
         multi_zone_area_addition:
           type: array
           items:
             $ref: '#/components/schemas/Permit_Application_Multi_Zone_Area_Addition_Tile'
           nullable: true
-        project_engagements:
+        archaeological_assessment_plan:
           allOf:
-          - $ref: '#/components/schemas/Permit_Application_Project_Engagements_Tile'
+          - $ref: '#/components/schemas/Permit_Application_Archaeological_Assessment_Plan_Tile'
           nullable: true
         legal_and_consent:
           allOf:
@@ -14578,6 +14574,10 @@ components:
         application_admin:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Admin_Tile'
+          nullable: true
+        application_contacts:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
           nullable: true
         permit_messages:
           allOf:
@@ -14663,10 +14663,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        is_template_requirement:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
         workflow_url:
           allOf:
           - $ref: '#/components/schemas/UrlAliasedNodeData'
@@ -14677,6 +14673,10 @@ components:
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
+        is_template_requirement:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
       required:
       - is_internal_requirement
       - is_template_requirement
@@ -14858,6 +14858,11 @@ components:
     Process_Requirement_Requirement_Identification_Aliased_Data:
       type: object
       properties:
+        requirement_identification:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
         requirement_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -14867,11 +14872,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/Process_Requirement_Is_Template_Requirement_Tile'
           nullable: true
-        requirement_identification:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
       required:
       - requirement_identification
       - requirement_name
@@ -14934,13 +14934,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Process_Requirement_Requirement_Execution_Duration_Tile'
           nullable: true
-        sub_requirement_assessment_n1:
-          allOf:
-          - $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Assessment_N1_Tile'
-          nullable: true
         requirement_data:
           allOf:
           - $ref: '#/components/schemas/Process_Requirement_Requirement_Data_Tile'
+          nullable: true
+        sub_requirement_assessment_n1:
+          allOf:
+          - $ref: '#/components/schemas/Process_Requirement_Sub_Requirement_Assessment_N1_Tile'
           nullable: true
     Process_Requirement_Sub_Requirement_Assessment_N1_Aliased_Data:
       type: object
@@ -15859,10 +15859,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        physical_location:
-          allOf:
-          - $ref: '#/components/schemas/Repository_Physical_Location_Tile'
-          nullable: true
         place_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -15878,6 +15874,10 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        physical_location:
+          allOf:
+          - $ref: '#/components/schemas/Repository_Physical_Location_Tile'
+          nullable: true
         city:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -16003,6 +16003,11 @@ components:
     Repository_Repository_Identifier_Aliased_Data:
       type: object
       properties:
+        alternate_identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repository_Alternate_Identifiers_Tile'
+          nullable: true
         repository_name:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -16014,11 +16019,6 @@ components:
           nullable: true
           title: Repository Code
           description: Enter text
-        alternate_identifiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Repository_Alternate_Identifiers_Tile'
-          nullable: true
       required:
       - repository_name
     Repository_Repository_Identifier_Tile:
@@ -16128,13 +16128,13 @@ components:
     Repository_Resource_Aliased_Data:
       type: object
       properties:
-        contact_information:
-          allOf:
-          - $ref: '#/components/schemas/Repository_Contact_Information_Tile'
-          nullable: true
         repository_identifier:
           allOf:
           - $ref: '#/components/schemas/Repository_Repository_Identifier_Tile'
+          nullable: true
+        contact_information:
+          allOf:
+          - $ref: '#/components/schemas/Repository_Contact_Information_Tile'
           nullable: true
         repository_notes:
           type: array
@@ -16385,6 +16385,11 @@ components:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
           description: Select BCAP Assignee if different from Submission Assignee
+        archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          description: Select or create the site
         comments_to_lg:
           type: array
           items:
@@ -16416,11 +16421,6 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
-        archaeological_site:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          description: Select or create the site
       required:
       - requested_operation
     Site_Submission_Archaeological_Site_Tile:
@@ -16546,13 +16546,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Site_Submission_Submission_Details_Tile'
           nullable: true
-        submission_internal_notes:
-          allOf:
-          - $ref: '#/components/schemas/Site_Submission_Submission_Internal_Notes_Tile'
-          nullable: true
         submitted_sites:
           allOf:
           - $ref: '#/components/schemas/Site_Submission_Submitted_Sites_Tile'
+          nullable: true
+        submission_internal_notes:
+          allOf:
+          - $ref: '#/components/schemas/Site_Submission_Submission_Internal_Notes_Tile'
           nullable: true
     Site_Submission_Submission_Details_Aliased_Data:
       type: object
@@ -16747,16 +16747,16 @@ components:
     Site_Submission_Submitted_Sites_Aliased_Data:
       type: object
       properties:
-        total_number_submitted:
-          allOf:
-          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
-          nullable: true
-          description: Enter number
         archaeological_site:
           type: array
           items:
             $ref: '#/components/schemas/Site_Submission_Archaeological_Site_Tile'
           nullable: true
+        total_number_submitted:
+          allOf:
+          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
+          nullable: true
+          description: Enter number
       required:
       - total_number_submitted
     Site_Submission_Submitted_Sites_Tile:
@@ -17022,11 +17022,6 @@ components:
     Site_Visit_Archaeological_Data_Aliased_Data:
       type: object
       properties:
-        cultural_material:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Cultural_Material_Tile'
-          nullable: true
         additional_site_typology:
           type: array
           items:
@@ -17036,6 +17031,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Archaeological_Feature_Tile'
+          nullable: true
+        cultural_material:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Cultural_Material_Tile'
           nullable: true
         stratigraphy:
           type: array
@@ -17047,15 +17047,15 @@ components:
           items:
             $ref: '#/components/schemas/Site_Visit_Archaeological_Culture_Tile'
           nullable: true
-        site_disturbance:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Site_Disturbance_Tile'
-          nullable: true
         chronology:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Chronology_Tile'
+          nullable: true
+        site_disturbance:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Site_Disturbance_Tile'
           nullable: true
     Site_Visit_Archaeological_Data_Tile:
       type: object
@@ -17706,6 +17706,10 @@ components:
     Site_Visit_Proposed_Unprotected_Area_Aliased_Data:
       type: object
       properties:
+        proposed_unprotected_area:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
         proposed_unprotected_site_area_rationale:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -17716,10 +17720,6 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
           description: Select an option
-        proposed_unprotected_area:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
       required:
       - proposed_unprotected_site_area_criteria
       - proposed_unprotected_site_area_rationale
@@ -17892,15 +17892,15 @@ components:
     Site_Visit_Related_Documents_Aliased_Data:
       type: object
       properties:
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
-          nullable: true
         related_site_documents:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Related_Site_Documents_Tile'
+          nullable: true
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
           nullable: true
         site_images:
           type: array
@@ -18025,15 +18025,15 @@ components:
     Site_Visit_Remarks_And_Recommendations_Aliased_Data:
       type: object
       properties:
-        recommendation:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Recommendation_Tile'
-          nullable: true
         general_remark:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_General_Remark_Tile'
+          nullable: true
+        recommendation:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Recommendation_Tile'
           nullable: true
     Site_Visit_Remarks_And_Recommendations_Tile:
       type: object
@@ -18102,14 +18102,14 @@ components:
           allOf:
           - $ref: '#/components/schemas/Site_Visit_Archaeological_Data_Tile'
           nullable: true
-        remarks_and_recommendations:
-          allOf:
-          - $ref: '#/components/schemas/Site_Visit_Remarks_And_Recommendations_Tile'
-          nullable: true
         ancestral_remains:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Ancestral_Remains_Tile'
+          nullable: true
+        remarks_and_recommendations:
+          allOf:
+          - $ref: '#/components/schemas/Site_Visit_Remarks_And_Recommendations_Tile'
           nullable: true
         related_documents:
           allOf:
@@ -18205,10 +18205,6 @@ components:
           - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           description: Select an option
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
@@ -18234,6 +18230,10 @@ components:
         primary_image:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
           nullable: true
     Site_Visit_Site_Images_Tile:
       type: object
@@ -18286,6 +18286,12 @@ components:
     Site_Visit_Site_Visit_Details_Aliased_Data:
       type: object
       properties:
+        archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Borden Number
+          description: Select a site
         is_site_visit_permitted:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -18319,12 +18325,6 @@ components:
           nullable: true
           title: Site Visit Description
           description: Enter text
-        archaeological_site:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-          title: Borden Number
-          description: Select a site
         associated_permit:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
@@ -18519,21 +18519,21 @@ components:
     Site_Visit_Spatial_Location_Aliased_Data:
       type: object
       properties:
-        boundary_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Enter text
-        spatial_location:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-          title: Site Visit Location
         proposed_unprotected_area:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Proposed_Unprotected_Area_Tile'
           nullable: true
+        spatial_location:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
+          title: Site Visit Location
+        boundary_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
         boundary_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'

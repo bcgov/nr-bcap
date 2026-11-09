@@ -553,11 +553,11 @@ export type ArchaeologicalSiteBcPropertyAddressAliasedData = {
      * Describe the location of sites with no civic address.
      */
     address_remarks?: StringAliasedNodeData | null;
+    bc_property_legal_description?: Array<ArchaeologicalSiteBcPropertyLegalDescriptionTile> | null;
     street_name?: StringAliasedNodeDataMax80 | null;
     street_number?: StringAliasedNodeDataMax50 | null;
     city?: StringAliasedNodeDataMax80 | null;
     postal_code?: StringAliasedNodeDataMax7 | null;
-    bc_property_legal_description?: Array<ArchaeologicalSiteBcPropertyLegalDescriptionTile> | null;
 };
 
 export type ArchaeologicalSiteBcPropertyAddressTile = {
@@ -803,6 +803,10 @@ export type ArchaeologicalSiteExternalUrlTile = {
 
 export type ArchaeologicalSiteGeneralRemarkInformationAliasedData = {
     /**
+     * Enter text
+     */
+    general_remark: StringAliasedNodeData | null;
+    /**
      * Select an option
      */
     general_remark_source: ReferenceAliasedNodeDataRequired | null;
@@ -810,10 +814,6 @@ export type ArchaeologicalSiteGeneralRemarkInformationAliasedData = {
      * Enter date
      */
     general_remark_date: DateAliasedNodeData | null;
-    /**
-     * Enter text
-     */
-    general_remark: StringAliasedNodeData | null;
 };
 
 export type ArchaeologicalSiteGeneralRemarkInformationTile = {
@@ -907,6 +907,7 @@ export type ArchaeologicalSiteHeritageSiteLocationTile = {
 
 export type ArchaeologicalSiteIdentificationAndRegistrationAliasedData = {
     borden_number?: BordenNumberDatatypeAliasedNodeDataMax13 | null;
+    authority?: Array<ArchaeologicalSiteAuthorityTile> | null;
     /**
      * Enter date
      */
@@ -915,13 +916,12 @@ export type ArchaeologicalSiteIdentificationAndRegistrationAliasedData = {
      * Enter text
      */
     parcel_owner_type?: StringAliasedNodeData | null;
-    site_alert?: ArchaeologicalSiteSiteAlertTile | null;
     register_type?: ReferenceAliasedNodeData | null;
+    site_alert?: ArchaeologicalSiteSiteAlertTile | null;
     /**
      * Select parent site (if applicable)
      */
     parent_site?: ResourceInstanceAliasedNodeData | null;
-    authority?: Array<ArchaeologicalSiteAuthorityTile> | null;
     site_decision?: Array<ArchaeologicalSiteSiteDecisionTile> | null;
     site_names?: Array<ArchaeologicalSiteSiteNamesTile> | null;
 };
@@ -973,8 +973,8 @@ export type ArchaeologicalSitePublicationReferenceTile = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedData = {
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTile> | null;
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTile> | null;
 };
 
@@ -1066,8 +1066,8 @@ export type ArchaeologicalSiteRemarksAndRestrictedInformationAliasedData = {
     restricted_information?: Array<ArchaeologicalSiteRestrictedInformationTile> | null;
     restricted_document?: Array<ArchaeologicalSiteRestrictedDocumentTile> | null;
     hca_contravention?: Array<ArchaeologicalSiteHcaContraventionTile> | null;
-    conviction?: Array<ArchaeologicalSiteConvictionTile> | null;
     contravention_document?: Array<ArchaeologicalSiteContraventionDocumentTile> | null;
+    conviction?: Array<ArchaeologicalSiteConvictionTile> | null;
 };
 
 export type ArchaeologicalSiteRemarksAndRestrictedInformationTile = {
@@ -1096,11 +1096,11 @@ export type ArchaeologicalSiteResourceAliasedData = {
     identification_and_registration?: ArchaeologicalSiteIdentificationAndRegistrationTile | null;
     heritage_site_location?: Array<ArchaeologicalSiteHeritageSiteLocationTile> | null;
     archaeological_data?: ArchaeologicalSiteArchaeologicalDataTile | null;
-    site_record_admin?: Array<ArchaeologicalSiteSiteRecordAdminTile> | null;
-    external_url?: Array<ArchaeologicalSiteExternalUrlTile> | null;
     ancestral_remains?: ArchaeologicalSiteAncestralRemainsTile | null;
     remarks_and_restricted_information?: ArchaeologicalSiteRemarksAndRestrictedInformationTile | null;
     related_documents?: ArchaeologicalSiteRelatedDocumentsTile | null;
+    external_url?: Array<ArchaeologicalSiteExternalUrlTile> | null;
+    site_record_admin?: Array<ArchaeologicalSiteSiteRecordAdminTile> | null;
 };
 
 export type ArchaeologicalSiteRestrictedAncestralRemainsRemarkAliasedData = {
@@ -1341,7 +1341,6 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      * Select an option
      */
     image_view?: ReferenceAliasedNodeData | null;
-    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -1359,6 +1358,7 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      */
     image_features?: StringAliasedNodeDataMax250 | null;
     primary_image?: BooleanAliasedNodeData | null;
+    site_images?: FileListAliasedNodeData | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTile = {
@@ -1744,11 +1744,11 @@ export type BcapMessageResourceAliasedData = {
 
 export type BcapServiceRequestBcPropertyAddressAliasedData = {
     address_remarks?: StringAliasedNodeData | null;
+    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTile> | null;
     street_name?: StringAliasedNodeData | null;
     street_number?: StringAliasedNodeData | null;
     city?: StringAliasedNodeData | null;
     postal_code?: StringAliasedNodeData | null;
-    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTile> | null;
 };
 
 export type BcapServiceRequestBcPropertyAddressTile = {
@@ -1828,9 +1828,9 @@ export type BcapServiceRequestCrownLandSurveyInformationTile = {
 };
 
 export type BcapServiceRequestCrownLandTenureTypeAliasedData = {
-    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTile | null;
-    crown_land_tenure_type?: StringAliasedNodeData | null;
     tenure_description?: StringAliasedNodeData | null;
+    crown_land_tenure_type?: StringAliasedNodeData | null;
+    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTile | null;
 };
 
 export type BcapServiceRequestCrownLandTenureTypeTile = {
@@ -1912,9 +1912,9 @@ export type BcapServiceRequestProcessRequirementTile = {
 };
 
 export type BcapServiceRequestProjectLocationAliasedData = {
-    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTile | null;
     service_request_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
     bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTile> | null;
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTile | null;
 };
 
 export type BcapServiceRequestProjectLocationTile = {
@@ -1968,18 +1968,18 @@ export type BcapServiceRequestProposedProjectTile = {
 
 export type BcapServiceRequestResourceAliasedData = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTile | null;
-    service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
     proposed_project?: BcapServiceRequestProposedProjectTile | null;
-    project_location?: BcapServiceRequestProjectLocationTile | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTile | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTile | null;
+    project_location?: BcapServiceRequestProjectLocationTile | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedData = {
     application_submission_date?: DateAliasedNodeData | null;
     ministry_assignee_n1?: ResourceInstanceAliasedNodeData | null;
-    process_module?: Array<BcapServiceRequestProcessModuleTile> | null;
     service_request_completion_target?: NumberAliasedNodeData | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTile> | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminTile = {
@@ -2162,13 +2162,13 @@ export type ContributorSummary = {
 
 export type ContributorAssociatedOrganizationAliasedData = {
     /**
-     * Select Organization Name if applicable
-     */
-    associated_organization?: ResourceInstanceAliasedNodeData | null;
-    /**
      * Enter date
      */
     start_date?: DateAliasedNodeData | null;
+    /**
+     * Select Organization Name if applicable
+     */
+    associated_organization?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter date
      */
@@ -2197,7 +2197,6 @@ export type ContributorAssociatedOrganizationTile = {
 };
 
 export type ContributorContributorAliasedData = {
-    associated_organization?: Array<ContributorAssociatedOrganizationTile> | null;
     /**
      * Enter text
      */
@@ -2223,11 +2222,12 @@ export type ContributorContributorAliasedData = {
      */
     first_name?: StringAliasedNodeDataMax125 | null;
     inactive?: BooleanAliasedNodeData | null;
+    mailing_address?: ContributorMailingAddressTile | null;
+    associated_organization?: Array<ContributorAssociatedOrganizationTile> | null;
     /**
      * Enter text
      */
     contact_email?: StringAliasedNodeDataMax125 | null;
-    mailing_address?: ContributorMailingAddressTile | null;
 };
 
 export type ContributorContributorDocumentAliasedData = {
@@ -2426,6 +2426,7 @@ export type DocumentCopyrightTypeTile = {
 };
 
 export type DocumentDocumentDetailsAliasedData = {
+    document_identifier?: Array<DocumentDocumentIdentifierTile> | null;
     /**
      * Enter text
      */
@@ -2446,7 +2447,6 @@ export type DocumentDocumentDetailsAliasedData = {
      * Select an option
      */
     document_type?: ReferenceAliasedNodeData | null;
-    document_identifier?: Array<DocumentDocumentIdentifierTile> | null;
     /**
      * Enter number
      */
@@ -2484,13 +2484,13 @@ export type DocumentDocumentDetailsTile = {
 
 export type DocumentDocumentIdentifierAliasedData = {
     /**
-     * Select an option
-     */
-    document_identifier_type?: ReferenceAliasedNodeData | null;
-    /**
      * Enter Report Number, URL or Digital Object Identifier
      */
     document_identifier?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    document_identifier_type?: ReferenceAliasedNodeData | null;
 };
 
 export type DocumentDocumentIdentifierTile = {
@@ -3288,14 +3288,14 @@ export type HriaDiscontinuedDataOtherMapsTile = {
 };
 
 export type HriaDiscontinuedDataResourceAliasedData = {
-    other_maps?: HriaDiscontinuedDataOtherMapsTile | null;
-    unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTile | null;
-    site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTile> | null;
     archaeological_site?: HriaDiscontinuedDataArchaeologicalSiteTile | null;
+    site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTile> | null;
+    unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTile | null;
     hria_jursidiction_and_tenure?: Array<HriaDiscontinuedDataHriaJursidictionAndTenureTile> | null;
-    biogeography?: HriaDiscontinuedDataBiogeographyTile | null;
-    chronology?: Array<HriaDiscontinuedDataChronologyTile> | null;
+    other_maps?: HriaDiscontinuedDataOtherMapsTile | null;
     site_dimensions?: HriaDiscontinuedDataSiteDimensionsTile | null;
+    chronology?: Array<HriaDiscontinuedDataChronologyTile> | null;
+    biogeography?: HriaDiscontinuedDataBiogeographyTile | null;
 };
 
 export type HriaDiscontinuedDataSiteBoundaryAnnotationsAliasedData = {
@@ -3399,11 +3399,11 @@ export type HriaDiscontinuedDataUnreviewedAdifRecordAliasedData = {
      * Enter text
      */
     site_entered_by?: NonLocalizedStringAliasedNodeData | null;
-    unreviewed_adif_record?: BooleanAliasedNodeData | null;
     /**
      * Enter date
      */
     site_entry_date?: DateAliasedNodeData | null;
+    unreviewed_adif_record?: BooleanAliasedNodeData | null;
 };
 
 export type HriaDiscontinuedDataUnreviewedAdifRecordTile = {
@@ -4511,8 +4511,8 @@ export type LegislativeActDocumentTile = {
 
 export type LegislativeActResourceAliasedData = {
     act_status?: LegislativeActActStatusTile | null;
-    document?: LegislativeActDocumentTile | null;
     authority?: LegislativeActAuthorityTile | null;
+    document?: LegislativeActDocumentTile | null;
 };
 
 export type LgPerson = {
@@ -4568,11 +4568,11 @@ export type LgPersonContactInformationTile = {
 };
 
 export type LgPersonGovernmentAssociationAliasedData = {
-    government_association?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter text
      */
     government_position?: StringAliasedNodeData | null;
+    government_association?: ResourceInstanceAliasedNodeData | null;
 };
 
 export type LgPersonGovernmentAssociationTile = {
@@ -4629,10 +4629,10 @@ export type LgPersonGovernmentPersonNameTile = {
 };
 
 export type LgPersonResourceAliasedData = {
-    contact_information?: LgPersonContactInformationTile | null;
-    government_association?: LgPersonGovernmentAssociationTile | null;
     government_person_name?: LgPersonGovernmentPersonNameTile | null;
+    contact_information?: LgPersonContactInformationTile | null;
     username?: LgPersonUsernameTile | null;
+    government_association?: LgPersonGovernmentAssociationTile | null;
 };
 
 export type LgPersonUsernameAliasedData = {
@@ -4807,8 +4807,8 @@ export type LocalGovernmentOfficeAddressTile = {
 };
 
 export type LocalGovernmentResourceAliasedData = {
-    government_location?: LocalGovernmentGovernmentLocationTile | null;
     government_name?: LocalGovernmentGovernmentNameTile | null;
+    government_location?: LocalGovernmentGovernmentLocationTile | null;
 };
 
 export type ModuleHost =
@@ -4954,12 +4954,12 @@ export type NoticeOfProjectIntentFirstNationAliasedData = {
      * Enter text
      */
     nation_specific_project_details?: StringAliasedNodeData | null;
-    notification?: NoticeOfProjectIntentNotificationTile | null;
     /**
      * Enter text
      */
     perliminary_terms?: StringAliasedNodeData | null;
     engagement_document?: Array<NoticeOfProjectIntentEngagementDocumentTile> | null;
+    notification?: NoticeOfProjectIntentNotificationTile | null;
     first_nation: ResourceInstanceAliasedNodeData | null;
 };
 
@@ -5397,8 +5397,8 @@ export type PermitApplicationApplicationAdminAliasedData = {
      * Enter number of years requested
      */
     permit_duration_years_requested?: NumberAliasedNodeDataMin0Max10 | null;
-    process_module?: Array<PermitApplicationProcessModuleTile> | null;
     project_officer?: ResourceInstanceAliasedNodeData | null;
+    process_module?: Array<PermitApplicationProcessModuleTile> | null;
 };
 
 export type PermitApplicationApplicationAdminTile = {
@@ -5580,8 +5580,8 @@ export type PermitApplicationLegalAndConsentTile = {
 
 export type PermitApplicationMultiZoneAreaAdditionAliasedData = {
     mza_requirement_ministry_asignee?: ResourceInstanceAliasedNodeData | null;
-    proposed_project_n1?: PermitApplicationProposedProjectN1Tile | null;
     mza_requirement?: ResourceInstanceAliasedNodeData | null;
+    proposed_project_n1?: PermitApplicationProposedProjectN1Tile | null;
 };
 
 export type PermitApplicationMultiZoneAreaAdditionTile = {
@@ -5788,11 +5788,11 @@ export type PermitApplicationProjectEngagementsTile = {
 };
 
 export type PermitApplicationProposedProjectAliasedData = {
-    project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
      * Select an option
      */
     project_type?: ReferenceAliasedNodeData | null;
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
      * Describe the scope of work to be competed as part of the proposed project
      */
@@ -5894,14 +5894,14 @@ export type PermitApplicationRelatedPermitTile = {
 
 export type PermitApplicationResourceAliasedData = {
     application_identification?: PermitApplicationApplicationIdentificationTile | null;
-    application_contacts?: PermitApplicationApplicationContactsTile | null;
-    archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     proposed_project?: PermitApplicationProposedProjectTile | null;
-    multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTile> | null;
     project_engagements?: PermitApplicationProjectEngagementsTile | null;
+    multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTile> | null;
+    archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTile | null;
     related_permit?: Array<PermitApplicationRelatedPermitTile> | null;
     application_admin?: PermitApplicationApplicationAdminTile | null;
+    application_contacts?: PermitApplicationApplicationContactsTile | null;
     permit_messages?: PermitApplicationPermitMessagesTile | null;
 };
 
@@ -5932,12 +5932,12 @@ export type ProcessRequirementIsTemplateRequirementAliasedData = {
      */
     process_requirement_type: ReferenceAliasedNodeDataRequired | null;
     is_internal_requirement: BooleanAliasedNodeData | null;
-    is_template_requirement: BooleanAliasedNodeData | null;
     workflow_url?: UrlAliasedNodeData | null;
     /**
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeData | null;
+    is_template_requirement: BooleanAliasedNodeData | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTile = {
@@ -6027,12 +6027,12 @@ export type ProcessRequirementRequirementIdentificationAliasedData = {
     /**
      * Enter text
      */
-    requirement_name: StringAliasedNodeData | null;
-    is_template_requirement?: ProcessRequirementIsTemplateRequirementTile | null;
+    requirement_identification: StringAliasedNodeData | null;
     /**
      * Enter text
      */
-    requirement_identification: StringAliasedNodeData | null;
+    requirement_name: StringAliasedNodeData | null;
+    is_template_requirement?: ProcessRequirementIsTemplateRequirementTile | null;
 };
 
 export type ProcessRequirementRequirementIdentificationTile = {
@@ -6059,8 +6059,8 @@ export type ProcessRequirementRequirementIdentificationTile = {
 export type ProcessRequirementResourceAliasedData = {
     requirement_identification?: ProcessRequirementRequirementIdentificationTile | null;
     requirement_execution_duration?: ProcessRequirementRequirementExecutionDurationTile | null;
-    sub_requirement_assessment_n1?: ProcessRequirementSubRequirementAssessmentN1Tile | null;
     requirement_data?: ProcessRequirementRequirementDataTile | null;
+    sub_requirement_assessment_n1?: ProcessRequirementSubRequirementAssessmentN1Tile | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1AliasedData = {
@@ -6505,7 +6505,6 @@ export type RepositoryContactInformationAliasedData = {
      * Enter text
      */
     address_notes?: StringAliasedNodeData | null;
-    physical_location?: RepositoryPhysicalLocationTile | null;
     /**
      * Enter text
      */
@@ -6518,6 +6517,7 @@ export type RepositoryContactInformationAliasedData = {
      * Enter text
      */
     address_line_2?: StringAliasedNodeData | null;
+    physical_location?: RepositoryPhysicalLocationTile | null;
     /**
      * Enter text
      */
@@ -6579,6 +6579,7 @@ export type RepositoryPhysicalLocationTile = {
 };
 
 export type RepositoryRepositoryIdentifierAliasedData = {
+    alternate_identifiers?: Array<RepositoryAlternateIdentifiersTile> | null;
     /**
      * Enter text
      */
@@ -6587,7 +6588,6 @@ export type RepositoryRepositoryIdentifierAliasedData = {
      * Enter text
      */
     repository_location_code?: NonLocalizedStringAliasedNodeData | null;
-    alternate_identifiers?: Array<RepositoryAlternateIdentifiersTile> | null;
 };
 
 export type RepositoryRepositoryIdentifierTile = {
@@ -6640,8 +6640,8 @@ export type RepositoryRepositoryNotesTile = {
 };
 
 export type RepositoryResourceAliasedData = {
-    contact_information?: RepositoryContactInformationTile | null;
     repository_identifier?: RepositoryRepositoryIdentifierTile | null;
+    contact_information?: RepositoryContactInformationTile | null;
     repository_notes?: Array<RepositoryRepositoryNotesTile> | null;
 };
 
@@ -6731,6 +6731,10 @@ export type SiteSubmissionArchaeologicalSiteAliasedData = {
      * Select BCAP Assignee if different from Submission Assignee
      */
     alternate_bcap_asignee?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Select or create the site
+     */
+    archaeological_site?: ResourceInstanceAliasedNodeData | null;
     comments_to_lg?: Array<SiteSubmissionCommentsToLgTile> | null;
     /**
      * Select an option
@@ -6752,10 +6756,6 @@ export type SiteSubmissionArchaeologicalSiteAliasedData = {
      * Select an option
      */
     submission_type?: ReferenceAliasedNodeData | null;
-    /**
-     * Select or create the site
-     */
-    archaeological_site?: ResourceInstanceAliasedNodeData | null;
 };
 
 export type SiteSubmissionArchaeologicalSiteTile = {
@@ -6817,8 +6817,8 @@ export type SiteSubmissionCommentsToLgTile = {
 
 export type SiteSubmissionResourceAliasedData = {
     submission_details?: SiteSubmissionSubmissionDetailsTile | null;
-    submission_internal_notes?: SiteSubmissionSubmissionInternalNotesTile | null;
     submitted_sites?: SiteSubmissionSubmittedSitesTile | null;
+    submission_internal_notes?: SiteSubmissionSubmissionInternalNotesTile | null;
 };
 
 export type SiteSubmissionSubmissionDetailsAliasedData = {
@@ -6913,11 +6913,11 @@ export type SiteSubmissionSubmissionInternalNotesTile = {
 };
 
 export type SiteSubmissionSubmittedSitesAliasedData = {
+    archaeological_site?: Array<SiteSubmissionArchaeologicalSiteTile> | null;
     /**
      * Enter number
      */
     total_number_submitted: NumberAliasedNodeDataMin0 | null;
-    archaeological_site?: Array<SiteSubmissionArchaeologicalSiteTile> | null;
 };
 
 export type SiteSubmissionSubmittedSitesTile = {
@@ -7051,13 +7051,13 @@ export type SiteVisitArchaeologicalCultureTile = {
 };
 
 export type SiteVisitArchaeologicalDataAliasedData = {
-    cultural_material?: Array<SiteVisitCulturalMaterialTile> | null;
     additional_site_typology?: Array<SiteVisitAdditionalSiteTypologyTile> | null;
     archaeological_feature?: Array<SiteVisitArchaeologicalFeatureTile> | null;
+    cultural_material?: Array<SiteVisitCulturalMaterialTile> | null;
     stratigraphy?: Array<SiteVisitStratigraphyTile> | null;
     archaeological_culture?: Array<SiteVisitArchaeologicalCultureTile> | null;
-    site_disturbance?: Array<SiteVisitSiteDisturbanceTile> | null;
     chronology?: Array<SiteVisitChronologyTile> | null;
+    site_disturbance?: Array<SiteVisitSiteDisturbanceTile> | null;
 };
 
 export type SiteVisitArchaeologicalDataTile = {
@@ -7389,6 +7389,7 @@ export type SiteVisitNewSiteNamesTile = {
 };
 
 export type SiteVisitProposedUnprotectedAreaAliasedData = {
+    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -7397,7 +7398,6 @@ export type SiteVisitProposedUnprotectedAreaAliasedData = {
      * Select an option
      */
     proposed_unprotected_site_area_criteria: ReferenceAliasedNodeDataRequired | null;
-    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeData | null;
 };
 
 export type SiteVisitProposedUnprotectedAreaTile = {
@@ -7479,8 +7479,8 @@ export type SiteVisitRecommendationTile = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedData = {
-    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTile> | null;
+    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
     site_images?: Array<SiteVisitSiteImagesTile> | null;
 };
 
@@ -7536,8 +7536,8 @@ export type SiteVisitRelatedSiteDocumentsTile = {
 };
 
 export type SiteVisitRemarksAndRecommendationsAliasedData = {
-    recommendation?: Array<SiteVisitRecommendationTile> | null;
     general_remark?: Array<SiteVisitGeneralRemarkTile> | null;
+    recommendation?: Array<SiteVisitRecommendationTile> | null;
 };
 
 export type SiteVisitRemarksAndRecommendationsTile = {
@@ -7566,8 +7566,8 @@ export type SiteVisitResourceAliasedData = {
     identification?: SiteVisitIdentificationTile | null;
     site_visit_details?: SiteVisitSiteVisitDetailsTile | null;
     archaeological_data?: SiteVisitArchaeologicalDataTile | null;
-    remarks_and_recommendations?: SiteVisitRemarksAndRecommendationsTile | null;
     ancestral_remains?: Array<SiteVisitAncestralRemainsTile> | null;
+    remarks_and_recommendations?: SiteVisitRemarksAndRecommendationsTile | null;
     related_documents?: SiteVisitRelatedDocumentsTile | null;
 };
 
@@ -7620,7 +7620,6 @@ export type SiteVisitSiteImagesAliasedData = {
      * Select an option
      */
     image_view?: ReferenceAliasedNodeData | null;
-    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -7638,6 +7637,7 @@ export type SiteVisitSiteImagesAliasedData = {
      */
     image_features?: StringAliasedNodeDataMax80 | null;
     primary_image?: BooleanAliasedNodeData | null;
+    site_images?: FileListAliasedNodeData | null;
 };
 
 export type SiteVisitSiteImagesTile = {
@@ -7662,6 +7662,10 @@ export type SiteVisitSiteImagesTile = {
 };
 
 export type SiteVisitSiteVisitDetailsAliasedData = {
+    /**
+     * Select a site
+     */
+    archaeological_site: ResourceInstanceAliasedNodeData | null;
     is_site_visit_permitted: BooleanAliasedNodeData | null;
     /**
      * Select a person
@@ -7683,10 +7687,6 @@ export type SiteVisitSiteVisitDetailsAliasedData = {
      * Enter text
      */
     project_description: StringAliasedNodeData | null;
-    /**
-     * Select a site
-     */
-    archaeological_site: ResourceInstanceAliasedNodeData | null;
     /**
      * Select permit
      */
@@ -7772,12 +7772,12 @@ export type SiteVisitSiteVisitTeamTile = {
 };
 
 export type SiteVisitSpatialLocationAliasedData = {
+    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTile> | null;
+    spatial_location?: GeojsonFeatureCollectionAliasedNodeData | null;
     /**
      * Enter text
      */
     boundary_description: StringAliasedNodeData | null;
-    spatial_location?: GeojsonFeatureCollectionAliasedNodeData | null;
-    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTile> | null;
     /**
      * Select an option
      */
@@ -8636,11 +8636,11 @@ export type ArchaeologicalSiteBcPropertyAddressAliasedDataWritable = {
      * Describe the location of sites with no civic address.
      */
     address_remarks?: StringAliasedNodeDataWritable | null;
+    bc_property_legal_description?: Array<ArchaeologicalSiteBcPropertyLegalDescriptionTileWritable> | null;
     street_name?: StringAliasedNodeDataMax80Writable | null;
     street_number?: StringAliasedNodeDataMax50Writable | null;
     city?: StringAliasedNodeDataMax80Writable | null;
     postal_code?: StringAliasedNodeDataMax7Writable | null;
-    bc_property_legal_description?: Array<ArchaeologicalSiteBcPropertyLegalDescriptionTileWritable> | null;
 };
 
 export type ArchaeologicalSiteBcPropertyAddressTileWritable = {
@@ -8886,6 +8886,10 @@ export type ArchaeologicalSiteExternalUrlTileWritable = {
 
 export type ArchaeologicalSiteGeneralRemarkInformationAliasedDataWritable = {
     /**
+     * Enter text
+     */
+    general_remark: StringAliasedNodeDataWritable | null;
+    /**
      * Select an option
      */
     general_remark_source: ReferenceAliasedNodeDataRequiredWritable | null;
@@ -8893,10 +8897,6 @@ export type ArchaeologicalSiteGeneralRemarkInformationAliasedDataWritable = {
      * Enter date
      */
     general_remark_date: DateAliasedNodeDataWritable | null;
-    /**
-     * Enter text
-     */
-    general_remark: StringAliasedNodeDataWritable | null;
 };
 
 export type ArchaeologicalSiteGeneralRemarkInformationTileWritable = {
@@ -8991,6 +8991,7 @@ export type ArchaeologicalSiteHeritageSiteLocationTileWritable = {
 export type ArchaeologicalSiteIdentificationAndRegistrationAliasedDataWritable =
     {
         borden_number?: BordenNumberDatatypeAliasedNodeDataMax13Writable | null;
+        authority?: Array<ArchaeologicalSiteAuthorityTileWritable> | null;
         /**
          * Enter date
          */
@@ -8999,13 +9000,12 @@ export type ArchaeologicalSiteIdentificationAndRegistrationAliasedDataWritable =
          * Enter text
          */
         parcel_owner_type?: StringAliasedNodeDataWritable | null;
-        site_alert?: ArchaeologicalSiteSiteAlertTileWritable | null;
         register_type?: ReferenceAliasedNodeDataWritable | null;
+        site_alert?: ArchaeologicalSiteSiteAlertTileWritable | null;
         /**
          * Select parent site (if applicable)
          */
         parent_site?: ResourceInstanceAliasedNodeDataWritable | null;
-        authority?: Array<ArchaeologicalSiteAuthorityTileWritable> | null;
         site_decision?: Array<ArchaeologicalSiteSiteDecisionTileWritable> | null;
         site_names?: Array<ArchaeologicalSiteSiteNamesTileWritable> | null;
     };
@@ -9057,8 +9057,8 @@ export type ArchaeologicalSitePublicationReferenceTileWritable = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedDataWritable = {
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTileWritable> | null;
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTileWritable> | null;
 };
 
@@ -9151,8 +9151,8 @@ export type ArchaeologicalSiteRemarksAndRestrictedInformationAliasedDataWritable
         restricted_information?: Array<ArchaeologicalSiteRestrictedInformationTileWritable> | null;
         restricted_document?: Array<ArchaeologicalSiteRestrictedDocumentTileWritable> | null;
         hca_contravention?: Array<ArchaeologicalSiteHcaContraventionTileWritable> | null;
-        conviction?: Array<ArchaeologicalSiteConvictionTileWritable> | null;
         contravention_document?: Array<ArchaeologicalSiteContraventionDocumentTileWritable> | null;
+        conviction?: Array<ArchaeologicalSiteConvictionTileWritable> | null;
     };
 
 export type ArchaeologicalSiteRemarksAndRestrictedInformationTileWritable = {
@@ -9181,11 +9181,11 @@ export type ArchaeologicalSiteResourceAliasedDataWritable = {
     identification_and_registration?: ArchaeologicalSiteIdentificationAndRegistrationTileWritable | null;
     heritage_site_location?: Array<ArchaeologicalSiteHeritageSiteLocationTileWritable> | null;
     archaeological_data?: ArchaeologicalSiteArchaeologicalDataTileWritable | null;
-    site_record_admin?: Array<ArchaeologicalSiteSiteRecordAdminTileWritable> | null;
-    external_url?: Array<ArchaeologicalSiteExternalUrlTileWritable> | null;
     ancestral_remains?: ArchaeologicalSiteAncestralRemainsTileWritable | null;
     remarks_and_restricted_information?: ArchaeologicalSiteRemarksAndRestrictedInformationTileWritable | null;
     related_documents?: ArchaeologicalSiteRelatedDocumentsTileWritable | null;
+    external_url?: Array<ArchaeologicalSiteExternalUrlTileWritable> | null;
+    site_record_admin?: Array<ArchaeologicalSiteSiteRecordAdminTileWritable> | null;
 };
 
 export type ArchaeologicalSiteRestrictedAncestralRemainsRemarkAliasedDataWritable =
@@ -9427,7 +9427,6 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      * Select an option
      */
     image_view?: ReferenceAliasedNodeDataWritable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -9445,6 +9444,7 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      */
     image_features?: StringAliasedNodeDataMax250Writable | null;
     primary_image?: BooleanAliasedNodeDataWritable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTileWritable = {
@@ -9802,11 +9802,11 @@ export type BcapMessageResourceAliasedDataWritable = {
 
 export type BcapServiceRequestBcPropertyAddressAliasedDataWritable = {
     address_remarks?: StringAliasedNodeDataWritable | null;
+    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTileWritable> | null;
     street_name?: StringAliasedNodeDataWritable | null;
     street_number?: StringAliasedNodeDataWritable | null;
     city?: StringAliasedNodeDataWritable | null;
     postal_code?: StringAliasedNodeDataWritable | null;
-    bc_property_legal_description?: Array<BcapServiceRequestBcPropertyLegalDescriptionTileWritable> | null;
 };
 
 export type BcapServiceRequestBcPropertyAddressTileWritable = {
@@ -9886,9 +9886,9 @@ export type BcapServiceRequestCrownLandSurveyInformationTileWritable = {
 };
 
 export type BcapServiceRequestCrownLandTenureTypeAliasedDataWritable = {
-    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTileWritable | null;
-    crown_land_tenure_type?: StringAliasedNodeDataWritable | null;
     tenure_description?: StringAliasedNodeDataWritable | null;
+    crown_land_tenure_type?: StringAliasedNodeDataWritable | null;
+    crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTileWritable | null;
 };
 
 export type BcapServiceRequestCrownLandTenureTypeTileWritable = {
@@ -9970,9 +9970,9 @@ export type BcapServiceRequestProcessRequirementTileWritable = {
 };
 
 export type BcapServiceRequestProjectLocationAliasedDataWritable = {
-    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTileWritable | null;
     service_request_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTileWritable> | null;
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTileWritable | null;
 };
 
 export type BcapServiceRequestProjectLocationTileWritable = {
@@ -10026,18 +10026,18 @@ export type BcapServiceRequestProposedProjectTileWritable = {
 
 export type BcapServiceRequestResourceAliasedDataWritable = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTileWritable | null;
-    service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
     proposed_project?: BcapServiceRequestProposedProjectTileWritable | null;
-    project_location?: BcapServiceRequestProjectLocationTileWritable | null;
+    service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTileWritable | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTileWritable | null;
+    project_location?: BcapServiceRequestProjectLocationTileWritable | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedDataWritable = {
     application_submission_date?: DateAliasedNodeDataWritable | null;
     ministry_assignee_n1?: ResourceInstanceAliasedNodeDataWritable | null;
-    process_module?: Array<BcapServiceRequestProcessModuleTileWritable> | null;
     service_request_completion_target?: NumberAliasedNodeDataWritable | null;
+    process_module?: Array<BcapServiceRequestProcessModuleTileWritable> | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminTileWritable = {
@@ -10167,13 +10167,13 @@ export type ContributorWritable = {
 
 export type ContributorAssociatedOrganizationAliasedDataWritable = {
     /**
-     * Select Organization Name if applicable
-     */
-    associated_organization?: ResourceInstanceAliasedNodeDataWritable | null;
-    /**
      * Enter date
      */
     start_date?: DateAliasedNodeDataWritable | null;
+    /**
+     * Select Organization Name if applicable
+     */
+    associated_organization?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
@@ -10202,7 +10202,6 @@ export type ContributorAssociatedOrganizationTileWritable = {
 };
 
 export type ContributorContributorAliasedDataWritable = {
-    associated_organization?: Array<ContributorAssociatedOrganizationTileWritable> | null;
     /**
      * Enter text
      */
@@ -10228,11 +10227,12 @@ export type ContributorContributorAliasedDataWritable = {
      */
     first_name?: StringAliasedNodeDataMax125Writable | null;
     inactive?: BooleanAliasedNodeDataWritable | null;
+    mailing_address?: ContributorMailingAddressTileWritable | null;
+    associated_organization?: Array<ContributorAssociatedOrganizationTileWritable> | null;
     /**
      * Enter text
      */
     contact_email?: StringAliasedNodeDataMax125Writable | null;
-    mailing_address?: ContributorMailingAddressTileWritable | null;
 };
 
 export type ContributorContributorDocumentAliasedDataWritable = {
@@ -10399,6 +10399,7 @@ export type DocumentCopyrightTypeTileWritable = {
 };
 
 export type DocumentDocumentDetailsAliasedDataWritable = {
+    document_identifier?: Array<DocumentDocumentIdentifierTileWritable> | null;
     /**
      * Enter text
      */
@@ -10419,7 +10420,6 @@ export type DocumentDocumentDetailsAliasedDataWritable = {
      * Select an option
      */
     document_type?: ReferenceAliasedNodeDataWritable | null;
-    document_identifier?: Array<DocumentDocumentIdentifierTileWritable> | null;
     /**
      * Enter number
      */
@@ -10457,13 +10457,13 @@ export type DocumentDocumentDetailsTileWritable = {
 
 export type DocumentDocumentIdentifierAliasedDataWritable = {
     /**
-     * Select an option
-     */
-    document_identifier_type?: ReferenceAliasedNodeDataWritable | null;
-    /**
      * Enter Report Number, URL or Digital Object Identifier
      */
     document_identifier?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    document_identifier_type?: ReferenceAliasedNodeDataWritable | null;
 };
 
 export type DocumentDocumentIdentifierTileWritable = {
@@ -11121,14 +11121,14 @@ export type HriaDiscontinuedDataOtherMapsTileWritable = {
 };
 
 export type HriaDiscontinuedDataResourceAliasedDataWritable = {
-    other_maps?: HriaDiscontinuedDataOtherMapsTileWritable | null;
-    unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTileWritable | null;
-    site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTileWritable> | null;
     archaeological_site?: HriaDiscontinuedDataArchaeologicalSiteTileWritable | null;
+    site_boundary_annotations?: Array<HriaDiscontinuedDataSiteBoundaryAnnotationsTileWritable> | null;
+    unreviewed_adif_record?: HriaDiscontinuedDataUnreviewedAdifRecordTileWritable | null;
     hria_jursidiction_and_tenure?: Array<HriaDiscontinuedDataHriaJursidictionAndTenureTileWritable> | null;
-    biogeography?: HriaDiscontinuedDataBiogeographyTileWritable | null;
-    chronology?: Array<HriaDiscontinuedDataChronologyTileWritable> | null;
+    other_maps?: HriaDiscontinuedDataOtherMapsTileWritable | null;
     site_dimensions?: HriaDiscontinuedDataSiteDimensionsTileWritable | null;
+    chronology?: Array<HriaDiscontinuedDataChronologyTileWritable> | null;
+    biogeography?: HriaDiscontinuedDataBiogeographyTileWritable | null;
 };
 
 export type HriaDiscontinuedDataSiteBoundaryAnnotationsAliasedDataWritable = {
@@ -11232,11 +11232,11 @@ export type HriaDiscontinuedDataUnreviewedAdifRecordAliasedDataWritable = {
      * Enter text
      */
     site_entered_by?: NonLocalizedStringAliasedNodeDataWritable | null;
-    unreviewed_adif_record?: BooleanAliasedNodeDataWritable | null;
     /**
      * Enter date
      */
     site_entry_date?: DateAliasedNodeDataWritable | null;
+    unreviewed_adif_record?: BooleanAliasedNodeDataWritable | null;
 };
 
 export type HriaDiscontinuedDataUnreviewedAdifRecordTileWritable = {
@@ -12180,8 +12180,8 @@ export type LegislativeActDocumentTileWritable = {
 
 export type LegislativeActResourceAliasedDataWritable = {
     act_status?: LegislativeActActStatusTileWritable | null;
-    document?: LegislativeActDocumentTileWritable | null;
     authority?: LegislativeActAuthorityTileWritable | null;
+    document?: LegislativeActDocumentTileWritable | null;
 };
 
 export type LgPersonWritable = {
@@ -12223,11 +12223,11 @@ export type LgPersonContactInformationTileWritable = {
 };
 
 export type LgPersonGovernmentAssociationAliasedDataWritable = {
-    government_association?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
     government_position?: StringAliasedNodeDataWritable | null;
+    government_association?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type LgPersonGovernmentAssociationTileWritable = {
@@ -12284,10 +12284,10 @@ export type LgPersonGovernmentPersonNameTileWritable = {
 };
 
 export type LgPersonResourceAliasedDataWritable = {
-    contact_information?: LgPersonContactInformationTileWritable | null;
-    government_association?: LgPersonGovernmentAssociationTileWritable | null;
     government_person_name?: LgPersonGovernmentPersonNameTileWritable | null;
+    contact_information?: LgPersonContactInformationTileWritable | null;
     username?: LgPersonUsernameTileWritable | null;
+    government_association?: LgPersonGovernmentAssociationTileWritable | null;
 };
 
 export type LgPersonUsernameAliasedDataWritable = {
@@ -12448,8 +12448,8 @@ export type LocalGovernmentOfficeAddressTileWritable = {
 };
 
 export type LocalGovernmentResourceAliasedDataWritable = {
-    government_location?: LocalGovernmentGovernmentLocationTileWritable | null;
     government_name?: LocalGovernmentGovernmentNameTileWritable | null;
+    government_location?: LocalGovernmentGovernmentLocationTileWritable | null;
 };
 
 export type ModuleHostWritable =
@@ -12522,12 +12522,12 @@ export type NoticeOfProjectIntentFirstNationAliasedDataWritable = {
      * Enter text
      */
     nation_specific_project_details?: StringAliasedNodeDataWritable | null;
-    notification?: NoticeOfProjectIntentNotificationTileWritable | null;
     /**
      * Enter text
      */
     perliminary_terms?: StringAliasedNodeDataWritable | null;
     engagement_document?: Array<NoticeOfProjectIntentEngagementDocumentTileWritable> | null;
+    notification?: NoticeOfProjectIntentNotificationTileWritable | null;
     first_nation: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
@@ -12858,8 +12858,8 @@ export type PermitApplicationApplicationAdminAliasedDataWritable = {
      * Enter number of years requested
      */
     permit_duration_years_requested?: NumberAliasedNodeDataMin0Max10Writable | null;
-    process_module?: Array<PermitApplicationProcessModuleTileWritable> | null;
     project_officer?: ResourceInstanceAliasedNodeDataWritable | null;
+    process_module?: Array<PermitApplicationProcessModuleTileWritable> | null;
 };
 
 export type PermitApplicationApplicationAdminTileWritable = {
@@ -13021,8 +13021,8 @@ export type PermitApplicationLegalAndConsentTileWritable = {
 
 export type PermitApplicationMultiZoneAreaAdditionAliasedDataWritable = {
     mza_requirement_ministry_asignee?: ResourceInstanceAliasedNodeDataWritable | null;
-    proposed_project_n1?: PermitApplicationProposedProjectN1TileWritable | null;
     mza_requirement?: ResourceInstanceAliasedNodeDataWritable | null;
+    proposed_project_n1?: PermitApplicationProposedProjectN1TileWritable | null;
 };
 
 export type PermitApplicationMultiZoneAreaAdditionTileWritable = {
@@ -13229,11 +13229,11 @@ export type PermitApplicationProjectEngagementsTileWritable = {
 };
 
 export type PermitApplicationProposedProjectAliasedDataWritable = {
-    project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
      * Select an option
      */
     project_type?: ReferenceAliasedNodeDataWritable | null;
+    project_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
      * Describe the scope of work to be competed as part of the proposed project
      */
@@ -13335,14 +13335,14 @@ export type PermitApplicationRelatedPermitTileWritable = {
 
 export type PermitApplicationResourceAliasedDataWritable = {
     application_identification?: PermitApplicationApplicationIdentificationTileWritable | null;
-    application_contacts?: PermitApplicationApplicationContactsTileWritable | null;
-    archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     proposed_project?: PermitApplicationProposedProjectTileWritable | null;
-    multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTileWritable> | null;
     project_engagements?: PermitApplicationProjectEngagementsTileWritable | null;
+    multi_zone_area_addition?: Array<PermitApplicationMultiZoneAreaAdditionTileWritable> | null;
+    archaeological_assessment_plan?: PermitApplicationArchaeologicalAssessmentPlanTile | null;
     legal_and_consent?: PermitApplicationLegalAndConsentTileWritable | null;
     related_permit?: Array<PermitApplicationRelatedPermitTileWritable> | null;
     application_admin?: PermitApplicationApplicationAdminTileWritable | null;
+    application_contacts?: PermitApplicationApplicationContactsTileWritable | null;
     permit_messages?: PermitApplicationPermitMessagesTileWritable | null;
 };
 
@@ -13359,12 +13359,12 @@ export type ProcessRequirementIsTemplateRequirementAliasedDataWritable = {
      */
     process_requirement_type: ReferenceAliasedNodeDataRequiredWritable | null;
     is_internal_requirement: BooleanAliasedNodeDataWritable | null;
-    is_template_requirement: BooleanAliasedNodeDataWritable | null;
     workflow_url?: UrlAliasedNodeDataWritable | null;
     /**
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeDataWritable | null;
+    is_template_requirement: BooleanAliasedNodeDataWritable | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTileWritable = {
@@ -13455,12 +13455,12 @@ export type ProcessRequirementRequirementIdentificationAliasedDataWritable = {
     /**
      * Enter text
      */
-    requirement_name: StringAliasedNodeDataWritable | null;
-    is_template_requirement?: ProcessRequirementIsTemplateRequirementTileWritable | null;
+    requirement_identification: StringAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
-    requirement_identification: StringAliasedNodeDataWritable | null;
+    requirement_name: StringAliasedNodeDataWritable | null;
+    is_template_requirement?: ProcessRequirementIsTemplateRequirementTileWritable | null;
 };
 
 export type ProcessRequirementRequirementIdentificationTileWritable = {
@@ -13487,8 +13487,8 @@ export type ProcessRequirementRequirementIdentificationTileWritable = {
 export type ProcessRequirementResourceAliasedDataWritable = {
     requirement_identification?: ProcessRequirementRequirementIdentificationTileWritable | null;
     requirement_execution_duration?: ProcessRequirementRequirementExecutionDurationTileWritable | null;
-    sub_requirement_assessment_n1?: ProcessRequirementSubRequirementAssessmentN1TileWritable | null;
     requirement_data?: ProcessRequirementRequirementDataTileWritable | null;
+    sub_requirement_assessment_n1?: ProcessRequirementSubRequirementAssessmentN1TileWritable | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = {
@@ -13871,7 +13871,6 @@ export type RepositoryContactInformationAliasedDataWritable = {
      * Enter text
      */
     address_notes?: StringAliasedNodeDataWritable | null;
-    physical_location?: RepositoryPhysicalLocationTileWritable | null;
     /**
      * Enter text
      */
@@ -13884,6 +13883,7 @@ export type RepositoryContactInformationAliasedDataWritable = {
      * Enter text
      */
     address_line_2?: StringAliasedNodeDataWritable | null;
+    physical_location?: RepositoryPhysicalLocationTileWritable | null;
     /**
      * Enter text
      */
@@ -13945,6 +13945,7 @@ export type RepositoryPhysicalLocationTileWritable = {
 };
 
 export type RepositoryRepositoryIdentifierAliasedDataWritable = {
+    alternate_identifiers?: Array<RepositoryAlternateIdentifiersTileWritable> | null;
     /**
      * Enter text
      */
@@ -13953,7 +13954,6 @@ export type RepositoryRepositoryIdentifierAliasedDataWritable = {
      * Enter text
      */
     repository_location_code?: NonLocalizedStringAliasedNodeDataWritable | null;
-    alternate_identifiers?: Array<RepositoryAlternateIdentifiersTileWritable> | null;
 };
 
 export type RepositoryRepositoryIdentifierTileWritable = {
@@ -14006,8 +14006,8 @@ export type RepositoryRepositoryNotesTileWritable = {
 };
 
 export type RepositoryResourceAliasedDataWritable = {
-    contact_information?: RepositoryContactInformationTileWritable | null;
     repository_identifier?: RepositoryRepositoryIdentifierTileWritable | null;
+    contact_information?: RepositoryContactInformationTileWritable | null;
     repository_notes?: Array<RepositoryRepositoryNotesTileWritable> | null;
 };
 
@@ -14055,6 +14055,10 @@ export type SiteSubmissionArchaeologicalSiteAliasedDataWritable = {
      * Select BCAP Assignee if different from Submission Assignee
      */
     alternate_bcap_asignee?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Select or create the site
+     */
+    archaeological_site?: ResourceInstanceAliasedNodeDataWritable | null;
     comments_to_lg?: Array<SiteSubmissionCommentsToLgTileWritable> | null;
     /**
      * Select an option
@@ -14076,10 +14080,6 @@ export type SiteSubmissionArchaeologicalSiteAliasedDataWritable = {
      * Select an option
      */
     submission_type?: ReferenceAliasedNodeDataWritable | null;
-    /**
-     * Select or create the site
-     */
-    archaeological_site?: ResourceInstanceAliasedNodeDataWritable | null;
 };
 
 export type SiteSubmissionArchaeologicalSiteTileWritable = {
@@ -14141,8 +14141,8 @@ export type SiteSubmissionCommentsToLgTileWritable = {
 
 export type SiteSubmissionResourceAliasedDataWritable = {
     submission_details?: SiteSubmissionSubmissionDetailsTileWritable | null;
-    submission_internal_notes?: SiteSubmissionSubmissionInternalNotesTileWritable | null;
     submitted_sites?: SiteSubmissionSubmittedSitesTileWritable | null;
+    submission_internal_notes?: SiteSubmissionSubmissionInternalNotesTileWritable | null;
 };
 
 export type SiteSubmissionSubmissionDetailsAliasedDataWritable = {
@@ -14237,11 +14237,11 @@ export type SiteSubmissionSubmissionInternalNotesTileWritable = {
 };
 
 export type SiteSubmissionSubmittedSitesAliasedDataWritable = {
+    archaeological_site?: Array<SiteSubmissionArchaeologicalSiteTileWritable> | null;
     /**
      * Enter number
      */
     total_number_submitted: NumberAliasedNodeDataMin0Writable | null;
-    archaeological_site?: Array<SiteSubmissionArchaeologicalSiteTileWritable> | null;
 };
 
 export type SiteSubmissionSubmittedSitesTileWritable = {
@@ -14375,13 +14375,13 @@ export type SiteVisitArchaeologicalCultureTileWritable = {
 };
 
 export type SiteVisitArchaeologicalDataAliasedDataWritable = {
-    cultural_material?: Array<SiteVisitCulturalMaterialTileWritable> | null;
     additional_site_typology?: Array<SiteVisitAdditionalSiteTypologyTileWritable> | null;
     archaeological_feature?: Array<SiteVisitArchaeologicalFeatureTileWritable> | null;
+    cultural_material?: Array<SiteVisitCulturalMaterialTileWritable> | null;
     stratigraphy?: Array<SiteVisitStratigraphyTileWritable> | null;
     archaeological_culture?: Array<SiteVisitArchaeologicalCultureTileWritable> | null;
-    site_disturbance?: Array<SiteVisitSiteDisturbanceTileWritable> | null;
     chronology?: Array<SiteVisitChronologyTileWritable> | null;
+    site_disturbance?: Array<SiteVisitSiteDisturbanceTileWritable> | null;
 };
 
 export type SiteVisitArchaeologicalDataTileWritable = {
@@ -14713,6 +14713,7 @@ export type SiteVisitNewSiteNamesTileWritable = {
 };
 
 export type SiteVisitProposedUnprotectedAreaAliasedDataWritable = {
+    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
@@ -14721,7 +14722,6 @@ export type SiteVisitProposedUnprotectedAreaAliasedDataWritable = {
      * Select an option
      */
     proposed_unprotected_site_area_criteria: ReferenceAliasedNodeDataRequiredWritable | null;
-    proposed_unprotected_area?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
 };
 
 export type SiteVisitProposedUnprotectedAreaTileWritable = {
@@ -14803,8 +14803,8 @@ export type SiteVisitRecommendationTileWritable = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedDataWritable = {
-    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTileWritable> | null;
+    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
     site_images?: Array<SiteVisitSiteImagesTileWritable> | null;
 };
 
@@ -14860,8 +14860,8 @@ export type SiteVisitRelatedSiteDocumentsTileWritable = {
 };
 
 export type SiteVisitRemarksAndRecommendationsAliasedDataWritable = {
-    recommendation?: Array<SiteVisitRecommendationTileWritable> | null;
     general_remark?: Array<SiteVisitGeneralRemarkTileWritable> | null;
+    recommendation?: Array<SiteVisitRecommendationTileWritable> | null;
 };
 
 export type SiteVisitRemarksAndRecommendationsTileWritable = {
@@ -14890,8 +14890,8 @@ export type SiteVisitResourceAliasedDataWritable = {
     identification?: SiteVisitIdentificationTileWritable | null;
     site_visit_details?: SiteVisitSiteVisitDetailsTileWritable | null;
     archaeological_data?: SiteVisitArchaeologicalDataTileWritable | null;
-    remarks_and_recommendations?: SiteVisitRemarksAndRecommendationsTileWritable | null;
     ancestral_remains?: Array<SiteVisitAncestralRemainsTileWritable> | null;
+    remarks_and_recommendations?: SiteVisitRemarksAndRecommendationsTileWritable | null;
     related_documents?: SiteVisitRelatedDocumentsTileWritable | null;
 };
 
@@ -14944,7 +14944,6 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      * Select an option
      */
     image_view?: ReferenceAliasedNodeDataWritable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -14962,6 +14961,7 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      */
     image_features?: StringAliasedNodeDataMax80Writable | null;
     primary_image?: BooleanAliasedNodeDataWritable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type SiteVisitSiteImagesTileWritable = {
@@ -14986,6 +14986,10 @@ export type SiteVisitSiteImagesTileWritable = {
 };
 
 export type SiteVisitSiteVisitDetailsAliasedDataWritable = {
+    /**
+     * Select a site
+     */
+    archaeological_site: ResourceInstanceAliasedNodeDataWritable | null;
     is_site_visit_permitted: BooleanAliasedNodeDataWritable | null;
     /**
      * Select a person
@@ -15007,10 +15011,6 @@ export type SiteVisitSiteVisitDetailsAliasedDataWritable = {
      * Enter text
      */
     project_description: StringAliasedNodeDataWritable | null;
-    /**
-     * Select a site
-     */
-    archaeological_site: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Select permit
      */
@@ -15096,12 +15096,12 @@ export type SiteVisitSiteVisitTeamTileWritable = {
 };
 
 export type SiteVisitSpatialLocationAliasedDataWritable = {
+    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTileWritable> | null;
+    spatial_location?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
     boundary_description: StringAliasedNodeDataWritable | null;
-    spatial_location?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
-    proposed_unprotected_area?: Array<SiteVisitProposedUnprotectedAreaTileWritable> | null;
     /**
      * Select an option
      */
