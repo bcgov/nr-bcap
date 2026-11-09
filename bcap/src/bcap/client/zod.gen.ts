@@ -3151,7 +3151,7 @@ export const zPermitApplicationApplicationContactsTile = z.object({
 });
 
 export const zPermitApplicationApplicationIdentificationAliasedData = z.object({
-    application_id: zStringAliasedNodeData.nullish(),
+    application_id: zNonLocalizedStringAliasedNodeData.nullable(),
     filing_type: zReferenceAliasedNodeDataRequired.nullable(),
     project_name: zStringAliasedNodeData.nullable(),
     map_or_hip: zReferenceAliasedNodeData.nullish(),
@@ -8526,7 +8526,7 @@ export const zPermitApplicationApplicationContactsTileWritable = z.object({
 });
 
 export const zPermitApplicationApplicationIdentificationAliasedDataWritable = z.object({
-    application_id: zStringAliasedNodeDataWritable.nullish(),
+    application_id: zNonLocalizedStringAliasedNodeDataWritable.nullable(),
     filing_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     project_name: zStringAliasedNodeDataWritable.nullable(),
     map_or_hip: zReferenceAliasedNodeDataWritable.nullish(),
@@ -10985,6 +10985,10 @@ export const zApiBcapServiceRequestListQuery = z.object({
 });
 
 export const zApiBcapServiceRequestListResponse = zPaginatedBcapServiceRequestList;
+
+export const zApiBcapServiceRequestCreateBody = zBcapServiceRequestWritable;
+
+export const zApiBcapServiceRequestCreateResponse = zBcapServiceRequest;
 
 export const zApiBcapServiceRequestRetrievePath = z.object({
     id: z.uuid()

@@ -23,6 +23,7 @@
      api_workflow_draft="(graph_slug) => {return `/bcap/api/workflow_draft/${graph_slug}`}"
      api_workflow_draft_all="{% url 'workflow_draft_list_all' %}"
      api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
+     bcap_service_request_create="{% url 'bcap_service_request_create' %}"
      permit_application_create="{% url 'permit_application_create' %}"
      seed_process_requirements='(permit_id, permit_type) => {return "{% url "seed_process_requirements" "00000000-0000-0000-0000-000000000000" "----p1" %}".replace("00000000-0000-0000-0000-000000000000", permit_id).replace("----p1", permit_type)}'
      permit_module='(permit_id, module_tileid) => {return "{% url "permit_module" "00000000-0000-0000-0000-000000000000" "11111111-1111-1111-1111-111111111111" %}".replace("00000000-0000-0000-0000-000000000000", permit_id).replace("11111111-1111-1111-1111-111111111111", module_tileid)}'

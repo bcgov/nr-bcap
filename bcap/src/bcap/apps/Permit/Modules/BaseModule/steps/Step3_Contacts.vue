@@ -18,7 +18,7 @@ type ArchesNode =
     | undefined;
 
 const hasRetainedArchaeologist = computed(() => {
-    const node = draftData?.value?.application_contacts?.aliased_data
+    const node = draftData?.value?.service_request_contacts?.aliased_data
         ?.has_retained_archaeologist as ArchesNode;
 
     if (node === null || node === undefined) return null;
@@ -51,16 +51,16 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.application_contacts?.aliased_data
+                draftData?.service_request_contacts?.aliased_data
                     ?.application_proponent
             "
-            graph-slug="permit_application"
+            graph-slug="bcap_service_request"
             node-alias="application_proponent"
             @update:aliased-node-data="
                 updateValue(
                     $event,
                     'application_proponent',
-                    'application_contacts',
+                    'service_request_contacts',
                 )
             "
         />
@@ -68,16 +68,16 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.application_contacts?.aliased_data
+                draftData?.service_request_contacts?.aliased_data
                     ?.has_retained_archaeologist
             "
-            graph-slug="permit_application"
+            graph-slug="bcap_service_request"
             node-alias="has_retained_archaeologist"
             @update:aliased-node-data="
                 updateValue(
                     $event,
                     'has_retained_archaeologist',
-                    'application_contacts',
+                    'service_request_contacts',
                 )
             "
         />
@@ -87,16 +87,16 @@ defineExpose({ isValid });
             class="description-box"
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.application_contacts?.aliased_data
+                draftData?.service_request_contacts?.aliased_data
                     ?.rationale_for_no_archaeologist
             "
-            graph-slug="permit_application"
+            graph-slug="bcap_service_request"
             node-alias="rationale_for_no_archaeologist"
             @update:aliased-node-data="
                 updateValue(
                     $event,
                     'rationale_for_no_archaeologist',
-                    'application_contacts',
+                    'service_request_contacts',
                 )
             "
         />
@@ -105,16 +105,16 @@ defineExpose({ isValid });
             v-if="hasRetainedArchaeologist === 'yes'"
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.application_contacts?.aliased_data
+                draftData?.service_request_contacts?.aliased_data
                     ?.application_archaeologist
             "
-            graph-slug="permit_application"
+            graph-slug="bcap_service_request"
             node-alias="application_archaeologist"
             @update:aliased-node-data="
                 updateValue(
                     $event,
                     'application_archaeologist',
-                    'application_contacts',
+                    'service_request_contacts',
                 )
             "
         />

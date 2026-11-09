@@ -334,6 +334,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedBcapServiceRequestList'
           description: ''
+    post:
+      operationId: api_bcap_service_request_create
+      description: |-
+        POST a new BCAP Service Request from a workflow draft payload.
+
+        Sanitizes WFS GeoJSON feature IDs from the service_request_boundary before
+        persisting, and seeds service_request_id (a backend-owned required node).
+        Applicants file their own service requests, so this only asks for a login;
+        owner-scoping is implicit (the resource is created by the requesting user).
+      tags:
+      - 'External: bcap_service_request'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BcapServiceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BcapServiceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BcapServiceRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BcapServiceRequest'
+          description: ''
   /bcap/api/bcap_service_request/{id}/:
     get:
       operationId: api_bcap_service_request_retrieve
@@ -6588,10 +6619,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
+          description: Enter text
         service_request_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
           nullable: true
+          description: Select an option
       required:
       - service_request_id
       - service_request_type
@@ -13563,9 +13596,9 @@ components:
       properties:
         application_id:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
-          description: Enter application ID
+          description: Enter text
         filing_type:
           allOf:
           - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
@@ -13594,6 +13627,7 @@ components:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
       required:
+      - application_id
       - filing_type
       - project_name
     Permit_Application_Application_Identification_Tile:

@@ -18,6 +18,7 @@ import type {
     ApiWorkflowDraftListAllData,
     BcapMessage,
     BcapMessageWritable,
+    BcapServiceRequest,
     ChecklistStep,
     ContributorSummary,
     ExternalDashboardCard,
@@ -194,6 +195,26 @@ export const submitApplication = async (
         body: {
             draft_id: draftId,
             aliased_data: cleanPayload,
+        },
+    });
+
+    const deleteUrl = `${arches.urls.api_workflow_draft(graphSlug)}/${draftId}`;
+    await apiFetch(deleteUrl, { method: HttpMethod.Delete });
+
+    return finalResource;
+};
+
+export const submitServiceRequest = async (
+    draftId: string,
+    payload: ArchesDraftData,
+    graphSlug: string = GraphSlug.BcapServiceRequest,
+): Promise<BcapServiceRequest> => {
+    const submitUrl = arches.urls.bcap_service_request_create;
+    const finalResource = await apiFetchJson<BcapServiceRequest>(submitUrl, {
+        method: HttpMethod.Post,
+        body: {
+            draft_id: draftId,
+            aliased_data: payload,
         },
     });
 
