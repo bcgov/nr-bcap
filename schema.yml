@@ -12699,7 +12699,6 @@ components:
           type: number
           format: double
           nullable: true
-          title: Upper (m asl)
           description: Enter number
         display_value:
           type: string
@@ -12739,7 +12738,6 @@ components:
           type: number
           format: double
           nullable: true
-          title: Permit Duration Requested
           description: Enter number of years requested
           minimum: 0
           maximum: 10

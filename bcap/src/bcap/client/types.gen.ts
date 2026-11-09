@@ -5079,8 +5079,6 @@ export type NoticeOfProjectIntentResourceAliasedData = {
 
 export type NumberAliasedNodeData = {
     /**
-     * Upper (m asl)
-     *
      * Enter number
      */
     node_value: number | null;
@@ -5103,8 +5101,6 @@ export type NumberAliasedNodeDataMin0 = {
 
 export type NumberAliasedNodeDataMin0Max10 = {
     /**
-     * Permit Duration Requested
-     *
      * Enter number of years requested
      */
     node_value: number | null;
@@ -12647,8 +12643,6 @@ export type NoticeOfProjectIntentResourceAliasedDataWritable = {
 
 export type NumberAliasedNodeDataWritable = {
     /**
-     * Upper (m asl)
-     *
      * Enter number
      */
     node_value: number | null;
@@ -12663,8 +12657,6 @@ export type NumberAliasedNodeDataMin0Writable = {
 
 export type NumberAliasedNodeDataMin0Max10Writable = {
     /**
-     * Permit Duration Requested
-     *
      * Enter number of years requested
      */
     node_value: number | null;
