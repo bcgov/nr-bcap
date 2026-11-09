@@ -973,8 +973,8 @@ export type ArchaeologicalSitePublicationReferenceTile = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedData = {
-    related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTile> | null;
     publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
+    related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTile> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTile> | null;
 };
 
@@ -1829,8 +1829,8 @@ export type BcapServiceRequestCrownLandSurveyInformationTile = {
 
 export type BcapServiceRequestCrownLandTenureTypeAliasedData = {
     tenure_description?: StringAliasedNodeData | null;
-    crown_land_tenure_type?: StringAliasedNodeData | null;
     crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTile | null;
+    crown_land_tenure_type?: StringAliasedNodeData | null;
 };
 
 export type BcapServiceRequestCrownLandTenureTypeTile = {
@@ -5897,8 +5897,8 @@ export type PermitApplicationResourceAliasedData = {
     legal_and_consent?: PermitApplicationLegalAndConsentTile | null;
     related_permit?: Array<PermitApplicationRelatedPermitTile> | null;
     application_admin?: PermitApplicationApplicationAdminTile | null;
-    application_contacts?: PermitApplicationApplicationContactsTile | null;
     permit_messages?: PermitApplicationPermitMessagesTile | null;
+    application_contacts?: PermitApplicationApplicationContactsTile | null;
 };
 
 export type ProcessRequirement = {
@@ -7475,8 +7475,8 @@ export type SiteVisitRecommendationTile = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedData = {
-    related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTile> | null;
     publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
+    related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTile> | null;
     site_images?: Array<SiteVisitSiteImagesTile> | null;
 };
 
@@ -9053,8 +9053,8 @@ export type ArchaeologicalSitePublicationReferenceTileWritable = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedDataWritable = {
-    related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTileWritable> | null;
     publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
+    related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTileWritable> | null;
 };
 
@@ -9883,8 +9883,8 @@ export type BcapServiceRequestCrownLandSurveyInformationTileWritable = {
 
 export type BcapServiceRequestCrownLandTenureTypeAliasedDataWritable = {
     tenure_description?: StringAliasedNodeDataWritable | null;
-    crown_land_tenure_type?: StringAliasedNodeDataWritable | null;
     crown_land_survey_information?: BcapServiceRequestCrownLandSurveyInformationTileWritable | null;
+    crown_land_tenure_type?: StringAliasedNodeDataWritable | null;
 };
 
 export type BcapServiceRequestCrownLandTenureTypeTileWritable = {
@@ -13334,8 +13334,8 @@ export type PermitApplicationResourceAliasedDataWritable = {
     legal_and_consent?: PermitApplicationLegalAndConsentTileWritable | null;
     related_permit?: Array<PermitApplicationRelatedPermitTileWritable> | null;
     application_admin?: PermitApplicationApplicationAdminTileWritable | null;
-    application_contacts?: PermitApplicationApplicationContactsTileWritable | null;
     permit_messages?: PermitApplicationPermitMessagesTileWritable | null;
+    application_contacts?: PermitApplicationApplicationContactsTileWritable | null;
 };
 
 export type ProcessRequirementWritable = {
@@ -14795,8 +14795,8 @@ export type SiteVisitRecommendationTileWritable = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedDataWritable = {
-    related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTileWritable> | null;
     publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
+    related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<SiteVisitSiteImagesTileWritable> | null;
 };
 

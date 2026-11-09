@@ -4245,15 +4245,15 @@ components:
     Archaeological_Site_Related_Documents_Aliased_Data:
       type: object
       properties:
-        related_site_documents:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Related_Site_Documents_Tile'
-          nullable: true
         publication_reference:
           type: array
           items:
             $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
+          nullable: true
+        related_site_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Related_Site_Documents_Tile'
           nullable: true
         site_images:
           type: array
@@ -6120,13 +6120,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-        crown_land_tenure_type:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
         crown_land_survey_information:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Survey_Information_Tile'
+          nullable: true
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
     Bcap_Service_Request_Crown_Land_Tenure_Type_Tile:
       type: object
@@ -14573,13 +14573,13 @@ components:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Application_Admin_Tile'
           nullable: true
-        application_contacts:
-          allOf:
-          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
-          nullable: true
         permit_messages:
           allOf:
           - $ref: '#/components/schemas/Permit_Application_Permit_Messages_Tile'
+          nullable: true
+        application_contacts:
+          allOf:
+          - $ref: '#/components/schemas/Permit_Application_Application_Contacts_Tile'
           nullable: true
     ProcessRequirement:
       type: object
@@ -17890,15 +17890,15 @@ components:
     Site_Visit_Related_Documents_Aliased_Data:
       type: object
       properties:
-        related_site_documents:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Related_Site_Documents_Tile'
-          nullable: true
         publication_reference:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
+          nullable: true
+        related_site_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Related_Site_Documents_Tile'
           nullable: true
         site_images:
           type: array

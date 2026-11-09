@@ -1837,8 +1837,8 @@ export const zBcapServiceRequestCrownLandSurveyInformationTile = z.object({
 
 export const zBcapServiceRequestCrownLandTenureTypeAliasedData = z.object({
     tenure_description: zStringAliasedNodeData.nullish(),
-    crown_land_tenure_type: zStringAliasedNodeData.nullish(),
-    crown_land_survey_information: zBcapServiceRequestCrownLandSurveyInformationTile.nullish()
+    crown_land_survey_information: zBcapServiceRequestCrownLandSurveyInformationTile.nullish(),
+    crown_land_tenure_type: zStringAliasedNodeData.nullish()
 });
 
 export const zBcapServiceRequestCrownLandTenureTypeTile = z.object({
@@ -3429,8 +3429,8 @@ export const zPermitApplicationResourceAliasedData = z.object({
     legal_and_consent: zPermitApplicationLegalAndConsentTile.nullish(),
     related_permit: z.array(zPermitApplicationRelatedPermitTile).nullish(),
     application_admin: zPermitApplicationApplicationAdminTile.nullish(),
-    application_contacts: zPermitApplicationApplicationContactsTile.nullish(),
-    permit_messages: zPermitApplicationPermitMessagesTile.nullish()
+    permit_messages: zPermitApplicationPermitMessagesTile.nullish(),
+    application_contacts: zPermitApplicationApplicationContactsTile.nullish()
 });
 
 export const zPatchedPermitApplication = z.object({
@@ -5172,8 +5172,8 @@ export const zArchaeologicalSiteSiteImagesTile = z.object({
 });
 
 export const zArchaeologicalSiteRelatedDocumentsAliasedData = z.object({
-    related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTile).nullish(),
     publication_reference: z.array(zArchaeologicalSitePublicationReferenceTile).nullish(),
+    related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTile).nullish(),
     site_images: z.array(zArchaeologicalSiteSiteImagesTile).nullish()
 });
 
@@ -5361,8 +5361,8 @@ export const zSiteVisitSiteImagesTile = z.object({
 });
 
 export const zSiteVisitRelatedDocumentsAliasedData = z.object({
-    related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTile).nullish(),
     publication_reference: z.array(zSiteVisitPublicationReferenceTile).nullish(),
+    related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTile).nullish(),
     site_images: z.array(zSiteVisitSiteImagesTile).nullish()
 });
 
@@ -7296,8 +7296,8 @@ export const zBcapServiceRequestCrownLandSurveyInformationTileWritable = z.objec
 
 export const zBcapServiceRequestCrownLandTenureTypeAliasedDataWritable = z.object({
     tenure_description: zStringAliasedNodeDataWritable.nullish(),
-    crown_land_tenure_type: zStringAliasedNodeDataWritable.nullish(),
-    crown_land_survey_information: zBcapServiceRequestCrownLandSurveyInformationTileWritable.nullish()
+    crown_land_survey_information: zBcapServiceRequestCrownLandSurveyInformationTileWritable.nullish(),
+    crown_land_tenure_type: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zBcapServiceRequestCrownLandTenureTypeTileWritable = z.object({
@@ -8804,8 +8804,8 @@ export const zPermitApplicationResourceAliasedDataWritable = z.object({
     legal_and_consent: zPermitApplicationLegalAndConsentTileWritable.nullish(),
     related_permit: z.array(zPermitApplicationRelatedPermitTileWritable).nullish(),
     application_admin: zPermitApplicationApplicationAdminTileWritable.nullish(),
-    application_contacts: zPermitApplicationApplicationContactsTileWritable.nullish(),
-    permit_messages: zPermitApplicationPermitMessagesTileWritable.nullish()
+    permit_messages: zPermitApplicationPermitMessagesTileWritable.nullish(),
+    application_contacts: zPermitApplicationApplicationContactsTileWritable.nullish()
 });
 
 export const zPatchedPermitApplicationWritable = z.object({
@@ -10415,8 +10415,8 @@ export const zArchaeologicalSiteSiteImagesTileWritable = z.object({
 });
 
 export const zArchaeologicalSiteRelatedDocumentsAliasedDataWritable = z.object({
-    related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTileWritable).nullish(),
     publication_reference: z.array(zArchaeologicalSitePublicationReferenceTileWritable).nullish(),
+    related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTileWritable).nullish(),
     site_images: z.array(zArchaeologicalSiteSiteImagesTileWritable).nullish()
 });
 
@@ -10576,8 +10576,8 @@ export const zSiteVisitSiteImagesTileWritable = z.object({
 });
 
 export const zSiteVisitRelatedDocumentsAliasedDataWritable = z.object({
-    related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTileWritable).nullish(),
     publication_reference: z.array(zSiteVisitPublicationReferenceTileWritable).nullish(),
+    related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTileWritable).nullish(),
     site_images: z.array(zSiteVisitSiteImagesTileWritable).nullish()
 });
 
