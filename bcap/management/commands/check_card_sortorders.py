@@ -16,7 +16,8 @@ Checks performed:
 By default the command reports problems and exits non-zero if any are found.
 
 Fix flags (update JSON files and live DB rows):
-  --fix-cards       Resolve NULL/duplicate card sortorders.
+  --fix-cards       Resolve NULL/duplicate card sortorders and widget sortorders
+                    within each card (CardModel + CardXNodeXWidget).
   --fix-nodes       Resolve NULL/duplicate node sortorders.
   --fix             Shorthand for --fix-cards --fix-nodes.
   --align-nodes     Within each parent-node sibling group, nodes with widgets
@@ -34,7 +35,6 @@ their DB query order (Python stable sort).
     python3 manage.py check_card_sortorders --fix-cards                # fix cards only
     python3 manage.py check_card_sortorders --fix-nodes                # fix nodes only
     python3 manage.py check_card_sortorders --align-nodes              # align nodes to widget order
-    python3 manage.py check_card_sortorders --fix-nodes --align-nodes  # fix non-widget nodes, align widget nodes
     python3 manage.py check_card_sortorders --resource-models-only     # skip branch graphs
 """
 
@@ -42,30 +42,35 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from django.apps import apps
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from arches.app.models import models as arches_models
 
 
-def _pkg():
-    return Path(apps.get_app_config("bcap").path) / "pkg"
-
-
-def _all_package_graphs():
-    """Yield (doc, graphid, slug, path) for every graph JSON in the package."""
-    for path in sorted((_pkg() / "graphs").rglob("*.json")):
-        try:
-            doc = json.loads(path.read_text())
-            graph = doc["graph"][0]
-            yield doc, graph["graphid"], graph["slug"], path
-        except (KeyError, IndexError, ValueError):
+def _all_package_graphs(resource_models_only=False):
+    """Yield (doc, graphid, slug, path) for every graph JSON in the project's
+    ``pkg/graphs/`` directory.
+    """
+    app_root = Path(settings.APP_ROOT).resolve()
+    subdirs = (
+        ["resource_models"] if resource_models_only else ["resource_models", "branches"]
+    )
+    for subdir in subdirs:
+        subdir_path = app_root / "pkg" / "graphs" / subdir
+        if not subdir_path.is_dir():
             continue
+        for path in sorted(subdir_path.rglob("*.json")):
+            try:
+                doc = json.loads(path.read_text())
+                graph = doc["graph"][0]
+                yield doc, graph["graphid"], graph["slug"], path
+            except (KeyError, IndexError, ValueError):
+                continue
 
 
 def _has_problem(group):
-    """True if the sibling group contains any NULL or duplicate sortorders."""
     sortorders = [c.sortorder for c in group]
     if any(s is None for s in sortorders):
         return True
@@ -85,7 +90,10 @@ class Command(BaseCommand):
         parser.add_argument(
             "--fix-cards",
             action="store_true",
-            help="Resolve NULL/duplicate card sortorders within each parent nodegroup.",
+            help=(
+                "Resolve NULL/duplicate card sortorders within each parent nodegroup "
+                "and widget sortorders within each card (CardXNodeXWidget)."
+            ),
         )
         parser.add_argument(
             "--fix-nodes",
@@ -114,11 +122,12 @@ class Command(BaseCommand):
         fix_nodes = options["fix_nodes"] or fix
         align_nodes = options["align_nodes"]
         resource_models_only = options["resource_models_only"]
+        project_root = Path(settings.APP_ROOT).resolve()
         problems = []
+        align_blocked: list[tuple[str, str]] = []  # (slug, card_name) deferred messages
+        updated_paths: list[Path] = []  # deferred file-write confirmations
 
-        for doc, graphid, slug, path in _all_package_graphs():
-            if resource_models_only and not doc["graph"][0].get("isresource", False):
-                continue
+        for doc, graphid, slug, path in _all_package_graphs(resource_models_only):
             # Build lookups for JSON file updates.
             json_cards_by_id = {}
             for json_card in doc["graph"][0].get("cards", []):
@@ -131,6 +140,12 @@ class Command(BaseCommand):
                 nid = str(json_node.get("nodeid", ""))
                 if nid:
                     json_nodes_by_id[nid] = json_node
+
+            json_widgets_by_id = {}
+            for json_widget in doc["graph"][0].get("cards_x_nodes_x_widgets", []):
+                wid = str(json_widget.get("id", ""))
+                if wid:
+                    json_widgets_by_id[wid] = json_widget
 
             # Group source cards by their parent nodegroup (None = top-level).
             all_cards = list(
@@ -154,9 +169,7 @@ class Command(BaseCommand):
                 # user can see the full context needed for a manual fix.
                 parent_key = group[0].nodegroup.parentnodegroup_id
                 self.stdout.write(
-                    self.style.WARNING(
-                        f"  [{slug}] parent nodegroup: {parent_key}"
-                    )
+                    self.style.WARNING(f"  [{slug}] parent nodegroup: {parent_key}")
                 )
                 sorted_for_display = sorted(
                     group,
@@ -175,9 +188,7 @@ class Command(BaseCommand):
                         problems.append((slug, card.cardid, str(card.name)))
                     else:
                         marker = f"  [ok ={so:>4}]"
-                    self.stdout.write(
-                        f"    {marker} {card.name} ({card.cardid})"
-                    )
+                    self.stdout.write(f"    {marker} {card.name} ({card.cardid})")
 
                 if not fix_cards:
                     continue
@@ -212,18 +223,90 @@ class Command(BaseCommand):
                             db_updates, ["sortorder"]
                         )
 
+            # --- cards_x_nodes_x_widgets: check widget sortorders within each card ---
+            all_widgets = list(
+                arches_models.CardXNodeXWidget.objects.filter(
+                    card__graph_id=graphid,
+                    card__source_identifier__isnull=True,
+                ).select_related("node", "card")
+            )
+            widget_card_groups: dict = {}
+            for widget in all_widgets:
+                widget_card_groups.setdefault(str(widget.card_id), []).append(widget)
+
+            for card_id, card_widgets in widget_card_groups.items():
+                if not _has_problem(card_widgets):
+                    continue
+
+                card_name = card_widgets[0].card.name
+                counts = Counter(w.sortorder for w in card_widgets)
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"  [{slug}] card widgets: {card_name} ({card_id})"
+                    )
+                )
+                sorted_for_display = sorted(
+                    card_widgets,
+                    key=lambda w: (
+                        w.sortorder is None,
+                        w.sortorder if w.sortorder is not None else 999_999,
+                    ),
+                )
+                for widget in sorted_for_display:
+                    so = widget.sortorder
+                    if so is None:
+                        marker = "  [NULL]    "
+                        problems.append((slug, widget.node_id, str(widget.node.name)))
+                    elif counts[so] > 1:
+                        marker = f"  [dup={so:>4}]"
+                        problems.append((slug, widget.node_id, str(widget.node.name)))
+                    else:
+                        marker = f"  [ok ={so:>4}]"
+                    self.stdout.write(
+                        f"    {marker} {widget.node.name} ({widget.node_id})"
+                    )
+
+                if not fix_cards:
+                    continue
+
+                sorted_widgets = sorted(
+                    card_widgets,
+                    key=lambda w: (
+                        w.sortorder is None,
+                        w.sortorder if w.sortorder is not None else 0,
+                    ),
+                )
+                db_widget_updates = []
+                for new_so, widget in enumerate(sorted_widgets):
+                    if widget.sortorder == new_so:
+                        continue
+                    self.stdout.write(
+                        f"    {slug} / {card_name} / {widget.node.name}: "
+                        f"{widget.sortorder} -> {new_so}"
+                    )
+                    widget.sortorder = new_so
+                    json_widget = json_widgets_by_id.get(str(widget.id))
+                    if json_widget is not None:
+                        json_widget["sortorder"] = new_so
+                        graph_dirty = True
+                    db_widget_updates.append(widget)
+
+                if db_widget_updates:
+                    with transaction.atomic():
+                        arches_models.CardXNodeXWidget.objects.bulk_update(
+                            db_widget_updates, ["sortorder"]
+                        )
+
             # Build node sibling groups (needed by both align-nodes and the
             # node check below).  Nodes are only comparable with their direct
             # tree siblings, so we group via the Edge table rather than by
             # nodegroup_id.
-            all_nodes = list(
-                arches_models.Node.objects.filter(graph_id=graphid)
-            )
+            all_nodes = list(arches_models.Node.objects.filter(graph_id=graphid))
             nodes_by_id = {str(n.nodeid): n for n in all_nodes}
 
-            edges = arches_models.Edge.objects.filter(
-                graph_id=graphid
-            ).values_list("rangenode_id", "domainnode_id")
+            edges = arches_models.Edge.objects.filter(graph_id=graphid).values_list(
+                "rangenode_id", "domainnode_id"
+            )
 
             node_sibling_groups: dict = {}
             for child_id, parent_id in edges:
@@ -241,48 +324,19 @@ class Command(BaseCommand):
             # The node check below runs afterwards so reported state reflects
             # the aligned values.
             if align_nodes:
-                widget_groups: dict = {}
-                for w in arches_models.CardXNodeXWidget.objects.filter(
-                    card__graph_id=graphid,
-                    card__source_identifier__isnull=True,
-                ).select_related("node", "card"):
-                    widget_groups.setdefault(str(w.card_id), []).append(w)
-
-                widget_invalid = False
-                for widgets in widget_groups.values():
+                # Re-use the already-fetched widget groups; after --fix-cards
+                # the in-memory sortorders are already updated.
+                # Collect blocked cards without reprinting their details here —
+                # the widget check block above already printed them.  Deferred
+                # messages are printed at the end so they don't get buried.
+                graph_align_blocked = False
+                for widgets in widget_card_groups.values():
                     if not _has_problem(widgets):
                         continue
-                    widget_invalid = True
-                    card_name = widgets[0].card.name
-                    counts = Counter(w.sortorder for w in widgets)
-                    self.stdout.write(
-                        self.style.ERROR(
-                            f"  [{slug}] --align-nodes blocked: "
-                            f"card '{card_name}' has NULL/duplicate widget sortorders"
-                        )
-                    )
-                    sorted_w = sorted(
-                        widgets,
-                        key=lambda w: (
-                            w.sortorder is None,
-                            w.sortorder if w.sortorder is not None else 999_999,
-                        ),
-                    )
-                    for w in sorted_w:
-                        so = w.sortorder
-                        if so is None:
-                            marker = "  [NULL]    "
-                            problems.append((slug, w.node_id, str(w.node.name)))
-                        elif counts[so] > 1:
-                            marker = f"  [dup={so:>4}]"
-                            problems.append((slug, w.node_id, str(w.node.name)))
-                        else:
-                            marker = f"  [ok ={so:>4}]"
-                        self.stdout.write(
-                            f"    {marker} {w.node.name} ({w.node_id})"
-                        )
+                    graph_align_blocked = True
+                    align_blocked.append((slug, str(widgets[0].card.name)))
 
-                if not widget_invalid:
+                if not graph_align_blocked:
                     # Build node_id → widget sortorder lookup.
                     widget_so_by_node: dict = {}
                     for node_id, ws in arches_models.CardXNodeXWidget.objects.filter(
@@ -304,13 +358,19 @@ class Command(BaseCommand):
                             [n for n in group if str(n.nodeid) in widget_so_by_node],
                             key=lambda n: (
                                 widget_so_by_node[str(n.nodeid)] is None,
-                                widget_so_by_node[str(n.nodeid)]
-                                if widget_so_by_node[str(n.nodeid)] is not None
-                                else 0,
+                                (
+                                    widget_so_by_node[str(n.nodeid)]
+                                    if widget_so_by_node[str(n.nodeid)] is not None
+                                    else 0
+                                ),
                             ),
                         )
                         non_widget_nodes = sorted(
-                            [n for n in group if str(n.nodeid) not in widget_so_by_node],
+                            [
+                                n
+                                for n in group
+                                if str(n.nodeid) not in widget_so_by_node
+                            ],
                             key=lambda n: (
                                 n.sortorder is None,
                                 n.sortorder if n.sortorder is not None else 0,
@@ -352,15 +412,11 @@ class Command(BaseCommand):
 
                 parent_node = nodes_by_id.get(parent_id)
                 parent_label = (
-                    f"{parent_node.name} ({parent_id})"
-                    if parent_node
-                    else parent_id
+                    f"{parent_node.name} ({parent_id})" if parent_node else parent_id
                 )
                 counts = Counter(n.sortorder for n in group)
                 self.stdout.write(
-                    self.style.WARNING(
-                        f"  [{slug}] parent node: {parent_label}"
-                    )
+                    self.style.WARNING(f"  [{slug}] parent node: {parent_label}")
                 )
                 sorted_for_display = sorted(
                     group,
@@ -379,9 +435,7 @@ class Command(BaseCommand):
                         problems.append((slug, node.nodeid, str(node.name)))
                     else:
                         marker = f"  [ok ={so:>4}]"
-                    self.stdout.write(
-                        f"    {marker} {node.name} ({node.nodeid})"
-                    )
+                    self.stdout.write(f"    {marker} {node.name} ({node.nodeid})")
 
                 if not fix_nodes:
                     continue
@@ -414,12 +468,29 @@ class Command(BaseCommand):
                         )
 
             if graph_dirty:
-                path.write_text(
-                    json.dumps(doc, indent=4, ensure_ascii=False) + "\n"
+                path.write_text(json.dumps(doc, indent=4, ensure_ascii=False) + "\n")
+                updated_paths.append(path)
+
+        # Deferred --align-nodes blocked messages — printed after all problem
+        # groups so they aren't buried in the middle of the output.
+        if align_blocked:
+            self.stdout.write("")
+            for block_slug, card_name in align_blocked:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"  [{block_slug}] --align-nodes blocked: "
+                        f"card '{card_name}' has NULL/duplicate widget sortorders "
+                        f"(run --fix-cards first)"
+                    )
                 )
+
+        # Deferred file-write confirmations.
+        if updated_paths:
+            self.stdout.write("")
+            for updated_path in updated_paths:
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"  updated: {path.relative_to(_pkg().parent)}"
+                        f"  updated: {updated_path.relative_to(project_root) if updated_path.is_relative_to(project_root) else updated_path}"
                     )
                 )
 

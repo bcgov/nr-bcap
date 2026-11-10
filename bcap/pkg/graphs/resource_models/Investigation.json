@@ -230,7 +230,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Mitigation Measures",
                         "maxLength": null,
                         "placeholder": {
@@ -244,7 +246,7 @@
                         "en": "Mitigation Measures"
                     },
                     "node_id": "049fb4cf-e164-4859-b9fe-b48d2267cf53",
-                    "sortorder": null,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -258,7 +260,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "HIP Study Details",
                         "maxLength": null,
                         "placeholder": {
@@ -272,7 +276,7 @@
                         "en": "HIP Study Details"
                     },
                     "node_id": "d73154e7-2309-4654-b1b9-f2a5ff76dcb6",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -286,7 +290,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "HIP Objectives",
                         "maxLength": null,
                         "placeholder": {
@@ -300,7 +306,7 @@
                         "en": "HIP Objectives"
                     },
                     "node_id": "a316d037-2f71-459e-9843-a6507f1dfbf3",
-                    "sortorder": null,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -314,7 +320,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Related Assessments",
                         "maxLength": null,
                         "placeholder": {
@@ -328,7 +336,7 @@
                         "en": "Related Assessments"
                     },
                     "node_id": "838acd08-6f3d-45a7-b4b4-87cbfc484a22",
-                    "sortorder": null,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -347,7 +355,7 @@
                         "en": "Arch Workplans and Schedule A"
                     },
                     "node_id": "51bf764e-709d-402c-9ea9-9f4c9c6365a3",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -363,7 +371,7 @@
                         "en": "Are Chance Finds Expected"
                     },
                     "node_id": "271fe0c4-b5b5-4624-a181-2727c508c1d1",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -377,7 +385,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Assessment Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -391,7 +401,7 @@
                         "en": "Assessment Approach"
                     },
                     "node_id": "6e8bed02-401d-4a65-8a9f-419b00eb15b2",
-                    "sortorder": null,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -407,7 +417,7 @@
                         "en": "Are Ancestral Remains Anticipated"
                     },
                     "node_id": "1e0173fa-f99c-4ece-98fa-9aa8878543cc",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -416,7 +426,9 @@
                     "card_id": "0ddacf17-d42d-44cc-8833-acd214fcd873",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Affected Sites",
                         "placeholder": {
                             "en": "Select one or more sites that may be affected by this project"
@@ -427,7 +439,7 @@
                         "en": "Affected Sites"
                     },
                     "node_id": "c73b3581-e105-4fb5-b41c-b9b007f796a1",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -436,7 +448,9 @@
                     "card_id": "0ddacf17-d42d-44cc-8833-acd214fcd873",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Relevant Arch Studies",
                         "placeholder": {
                             "en": "List one or more studies that have been completed within the proposed boundary"
@@ -447,7 +461,7 @@
                         "en": "Relevant Arch Studies"
                     },
                     "node_id": "6eb54cbe-0f37-46b7-a089-4b7d863f4f26",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -456,7 +470,9 @@
                     "card_id": "b4161981-f6a2-42a2-8858-9e8ff0fae869",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Overseeing Archaeologist",
                         "placeholder": {
                             "en": ""
@@ -476,7 +492,9 @@
                     "card_id": "b4161981-f6a2-42a2-8858-9e8ff0fae869",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Field Directors",
                         "placeholder": {
                             "en": ""
@@ -501,7 +519,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Permit Deliverables",
                         "maxLength": null,
                         "placeholder": {
@@ -545,7 +565,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Ancestral Remains Approach Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -573,7 +595,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Ancestral Remains Approach Additional Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -601,7 +625,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Ancestral Remains Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -661,7 +687,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Additional Repository and Curation Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -684,7 +712,9 @@
                     "card_id": "9c8f9d85-cf81-4d5b-9cc4-2c56230f3484",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Destination Repository",
                         "placeholder": {
                             "en": ""
@@ -741,7 +771,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Data Analysis Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -801,7 +833,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Subsurface Testing Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -829,7 +863,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Machine Assisted Inspection Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -857,7 +893,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Field Transport and Lab Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -885,7 +923,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Machine Assisted Inspection Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -913,7 +953,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Other Field Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -973,7 +1015,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Methods Alignment",
                         "maxLength": null,
                         "placeholder": {
@@ -1001,7 +1045,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Arch Bearing Sediment",
                         "maxLength": null,
                         "placeholder": {
@@ -1029,7 +1075,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Winter Assessment Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -1073,7 +1121,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Arch Potential Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1101,7 +1151,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Survey Coverage Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1177,7 +1229,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Rock Art Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1221,7 +1275,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Wet Sites Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1249,7 +1305,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate CMT Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1277,7 +1335,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Excavation Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1305,7 +1365,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Additional Recording Information",
                         "maxLength": null,
                         "placeholder": {
@@ -1349,7 +1411,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Historical Sites Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1393,7 +1457,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Other Recording Approaches",
                         "maxLength": null,
                         "placeholder": {
@@ -1437,7 +1503,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Alternate Site Flagging Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1465,7 +1533,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Details of Collected Materials",
                         "maxLength": null,
                         "placeholder": {
@@ -1493,7 +1563,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Collection Approach Details",
                         "maxLength": null,
                         "placeholder": {
@@ -1521,7 +1593,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Additional Collection and Sampling Details",
                         "maxLength": null,
                         "placeholder": {
@@ -1549,7 +1623,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Collection Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1577,7 +1653,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Collection Approach Additional Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -1605,7 +1683,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Details of Collected Samples",
                         "maxLength": null,
                         "placeholder": {
@@ -1633,7 +1713,9 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": ["placeholder"],
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
                         "label": "Investigation Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -2488,7 +2570,7 @@
                     "nodeid": "befab051-cb58-493b-85ea-6634c95d2a64",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2511,7 +2593,7 @@
                     "nodeid": "a316d037-2f71-459e-9843-a6507f1dfbf3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 4,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2534,7 +2616,7 @@
                     "nodeid": "d73154e7-2309-4654-b1b9-f2a5ff76dcb6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2557,7 +2639,7 @@
                     "nodeid": "049fb4cf-e164-4859-b9fe-b48d2267cf53",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 2,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2589,7 +2671,7 @@
                     "nodeid": "6eb54cbe-0f37-46b7-a089-4b7d863f4f26",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 8,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2612,7 +2694,7 @@
                     "nodeid": "6e8bed02-401d-4a65-8a9f-419b00eb15b2",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 1,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2648,7 +2730,7 @@
                     "nodeid": "c73b3581-e105-4fb5-b41c-b9b007f796a1",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 7,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2658,7 +2740,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2679,7 +2764,7 @@
                     "nodeid": "271fe0c4-b5b5-4624-a181-2727c508c1d1",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 3,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2707,7 +2792,7 @@
                     "nodeid": "51bf764e-709d-402c-9ea9-9f4c9c6365a3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 6,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2717,7 +2802,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2738,7 +2826,7 @@
                     "nodeid": "1e0173fa-f99c-4ece-98fa-9aa8878543cc",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 5,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2761,7 +2849,7 @@
                     "nodeid": "838acd08-6f3d-45a7-b4b4-87cbfc484a22",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E87_Curation_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 9,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2871,7 +2959,7 @@
                     "nodeid": "0930fa16-d0f1-45e5-8a56-76e87b5c13bf",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2881,7 +2969,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2902,7 +2993,7 @@
                     "nodeid": "81bd7ddd-28e9-46a9-ad0e-6052021cf990",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2925,7 +3016,7 @@
                     "nodeid": "5dcc033c-04d2-4200-a34d-df33f7130930",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2981,7 +3072,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3048,7 +3142,7 @@
                     "nodeid": "d01b09fe-48ce-48d4-a0da-11d50cfbdc4e",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3117,7 +3211,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3148,7 +3245,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3169,7 +3269,7 @@
                     "nodeid": "0938774a-5972-49f6-9941-b74b14214b98",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3179,7 +3279,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3210,7 +3313,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3231,7 +3337,7 @@
                     "nodeid": "24f323a4-5382-4509-9b51-d8d396ac9261",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 13,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3254,7 +3360,7 @@
                     "nodeid": "27008f7a-21de-4bbc-a7d1-2cb62cff93e9",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 11,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3277,7 +3383,7 @@
                     "nodeid": "eaa8c1ed-a27d-4010-8a34-e05cf35a5233",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 17,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3287,7 +3393,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3308,7 +3417,7 @@
                     "nodeid": "0ffc942d-2cb3-4564-a031-8d2cc742354b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 8,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3331,7 +3440,7 @@
                     "nodeid": "f8d46f4a-7393-4cf2-9064-a7e00f223893",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 17,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3354,7 +3463,7 @@
                     "nodeid": "4466b41e-f814-45e6-9108-53f524bd397c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 6,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3377,7 +3486,7 @@
                     "nodeid": "ffec4343-7483-487f-aee3-916fdf63f27c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 12,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3400,7 +3509,7 @@
                     "nodeid": "66340fb5-0e53-4277-bb3b-508597f63fed",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 16,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3423,7 +3532,7 @@
                     "nodeid": "3e1cd63a-c684-49fa-a14b-175ccc0d1786",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 15,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3433,7 +3542,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3454,7 +3566,7 @@
                     "nodeid": "ead7d689-1f9a-48d1-a8bb-01286e5a7a14",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 5,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3464,7 +3576,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3485,7 +3600,7 @@
                     "nodeid": "406d033f-9e87-4693-b438-9a1d58807478",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 3,
+                    "sortorder": 16,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3508,7 +3623,7 @@
                     "nodeid": "9187a0ba-13e8-42da-980a-7a954e3a402a",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 7,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3531,7 +3646,7 @@
                     "nodeid": "a7a9057f-b91f-488a-9053-53f6340f4fa3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3554,7 +3669,7 @@
                     "nodeid": "df473673-f38f-4b9b-9986-4f085c4c3591",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 14,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3577,7 +3692,7 @@
                     "nodeid": "52e95a00-1f63-476e-8365-c26e64ef7254",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 9,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3600,7 +3715,7 @@
                     "nodeid": "f11c0967-2896-4de1-884a-a1f41cbaac10",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 4,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3610,7 +3725,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3631,7 +3749,7 @@
                     "nodeid": "574ac050-b753-4c55-8c02-c2dd46a565bc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3664,7 +3782,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3685,7 +3806,7 @@
                     "nodeid": "447bc6c0-c404-4094-9e9c-2b88481fb1ce",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 10,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3718,7 +3839,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3739,7 +3863,7 @@
                     "nodeid": "e02c94d4-d9bf-4938-a8f5-7623dfb35976",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3749,7 +3873,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3770,7 +3897,7 @@
                     "nodeid": "10a02384-52b9-45f4-aaab-1bbc83eee54b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3826,7 +3953,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3847,7 +3977,7 @@
                     "nodeid": "f80907e6-0af7-46f1-b33d-eafd171c1e72",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3857,7 +3987,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3901,7 +4034,7 @@
                     "nodeid": "56600acd-771c-422e-b146-4939f83948d9",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3924,7 +4057,7 @@
                     "nodeid": "6713df37-2a3f-424d-b5a3-5daae1887fd2",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3934,7 +4067,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3955,7 +4091,7 @@
                     "nodeid": "686e5236-d50f-4a44-9c53-42a52d0fb7da",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3965,7 +4101,10 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "i18n_properties": [
+                            "trueLabel",
+                            "falseLabel"
+                        ],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3986,7 +4125,7 @@
                     "nodeid": "7d536fc9-cfcf-4f97-9ceb-ac8e493f1d79",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4009,7 +4148,7 @@
                     "nodeid": "5cb778bc-de25-4dc0-90fa-c9bc22393e8b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4170,7 +4309,7 @@
                     "nodeid": "3e46ed66-4a80-4767-9108-f1090163cff6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
