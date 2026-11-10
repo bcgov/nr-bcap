@@ -26,7 +26,7 @@
                         "en": "Site Dimensions"
                     },
                     "nodegroup_id": "f059bb98-60eb-11f0-a806-0242ac170007",
-                    "sortorder": 4,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -53,7 +53,7 @@
                         "en": "Historical Spatial Accuracy"
                     },
                     "nodegroup_id": "143fc2f7-da1b-4373-bc8c-debfa5369a8c",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -80,7 +80,7 @@
                         "en": "Chronology"
                     },
                     "nodegroup_id": "7e48be06-52b2-11f0-9251-2a3f36199137",
-                    "sortorder": 5,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -107,7 +107,7 @@
                         "en": "Tenure/Reserves"
                     },
                     "nodegroup_id": "03d3fc6c-197d-11f0-b2a5-0242ac170008",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -163,7 +163,7 @@
                         "en": "Other Maps"
                     },
                     "nodegroup_id": "c0d2f3b9-6f8d-4205-8b20-75541b40b347",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -217,7 +217,7 @@
                         "en": "Biogeography"
                     },
                     "nodegroup_id": "03d3067c-60ef-11f0-9b96-0242ac170007",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 }

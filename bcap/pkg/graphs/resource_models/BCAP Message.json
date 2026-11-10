@@ -53,7 +53,7 @@
                         "en": "Archived By"
                     },
                     "nodegroup_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 }
@@ -1228,7 +1228,7 @@
                     "nodeid": "c47ba982-3094-4608-b8cb-46088aaebd3d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P134_continued",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }

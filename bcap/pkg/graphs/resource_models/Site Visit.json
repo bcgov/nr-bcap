@@ -350,7 +350,7 @@
                         "en": "Recommendations"
                     },
                     "nodegroup_id": "8cf43a0e-61ab-11f0-be7c-3a7a4e6803c5",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -566,7 +566,7 @@
                         "en": "Location and Access"
                     },
                     "nodegroup_id": "38608aa6-6c00-4de1-aa07-e440db5c78ae",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },

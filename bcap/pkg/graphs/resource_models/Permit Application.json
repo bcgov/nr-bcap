@@ -26,7 +26,7 @@
                         "en": "Process Requirement"
                     },
                     "nodegroup_id": "0a4d02c6-82a7-4013-a99e-9bd0796b9a78",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true
                 },
