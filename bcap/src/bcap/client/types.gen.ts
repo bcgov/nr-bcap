@@ -973,9 +973,9 @@ export type ArchaeologicalSitePublicationReferenceTile = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedData = {
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTile> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTile> | null;
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
 };
 
 export type ArchaeologicalSiteRelatedDocumentsTile = {
@@ -1341,6 +1341,7 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      * Enter date
      */
     image_date?: DateAliasedNodeData | null;
+    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -1358,7 +1359,6 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80 | null;
-    site_images?: FileListAliasedNodeData | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTile = {
@@ -7320,9 +7320,9 @@ export type SiteVisitRecommendationTile = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedData = {
-    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTile> | null;
     site_images?: Array<SiteVisitSiteImagesTile> | null;
+    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
 };
 
 export type SiteVisitRelatedDocumentsTile = {
@@ -7458,6 +7458,7 @@ export type SiteVisitSiteImagesAliasedData = {
      * Enter date
      */
     image_date?: DateAliasedNodeData | null;
+    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -7478,7 +7479,6 @@ export type SiteVisitSiteImagesAliasedData = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80 | null;
-    site_images?: FileListAliasedNodeData | null;
 };
 
 export type SiteVisitSiteImagesTile = {
@@ -8885,9 +8885,9 @@ export type ArchaeologicalSitePublicationReferenceTileWritable = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedDataWritable = {
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTileWritable> | null;
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
 };
 
 export type ArchaeologicalSiteRelatedDocumentsTileWritable = {
@@ -9255,6 +9255,7 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      * Enter date
      */
     image_date?: DateAliasedNodeDataWritable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -9272,7 +9273,6 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80Writable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTileWritable = {
@@ -14486,9 +14486,9 @@ export type SiteVisitRecommendationTileWritable = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedDataWritable = {
-    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<SiteVisitSiteImagesTileWritable> | null;
+    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
 };
 
 export type SiteVisitRelatedDocumentsTileWritable = {
@@ -14624,6 +14624,7 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      * Enter date
      */
     image_date?: DateAliasedNodeDataWritable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -14644,7 +14645,6 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80Writable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type SiteVisitSiteImagesTileWritable = {

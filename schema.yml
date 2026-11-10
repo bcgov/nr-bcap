@@ -4183,11 +4183,6 @@ components:
     Archaeological_Site_Related_Documents_Aliased_Data:
       type: object
       properties:
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
-          nullable: true
         related_site_documents:
           type: array
           items:
@@ -4197,6 +4192,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Archaeological_Site_Site_Images_Tile'
+          nullable: true
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
           nullable: true
     Archaeological_Site_Related_Documents_Tile:
       type: object
@@ -4976,6 +4976,11 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+          title: Site Image
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -5003,11 +5008,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
           nullable: true
           description: E.g. City of Nelson
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-          title: Site Image
     Archaeological_Site_Site_Images_Tile:
       type: object
       properties:
@@ -17484,11 +17484,6 @@ components:
     Site_Visit_Related_Documents_Aliased_Data:
       type: object
       properties:
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
-          nullable: true
         related_site_documents:
           type: array
           items:
@@ -17498,6 +17493,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Site_Images_Tile'
+          nullable: true
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
           nullable: true
     Site_Visit_Related_Documents_Tile:
       type: object
@@ -17795,6 +17795,10 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
@@ -17823,10 +17827,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
           nullable: true
           description: E.g. City of Nelson
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
     Site_Visit_Site_Images_Tile:
       type: object
       properties:
