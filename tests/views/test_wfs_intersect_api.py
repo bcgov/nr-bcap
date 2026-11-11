@@ -148,31 +148,35 @@ class WfsIntersectViewTests(SimpleTestCase):
     # ------------------------------------------------------------------
 
     def test_missing_geometry_error_returns_400(self):
-        response, _ = self._post(
-            {"geometry": _POLYGON, "layer": _LAYER},
-            service_exc=MissingGeometryError("no usable geometry"),
-        )
+        with self.assertLogs(_MODULE, level="WARNING"):
+            response, _ = self._post(
+                {"geometry": _POLYGON, "layer": _LAYER},
+                service_exc=MissingGeometryError("no usable geometry"),
+            )
         self.assertEqual(response.status_code, 400)
 
     def test_missing_geometry_error_response_contains_geometry_key(self):
-        response, _ = self._post(
-            {"geometry": _POLYGON, "layer": _LAYER},
-            service_exc=MissingGeometryError("no usable geometry"),
-        )
+        with self.assertLogs(_MODULE, level="WARNING"):
+            response, _ = self._post(
+                {"geometry": _POLYGON, "layer": _LAYER},
+                service_exc=MissingGeometryError("no usable geometry"),
+            )
         self.assertIn("geometry", response.data)
 
     def test_wfs_error_returns_400(self):
-        response, _ = self._post(
-            {"geometry": _POLYGON, "layer": _LAYER},
-            service_exc=WfsError("upstream failed"),
-        )
+        with self.assertLogs(_MODULE, level="ERROR"):
+            response, _ = self._post(
+                {"geometry": _POLYGON, "layer": _LAYER},
+                service_exc=WfsError("upstream failed"),
+            )
         self.assertEqual(response.status_code, 400)
 
     def test_wfs_error_response_contains_detail_key(self):
-        response, _ = self._post(
-            {"geometry": _POLYGON, "layer": _LAYER},
-            service_exc=WfsError("upstream failed"),
-        )
+        with self.assertLogs(_MODULE, level="ERROR"):
+            response, _ = self._post(
+                {"geometry": _POLYGON, "layer": _LAYER},
+                service_exc=WfsError("upstream failed"),
+            )
         self.assertIn("detail", response.data)
 
     def test_missing_geometry_error_logged_as_warning(self):

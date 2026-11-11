@@ -42,7 +42,8 @@ class BordenNumberImplTests(TestCase):
             "The Borden Grid lookup service returned an unexpected error (HTTP 503). "
             "Please try again or contact system support."
         )
-        body = json.loads(self._call_get_impl(exc).content)
+        with self.assertLogs("bcap.views.api", level="ERROR"):
+            body = json.loads(self._call_get_impl(exc).content)
         self.assertEqual(body["status"], "error")
         self.assertIn("503", body["message"])
 
@@ -62,7 +63,8 @@ class BordenNumberImplTests(TestCase):
         self.assertIn("British Columbia", body["message"])
 
     def test_unexpected_exception_returns_generic_error_json(self):
-        body = json.loads(self._call_get_impl(RuntimeError("boom")).content)
+        with self.assertLogs("bcap.views.api", level="ERROR"):
+            body = json.loads(self._call_get_impl(RuntimeError("boom")).content)
         self.assertEqual(body["status"], "error")
         self.assertIn("unexpected error", body["message"])
 
@@ -317,7 +319,10 @@ class RegisterTypeTests(SimpleTestCase):
 
     def test_exception_returns_error_json(self):
         self.view.api.calculate.side_effect = RuntimeError("boom")
-        response = self.view.get(self.factory.get("/"), resourceinstanceid="some-uuid")
+        with self.assertLogs("bcap.views.api", level="ERROR"):
+            response = self.view.get(
+                self.factory.get("/"), resourceinstanceid="some-uuid"
+            )
         body = json.loads(response.content)
         self.assertEqual(body["status"], "error")
         self.assertIn("unexpected error", body["message"])
