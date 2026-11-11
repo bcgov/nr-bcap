@@ -1,4 +1,5 @@
 """Tests for the check_card_sortorders management command."""
+
 import json
 import tempfile
 from io import StringIO
@@ -71,14 +72,16 @@ def _make_path(relative="bcap/pkg/graphs/resource_models/Test.json"):
 
 def _make_doc(graphid, slug="test-graph", cards=(), nodes=(), widgets=()):
     return {
-        "graph": [{
-            "graphid": graphid,
-            "slug": slug,
-            "isresource": True,
-            "cards": list(cards),
-            "nodes": list(nodes),
-            "cards_x_nodes_x_widgets": list(widgets),
-        }]
+        "graph": [
+            {
+                "graphid": graphid,
+                "slug": slug,
+                "isresource": True,
+                "cards": list(cards),
+                "nodes": list(nodes),
+                "cards_x_nodes_x_widgets": list(widgets),
+            }
+        ]
     }
 
 
@@ -269,10 +272,16 @@ class TestAllPackageGraphs(SimpleTestCase):
             (Path(tmp) / "pkg" / "graphs" / "resource_models").mkdir(parents=True)
             (Path(tmp) / "pkg" / "graphs" / "branches").mkdir(parents=True)
             self._write_graph(
-                Path(tmp) / "pkg" / "graphs" / "resource_models", "RM.json", _uuid(), "rm-graph"
+                Path(tmp) / "pkg" / "graphs" / "resource_models",
+                "RM.json",
+                _uuid(),
+                "rm-graph",
             )
             self._write_graph(
-                Path(tmp) / "pkg" / "graphs" / "branches", "BR.json", _uuid(), "br-graph"
+                Path(tmp) / "pkg" / "graphs" / "branches",
+                "BR.json",
+                _uuid(),
+                "br-graph",
             )
 
             with patch(f"{_MODULE}.settings") as ms:
@@ -677,7 +686,9 @@ class TestCommandDeferredOutput(SimpleTestCase):
         doc = _make_doc(_uuid(), cards=[json_card])
         path = _make_path(relative="bcap/pkg/graphs/resource_models/MyGraph.json")
 
-        c1 = _make_card(cardid=cid, sortorder=0, name="CardAlpha", parent_ng_id=parent_id)
+        c1 = _make_card(
+            cardid=cid, sortorder=0, name="CardAlpha", parent_ng_id=parent_id
+        )
         c2 = _make_card(sortorder=0, name="CardBeta", parent_ng_id=parent_id)
 
         out, _, _ = _run(fix_cards=True, doc=doc, path=path, cards=[c1, c2])

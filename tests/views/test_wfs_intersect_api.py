@@ -1,4 +1,5 @@
 """Tests for WfsIntersectView (bcap/views/wfs_intersect_api.py)."""
+
 from contextlib import ExitStack
 from unittest.mock import patch
 
@@ -16,7 +17,13 @@ _POLYGON = {
 }
 _WFS_RESULT = {
     "type": "FeatureCollection",
-    "features": [{"type": "Feature", "properties": {"TENURE_TYPE": "LICENCE"}, "geometry": _POLYGON}],
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {"TENURE_TYPE": "LICENCE"},
+            "geometry": _POLYGON,
+        }
+    ],
 }
 
 
@@ -35,13 +42,13 @@ class WfsIntersectViewTests(SimpleTestCase):
             stack.enter_context(
                 patch.object(WfsIntersectView, "permission_classes", [])
             )
-            mock_q = stack.enter_context(
-                patch(f"{_MODULE}.WfsIntersectService.query")
-            )
+            mock_q = stack.enter_context(patch(f"{_MODULE}.WfsIntersectService.query"))
             if service_exc is not None:
                 mock_q.side_effect = service_exc
             else:
-                mock_q.return_value = service_return if service_return is not None else _WFS_RESULT
+                mock_q.return_value = (
+                    service_return if service_return is not None else _WFS_RESULT
+                )
             response = WfsIntersectView.as_view()(request)
         return response, mock_q
 
@@ -99,7 +106,10 @@ class WfsIntersectViewTests(SimpleTestCase):
         mock_q.assert_not_called()
 
     def test_feature_collection_with_features_calls_service(self):
-        fc = {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": _POLYGON, "properties": {}}]}
+        fc = {
+            "type": "FeatureCollection",
+            "features": [{"type": "Feature", "geometry": _POLYGON, "properties": {}}],
+        }
         _, mock_q = self._post({"geometry": fc, "layer": _LAYER})
         mock_q.assert_called_once()
 

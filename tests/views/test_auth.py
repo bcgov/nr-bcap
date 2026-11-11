@@ -1,4 +1,5 @@
 """Tests for auth_callback (bcap/views/auth.py)."""
+
 from unittest.mock import MagicMock, patch
 
 from django.test import RequestFactory, SimpleTestCase

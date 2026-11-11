@@ -216,7 +216,9 @@ class ControlledListHierarchyTests(SimpleTestCase):
         root.parent = None
 
         mock_lv = MagicMock()
-        mock_lv.objects.filter.return_value.values_list.return_value.first.return_value = "Root Label"
+        mock_lv.objects.filter.return_value.values_list.return_value.first.return_value = (
+            "Root Label"
+        )
 
         with (
             patch("bcap.views.api.ListItem") as mock_li,
@@ -239,7 +241,9 @@ class ControlledListHierarchyTests(SimpleTestCase):
 
         def filter_side(*_, list_item, **__):
             mock_qs = MagicMock()
-            mock_qs.values_list.return_value.first.return_value = label_map.get(id(list_item))
+            mock_qs.values_list.return_value.first.return_value = label_map.get(
+                id(list_item)
+            )
             return mock_qs
 
         with (
@@ -272,7 +276,9 @@ class LegislativeActTests(SimpleTestCase):
         ):
             mock_proxy = mock_proxy_cls.return_value
             mock_proxy.get_authorities.return_value = {"act": "data"}
-            mock_serializer_cls.return_value.serializeToPython.return_value = {"act": "data"}
+            mock_serializer_cls.return_value.serializeToPython.return_value = {
+                "act": "data"
+            }
 
             response = self.view.get(self.factory.get("/"), act_id="abc-123")
 
@@ -338,7 +344,9 @@ class BCAPResourceDetailViewTests(SimpleTestCase):
         request = self.factory.get("/")
 
         with (
-            patch.object(ArchesResourceDetailView, "retrieve", return_value=mock_response),
+            patch.object(
+                ArchesResourceDetailView, "retrieve", return_value=mock_response
+            ),
             patch("bcap.views.api.inject_map_attributes") as mock_inject,
         ):
             self.view.retrieve(request, pk="some-uuid", graph="archaeological_site")
@@ -353,7 +361,9 @@ class BCAPResourceDetailViewTests(SimpleTestCase):
         request = self.factory.get("/")
 
         with (
-            patch.object(ArchesResourceDetailView, "retrieve", return_value=mock_response),
+            patch.object(
+                ArchesResourceDetailView, "retrieve", return_value=mock_response
+            ),
             patch("bcap.views.api.inject_map_attributes"),
         ):
             result = self.view.retrieve(request, pk="some-uuid", graph="arch_site")
@@ -366,7 +376,9 @@ class BCAPResourceDetailViewTests(SimpleTestCase):
         request = self.factory.get("/")
 
         with (
-            patch.object(ArchesResourceDetailView, "retrieve", return_value=mock_response),
+            patch.object(
+                ArchesResourceDetailView, "retrieve", return_value=mock_response
+            ),
             patch("bcap.views.api.inject_map_attributes") as mock_inject,
         ):
             self.view.retrieve(request, pk="some-uuid")
