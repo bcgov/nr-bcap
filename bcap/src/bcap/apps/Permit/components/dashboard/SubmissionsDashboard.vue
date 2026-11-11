@@ -107,6 +107,7 @@ const draftModule = (draft: ExternalDashboardCard) =>
 // The module list calls the application itself "Filing Summary", which reads
 // wrong on a draft card.
 const DRAFT_LABELS: Record<string, string> = {
+    [GraphSlug.BcapServiceRequest]: 'Service Request',
     [GraphSlug.PermitApplication]: 'Permit Application',
 };
 
@@ -118,7 +119,9 @@ const draftLabel = (draft: ExternalDashboardCard) =>
 // A module draft borrows its permit's name and filing type, so it has to say
 // which module it is; an application draft is the application.
 const isModuleDraft = (draft: ExternalDashboardCard) =>
-    !!draft.graph_slug && draft.graph_slug !== GraphSlug.PermitApplication;
+    !!draft.graph_slug &&
+    draft.graph_slug !== GraphSlug.PermitApplication &&
+    draft.graph_slug !== GraphSlug.BcapServiceRequest;
 
 // A module draft names the module alone; the permit it hangs off is already on
 // the card as the application number.
@@ -130,7 +133,7 @@ const draftTitle = (draft: ExternalDashboardCard) =>
 const draftDescription = (draft: ExternalDashboardCard) =>
     isModuleDraft(draft)
         ? `${draftLabel(draft)} Draft`
-        : draft.submission_type || 'Permit Application Draft';
+        : draft.submission_type || `${draftLabel(draft)} Draft`;
 
 // A draft under a permit opens that permit's filing summary; one with no permit
 // yet has nothing to summarise, so it resumes its workflow instead.
