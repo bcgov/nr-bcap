@@ -20,7 +20,7 @@ details = {
     "modulename": "assign_application_id.py",
     "description": (
         "On first save of a tile whose nodegroup contains a reference-number-widget "
-        "node, assigns a fresh sequence id when one is not already present. "
+        "node, assigns a fresh sequence id (overwriting any placeholder value). "
         "Works for any resource model with exactly one such node."
     ),
     "defaultconfig": {"triggering_nodegroups": []},
@@ -39,7 +39,7 @@ class AssignApplicationId(BaseFunction):
         card_widget = (
             arches_models.CardXNodeXWidget.objects.filter(
                 widget_id=_REFERENCE_NUMBER_WIDGET_ID,
-                node__graph=tile.resourceinstance.graph,
+                node__graph__slug=tile.resourceinstance.graph.slug,
                 node__source_identifier=None,
             )
             .select_related("node")
@@ -52,10 +52,6 @@ class AssignApplicationId(BaseFunction):
 
         # Only act when the reference-number node lives in this tile's nodegroup.
         if str(node.nodegroup_id) != str(tile.nodegroup_id):
-            return
-
-        # Skip if the value was already supplied by the caller.
-        if tile.data.get(str(node.pk)):
             return
 
         config = card_widget.config or {}

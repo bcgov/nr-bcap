@@ -30,6 +30,7 @@ class AssignApplicationIdTests(TestCase):
         # A pk that isn't in the table yet is what the hook reads as a first save.
         return SimpleNamespace(
             pk=uuid4(),
+            nodegroup_id=self.node.nodegroup_id,
             data=data or {},
             resourceinstance=SimpleNamespace(
                 graph=SimpleNamespace(slug=GraphSlugs.PERMIT_APPLICATION)
