@@ -277,36 +277,36 @@ export type AlterationResourceAliasedData = {
 
 export type AlterationSection1OverviewAliasedData = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeData | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeData | null;
-    are_chance_finds_expected?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeData | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeData | null;
+    are_chance_finds_expected?: BooleanAliasedNodeData | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeData | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeData | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeData | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeData | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeData | null;
 };
 
 export type AlterationSection1OverviewTile = {
@@ -973,9 +973,9 @@ export type ArchaeologicalSitePublicationReferenceTile = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedData = {
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTile> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTile> | null;
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTile> | null;
 };
 
 export type ArchaeologicalSiteRelatedDocumentsTile = {
@@ -1341,7 +1341,6 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      * Enter date
      */
     image_date?: DateAliasedNodeData | null;
-    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -1359,6 +1358,7 @@ export type ArchaeologicalSiteSiteImagesAliasedData = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80 | null;
+    site_images?: FileListAliasedNodeData | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTile = {
@@ -3724,36 +3724,36 @@ export type InspectionResourceAliasedData = {
 
 export type InspectionSection1OverviewAliasedData = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeData | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeData | null;
-    are_chance_finds_expected?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeData | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeData | null;
+    are_chance_finds_expected?: BooleanAliasedNodeData | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeData | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeData | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeData | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeData | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeData | null;
 };
 
 export type InspectionSection1OverviewTile = {
@@ -4230,36 +4230,36 @@ export type InvestigationResourceAliasedData = {
 
 export type InvestigationSection1OverviewAliasedData = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeData | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeData | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeData | null;
-    are_chance_finds_expected?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeData | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeData | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeData | null;
+    are_chance_finds_expected?: BooleanAliasedNodeData | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeData | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeData | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeData | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeData | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeData | null;
 };
 
 export type InvestigationSection1OverviewTile = {
@@ -7320,9 +7320,9 @@ export type SiteVisitRecommendationTile = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedData = {
+    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTile> | null;
     site_images?: Array<SiteVisitSiteImagesTile> | null;
-    publication_reference?: Array<SiteVisitPublicationReferenceTile> | null;
 };
 
 export type SiteVisitRelatedDocumentsTile = {
@@ -7458,7 +7458,6 @@ export type SiteVisitSiteImagesAliasedData = {
      * Enter date
      */
     image_date?: DateAliasedNodeData | null;
-    site_images?: FileListAliasedNodeData | null;
     /**
      * E.g., Site area, view west.
      */
@@ -7479,6 +7478,7 @@ export type SiteVisitSiteImagesAliasedData = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80 | null;
+    site_images?: FileListAliasedNodeData | null;
 };
 
 export type SiteVisitSiteImagesTile = {
@@ -8202,36 +8202,36 @@ export type AlterationResourceAliasedDataWritable = {
 
 export type AlterationSection1OverviewAliasedDataWritable = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeDataWritable | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeDataWritable | null;
-    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeDataWritable | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeDataWritable | null;
+    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeDataWritable | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeDataWritable | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeDataWritable | null;
 };
 
 export type AlterationSection1OverviewTileWritable = {
@@ -8885,9 +8885,9 @@ export type ArchaeologicalSitePublicationReferenceTileWritable = {
 };
 
 export type ArchaeologicalSiteRelatedDocumentsAliasedDataWritable = {
+    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
     related_site_documents?: Array<ArchaeologicalSiteRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<ArchaeologicalSiteSiteImagesTileWritable> | null;
-    publication_reference?: Array<ArchaeologicalSitePublicationReferenceTileWritable> | null;
 };
 
 export type ArchaeologicalSiteRelatedDocumentsTileWritable = {
@@ -9255,7 +9255,6 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      * Enter date
      */
     image_date?: DateAliasedNodeDataWritable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -9273,6 +9272,7 @@ export type ArchaeologicalSiteSiteImagesAliasedDataWritable = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80Writable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type ArchaeologicalSiteSiteImagesTileWritable = {
@@ -11357,36 +11357,36 @@ export type InspectionResourceAliasedDataWritable = {
 
 export type InspectionSection1OverviewAliasedDataWritable = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeDataWritable | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeDataWritable | null;
-    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeDataWritable | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeDataWritable | null;
+    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeDataWritable | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeDataWritable | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeDataWritable | null;
 };
 
 export type InspectionSection1OverviewTileWritable = {
@@ -11741,36 +11741,36 @@ export type InvestigationResourceAliasedDataWritable = {
 
 export type InvestigationSection1OverviewAliasedDataWritable = {
     /**
-     * List one or more studies that have been completed within the proposed boundary
-     */
-    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
-    /**
      * Provide details of the HIP study
      */
     hip_study_details?: StringAliasedNodeDataWritable | null;
     /**
+     * List one or more studies that have been completed within the proposed boundary
+     */
+    relevant_arch_studies?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
      * List any assessments that are related to this project
      */
     related_assessments?: StringAliasedNodeDataWritable | null;
-    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe the the HIP stduy objectives
-     */
-    hip_objectives?: StringAliasedNodeDataWritable | null;
     are_ancestral_remains_anticipated?: BooleanAliasedNodeDataWritable | null;
-    /**
-     * Briefly describe what mitigation measures to be taken
-     */
-    mitigation_measures?: StringAliasedNodeDataWritable | null;
+    are_chance_finds_expected?: BooleanAliasedNodeDataWritable | null;
     /**
      * Select one or more sites that may be affected by this project
      */
     affected_sites?: ResourceInstanceListAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe what mitigation measures to be taken
+     */
+    mitigation_measures?: StringAliasedNodeDataWritable | null;
     arch_workplans_and_schedule_a?: FileListAliasedNodeDataWritable | null;
     /**
      * Briefly describe the approach to be taken to assess the project
      */
     assessment_approach?: StringAliasedNodeDataWritable | null;
+    /**
+     * Briefly describe the the HIP stduy objectives
+     */
+    hip_objectives?: StringAliasedNodeDataWritable | null;
 };
 
 export type InvestigationSection1OverviewTileWritable = {
@@ -14486,9 +14486,9 @@ export type SiteVisitRecommendationTileWritable = {
 };
 
 export type SiteVisitRelatedDocumentsAliasedDataWritable = {
+    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
     related_site_documents?: Array<SiteVisitRelatedSiteDocumentsTileWritable> | null;
     site_images?: Array<SiteVisitSiteImagesTileWritable> | null;
-    publication_reference?: Array<SiteVisitPublicationReferenceTileWritable> | null;
 };
 
 export type SiteVisitRelatedDocumentsTileWritable = {
@@ -14624,7 +14624,6 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      * Enter date
      */
     image_date?: DateAliasedNodeDataWritable | null;
-    site_images?: FileListAliasedNodeDataWritable | null;
     /**
      * E.g., Site area, view west.
      */
@@ -14645,6 +14644,7 @@ export type SiteVisitSiteImagesAliasedDataWritable = {
      * E.g. City of Nelson
      */
     copyright?: StringAliasedNodeDataMax80Writable | null;
+    site_images?: FileListAliasedNodeDataWritable | null;
 };
 
 export type SiteVisitSiteImagesTileWritable = {

@@ -2719,45 +2719,40 @@ components:
     Alteration_Section_1_Overview_Aliased_Data:
       type: object
       properties:
+        hip_study_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Provide details of the HIP study
         relevant_arch_studies:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: List one or more studies that have been completed within the
             proposed boundary
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
         related_assessments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: List any assessments that are related to this project
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
         are_ancestral_remains_anticipated:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        mitigation_measures:
+        are_chance_finds_expected:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          description: Briefly describe what mitigation measures to be taken
         affected_sites:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: Select one or more sites that may be affected by this project
+        mitigation_measures:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe what mitigation measures to be taken
         arch_workplans_and_schedule_a:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
@@ -2767,6 +2762,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Briefly describe the approach to be taken to assess the project
+        hip_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe the the HIP stduy objectives
     Alteration_Section_1_Overview_Tile:
       type: object
       properties:
@@ -4183,6 +4183,11 @@ components:
     Archaeological_Site_Related_Documents_Aliased_Data:
       type: object
       properties:
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
+          nullable: true
         related_site_documents:
           type: array
           items:
@@ -4192,11 +4197,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Archaeological_Site_Site_Images_Tile'
-          nullable: true
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Archaeological_Site_Publication_Reference_Tile'
           nullable: true
     Archaeological_Site_Related_Documents_Tile:
       type: object
@@ -4976,11 +4976,6 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
-          title: Site Image
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -5008,6 +5003,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
           nullable: true
           description: E.g. City of Nelson
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
+          title: Site Image
     Archaeological_Site_Site_Images_Tile:
       type: object
       properties:
@@ -9960,45 +9960,40 @@ components:
     Inspection_Section_1_Overview_Aliased_Data:
       type: object
       properties:
+        hip_study_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Provide details of the HIP study
         relevant_arch_studies:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: List one or more studies that have been completed within the
             proposed boundary
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
         related_assessments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: List any assessments that are related to this project
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
         are_ancestral_remains_anticipated:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        mitigation_measures:
+        are_chance_finds_expected:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          description: Briefly describe what mitigation measures to be taken
         affected_sites:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: Select one or more sites that may be affected by this project
+        mitigation_measures:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe what mitigation measures to be taken
         arch_workplans_and_schedule_a:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
@@ -10008,6 +10003,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Briefly describe the approach to be taken to assess the project
+        hip_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe the the HIP stduy objectives
     Inspection_Section_1_Overview_Tile:
       type: object
       properties:
@@ -10866,45 +10866,40 @@ components:
     Investigation_Section_1_Overview_Aliased_Data:
       type: object
       properties:
+        hip_study_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Provide details of the HIP study
         relevant_arch_studies:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: List one or more studies that have been completed within the
             proposed boundary
-        hip_study_details:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Provide details of the HIP study
         related_assessments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: List any assessments that are related to this project
-        are_chance_finds_expected:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-        hip_objectives:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          description: Briefly describe the the HIP stduy objectives
         are_ancestral_remains_anticipated:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        mitigation_measures:
+        are_chance_finds_expected:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          description: Briefly describe what mitigation measures to be taken
         affected_sites:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceListAliasedNodeData'
           nullable: true
           description: Select one or more sites that may be affected by this project
+        mitigation_measures:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe what mitigation measures to be taken
         arch_workplans_and_schedule_a:
           allOf:
           - $ref: '#/components/schemas/FileListAliasedNodeData'
@@ -10914,6 +10909,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Briefly describe the approach to be taken to assess the project
+        hip_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Briefly describe the the HIP stduy objectives
     Investigation_Section_1_Overview_Tile:
       type: object
       properties:
@@ -17484,6 +17484,11 @@ components:
     Site_Visit_Related_Documents_Aliased_Data:
       type: object
       properties:
+        publication_reference:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
+          nullable: true
         related_site_documents:
           type: array
           items:
@@ -17493,11 +17498,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Site_Visit_Site_Images_Tile'
-          nullable: true
-        publication_reference:
-          type: array
-          items:
-            $ref: '#/components/schemas/Site_Visit_Publication_Reference_Tile'
           nullable: true
     Site_Visit_Related_Documents_Tile:
       type: object
@@ -17795,10 +17795,6 @@ components:
           - $ref: '#/components/schemas/DateAliasedNodeData'
           nullable: true
           description: Enter date
-        site_images:
-          allOf:
-          - $ref: '#/components/schemas/FileListAliasedNodeData'
-          nullable: true
         image_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
@@ -17827,6 +17823,10 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeDataMax80'
           nullable: true
           description: E.g. City of Nelson
+        site_images:
+          allOf:
+          - $ref: '#/components/schemas/FileListAliasedNodeData'
+          nullable: true
     Site_Visit_Site_Images_Tile:
       type: object
       properties:

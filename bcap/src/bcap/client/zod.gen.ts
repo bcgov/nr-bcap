@@ -1313,16 +1313,16 @@ export const zAlterationRecordingsTile = z.object({
 });
 
 export const zAlterationSection1OverviewAliasedData = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     hip_study_details: zStringAliasedNodeData.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     related_assessments: zStringAliasedNodeData.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
-    hip_objectives: zStringAliasedNodeData.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeData.nullish(),
-    mitigation_measures: zStringAliasedNodeData.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeData.nullish(),
+    mitigation_measures: zStringAliasedNodeData.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeData.nullish(),
-    assessment_approach: zStringAliasedNodeData.nullish()
+    assessment_approach: zStringAliasedNodeData.nullish(),
+    hip_objectives: zStringAliasedNodeData.nullish()
 });
 
 export const zAlterationSection1OverviewTile = z.object({
@@ -2433,16 +2433,16 @@ export const zInspectionRecordingsTile = z.object({
 });
 
 export const zInspectionSection1OverviewAliasedData = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     hip_study_details: zStringAliasedNodeData.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     related_assessments: zStringAliasedNodeData.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
-    hip_objectives: zStringAliasedNodeData.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeData.nullish(),
-    mitigation_measures: zStringAliasedNodeData.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeData.nullish(),
+    mitigation_measures: zStringAliasedNodeData.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeData.nullish(),
-    assessment_approach: zStringAliasedNodeData.nullish()
+    assessment_approach: zStringAliasedNodeData.nullish(),
+    hip_objectives: zStringAliasedNodeData.nullish()
 });
 
 export const zInspectionSection1OverviewTile = z.object({
@@ -2685,16 +2685,16 @@ export const zInvestigationRecordingsTile = z.object({
 });
 
 export const zInvestigationSection1OverviewAliasedData = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     hip_study_details: zStringAliasedNodeData.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeData.nullish(),
     related_assessments: zStringAliasedNodeData.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
-    hip_objectives: zStringAliasedNodeData.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeData.nullish(),
-    mitigation_measures: zStringAliasedNodeData.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeData.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeData.nullish(),
+    mitigation_measures: zStringAliasedNodeData.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeData.nullish(),
-    assessment_approach: zStringAliasedNodeData.nullish()
+    assessment_approach: zStringAliasedNodeData.nullish(),
+    hip_objectives: zStringAliasedNodeData.nullish()
 });
 
 export const zInvestigationSection1OverviewTile = z.object({
@@ -5014,12 +5014,12 @@ export const zArchaeologicalSiteSiteImagesAliasedData = z.object({
     primary_image: zBooleanAliasedNodeData.nullish(),
     image_type: zReferenceAliasedNodeData.nullish(),
     image_date: zDateAliasedNodeData.nullish(),
-    site_images: zFileListAliasedNodeData.nullish(),
     image_description: zStringAliasedNodeData.nullish(),
     photographer: zStringAliasedNodeDataMax80.nullish(),
     image_view: zReferenceAliasedNodeData.nullish(),
     image_features: zStringAliasedNodeDataMax250.nullish(),
-    copyright: zStringAliasedNodeDataMax80.nullish()
+    copyright: zStringAliasedNodeDataMax80.nullish(),
+    site_images: zFileListAliasedNodeData.nullish()
 });
 
 export const zArchaeologicalSiteSiteImagesTile = z.object({
@@ -5040,9 +5040,9 @@ export const zArchaeologicalSiteSiteImagesTile = z.object({
 });
 
 export const zArchaeologicalSiteRelatedDocumentsAliasedData = z.object({
+    publication_reference: z.array(zArchaeologicalSitePublicationReferenceTile).nullish(),
     related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTile).nullish(),
-    site_images: z.array(zArchaeologicalSiteSiteImagesTile).nullish(),
-    publication_reference: z.array(zArchaeologicalSitePublicationReferenceTile).nullish()
+    site_images: z.array(zArchaeologicalSiteSiteImagesTile).nullish()
 });
 
 export const zArchaeologicalSiteRelatedDocumentsTile = z.object({
@@ -5203,12 +5203,12 @@ export const zSiteVisitSiteImagesAliasedData = z.object({
     primary_image: zBooleanAliasedNodeData.nullish(),
     image_type: zReferenceAliasedNodeData.nullish(),
     image_date: zDateAliasedNodeData.nullish(),
-    site_images: zFileListAliasedNodeData.nullish(),
     image_description: zStringAliasedNodeDataMax80.nullish(),
     photographer: zStringAliasedNodeDataMax80.nullish(),
     image_view: zReferenceAliasedNodeData.nullish(),
     image_features: zStringAliasedNodeDataMax80.nullish(),
-    copyright: zStringAliasedNodeDataMax80.nullish()
+    copyright: zStringAliasedNodeDataMax80.nullish(),
+    site_images: zFileListAliasedNodeData.nullish()
 });
 
 export const zSiteVisitSiteImagesTile = z.object({
@@ -5229,9 +5229,9 @@ export const zSiteVisitSiteImagesTile = z.object({
 });
 
 export const zSiteVisitRelatedDocumentsAliasedData = z.object({
+    publication_reference: z.array(zSiteVisitPublicationReferenceTile).nullish(),
     related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTile).nullish(),
-    site_images: z.array(zSiteVisitSiteImagesTile).nullish(),
-    publication_reference: z.array(zSiteVisitPublicationReferenceTile).nullish()
+    site_images: z.array(zSiteVisitSiteImagesTile).nullish()
 });
 
 export const zSiteVisitRelatedDocumentsTile = z.object({
@@ -6668,16 +6668,16 @@ export const zAlterationRecordingsTileWritable = z.object({
 });
 
 export const zAlterationSection1OverviewAliasedDataWritable = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     hip_study_details: zStringAliasedNodeDataWritable.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     related_assessments: zStringAliasedNodeDataWritable.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
-    hip_objectives: zStringAliasedNodeDataWritable.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeDataWritable.nullish(),
-    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeDataWritable.nullish(),
-    assessment_approach: zStringAliasedNodeDataWritable.nullish()
+    assessment_approach: zStringAliasedNodeDataWritable.nullish(),
+    hip_objectives: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zAlterationSection1OverviewTileWritable = z.object({
@@ -7732,16 +7732,16 @@ export const zInspectionRecordingsTileWritable = z.object({
 });
 
 export const zInspectionSection1OverviewAliasedDataWritable = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     hip_study_details: zStringAliasedNodeDataWritable.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     related_assessments: zStringAliasedNodeDataWritable.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
-    hip_objectives: zStringAliasedNodeDataWritable.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeDataWritable.nullish(),
-    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeDataWritable.nullish(),
-    assessment_approach: zStringAliasedNodeDataWritable.nullish()
+    assessment_approach: zStringAliasedNodeDataWritable.nullish(),
+    hip_objectives: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zInspectionSection1OverviewTileWritable = z.object({
@@ -7970,16 +7970,16 @@ export const zInvestigationRecordingsTileWritable = z.object({
 });
 
 export const zInvestigationSection1OverviewAliasedDataWritable = z.object({
-    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     hip_study_details: zStringAliasedNodeDataWritable.nullish(),
+    relevant_arch_studies: zResourceInstanceListAliasedNodeDataWritable.nullish(),
     related_assessments: zStringAliasedNodeDataWritable.nullish(),
-    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
-    hip_objectives: zStringAliasedNodeDataWritable.nullish(),
     are_ancestral_remains_anticipated: zBooleanAliasedNodeDataWritable.nullish(),
-    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
+    are_chance_finds_expected: zBooleanAliasedNodeDataWritable.nullish(),
     affected_sites: zResourceInstanceListAliasedNodeDataWritable.nullish(),
+    mitigation_measures: zStringAliasedNodeDataWritable.nullish(),
     arch_workplans_and_schedule_a: zFileListAliasedNodeDataWritable.nullish(),
-    assessment_approach: zStringAliasedNodeDataWritable.nullish()
+    assessment_approach: zStringAliasedNodeDataWritable.nullish(),
+    hip_objectives: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zInvestigationSection1OverviewTileWritable = z.object({
@@ -10141,12 +10141,12 @@ export const zArchaeologicalSiteSiteImagesAliasedDataWritable = z.object({
     primary_image: zBooleanAliasedNodeDataWritable.nullish(),
     image_type: zReferenceAliasedNodeDataWritable.nullish(),
     image_date: zDateAliasedNodeDataWritable.nullish(),
-    site_images: zFileListAliasedNodeDataWritable.nullish(),
     image_description: zStringAliasedNodeDataWritable.nullish(),
     photographer: zStringAliasedNodeDataMax80Writable.nullish(),
     image_view: zReferenceAliasedNodeDataWritable.nullish(),
     image_features: zStringAliasedNodeDataMax250Writable.nullish(),
-    copyright: zStringAliasedNodeDataMax80Writable.nullish()
+    copyright: zStringAliasedNodeDataMax80Writable.nullish(),
+    site_images: zFileListAliasedNodeDataWritable.nullish()
 });
 
 export const zArchaeologicalSiteSiteImagesTileWritable = z.object({
@@ -10167,9 +10167,9 @@ export const zArchaeologicalSiteSiteImagesTileWritable = z.object({
 });
 
 export const zArchaeologicalSiteRelatedDocumentsAliasedDataWritable = z.object({
+    publication_reference: z.array(zArchaeologicalSitePublicationReferenceTileWritable).nullish(),
     related_site_documents: z.array(zArchaeologicalSiteRelatedSiteDocumentsTileWritable).nullish(),
-    site_images: z.array(zArchaeologicalSiteSiteImagesTileWritable).nullish(),
-    publication_reference: z.array(zArchaeologicalSitePublicationReferenceTileWritable).nullish()
+    site_images: z.array(zArchaeologicalSiteSiteImagesTileWritable).nullish()
 });
 
 export const zArchaeologicalSiteRelatedDocumentsTileWritable = z.object({
@@ -10302,12 +10302,12 @@ export const zSiteVisitSiteImagesAliasedDataWritable = z.object({
     primary_image: zBooleanAliasedNodeDataWritable.nullish(),
     image_type: zReferenceAliasedNodeDataWritable.nullish(),
     image_date: zDateAliasedNodeDataWritable.nullish(),
-    site_images: zFileListAliasedNodeDataWritable.nullish(),
     image_description: zStringAliasedNodeDataMax80Writable.nullish(),
     photographer: zStringAliasedNodeDataMax80Writable.nullish(),
     image_view: zReferenceAliasedNodeDataWritable.nullish(),
     image_features: zStringAliasedNodeDataMax80Writable.nullish(),
-    copyright: zStringAliasedNodeDataMax80Writable.nullish()
+    copyright: zStringAliasedNodeDataMax80Writable.nullish(),
+    site_images: zFileListAliasedNodeDataWritable.nullish()
 });
 
 export const zSiteVisitSiteImagesTileWritable = z.object({
@@ -10328,9 +10328,9 @@ export const zSiteVisitSiteImagesTileWritable = z.object({
 });
 
 export const zSiteVisitRelatedDocumentsAliasedDataWritable = z.object({
+    publication_reference: z.array(zSiteVisitPublicationReferenceTileWritable).nullish(),
     related_site_documents: z.array(zSiteVisitRelatedSiteDocumentsTileWritable).nullish(),
-    site_images: z.array(zSiteVisitSiteImagesTileWritable).nullish(),
-    publication_reference: z.array(zSiteVisitPublicationReferenceTileWritable).nullish()
+    site_images: z.array(zSiteVisitSiteImagesTileWritable).nullish()
 });
 
 export const zSiteVisitRelatedDocumentsTileWritable = z.object({
