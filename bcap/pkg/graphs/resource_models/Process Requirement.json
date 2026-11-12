@@ -205,9 +205,7 @@
                     "card_id": "d11d5b64-9c25-4233-a300-67c78eeed2ed",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Parent Module",
                         "placeholder": {
                             "en": ""
@@ -232,9 +230,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -279,11 +275,7 @@
                     "config": {
                         "defaultValue": "",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Default Target Processing Time (days)",
                         "max": "",
                         "min": "",
@@ -320,9 +312,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Name",
                         "maxLength": null,
                         "placeholder": {
@@ -371,9 +361,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -413,11 +401,7 @@
                     "config": {
                         "defaultValue": "0",
                         "format": "",
-                        "i18n_properties": [
-                            "placeholder",
-                            "prefix",
-                            "suffix"
-                        ],
+                        "i18n_properties": ["placeholder", "prefix", "suffix"],
                         "label": "Sort Order",
                         "max": "",
                         "min": "",
@@ -501,9 +485,7 @@
                 {
                     "card_id": "d11d5b64-9c25-4233-a300-67c78eeed2ed",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Process Requirement Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -528,9 +510,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Notes",
                         "maxLength": null,
                         "placeholder": {
@@ -584,9 +564,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Requirement",
                         "maxLength": null,
                         "placeholder": {
@@ -630,9 +608,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Description",
                         "maxLength": null,
                         "placeholder": {
@@ -1177,10 +1153,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1211,10 +1184,7 @@
                         "falseLabel": {
                             "en": "Optional"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Mandatory"
                         }
@@ -1317,10 +1287,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -1351,10 +1318,7 @@
                         "falseLabel": {
                             "en": "Working Document"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Template"
                         }
@@ -1385,10 +1349,7 @@
                         "falseLabel": {
                             "en": "Unsatisfied"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Satisfied"
                         }

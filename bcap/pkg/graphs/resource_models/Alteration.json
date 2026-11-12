@@ -230,9 +230,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Mitigation Measures",
                         "maxLength": null,
                         "placeholder": {
@@ -260,9 +258,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HIP Study Details",
                         "maxLength": null,
                         "placeholder": {
@@ -290,9 +286,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "HIP Objectives",
                         "maxLength": null,
                         "placeholder": {
@@ -320,9 +314,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Related Assessments",
                         "maxLength": null,
                         "placeholder": {
@@ -385,9 +377,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Assessment Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -426,9 +416,7 @@
                     "card_id": "0fc64b87-b570-4ddd-85a8-6fe11d4c7d9a",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Affected Sites",
                         "placeholder": {
                             "en": "Select one or more sites that may be affected by this project"
@@ -448,9 +436,7 @@
                     "card_id": "0fc64b87-b570-4ddd-85a8-6fe11d4c7d9a",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Relevant Arch Studies",
                         "placeholder": {
                             "en": "List one or more studies that have been completed within the proposed boundary"
@@ -470,9 +456,7 @@
                     "card_id": "463ba09c-3513-4486-823c-a06f87deb9f9",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Overseeing Archaeologist",
                         "placeholder": {
                             "en": ""
@@ -492,9 +476,7 @@
                     "card_id": "463ba09c-3513-4486-823c-a06f87deb9f9",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Field Directors",
                         "placeholder": {
                             "en": ""
@@ -519,9 +501,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Permit Deliverables",
                         "maxLength": null,
                         "placeholder": {
@@ -565,9 +545,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Ancestral Remains Approach Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -595,9 +573,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Ancestral Remains Approach Additional Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -625,9 +601,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Ancestral Remains Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -687,9 +661,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Additional Repository and Curation Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -712,9 +684,7 @@
                     "card_id": "325141e5-1a1b-4601-a740-4f7f6bd8fc1a",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Destination Repository",
                         "placeholder": {
                             "en": ""
@@ -771,9 +741,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Data Analysis Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -833,9 +801,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Subsurface Testing Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -863,9 +829,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Machine Assisted Inspection Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -893,9 +857,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Field Transport and Lab Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -923,9 +885,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Machine Assisted Inspection Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -953,9 +913,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Other Field Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -1015,9 +973,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Methods Alignment",
                         "maxLength": null,
                         "placeholder": {
@@ -1045,9 +1001,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Arch Bearing Sediment",
                         "maxLength": null,
                         "placeholder": {
@@ -1075,9 +1029,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Winter Assessment Methods",
                         "maxLength": null,
                         "placeholder": {
@@ -1121,9 +1073,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Arch Potential Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1151,9 +1101,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Survey Coverage Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1229,9 +1177,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Rock Art Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1275,9 +1221,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Wet Sites Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1305,9 +1249,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate CMT Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1335,9 +1277,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Excavation Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1365,9 +1305,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Additional Recording Information",
                         "maxLength": null,
                         "placeholder": {
@@ -1411,9 +1349,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Historical Sites Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1457,9 +1393,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Other Recording Approaches",
                         "maxLength": null,
                         "placeholder": {
@@ -1503,9 +1437,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alternate Site Flagging Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1533,9 +1465,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Details of Collected Materials",
                         "maxLength": null,
                         "placeholder": {
@@ -1563,9 +1493,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Collection Approach Details",
                         "maxLength": null,
                         "placeholder": {
@@ -1593,9 +1521,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Additional Collection and Sampling Details",
                         "maxLength": null,
                         "placeholder": {
@@ -1623,9 +1549,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Collection Approach",
                         "maxLength": null,
                         "placeholder": {
@@ -1653,9 +1577,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Collection Approach Additional Comments",
                         "maxLength": null,
                         "placeholder": {
@@ -1683,9 +1605,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Details of Collected Samples",
                         "maxLength": null,
                         "placeholder": {
@@ -1713,9 +1633,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alteration Identification",
                         "maxLength": null,
                         "placeholder": {
@@ -2740,10 +2658,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2802,10 +2717,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2969,10 +2881,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3072,10 +2981,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3211,10 +3117,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3245,10 +3148,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3279,10 +3179,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3313,10 +3210,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3393,10 +3287,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3542,10 +3433,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3576,10 +3464,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3725,10 +3610,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3782,10 +3664,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3839,10 +3718,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3873,10 +3749,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3953,10 +3826,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -3987,10 +3857,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -4067,10 +3934,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -4101,10 +3965,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

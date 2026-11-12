@@ -345,9 +345,7 @@
                 {
                     "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Service Request Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -367,9 +365,7 @@
                     "card_id": "5a6fd914-342c-4906-9190-73a1c1e119e7",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Service Request ID",
                         "maxLength": null,
                         "placeholder": {
@@ -1489,10 +1485,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -2037,10 +2030,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

@@ -135,9 +135,7 @@
                 {
                     "card_id": "bb3d5228-b2ad-4c44-922c-8f9e6c3a25cf",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Document Type",
                         "placeholder": {
                             "en": "Select the type of document"
@@ -157,9 +155,7 @@
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
                         "defaultValue": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "BCAP Username",
                         "maxLength": null,
                         "placeholder": {
@@ -187,9 +183,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contact Email",
                         "maxLength": "125",
                         "placeholder": {
@@ -231,9 +225,7 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Role",
                         "placeholder": {
                             "en": "Select an option for Individuals, leave blank for Organizations"
@@ -279,9 +271,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contact Phone Number",
                         "maxLength": "25",
                         "placeholder": {
@@ -319,9 +309,7 @@
                 {
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -346,9 +334,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Individual's Last Name OR Organization's Full Name",
                         "maxLength": "250",
                         "placeholder": {
@@ -376,9 +362,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Contributor First Name",
                         "maxLength": "125",
                         "placeholder": {
@@ -401,9 +385,7 @@
                     "card_id": "c4ec946a-9dea-11ed-9a7b-5254004d77d3",
                     "config": {
                         "defaultResourceInstance": [],
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Associated Organization",
                         "placeholder": {
                             "en": "Select Organization Name if applicable"
@@ -1067,10 +1049,7 @@
                         "falseLabel": {
                             "en": "Active"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Inactive"
                         }
