@@ -10,6 +10,9 @@ from arches_zod_validation.schema import (
     sort_generated_schema_properties,
     type_base_serializer_fields,
     _sort_properties_in_place,
+    _build_per_graph_sortorders,
+    _schema_graph_slug,
+    _extract_context_alias,
 )
 
 
@@ -36,4 +39,7 @@ __all__ = [
     "sort_generated_schema_properties",
     "type_base_serializer_fields",
     "_sort_properties_in_place",
+    "_build_per_graph_sortorders",
+    "_schema_graph_slug",
+    "_extract_context_alias",
 ]
