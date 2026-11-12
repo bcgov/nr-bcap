@@ -24,6 +24,8 @@ from bcap.schema import (
     AliasedNodeDataSerializer,
     AliasedNodeDataExtension,
     _sort_properties_in_place,
+    _schema_graph_slug,
+    _extract_context_alias,
     type_base_serializer_fields,
 )
 from bcap.serializers.graph_serializers import (
@@ -370,8 +372,9 @@ class NodeValueEnvelopeContractTests(TestCase):
 
 
 class SchemaPropertySortingTests(SimpleTestCase):
-    """Arches node-derived properties order by (Node.sortorder, alias); maps with
-    any non-alias key (hand-written serializers) keep their declared order."""
+    """Properties whose keys are all node aliases are sorted by (sortorder, alias);
+    sortorder values come from CardModel/CardXNodeXWidget, not Node.sortorder.
+    Maps containing any non-alias key keep their declared order."""
 
     ORDER = {"a_node": 1, "b_node": 0, "c_node": 0}  # b, c tie at 0
 
@@ -384,6 +387,85 @@ class SchemaPropertySortingTests(SimpleTestCase):
         schema = {"properties": {"id": {}, "c_node": {}, "b_node": {}}}
         _sort_properties_in_place(schema, self.ORDER)
         self.assertEqual(list(schema["properties"]), ["id", "c_node", "b_node"])
+
+
+class SchemaGraphSlugTests(SimpleTestCase):
+    """_schema_graph_slug matches schema component names back to their graph slug,
+    preferring longer slugs to avoid false prefix matches."""
+
+    SLUGS_DESC = sorted(
+        ["site_visit", "site", "archaeological_site"], key=len, reverse=True
+    )
+
+    def test_matches_exact_prefix(self):
+        self.assertEqual(
+            _schema_graph_slug("Archaeological_Site_Foo_Bar", self.SLUGS_DESC),
+            "archaeological_site",
+        )
+
+    def test_longer_slug_wins_over_shorter_prefix(self):
+        # 'site_visit' must win over 'site' for Site_Visit_* names.
+        self.assertEqual(
+            _schema_graph_slug("Site_Visit_Aliased_Data", self.SLUGS_DESC),
+            "site_visit",
+        )
+
+    def test_no_match_returns_none(self):
+        self.assertIsNone(
+            _schema_graph_slug("AliasedNodeData", self.SLUGS_DESC),
+        )
+
+    def test_exact_slug_match(self):
+        self.assertEqual(
+            _schema_graph_slug("Site", self.SLUGS_DESC),
+            "site",
+        )
+
+
+class ExtractContextAliasTests(SimpleTestCase):
+    """_extract_context_alias maps tile schema names to their nodegroup alias
+    and resource-level schemas to None."""
+
+    SLUG = "archaeological_site"
+    KNOWN = {"related_documents", "site_images", "assessment"}
+
+    def test_tile_schema_returns_nodegroup_alias(self):
+        self.assertEqual(
+            _extract_context_alias(
+                "Archaeological_Site_Related_Documents_Aliased_Data",
+                self.SLUG,
+                self.KNOWN,
+            ),
+            "related_documents",
+        )
+
+    def test_resource_level_schema_returns_none(self):
+        # _Resource_Aliased_Data suffix doesn't match any known nodegroup alias.
+        self.assertIsNone(
+            _extract_context_alias(
+                "Archaeological_Site_Resource_Aliased_Data",
+                self.SLUG,
+                self.KNOWN,
+            )
+        )
+
+    def test_unknown_middle_returns_none(self):
+        self.assertIsNone(
+            _extract_context_alias(
+                "Archaeological_Site_Nonexistent_Aliased_Data",
+                self.SLUG,
+                self.KNOWN,
+            )
+        )
+
+    def test_wrong_slug_prefix_returns_none(self):
+        self.assertIsNone(
+            _extract_context_alias(
+                "Site_Visit_Related_Documents_Aliased_Data",
+                self.SLUG,
+                self.KNOWN,
+            )
+        )
 
 
 class BaseSerializerFieldTypingTests(SimpleTestCase):
