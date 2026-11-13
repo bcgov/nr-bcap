@@ -341,6 +341,10 @@ paths:
 
         Sanitizes WFS GeoJSON feature IDs from the service_request_boundary before
         persisting, and seeds service_request_id (a backend-owned required node).
+        A body that already carries the submission date attaches the requirement
+        working copies here; one saved as a draft gets them on the update that
+        submits it (see the detail view).
+
         Applicants file their own service requests, so this only asks for a login;
         owner-scoping is implicit (the resource is created by the requesting user).
       tags:
@@ -369,12 +373,10 @@ paths:
     get:
       operationId: api_bcap_service_request_retrieve
       description: |-
-        Detail endpoint for a single BCAP Service Request resource and its nested tiles.
+        GET/PATCH a BCAP Service Request and its nested tiles.
 
-        Owner-scoped: requesting one created by another user returns 404. Declared
-        verbs: GET (from generated/generate.json); the
-        RetrieveAPIView base class serves the detail subset
-        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
+        The update that first sets the submission date is the submission: it
+        attaches the requirement working copies.
       parameters:
       - in: path
         name: id
@@ -6277,70 +6279,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Bcap_Service_Request_Project_Location_Aliased_Data:
-      type: object
-      properties:
-        service_request_boundary:
-          allOf:
-          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
-          nullable: true
-        bc_property_address:
-          type: array
-          items:
-            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Tile'
-          nullable: true
-        crown_land_tenure_type:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
-          nullable: true
-    Bcap_Service_Request_Project_Location_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Bcap_Service_Request_Proposed_Project_Aliased_Data:
       type: object
       properties:
@@ -6427,6 +6365,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Contacts_Tile'
           nullable: true
+        service_request_location:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Location_Tile'
+          nullable: true
         service_request_admin:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Admin_Tile'
@@ -6434,10 +6376,6 @@ components:
         service_request_messages:
           allOf:
           - $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Messages_Tile'
-          nullable: true
-        project_location:
-          allOf:
-          - $ref: '#/components/schemas/Bcap_Service_Request_Project_Location_Tile'
           nullable: true
     Bcap_Service_Request_Service_Request_Admin_Aliased_Data:
       type: object
@@ -6615,6 +6553,77 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Identification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Bcap_Service_Request_Service_Request_Location_Aliased_Data:
+      type: object
+      properties:
+        property_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select the type of property
+        bc_property_address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bcap_Service_Request_Bc_Property_Address_Tile'
+          nullable: true
+        service_request_boundary:
+          allOf:
+          - $ref: '#/components/schemas/GeojsonFeatureCollectionAliasedNodeData'
+          nullable: true
+        crown_land_tenure_type:
+          allOf:
+          - $ref: '#/components/schemas/Bcap_Service_Request_Crown_Land_Tenure_Type_Tile'
+          nullable: true
+      required:
+      - property_type
+    Bcap_Service_Request_Service_Request_Location_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Bcap_Service_Request_Service_Request_Location_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647

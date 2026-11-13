@@ -22,7 +22,10 @@ from bcap.views.workflow_draft_api import (
     WorkflowDraftListCreateView,
     WorkflowDraftDetailView,
 )
-from bcap.views.bcap_service_request_api import BcapServiceRequestCreateView
+from bcap.views.bcap_service_request_api import (
+    BcapServiceRequestCreateView,
+    BcapServiceRequestView,
+)
 from bcap.views.permit_application_api import (
     PermitApplicationView,
     PermitApplicationCreateView,
@@ -97,6 +100,12 @@ documented_api_patterns = [
         "api/bcap_service_request",
         BcapServiceRequestCreateView.as_view(),
         name="bcap_service_request_create",
+    ),
+    # External - object level user filtering - override.
+    path(
+        "api/bcap_service_request/<uuid:pk>/",
+        BcapServiceRequestView.as_view(),
+        name="api_bcap_service_request",
     ),
     # Submitter - object level user filtering - override
     path(

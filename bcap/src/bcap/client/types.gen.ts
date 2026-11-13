@@ -1968,33 +1968,6 @@ export type BcapServiceRequestProcessRequirementTile = {
     } | null;
 };
 
-export type BcapServiceRequestProjectLocationAliasedData = {
-    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
-    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTile> | null;
-    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTile | null;
-};
-
-export type BcapServiceRequestProjectLocationTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: BcapServiceRequestProjectLocationAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type BcapServiceRequestProposedProjectAliasedData = {
     /**
      * Select an option
@@ -2039,9 +2012,9 @@ export type BcapServiceRequestResourceAliasedData = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTile | null;
     proposed_project?: BcapServiceRequestProposedProjectTile | null;
     service_request_contacts?: BcapServiceRequestServiceRequestContactsTile | null;
+    service_request_location?: BcapServiceRequestServiceRequestLocationTile | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTile | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTile | null;
-    project_location?: BcapServiceRequestProjectLocationTile | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedData = {
@@ -2126,6 +2099,37 @@ export type BcapServiceRequestServiceRequestIdentificationTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestLocationAliasedData = {
+    /**
+     * Select the type of property
+     */
+    property_type: ReferenceAliasedNodeDataRequired | null;
+    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTile> | null;
+    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeData | null;
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTile | null;
+};
+
+export type BcapServiceRequestServiceRequestLocationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestLocationAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -9965,33 +9969,6 @@ export type BcapServiceRequestProcessRequirementTileWritable = {
     } | null;
 };
 
-export type BcapServiceRequestProjectLocationAliasedDataWritable = {
-    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
-    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTileWritable> | null;
-    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTileWritable | null;
-};
-
-export type BcapServiceRequestProjectLocationTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: BcapServiceRequestProjectLocationAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
 export type BcapServiceRequestProposedProjectAliasedDataWritable = {
     /**
      * Select an option
@@ -10036,9 +10013,9 @@ export type BcapServiceRequestResourceAliasedDataWritable = {
     service_request_identification?: BcapServiceRequestServiceRequestIdentificationTileWritable | null;
     proposed_project?: BcapServiceRequestProposedProjectTileWritable | null;
     service_request_contacts?: BcapServiceRequestServiceRequestContactsTileWritable | null;
+    service_request_location?: BcapServiceRequestServiceRequestLocationTileWritable | null;
     service_request_admin?: BcapServiceRequestServiceRequestAdminTileWritable | null;
     service_request_messages?: BcapServiceRequestServiceRequestMessagesTileWritable | null;
-    project_location?: BcapServiceRequestProjectLocationTileWritable | null;
 };
 
 export type BcapServiceRequestServiceRequestAdminAliasedDataWritable = {
@@ -10124,6 +10101,37 @@ export type BcapServiceRequestServiceRequestIdentificationTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: BcapServiceRequestServiceRequestIdentificationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type BcapServiceRequestServiceRequestLocationAliasedDataWritable = {
+    /**
+     * Select the type of property
+     */
+    property_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    bc_property_address?: Array<BcapServiceRequestBcPropertyAddressTileWritable> | null;
+    service_request_boundary?: GeojsonFeatureCollectionAliasedNodeDataWritable | null;
+    crown_land_tenure_type?: BcapServiceRequestCrownLandTenureTypeTileWritable | null;
+};
+
+export type BcapServiceRequestServiceRequestLocationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: BcapServiceRequestServiceRequestLocationAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {

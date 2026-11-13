@@ -1,9 +1,13 @@
-"""BCAP Service Request create endpoint: POST a new Service Request, sanitizing
-any GeoJSON feature IDs from the boundary map before persisting.
+"""BCAP Service Request CRUD: seed the service request id on create, and
+attach the requirement working copies on first submission.
 
-Subclasses the generated view components rather than the generated view class
-itself (which is GET-only) so the create path can live at the same URL prefix
-without disabling the generated list."""
+The create view subclasses the generated view components rather than the
+generated view class itself (which is GET-only) so the create path can live
+at the same URL prefix without disabling the generated list.
+
+The detail view subclasses the generated RetrieveAPIView and adds PATCH so
+submissions can be processed here.
+"""
 
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView
@@ -11,6 +15,9 @@ from rest_framework.generics import CreateAPIView
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from bcap.permissions.route_guards import SubmitterOrInternal
+from bcap.services.bcap_service_request.bcap_service_request_service import (
+    BcapServiceRequestService,
+)
 from bcap.util.aliases.bcap_service_request import (
     BcapServiceRequestAliases as aliases,
     BcapServiceRequestGroupAliases as group_aliases,
@@ -20,6 +27,7 @@ from bcap.util.reference_number import allocate_reference_number
 from bcap.util.tiles import set_payload_node
 from bcap.views.mixins import SanitizeFeatureIdsMixin
 from bcap.views.generated.bcap_service_request import (
+    BcapServiceRequestView as GeneratedBcapServiceRequestView,
     BcapServiceRequestViewMixin,
 )
 
@@ -50,6 +58,34 @@ def _seed_service_request_id(data):
 
 
 @extend_schema(tags=["External: bcap_service_request"])
+class BcapServiceRequestView(SanitizeFeatureIdsMixin, GeneratedBcapServiceRequestView):
+    """GET/PATCH a BCAP Service Request and its nested tiles.
+
+    The update that first sets the submission date is the submission: it
+    attaches the requirement working copies."""
+
+    permission_classes = [SubmitterOrInternal]
+    http_method_names = ["get", "patch", "head", "options"]
+
+    def get_queryset(self):
+        return BcapServiceRequestService.base_query(
+            self.request.user, resource_ids=self.resource_ids
+        )
+
+    def update(self, request, *args, **kwargs):
+        def save():
+            self.sanitize_all_feature_ids(request.data)
+            return super(BcapServiceRequestView, self).update(request, *args, **kwargs)
+
+        return BcapServiceRequestService(request).submit(
+            self.get_object(),
+            request.data,
+            request.user,
+            save=save,
+        )
+
+
+@extend_schema(tags=["External: bcap_service_request"])
 class BcapServiceRequestCreateView(
     SanitizeFeatureIdsMixin,
     BcapServiceRequestViewMixin,
@@ -60,6 +96,10 @@ class BcapServiceRequestCreateView(
 
     Sanitizes WFS GeoJSON feature IDs from the service_request_boundary before
     persisting, and seeds service_request_id (a backend-owned required node).
+    A body that already carries the submission date attaches the requirement
+    working copies here; one saved as a draft gets them on the update that
+    submits it (see the detail view).
+
     Applicants file their own service requests, so this only asks for a login;
     owner-scoping is implicit (the resource is created by the requesting user)."""
 
@@ -69,4 +109,10 @@ class BcapServiceRequestCreateView(
     def create(self, request, *args, **kwargs):
         self.sanitize_all_feature_ids(request.data)
         _seed_service_request_id(request.data)
-        return super().create(request, *args, **kwargs)
+
+        def save():
+            return super(BcapServiceRequestCreateView, self).create(
+                request, *args, **kwargs
+            )
+
+        return BcapServiceRequestService(request).create(request.data, save=save)

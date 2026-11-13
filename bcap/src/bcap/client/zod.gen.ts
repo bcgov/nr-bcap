@@ -1884,29 +1884,6 @@ export const zBcapServiceRequestProcessModuleTile = z.object({
     })).nullish()
 });
 
-export const zBcapServiceRequestProjectLocationAliasedData = z.object({
-    service_request_boundary: zGeojsonFeatureCollectionAliasedNodeData.nullish(),
-    bc_property_address: z.array(zBcapServiceRequestBcPropertyAddressTile).nullish(),
-    crown_land_tenure_type: zBcapServiceRequestCrownLandTenureTypeTile.nullish()
-});
-
-export const zBcapServiceRequestProjectLocationTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapServiceRequestProjectLocationAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zBcapServiceRequestProposedProjectAliasedData = z.object({
     project_type: zReferenceAliasedNodeData.nullish(),
     project_description: zStringAliasedNodeData.nullish(),
@@ -1979,13 +1956,37 @@ export const zBcapServiceRequestServiceRequestContactsTile = z.object({
     })).nullish()
 });
 
+export const zBcapServiceRequestServiceRequestLocationAliasedData = z.object({
+    property_type: zReferenceAliasedNodeDataRequired.nullable(),
+    bc_property_address: z.array(zBcapServiceRequestBcPropertyAddressTile).nullish(),
+    service_request_boundary: zGeojsonFeatureCollectionAliasedNodeData.nullish(),
+    crown_land_tenure_type: zBcapServiceRequestCrownLandTenureTypeTile.nullish()
+});
+
+export const zBcapServiceRequestServiceRequestLocationTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zBcapServiceRequestServiceRequestLocationAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zBcapServiceRequestResourceAliasedData = z.object({
     service_request_identification: zBcapServiceRequestServiceRequestIdentificationTile.nullish(),
     proposed_project: zBcapServiceRequestProposedProjectTile.nullish(),
     service_request_contacts: zBcapServiceRequestServiceRequestContactsTile.nullish(),
+    service_request_location: zBcapServiceRequestServiceRequestLocationTile.nullish(),
     service_request_admin: zBcapServiceRequestServiceRequestAdminTile.nullish(),
-    service_request_messages: zBcapServiceRequestServiceRequestMessagesTile.nullish(),
-    project_location: zBcapServiceRequestProjectLocationTile.nullish()
+    service_request_messages: zBcapServiceRequestServiceRequestMessagesTile.nullish()
 });
 
 export const zBcapServiceRequest = z.object({
@@ -7211,29 +7212,6 @@ export const zBcapServiceRequestProcessModuleTileWritable = z.object({
     })).nullish()
 });
 
-export const zBcapServiceRequestProjectLocationAliasedDataWritable = z.object({
-    service_request_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
-    bc_property_address: z.array(zBcapServiceRequestBcPropertyAddressTileWritable).nullish(),
-    crown_land_tenure_type: zBcapServiceRequestCrownLandTenureTypeTileWritable.nullish()
-});
-
-export const zBcapServiceRequestProjectLocationTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zBcapServiceRequestProjectLocationAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
 export const zBcapServiceRequestProposedProjectAliasedDataWritable = z.object({
     project_type: zReferenceAliasedNodeDataWritable.nullish(),
     project_description: zStringAliasedNodeDataWritable.nullish(),
@@ -7306,13 +7284,37 @@ export const zBcapServiceRequestServiceRequestContactsTileWritable = z.object({
     })).nullish()
 });
 
+export const zBcapServiceRequestServiceRequestLocationAliasedDataWritable = z.object({
+    property_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
+    bc_property_address: z.array(zBcapServiceRequestBcPropertyAddressTileWritable).nullish(),
+    service_request_boundary: zGeojsonFeatureCollectionAliasedNodeDataWritable.nullish(),
+    crown_land_tenure_type: zBcapServiceRequestCrownLandTenureTypeTileWritable.nullish()
+});
+
+export const zBcapServiceRequestServiceRequestLocationTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zBcapServiceRequestServiceRequestLocationAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zBcapServiceRequestResourceAliasedDataWritable = z.object({
     service_request_identification: zBcapServiceRequestServiceRequestIdentificationTileWritable.nullish(),
     proposed_project: zBcapServiceRequestProposedProjectTileWritable.nullish(),
     service_request_contacts: zBcapServiceRequestServiceRequestContactsTileWritable.nullish(),
+    service_request_location: zBcapServiceRequestServiceRequestLocationTileWritable.nullish(),
     service_request_admin: zBcapServiceRequestServiceRequestAdminTileWritable.nullish(),
-    service_request_messages: zBcapServiceRequestServiceRequestMessagesTileWritable.nullish(),
-    project_location: zBcapServiceRequestProjectLocationTileWritable.nullish()
+    service_request_messages: zBcapServiceRequestServiceRequestMessagesTileWritable.nullish()
 });
 
 export const zBcapServiceRequestWritable = z.object({
