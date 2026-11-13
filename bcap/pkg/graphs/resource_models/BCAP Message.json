@@ -53,7 +53,7 @@
                         "en": "Archived By"
                     },
                     "nodegroup_id": "c47ba982-3094-4608-b8cb-46088aaebd3d",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 }
@@ -75,7 +75,7 @@
                         "en": "Thread Author Resolved Date"
                     },
                     "node_id": "6a84814e-9100-42dd-82ac-b13d8a323095",
-                    "sortorder": 5,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -95,7 +95,7 @@
                         "en": "Thread Author Resolved By"
                     },
                     "node_id": "df4e3a42-e830-481d-850e-e2e1024f6c49",
-                    "sortorder": 5,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -116,7 +116,7 @@
                         "en": "Thread Recipient Resolved Date"
                     },
                     "node_id": "96c1fd9f-cb65-409f-9c61-855b3655dd7c",
-                    "sortorder": 5,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -136,7 +136,7 @@
                         "en": "Thread Recipient Resolved By"
                     },
                     "node_id": "b0dfebbd-0538-4bf4-9f88-237983adc621",
-                    "sortorder": 5,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -155,7 +155,7 @@
                         "en": "Attachments"
                     },
                     "node_id": "3bd0d706-dcc7-4a94-a344-42631018d878",
-                    "sortorder": 7,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -183,7 +183,7 @@
                         "en": "Message Subject"
                     },
                     "node_id": "677e0e55-d77d-4267-9ff8-de920a374e8c",
-                    "sortorder": 1,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -204,7 +204,7 @@
                         "en": "Message Creation Date"
                     },
                     "node_id": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
-                    "sortorder": 3,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -232,7 +232,7 @@
                         "en": "Message Content"
                     },
                     "node_id": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
-                    "sortorder": 2,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -271,7 +271,7 @@
                         "en": "Recipient"
                     },
                     "node_id": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -291,7 +291,7 @@
                         "en": "Thread Participants"
                     },
                     "node_id": "db147791-3123-445a-8f1a-20f7cc100f97",
-                    "sortorder": 6,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -311,7 +311,7 @@
                         "en": "Message Author"
                     },
                     "node_id": "b9909543-8e7b-4298-bcdf-2550e30c458a",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -331,7 +331,7 @@
                         "en": "Resource Context"
                     },
                     "node_id": "c236f714-f49e-47ba-934f-52134e119523",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -347,7 +347,7 @@
                         "en": "Is Internal"
                     },
                     "node_id": "9652889d-730f-4485-99a8-bca335357009",
-                    "sortorder": 8,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -363,7 +363,7 @@
                         "en": "Thread Answered"
                     },
                     "node_id": "e2265e25-37ce-41c8-bca7-63ac0fd2140a",
-                    "sortorder": 9,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -384,7 +384,7 @@
                         "en": "Thread Last Message Date"
                     },
                     "node_id": "c189af6a-dcb2-4eac-9cf1-11817a1ab757",
-                    "sortorder": 10,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -404,7 +404,7 @@
                         "en": "Thread"
                     },
                     "node_id": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
-                    "sortorder": 11,
+                    "sortorder": 16,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -690,7 +690,7 @@
                     "nodeid": "677e0e55-d77d-4267-9ff8-de920a374e8c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 0,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -715,7 +715,7 @@
                     "nodeid": "6a84814e-9100-42dd-82ac-b13d8a323095",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 6,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -747,7 +747,7 @@
                     "nodeid": "df4e3a42-e830-481d-850e-e2e1024f6c49",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 6,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -804,7 +804,7 @@
                     "nodeid": "b0dfebbd-0538-4bf4-9f88-237983adc621",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -832,7 +832,7 @@
                     "nodeid": "3bd0d706-dcc7-4a94-a344-42631018d878",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 7,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -855,7 +855,7 @@
                     "nodeid": "b86944e5-2c9e-4b51-b6a2-7df2fefb89bc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54_is_same-as",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -887,7 +887,7 @@
                     "nodeid": "b9909543-8e7b-4298-bcdf-2550e30c458a",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -961,7 +961,7 @@
                     "nodeid": "e0c6e44b-348f-4a1e-9aff-84352273aefc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 0,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -986,7 +986,7 @@
                     "nodeid": "c189af6a-dcb2-4eac-9cf1-11817a1ab757",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 10,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1018,7 +1018,7 @@
                     "nodeid": "fe07fa5d-2b0f-4b33-9af8-9fa398a03616",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1050,7 +1050,7 @@
                     "nodeid": "db147791-3123-445a-8f1a-20f7cc100f97",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 6,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1102,7 +1102,7 @@
                     "nodeid": "c236f714-f49e-47ba-934f-52134e119523",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1133,7 +1133,7 @@
                     "nodeid": "9652889d-730f-4485-99a8-bca335357009",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 0,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1164,7 +1164,7 @@
                     "nodeid": "e2265e25-37ce-41c8-bca7-63ac0fd2140a",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E3_Condition_State",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
-                    "sortorder": 9,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1196,7 +1196,7 @@
                     "nodeid": "1fe004a7-8a30-40c1-9c73-be8c3803cbfd",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 11,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

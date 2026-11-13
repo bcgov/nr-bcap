@@ -49,7 +49,7 @@ def build_external_permit(
         name,
         submission_date="2026-06-18",
         # Pinned by label so the card's submission_type is assertable.
-        filing_type="Site Visit",
+        filing_type="Submit a Site Visit",
         organization=organization,
         related_permit=hca_permit,
     )
@@ -157,7 +157,7 @@ class ExternalDashboardServiceTests(TestCase):
         card = next(c for c in page.results if c.id == str(self.mine_active.pk))
         self.assertFalse(card.is_draft)
         self.assertEqual(card.project_name, "Mine Active")
-        self.assertRegex(card.application_number, r"^APP-\d+$")
+        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
         self.assertEqual(card.submission_date, "2026-06-18")
         self.assertEqual(card.created_by_name, "Grace Hopper")
         self.assertEqual(card.permit_id, self.hca_id)
@@ -261,7 +261,7 @@ class ExternalDashboardDraftsTests(TestCase):
                 "application_identification": {
                     "aliased_data": {
                         "project_name": {"en": {"value": "Draft Project"}},
-                        "application_id": {"en": {"value": "DRAFT-1"}},
+                        "application_id": "DRAFT-1",
                     }
                 }
             },
@@ -311,8 +311,8 @@ class ExternalDashboardDraftsTests(TestCase):
         card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
         self.assertEqual(card.permit_application_id, str(self.permit.pk))
         self.assertEqual(card.project_name, "Parent Project")
-        self.assertRegex(card.application_number, r"^APP-\d+$")
-        self.assertEqual(card.submission_type, "Site Visit")
+        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
+        self.assertEqual(card.submission_type, "Submit a Site Visit")
         self.assertEqual(card.organization, "Parent Corp")
 
     def test_a_parentless_draft_names_no_organization(self):
@@ -516,7 +516,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
 
         self.assertEqual(card.project_name, "Parent Project")
         # Fields the draft doesn't carry come from the parent too.
-        self.assertEqual(card.submission_type, "Site Visit")
+        self.assertEqual(card.submission_type, "Submit a Site Visit")
 
     def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
         gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")

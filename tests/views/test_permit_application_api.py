@@ -202,7 +202,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ident = self._permit(
             pk, aliases.APPLICATION_ID
         ).aliased_data.application_identification
-        return localized_string(ident.aliased_data.application_id) if ident else ""
+        return ident.aliased_data.application_id or "" if ident else ""
 
     def _requirement_count(self):
         return ResourceInstance.objects.filter(
@@ -211,7 +211,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_create_seeds_distinct_ids_without_requirements(self):
         draft = self._create()
-        self.assertRegex(self._application_id(draft), r"^APP-\d+$")
+        self.assertRegex(self._application_id(draft), r"^APP-\d{4}-\d+$")
         # The class-level permits came through the same endpoint, so the ids
         # the seeder mints have to differ from theirs.
         self.assertNotEqual(

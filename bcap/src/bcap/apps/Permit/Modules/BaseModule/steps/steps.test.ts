@@ -7,10 +7,11 @@ import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import Step1 from './Step1_About.vue';
 import Step2 from './Step2_Prelim.vue';
 import Step3 from './Step3_Contacts.vue';
-import Step4 from './Step4_Details.vue';
+import Step4 from './Step4_Location.vue';
+import Step5 from './Step5_Details.vue';
 import Step99 from './Step99_Review.vue';
 
-const steps = { Step1, Step2, Step3, Step4, Step99 };
+const steps = { Step1, Step2, Step3, Step4, Step5, Step99 };
 
 // shallowMount would stub <Form> and never render its slot, so the widgets
 // inside it would not exist to emit from.
@@ -18,7 +19,14 @@ const passthrough = { template: '<div><slot /></div>' };
 
 const mountStep = (component: unknown) =>
     mount(component as never, {
-        global: { stubs: { Form: passthrough, FieldSet: passthrough } },
+        global: {
+            stubs: {
+                Form: passthrough,
+                FieldSet: passthrough,
+                InputText: true,
+                Button: true,
+            },
+        },
     });
 
 const edit = (value: string) =>
@@ -47,15 +55,15 @@ describe('BaseModule steps', () => {
         const wrapper = mountStep(Step2);
         const updateValue = vi.spyOn(useDraftStore(), 'updateValue');
 
-        const filingType = edit('Investigation');
+        const serviceRequestType = edit('Investigation');
         wrapper
             .findComponent({ name: 'GenericWidget' })
-            .vm.$emit('update:aliasedNodeData', filingType);
+            .vm.$emit('update:aliasedNodeData', serviceRequestType);
 
         expect(updateValue).toHaveBeenCalledWith(
-            filingType,
-            'filing_type',
-            'application_identification',
+            serviceRequestType,
+            'service_request_type',
+            'service_request_identification',
         );
     });
 
@@ -73,32 +81,41 @@ describe('BaseModule steps', () => {
         expect(updateValue).toHaveBeenCalledWith(
             retained,
             'has_retained_archaeologist',
-            'application_contacts',
+            'service_request_contacts',
         );
     });
 
-    it('Step4 routes the geojson boundary and the nested sector path', () => {
+    it('Step4 routes a BC Property Address field into the draft store', () => {
         const wrapper = mountStep(Step4);
         const updateValue = vi.spyOn(useDraftStore(), 'updateValue');
-        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
 
-        const sector = edit('Forestry');
-        widgets[0].vm.$emit('update:aliasedNodeData', sector);
-        expect(updateValue).toHaveBeenCalledWith(sector, 'industrial_sector', [
-            'proposed_project',
-            'development_project_details',
-        ]);
+        const streetNumber = edit('123');
+        wrapper
+            .findComponent({ name: 'GenericWidget' })
+            .vm.$emit('update:aliasedNodeData', streetNumber);
+
+        expect(updateValue).toHaveBeenCalledWith(
+            streetNumber,
+            'street_number',
+            ['project_location', 'bc_property_address[0]'],
+        );
+    });
+
+    it('Step5 routes the geojson boundary to project_location', () => {
+        const wrapper = mountStep(Step5);
+        const updateValue = vi.spyOn(useDraftStore(), 'updateValue');
+        const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
 
         const boundary = {
             display_value: '',
             node_value: { type: 'FeatureCollection', features: [] },
             details: [],
         } as unknown as AliasedNodeData;
-        widgets[1].vm.$emit('update:aliasedNodeData', boundary);
+        widgets[0].vm.$emit('update:aliasedNodeData', boundary);
         expect(updateValue).toHaveBeenCalledWith(
             boundary,
-            'project_boundary',
-            'proposed_project',
+            'service_request_boundary',
+            'project_location',
         );
     });
 });

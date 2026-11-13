@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, type Component } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 
 const push = vi.fn();
@@ -419,6 +419,167 @@ describe('drafts', () => {
         expect(wrapper.findComponent(DialogStub).props('visible')).toBe(true);
         // Opening the dialog must not delete anything on its own.
         expect(deleteDraft).not.toHaveBeenCalled();
+    });
+});
+
+describe('draft card labels', () => {
+    it('uses an untitled fallback when a draft has no project name', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({ project_name: '', submission_type: '' }),
+        ]);
+        const wrapper = await mountDashboard();
+        expect(wrapper.findComponent(ProjectCard).props('bodyTitle')).toBe(
+            'Untitled Permit Application',
+        );
+    });
+
+    it('falls back to a label-based description when submission type is absent', async () => {
+        fetchDraftCards.mockResolvedValue([makeDraft({ submission_type: '' })]);
+        const wrapper = await mountDashboard();
+        expect(
+            (wrapper.findComponent(ProjectCard).props('body') as string[])[0],
+        ).toBe('Type: Permit Application Draft');
+    });
+
+    it('labels a service request draft as Service Request', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                graph_slug: 'bcap_service_request',
+                project_name: '',
+                submission_type: '',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+        expect(wrapper.findComponent(ProjectCard).props('bodyTitle')).toBe(
+            'Untitled Service Request',
+        );
+    });
+
+    it('routes to the base module workflow when no module matches the slug', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({
+                graph_slug: 'bcap_message',
+                permit_application_id: '',
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+        expect(wrapper.findComponent(ProjectCard).props('route')).toEqual({
+            name: 'baseModule',
+            query: { draftId: 'draft-1' },
+        });
+    });
+});
+
+describe('draft filtering', () => {
+    it('filters drafts by the search query', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({ id: 'd1', project_name: 'Forest Survey' }),
+            makeDraft({ id: 'd2', project_name: 'River Dig' }),
+        ]);
+        const wrapper = await mountDashboard();
+        wrapper
+            .findComponent({ name: 'SortingBar' })
+            .vm.$emit('update:search', 'forest');
+        await flushPromises();
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((c) => c.props('bodyTitle')),
+        ).toEqual(['Forest Survey']);
+    });
+
+    it('swaps to company drafts when the company toggle is on', async () => {
+        fetchDraftCards.mockResolvedValue([
+            makeDraft({ id: 'mine', project_name: 'My Draft' }),
+        ]);
+        fetchCompanyDraftCards.mockResolvedValue([
+            makeDraft({ id: 'mine', project_name: 'My Draft' }),
+            makeDraft({ id: 'theirs', project_name: 'Colleague Draft' }),
+        ]);
+        const wrapper = await mountDashboard();
+        await includeCompany(wrapper);
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((c) => c.props('bodyTitle')),
+        ).toEqual(['My Draft', 'Colleague Draft']);
+    });
+});
+
+describe('project card filtering', () => {
+    it('filters projects to those with unresolved messages when messagesOnly is on', async () => {
+        fetchMyProjects.mockResolvedValue([
+            makeProject({ id: 'a', project_name: 'Normal' }),
+            makeProject({
+                id: 'b',
+                project_name: 'Has Message',
+                unresolved_messages: 2,
+            }),
+        ]);
+        const wrapper = await mountDashboard();
+        await switchTab(wrapper, 'filings');
+        wrapper
+            .findComponent({ name: 'SortingBar' })
+            .vm.$emit('update:messagesOnly', true);
+        await flushPromises();
+        expect(
+            wrapper
+                .findAllComponents(ProjectCard)
+                .map((c) => c.props('bodyTitle')),
+        ).toEqual(['Has Message']);
+    });
+
+    it('shows the organization in the project card body', async () => {
+        fetchMyProjects.mockResolvedValue([
+            makeProject({ organization: 'Mining Corp' }),
+        ]);
+        const wrapper = await mountDashboard();
+        await switchTab(wrapper, 'filings');
+        expect(
+            (wrapper.findComponent(ProjectCard).props('body') as string[])[3],
+        ).toBe('Organization: Mining Corp');
+    });
+});
+
+describe('delete draft', () => {
+    it('calls deleteDraft and removes the card after confirmation', async () => {
+        fetchDraftCards.mockResolvedValue([makeDraft()]);
+        const DialogWithFooter: Component = defineComponent({
+            props: {
+                visible: Boolean,
+                closable: Boolean,
+                header: String,
+                modal: Boolean,
+            },
+            template: '<div class="dialog-stub"><slot name="footer" /></div>',
+        });
+        const wrapper = mount(SubmissionsDashboard, {
+            global: { stubs: { ...STUBS, Dialog: DialogWithFooter } },
+        });
+        await flushPromises();
+
+        await wrapper.find('.draft-delete-btn').trigger('click');
+        const confirmBtn = wrapper
+            .findAll('button-stub')
+            .find((b) => b.attributes('label') === 'Delete');
+        await confirmBtn!.trigger('click');
+        await flushPromises();
+
+        expect(deleteDraft).toHaveBeenCalledWith(
+            'permit_application',
+            'draft-1',
+        );
+        expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
+    });
+});
+
+describe('refresh', () => {
+    it('reloads all card data when SortingBar emits refresh', async () => {
+        const wrapper = await mountDashboard();
+        expect(fetchDraftCards).toHaveBeenCalledTimes(1);
+        wrapper.findComponent({ name: 'SortingBar' }).vm.$emit('refresh');
+        await flushPromises();
+        expect(fetchDraftCards).toHaveBeenCalledTimes(2);
     });
 });
 

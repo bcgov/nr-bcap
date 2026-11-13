@@ -8,7 +8,7 @@ same graph would collide as duplicate schema components.
 
 from drf_spectacular.utils import PolymorphicProxySerializer
 
-from arches_zod_validation.views.mixins import BCAPResourceSerializer
+from arches_zod_validation.views.mixins import AppResourceSerializer
 
 from bcap.schema import resource_aliased_data_component
 from bcap.util.bcap_aliases import GraphSlugs
@@ -24,18 +24,18 @@ from bcap.views.generated.site_visit import SiteVisitSerializer
 # Graphs whose verbs are [] in generate.json have no generated route, so no
 # generated serializer either; declare theirs here. The rest reuse the
 # generated one.
-class InvestigationSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
+class InvestigationSerializer(AppResourceSerializer):
+    class Meta(AppResourceSerializer.Meta):
         graph_slug = GraphSlugs.INVESTIGATION
 
 
-class AlterationSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
+class AlterationSerializer(AppResourceSerializer):
+    class Meta(AppResourceSerializer.Meta):
         graph_slug = GraphSlugs.ALTERATION
 
 
-class InspectionSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
+class InspectionSerializer(AppResourceSerializer):
+    class Meta(AppResourceSerializer.Meta):
         graph_slug = GraphSlugs.INSPECTION
 
 

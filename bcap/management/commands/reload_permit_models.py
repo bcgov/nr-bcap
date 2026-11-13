@@ -167,6 +167,17 @@ class Command(BaseCommand):
                 card__graph_id=graphid,
                 source_identifier__isnull=True,
             ).delete()
+            # promote_draft_graph_to_active_graph recreates card rows from the
+            # current DB state, so card.save() in import_graphs UPDATEs them
+            # in-place, preserving their historical physical row order. That
+            # order differs from a fresh CI database (which INSERTs in JSON
+            # file order), causing non-deterministic schema generation.
+            # Deleting the cards here forces import_graphs to INSERT them
+            # fresh in JSON order, matching CI behaviour.
+            arches_models.CardModel.objects.filter(
+                graph_id=graphid,
+                source_identifier__isnull=True,
+            ).delete()
             self.stdout.write(f"  prepared: {slug}")
 
     def _publish_and_sync_resources(self, paths):

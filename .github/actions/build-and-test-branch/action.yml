@@ -114,6 +114,7 @@ runs:
     - name: Check API contract and Zod schemas are up to date
       run: |
         python manage.py migrate
+        python manage.py check_graph_sortorders
         python manage.py regenerate_api --check
       shell: bash
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/b7842268-8397-4135-959b-af6c48f0e7e6">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/c778e14f-b609-41f1-a1e8-318e9c0458cb">
+        <dcterms:title>Location Type</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/b7842268-8397-4135-959b-af6c48f0e7e6</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Private Property</skos:prefLabel>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/ae26c2df-8ac1-4638-a9a2-ada21b676559">
+    <skos:prefLabel xml:lang="en">Public (Crown) Land</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/ae26c2df-8ac1-4638-a9a2-ada21b676559</dcterms:identifier>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c778e14f-b609-41f1-a1e8-318e9c0458cb"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/2ba66326-81b8-44ac-a8c3-abf07cac674d">
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c778e14f-b609-41f1-a1e8-318e9c0458cb"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/2ba66326-81b8-44ac-a8c3-abf07cac674d</dcterms:identifier>
+  </skos:Concept>
+</rdf:RDF>

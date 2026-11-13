@@ -17,7 +17,7 @@ bcrhp_api_client_id: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_ID') }}
 bcrhp_api_client_secret: "{{ lookup('ansible.builtin.env', 'BCRHP_API_CLIENT_SECRET') }}"
 
 restart_s6_services: True
-reconfigure_s6_services: False
+reconfigure_s6_services: True
 
 # Required for 7.6.x
 python_executable: /usr/bin/python3.12
@@ -30,4 +30,4 @@ python_executable: /usr/bin/python3.12
 #  - "bcap 1081_drop_materialized_views"
 #  - "models"
 
-
+reindex_database: True

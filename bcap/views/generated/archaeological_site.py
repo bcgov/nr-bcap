@@ -16,13 +16,13 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from arches_zod_validation.views.mixins import (
     ArchesResourceViewMixin,
-    BCAPResourceSerializer,
+    AppResourceSerializer,
     UserOwnedResourceMixin,
 )
 
 
-class ArchaeologicalSiteSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
+class ArchaeologicalSiteSerializer(AppResourceSerializer):
+    class Meta(AppResourceSerializer.Meta):
         graph_slug = "archaeological_site"
 
 

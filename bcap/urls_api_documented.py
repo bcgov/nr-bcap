@@ -22,6 +22,10 @@ from bcap.views.workflow_draft_api import (
     WorkflowDraftListCreateView,
     WorkflowDraftDetailView,
 )
+from bcap.views.bcap_service_request_api import (
+    BcapServiceRequestCreateView,
+    BcapServiceRequestView,
+)
 from bcap.views.permit_application_api import (
     PermitApplicationView,
     PermitApplicationCreateView,
@@ -49,6 +53,7 @@ from bcap.views.bcap_message_api import (
     BcapMessageThreadView,
 )
 from bcap.views.user_api import BCAPUserView
+from bcap.views.wfs_intersect_api import WfsIntersectView
 from bcap.views.registration_link_api import (
     AssignableGroupsView,
     RegistrationLinkView,
@@ -89,6 +94,18 @@ documented_api_patterns = [
         "api/workflow_draft/<slug:graph_slug>/<uuid:pk>",
         WorkflowDraftDetailView.as_view(),
         name="workflow_draft_detail",
+    ),
+    # Submitter - object level user filtering - override
+    path(
+        "api/bcap_service_request",
+        BcapServiceRequestCreateView.as_view(),
+        name="bcap_service_request_create",
+    ),
+    # External - object level user filtering - override.
+    path(
+        "api/bcap_service_request/<uuid:pk>/",
+        BcapServiceRequestView.as_view(),
+        name="api_bcap_service_request",
     ),
     # Submitter - object level user filtering - override
     path(
@@ -208,6 +225,12 @@ documented_api_patterns = [
         "api/bcap_message/<uuid:pk>/",
         BcapMessageDetailView.as_view(),
         name="bcap_message_detail",
+    ),
+    # WFS Intersects proxy: POST a geometry, get back intersecting WFS features.
+    path(
+        "api/wfs/intersect",
+        WfsIntersectView.as_view(),
+        name="wfs_intersect",
     ),
 ]
 

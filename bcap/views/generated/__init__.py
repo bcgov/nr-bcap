@@ -74,13 +74,6 @@ from .legislative_act import (
     LegislativeActView,
 )
 
-from .lg_person import (
-    LgPersonSerializer,
-    LgPersonViewMixin,
-    LgPersonListView,
-    LgPersonView,
-)
-
 from .local_government import (
     LocalGovernmentSerializer,
     LocalGovernmentViewMixin,
@@ -178,10 +171,6 @@ __all__ = [
     "LegislativeActSerializer",
     "LegislativeActView",
     "LegislativeActViewMixin",
-    "LgPersonListView",
-    "LgPersonSerializer",
-    "LgPersonView",
-    "LgPersonViewMixin",
     "LocalGovernmentListView",
     "LocalGovernmentSerializer",
     "LocalGovernmentView",
