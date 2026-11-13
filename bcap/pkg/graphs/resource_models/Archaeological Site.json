@@ -1585,6 +1585,25 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
+                    "card_id": "bb157c5a-01d8-11f0-850c-0242ac170007",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "337bd1a5-fee0-4642-b054-658eacc700c0",
+                    "label": {
+                        "en": "Publication Reference"
+                    },
+                    "node_id": "bb157a2a-01d8-11f0-850c-0242ac170007",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
                     "card_id": "41fb5b50-61a5-11f0-9674-3a7a4e6803c5",
                     "config": {
                         "defaultValue": {
@@ -7847,9 +7866,9 @@
             "publication": {
                 "graph_id": "cef9c510-e3e6-4057-ac08-89ad926180b4",
                 "most_recent_edit_id": null,
-                "notes": "Add missing export field names",
-                "publicationid": "aa1df2c5-2b39-4d38-a1cc-951502f46bc2",
-                "published_time": "2026-10-07T10:37:36.322"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "e0a6aba5-332e-42c7-aa63-67dd67b7a4c1",
+                "published_time": "2026-11-12T16:07:58.175"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -7946,11 +7965,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "6.12.76-linuxkit"
-    }
+    ]
 }

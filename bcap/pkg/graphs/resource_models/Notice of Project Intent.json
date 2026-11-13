@@ -254,6 +254,25 @@
                     "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
+                    "card_id": "e50e986e-76a4-4d15-ba28-cdd51b26e822",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "3c404cad-4726-4a8e-88bb-2a0df1885b39",
+                    "label": {
+                        "en": "Calculated Impacted First Nations"
+                    },
+                    "node_id": "596d4ede-a0f0-41c8-a188-227303de0c43",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
                     "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
                     "config": {
                         "defaultResourceInstance": [],
@@ -293,6 +312,25 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "e50e986e-76a4-4d15-ba28-cdd51b26e822",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "73da0d5a-446b-4f91-8b44-8052e765fe2a",
+                    "label": {
+                        "en": "Proposed First Nations Consultations"
+                    },
+                    "node_id": "04a3fa8c-c0f5-4419-ad00-7609654b51fb",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
@@ -1081,9 +1119,9 @@
             "publication": {
                 "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                 "most_recent_edit_id": null,
-                "notes": "Widget tweaks, put notification and documents on separate cards",
-                "publicationid": "0006465b-d95f-4abd-a2ea-4174d29bd153",
-                "published_time": "2026-07-23T14:49:33.420"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "d40584e3-c234-4858-92c2-4a78ba19c02c",
+                "published_time": "2026-11-12T16:07:57.939"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1180,11 +1218,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "6.12.76-linuxkit"
-    }
+    ]
 }

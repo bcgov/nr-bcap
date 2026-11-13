@@ -429,6 +429,21 @@
                     "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
+                    "card_id": "1d16cde8-12b5-4e60-aaa6-2672e3f23dff",
+                    "config": {
+                        "defaultValue": null
+                    },
+                    "id": "b4be38f1-5316-4502-8ea9-60475c3882d1",
+                    "label": {
+                        "en": "Is Part of Package"
+                    },
+                    "node_id": "85479242-92a3-4fa8-8273-b845aaa38594",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
                     "card_id": "132406d4-9eaa-42f5-a1af-fd685800a367",
                     "config": {
                         "i18n_properties": ["placeholder"],
@@ -1777,9 +1792,9 @@
             "publication": {
                 "graph_id": "0a20038d-7e05-4f5b-9f05-ab36a0db527e",
                 "most_recent_edit_id": null,
-                "notes": "Tweaks",
-                "publicationid": "b43d3559-37a8-48f0-85b4-7e47f9201f59",
-                "published_time": "2026-11-06T10:26:21.647"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "e521db26-75cb-47ea-8b8e-f8abd53ccc54",
+                "published_time": "2026-11-12T16:07:57.953"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1876,11 +1891,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "7.0.14-linuxkit"
-    }
+    ]
 }

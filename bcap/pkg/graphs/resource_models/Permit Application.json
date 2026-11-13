@@ -464,7 +464,7 @@
                         "en": "Applicant Name"
                     },
                     "node_id": "ccc0873b-561d-4953-877f-652aeeabbe41",
-                    "sortorder": 1,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -518,6 +518,25 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+                    "card_id": "7fdcf8bf-e2ea-4454-b9c1-fe932e71d677",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "18eda237-cfd1-411d-8a76-626ba8d25b95",
+                    "label": {
+                        "en": "Project Engagement"
+                    },
+                    "node_id": "fc91b106-4fc9-432d-b38f-4872b54b7f85",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
                         "i18n_properties": ["placeholder"],
@@ -531,10 +550,37 @@
                         "en": "Industrial Sector"
                     },
                     "node_id": "afc0cfbb-f8b8-4eeb-bff1-725013b1bd92",
-                    "sortorder": 4,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "dcfa6ba0-a40d-44a5-a340-c2e3599db098",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "1cb9849b-31a7-41f4-9074-072fef19792e",
+                    "label": {
+                        "en": "Alteration Details"
+                    },
+                    "node_id": "e4c7ecd6-a649-4c2f-8571-17541d05b285",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "918189f9-4f66-49f5-a93e-031170d17a76",
@@ -547,7 +593,7 @@
                         "en": "Grant of License to Ministry"
                     },
                     "node_id": "ad7dd15c-baee-4b05-ab2c-0397b9d4acd3",
-                    "sortorder": 4,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -586,7 +632,7 @@
                         "en": "Copyright Authorization"
                     },
                     "node_id": "f69b35cc-8342-4ad0-b75e-eea62109c64f",
-                    "sortorder": 5,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -614,7 +660,7 @@
                         "en": "Scope of Work"
                     },
                     "node_id": "b05bacfe-e0ae-4a4a-b2d7-827b5a6009bd",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -688,6 +734,48 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+                    "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
+                    "config": {
+                        "defaultValue": null
+                    },
+                    "id": "3ff5c5bd-5a48-47f8-9a9a-0fc673946a0f",
+                    "label": {
+                        "en": "Has Concurrent Permits"
+                    },
+                    "node_id": "18c710fd-548f-4d49-afb5-be4dedea7ae0",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "45dc92ce-a37b-411e-8f8d-36ebd621583c",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "48620f9c-54b7-4693-bdc9-4087ac91e148",
+                    "label": {
+                        "en": "MZA Alteration Details"
+                    },
+                    "node_id": "dc487490-8838-4d9e-8ce5-9aff450ffe25",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
                     "card_id": "7fc79758-9d05-486f-91bb-e1ecb856f9f3",
                     "config": {
                         "i18n_properties": ["placeholder"],
@@ -722,6 +810,25 @@
                     },
                     "node_id": "f3018675-a20c-4086-8a7f-6b867e4bc3d1",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "b06f2332-ff55-4232-a3c6-b0a252ba5a14",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "53f1b383-90ba-461c-9032-ae812eb4fb61",
+                    "label": {
+                        "en": "Application Proponent"
+                    },
+                    "node_id": "941d9a09-2f1e-4616-9a04-bb7f9d2aa987",
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
@@ -949,6 +1056,25 @@
                     "widget_id": "10000000-0000-0000-0000-000000000019"
                 },
                 {
+                    "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "767fed73-c46d-47b5-9335-bce309847b38",
+                    "label": {
+                        "en": "Concurrent Permits List"
+                    },
+                    "node_id": "0fb40ef8-4898-4120-a69c-d353ebecc094",
+                    "sortorder": 3,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                },
+                {
                     "card_id": "637becfb-29bf-4b72-a595-f7ce5b6dd0c5",
                     "config": {
                         "defaultResourceInstance": [],
@@ -991,7 +1117,7 @@
                         "en": "Project Description"
                     },
                     "node_id": "3e4f5ea8-d41b-4c7e-977e-56b1f339590d",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -1007,7 +1133,7 @@
                         "en": "Is Consent Given"
                     },
                     "node_id": "43d67a8a-8a76-45d9-8edf-600862f389e5",
-                    "sortorder": 2,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -1069,7 +1195,7 @@
                         "en": "Time of Consent"
                     },
                     "node_id": "29cb3361-0b83-411c-ae6e-e1993856b654",
-                    "sortorder": 3,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -1092,6 +1218,52 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "b06f2332-ff55-4232-a3c6-b0a252ba5a14",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "8f2823c3-87e1-43a3-ad76-7d5e29465b01",
+                    "label": {
+                        "en": "Application Archaeologist"
+                    },
+                    "node_id": "915cfe43-d0ff-4c36-b614-c792785c6d07",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "95c259a0-33be-4037-a0cb-080b77c6340b",
+                    "label": {
+                        "en": "Approach on Concurrent Permits"
+                    },
+                    "node_id": "eb26f9e0-a963-4695-9779-871bda2916aa",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "262b7728-8453-4dd2-a994-0ee37dfbb4b1",
@@ -1160,7 +1332,7 @@
                         "en": "Project Type"
                     },
                     "node_id": "239d98bf-a098-4b84-bb9a-5b9da0aafe60",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
@@ -1211,6 +1383,36 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "b06f2332-ff55-4232-a3c6-b0a252ba5a14",
+                    "config": {
+                        "defaultValue": null
+                    },
+                    "id": "b6e0fb2e-f40b-4ff1-88ce-0e4403666271",
+                    "label": {
+                        "en": "Has Retained Archaeologist"
+                    },
+                    "node_id": "7a82c932-3404-4177-a700-2531228d11ce",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "4f3dd197-69e7-4c37-92b3-8d647a3b71eb",
+                    "config": {
+                        "defaultValue": null
+                    },
+                    "id": "bff4ffa6-59b0-4e11-a229-b58b0546e30a",
+                    "label": {
+                        "en": "Is Related Permit"
+                    },
+                    "node_id": "0b742fcf-bd21-437a-b7bc-65415ac9a9c0",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
                     "card_id": "d419e5c5-c9ef-430d-9877-99127b6b8708",
@@ -1277,6 +1479,33 @@
                     "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
+                    "card_id": "b06f2332-ff55-4232-a3c6-b0a252ba5a14",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "da27459c-027b-45fa-b119-2f1926366169",
+                    "label": {
+                        "en": "Rationale For No Archaeologist"
+                    },
+                    "node_id": "83393b22-07d0-4e05-af0b-297ff73b46e0",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
                     "card_id": "640d8471-4f3f-476e-a0ce-70a3aff1c483",
                     "config": {
                         "basemap": "British Columbia Roads",
@@ -1319,7 +1548,7 @@
                         "en": "Project Boundary"
                     },
                     "node_id": "375e9e4f-eb70-42e1-a2f6-8d8a9ef7689a",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000007"
@@ -1376,6 +1605,25 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000008"
+                },
+                {
+                    "card_id": "d419e5c5-c9ef-430d-9877-99127b6b8708",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "fc265eff-8d8c-44da-b498-92f8a590e3a1",
+                    "label": {
+                        "en": "FN Boundary Intersections"
+                    },
+                    "node_id": "196c4d71-5a0b-4290-909b-2b7fa6eda487",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "371f55ab-7d98-4f78-a52a-b5a211e9513b",
@@ -2521,7 +2769,7 @@
                     "nodeid": "239d98bf-a098-4b84-bb9a-5b9da0aafe60",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2787,7 +3035,7 @@
                     "nodeid": "3e4f5ea8-d41b-4c7e-977e-56b1f339590d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4188,9 +4436,9 @@
             "publication": {
                 "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
                 "most_recent_edit_id": null,
-                "notes": "Update application ID to be non-localized string w/ reference number widget",
-                "publicationid": "a90aa53d-72bc-420c-972a-5bbf76e23bda",
-                "published_time": "2026-11-08T09:59:21.287"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "2620d0ac-6b73-42a1-a526-80b0a8c5808c",
+                "published_time": "2026-11-12T16:07:58.074"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -4287,11 +4535,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "7.0.14-linuxkit"
-    }
+    ]
 }
