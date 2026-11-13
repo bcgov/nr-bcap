@@ -38,8 +38,12 @@ def boundary_payload(feature_id="not-a-uuid"):
     return {
         ALIASED_DATA: {
             **_identification_tile(),
-            group_aliases.PROJECT_LOCATION: {
+            group_aliases.SERVICE_REQUEST_LOCATION: {
                 ALIASED_DATA: {
+                    aliases.PROPERTY_TYPE: api_reference_value(
+                        GraphSlugs.BCAP_SERVICE_REQUEST,
+                        aliases.PROPERTY_TYPE,
+                    ),
                     aliases.SERVICE_REQUEST_BOUNDARY: {
                         "node_value": {
                             "type": "FeatureCollection",
@@ -55,7 +59,7 @@ def boundary_payload(feature_id="not-a-uuid"):
                                 }
                             ],
                         }
-                    }
+                    },
                 }
             },
         }
@@ -116,7 +120,7 @@ class BcapServiceRequestCreateTests(AuthTestHelper, TestCase):
         # original text string.
         data = resp.json()
         project_location = (data.get(ALIASED_DATA) or {}).get(
-            group_aliases.PROJECT_LOCATION, {}
+            group_aliases.SERVICE_REQUEST_LOCATION, {}
         )
         boundary = (project_location.get(ALIASED_DATA) or {}).get(
             aliases.SERVICE_REQUEST_BOUNDARY, {}
