@@ -24,6 +24,7 @@ from arches_querysets.models import ResourceTileTree
 
 from bcap.util.graph import nodes_for
 from bcap.services.contributor.organization_service import OrganizationService
+from bcap.util.aliases.bcap_service_request import BcapServiceRequestAliases
 from bcap.util.aliases.permit_application import PermitApplicationAliases
 from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
 from bcap.util.bcap_aliases import GraphSlugs
@@ -36,6 +37,7 @@ class PermitAccess:
     for listing what they may touch."""
 
     PERMIT_ORG = PermitApplicationAliases.OWNING_ORGANIZATION
+    SR_ORG = BcapServiceRequestAliases.RESPONSIBLE_ORGANIZATION
     DRAFT_ORG = WorkflowDraftsAliases.OWNING_ORGANIZATION
 
     @classmethod
@@ -45,6 +47,14 @@ class PermitAccess:
         return OrganizationService().own_or_company_filter(user, cls.PERMIT_ORG)
 
     @classmethod
+    def own_or_company_service_requests(cls, user):
+        """Their own service requests (filed under no organization) plus any
+        filed under an organization they belong to. responsible_organization is
+        optional, so an unset value is treated as "no organization" and falls
+        through to the principaluser check."""
+        return OrganizationService().own_or_company_filter(user, cls.SR_ORG)
+
+    @classmethod
     def own_or_company_drafts(cls, user):
         """By the same rule as their permits."""
         return OrganizationService().own_or_company_filter(user, cls.DRAFT_ORG)
@@ -52,13 +62,19 @@ class PermitAccess:
     @classmethod
     def own_or_company_resource_ids(cls, user):
         """Every resource id an applicant may open: their own and their company's
-        permits, and what hangs off one within two hops (a requirement, its
-        submission host). The list-shaped twin of the reach check below."""
+        permits and service requests, and what hangs off one within two hops (a
+        requirement, its submission host). The list-shaped twin of the reach
+        check below."""
         permits = {
             str(pk) for pk in cls._visible_permits(user).values_list("pk", flat=True)
         }
-        requirements = cls._referenced_by(permits)
-        return permits | requirements | cls._referenced_by(requirements)
+        service_requests = {
+            str(pk)
+            for pk in cls._visible_service_requests(user).values_list("pk", flat=True)
+        }
+        top_level = permits | service_requests
+        requirements = cls._referenced_by(top_level)
+        return top_level | requirements | cls._referenced_by(requirements)
 
     @classmethod
     def _visible_permits(cls, user, resource_ids=None):
@@ -69,6 +85,16 @@ class PermitAccess:
             nodes=nodes_for(GraphSlugs.PERMIT_APPLICATION, [cls.PERMIT_ORG]),
             resource_ids=resource_ids,
         ).filter(cls.own_or_company_permits(user))
+
+    @classmethod
+    def _visible_service_requests(cls, user, resource_ids=None):
+        """The service requests this user may see, carrying just the organization
+        node the rule reads."""
+        return ResourceTileTree.get_tiles(
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            nodes=nodes_for(GraphSlugs.BCAP_SERVICE_REQUEST, [cls.SR_ORG]),
+            resource_ids=resource_ids,
+        ).filter(cls.own_or_company_service_requests(user))
 
     @staticmethod
     def _referenced_by(resource_ids):

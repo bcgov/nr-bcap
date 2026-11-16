@@ -18,17 +18,16 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     InternalDashboardStatus,
 )
-from bcap.services.permit_application.permit_application_service import (
-    PermitApplicationService,
+from bcap.services.bcap_service_request.bcap_service_request_service import (
+    BcapServiceRequestService,
 )
-from bcap.util.aliases.permit_application import PermitApplicationAliases as pa
+from bcap.util.aliases.bcap_service_request import BcapServiceRequestAliases as sr
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder
 from tests.services.contributor_fixtures import make_contributor, make_party
 from tests.permit_fixtures import (
     RequirementRow,
-    build_permit,
+    build_service_request,
     make_requirement,
 )
 from tests.services.message_fixtures import make_message
@@ -36,13 +35,12 @@ from tests.services.message_fixtures import make_message
 from tests.controlled_list_fixtures import ControlledListFixtures
 
 
-def build_permit_graph():
-    """A minimal Permit Application graph for the dashboard tests: one permit
-    linked to an HCA Permit (held by Acme Corp) and three process requirements
-    -- satisfied "Review" (order 1), outstanding "Field Assessment" (order 2),
-    and outstanding "Site Inspection" (order 3). The card surfaces the
-    lowest-order outstanding requirement, "Field Assessment". Returns the
-    created resources."""
+def build_sr_graph():
+    """A minimal BCAP Service Request graph for the dashboard tests: one SR
+    with three process requirements -- satisfied "Review" (order 1), outstanding
+    "Field Assessment" (order 2), and outstanding "Site Inspection" (order 3).
+    The card surfaces the lowest-order outstanding requirement, "Field Assessment".
+    Returns the created resources."""
     builder = FixtureBuilder()
 
     ada = make_contributor(builder, "Lovelace", "Ada")
@@ -56,21 +54,6 @@ def build_permit_graph():
         bcap_username="testuser",
         associated_organization=acme,
     )
-    alan = make_contributor(builder, "Turing", "Alan")
-
-    hca_permit = builder.new_resource("hca_permit")
-    builder.append_blank_tile_for_group(
-        hca_permit,
-        "permit_identification",
-        {
-            "permit_number": "HCA-001",
-            "permit_holder": [acme],
-            "hca_permit_type": reference_value(
-                "hca_permit", "hca_permit_type", "Investigation"
-            ),
-        },
-    )
-    hca_permit.save(**builder.save_kwargs)
 
     review = builder.make_process_requirement(
         {
@@ -127,7 +110,7 @@ def build_permit_graph():
     # single module. "Site Inspection" (order 3) precedes "Field Assessment"
     # (order 2) in tile order, so the card surfaces the right row by lowest
     # order, not position.
-    permit = build_permit(
+    service_request = build_service_request(
         builder,
         "My Project",
         [
@@ -136,30 +119,25 @@ def build_permit_graph():
             RequirementRow(assessment, 2, grace),
         ],
         # Pinned by label so the card's submission_type is assertable.
-        filing_type="Submit a Site Visit",
-        organization=acme,
-        related_permit=hca_permit,
-        admin_values={pa.PROJECT_OFFICER: alan},
+        service_request_type="Submit a Site Visit",
     )
 
     return SimpleNamespace(
-        permit=permit,
-        hca_permit=hca_permit,
+        service_request=service_request,
         ada=ada,
         grace=grace,
         acme=acme,
-        alan=alan,
         review=review,
         assessment=assessment,
         site=site,
     )
 
 
-def build_minimal_permit(builder, name, satisfied=False, submitted=True):
-    """A permit_application with only the tiles a card needs: identification,
+def build_minimal_sr(builder, name, satisfied=False, submitted=True):
+    """A bcap_service_request with only the tiles a card needs: identification,
     admin, and one process requirement under a single module. Unsatisfied and
-    submitted, it is the cheapest permit the dashboard shows."""
-    return build_permit(
+    submitted, it is the cheapest SR the dashboard shows."""
+    return build_service_request(
         builder,
         name,
         [RequirementRow(make_requirement(builder, name, satisfied))],
@@ -167,26 +145,29 @@ def build_minimal_permit(builder, name, satisfied=False, submitted=True):
     )
 
 
-def build_permit_with_investigation(builder, name):
-    """A dashboard-visible permit whose outstanding requirement's
-    submission_data points at an Investigation host -- the linkage the
-    unresolved-thread roll-up follows. Returns the permit, the host resource, and
-    the requirement."""
+def build_sr_with_investigation(builder, name):
+    """A dashboard-visible SR whose outstanding requirement's submission_data
+    points at an Investigation host -- the linkage the unresolved-thread
+    roll-up follows. Returns the SR, the host resource, and the requirement."""
     host = builder.make_resource(GraphSlugs.INVESTIGATION)
     requirement = make_requirement(builder, name)
     builder.link(str(requirement.pk), submission=host)
-    permit = build_permit(builder, name, [RequirementRow(requirement)])
-    return permit, host, requirement
+    service_request = build_service_request(
+        builder, name, [RequirementRow(requirement)]
+    )
+    return service_request, host, requirement
 
 
-def build_groupless_requirement_permit(builder, name):
-    """A permit whose active requirement is a process_requirement with no group
+def build_groupless_sr_requirement(builder, name):
+    """An SR whose active requirement is a process_requirement with no group
     tiles at all -- unsatisfied (no status), so the card surfaces it. Returns
-    the permit and the requirement id."""
+    the SR and the requirement id."""
     requirement = builder.new_resource("process_requirement")
     requirement.save(**builder.save_kwargs)
-    permit = build_permit(builder, name, [RequirementRow(requirement)])
-    return permit, str(requirement.pk)
+    service_request = build_service_request(
+        builder, name, [RequirementRow(requirement)]
+    )
+    return service_request, str(requirement.pk)
 
 
 def _tile(**leaves):
@@ -204,25 +185,23 @@ class _DashboardServiceData:
         # Seeded resources are rolled back with the class transaction.
         ControlledListFixtures.seed()
         cls.service = InternalDashboardService()
-        graph = build_permit_graph()
+        graph = build_sr_graph()
 
-        cls.permit_id = str(graph.permit.pk)
-        cls.hca_permit_id = str(graph.hca_permit.pk)
+        cls.permit_id = str(graph.service_request.pk)
         cls.ada_id = str(graph.ada.pk)
         cls.grace_id = str(graph.grace.pk)
         cls.acme_id = str(graph.acme.pk)
-        cls.alan_id = str(graph.alan.pk)
         cls.review_id = str(graph.review.pk)
         cls.assessment_id = str(graph.assessment.pk)
         cls.site_id = str(graph.site.pk)
 
 
 class DashboardServiceTests(_DashboardServiceData, TestCase):
-    """The dashboard service against the shared permit graph: the public
+    """The dashboard service against the shared SR graph: the public
     get_cards() API end to end, plus the individual steps it chains together.
     Both share one graph build (setUpTestData runs once per class)."""
 
-    def test_get_cards_builds_one_card_from_the_permit_graph(self):
+    def test_get_cards_builds_one_card_from_the_sr_graph(self):
         page = self.service.get_cards(DashboardFilter())
 
         self.assertEqual(page.count, 1)
@@ -230,20 +209,12 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         card = page.results[0]
         self.assertEqual(card.id, self.permit_id)
         self.assertEqual(card.project_name, "My Project")
-        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
+        self.assertRegex(card.application_number, r"^[A-Z]+-\d{4}-\d+$")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card.requirement_name, "Field Assessment")
         self.assertEqual(card.requirement_due_date, "2026-02-15")
         self.assertEqual(card.assessment_notes, "awaiting site access")
         self.assertEqual(card.requirement_id, self.assessment_id)
-        self.assertEqual(card.permit_number, "HCA-001")
-        self.assertEqual(card.permit_id, self.hca_permit_id)
-        self.assertEqual(card.permit_holder, "Acme Corp")
-        self.assertEqual(card.organization, "Acme Corp")
-        self.assertEqual(card.permit_holder_ids, [self.acme_id])
-        # The project_officer on the permit's application_admin group.
-        self.assertEqual(card.project_officer, "Turing, Alan")
-        self.assertEqual(card.project_officer_id, self.alan_id)
         # The assignee on the chosen ("Field Assessment") tile.
         self.assertEqual(card.ministry_assignee_name, "Hopper, Grace")
         self.assertEqual(card.ministry_assignee_id, self.grace_id)
@@ -251,7 +222,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_assigned_to_me_status_filters_by_user_bcap_username(self):
         # Grace's bcap_username is "testuser" and she is the assignee of the
         # active ("Field Assessment") requirement, so ASSIGNED_TO_ME returns the
-        # permit for that user.
+        # SR for that user.
         matching = self.service.get_cards(
             DashboardFilter(status=InternalDashboardStatus.ASSIGNED_TO_ME), "testuser"
         )
@@ -267,7 +238,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
 
     def test_blank_username_assignment_filters_require_a_user(self):
         # ASSIGNED_TO_ME is keyed on the viewer's Contributor, so a blank
-        # username is rejected rather than matching every permit.
+        # username is rejected rather than matching every SR.
         for username in (None, ""):
             with self.subTest(username=username):
                 with self.assertRaises(ValueError):
@@ -276,11 +247,11 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
                         username,
                     )
 
-    def test_unassigned_status_returns_only_permits_with_no_active_assignee(self):
-        # The graph permit's active requirement ("Field Assessment") is assigned
-        # to Grace, so it is excluded; add a permit whose active requirement has
+    def test_unassigned_status_returns_only_srs_with_no_active_assignee(self):
+        # The graph SR's active requirement ("Field Assessment") is assigned
+        # to Grace, so it is excluded; add an SR whose active requirement has
         # no assignee, which is the only UNASSIGNED match.
-        unassigned_id = str(build_minimal_permit(FixtureBuilder(), "Orphan").pk)
+        unassigned_id = str(build_minimal_sr(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(
             DashboardFilter(status=InternalDashboardStatus.UNASSIGNED)
@@ -288,10 +259,10 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
 
         self.assertEqual([card.id for card in page.results], [unassigned_id])
 
-    def test_no_status_returns_all_actionable_permits_regardless_of_assignee(self):
+    def test_no_status_returns_all_actionable_srs_regardless_of_assignee(self):
         # No status means the assignment filter is not applied: both the
-        # assigned graph permit and an unassigned one are returned.
-        unassigned_id = str(build_minimal_permit(FixtureBuilder(), "Orphan").pk)
+        # assigned graph SR and an unassigned one are returned.
+        unassigned_id = str(build_minimal_sr(FixtureBuilder(), "Orphan").pk)
 
         page = self.service.get_cards(DashboardFilter())
 
@@ -299,19 +270,19 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
             {card.id for card in page.results}, {self.permit_id, unassigned_id}
         )
 
-    def test_permits_returns_count_and_the_permit_application(self):
+    def test_permits_returns_count_and_the_sr(self):
         count, permits = self.service._permits(DashboardFilter())
 
         self.assertEqual(count, 1)
         self.assertEqual(len(permits), 1)
         self.assertEqual(str(permits[0].pk), self.permit_id)
 
-    def test_requirement_tiles_by_permit_groups_by_permit(self):
+    def test_requirement_tiles_by_permit_groups_by_sr(self):
         _, permits = self.service._permits(DashboardFilter())
 
         by_permit = self.service._requirement_tiles_by_permit(permits)
 
-        # The permit's three process-requirement tiles are grouped under its id.
+        # The SR's three process-requirement tiles are grouped under its id.
         self.assertEqual(list(by_permit), [self.permit_id])
         self.assertEqual(len(by_permit[self.permit_id]), 3)
 
@@ -319,7 +290,7 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         _, permits = self.service._permits(DashboardFilter())
         by_permit = self.service._requirement_tiles_by_permit(permits)
         ids = self.service._referenced_ids(
-            chain.from_iterable(by_permit.values()), self.service.PA.PROCESS_REQUIREMENT
+            chain.from_iterable(by_permit.values()), self.service.SR.PROCESS_REQUIREMENT
         )
 
         chosen = self.service._choose_requirements(by_permit, ids)
@@ -343,16 +314,6 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
         )
         # The chosen requirement carries its process_requirement tile.
         self.assertIsNotNone(requirement.tile)
-
-    def test_hca_permits_maps_number_and_holders(self):
-        _, permits = self.service._permits(DashboardFilter())
-
-        hca_permits = self.service._hca_permits(permits)
-
-        self.assertEqual(list(hca_permits), [self.hca_permit_id])
-        hca = hca_permits[self.hca_permit_id]
-        self.assertEqual(hca.number, "HCA-001")
-        self.assertEqual(hca.holder_ids, [self.acme_id])
 
     def test_hca_permits_tolerates_a_missing_identification_group(self):
         # An HCA Permit whose permit_identification group tile is absent reads as
@@ -380,41 +341,39 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
     def test_choose_requirements_reads_a_requirement_with_missing_groups(self):
         # A requirement with no group tiles is unsatisfied, so it is surfaced;
         # its absent groups must read as blank fields rather than crash.
-        permit, requirement_id = build_groupless_requirement_permit(
+        service_request, requirement_id = build_groupless_sr_requirement(
             FixtureBuilder(), "Bare"
         )
-        permit_id = str(permit.pk)
+        sr_id = str(service_request.pk)
 
         _, permits = self.service._permits(DashboardFilter())
         by_permit = self.service._requirement_tiles_by_permit(permits)
         ids = self.service._referenced_ids(
-            chain.from_iterable(by_permit.values()), self.service.PA.PROCESS_REQUIREMENT
+            chain.from_iterable(by_permit.values()), self.service.SR.PROCESS_REQUIREMENT
         )
         chosen = self.service._choose_requirements(by_permit, ids)
 
-        requirement = chosen[permit_id]
+        requirement = chosen[sr_id]
         self.assertEqual(requirement.route, requirement_id)
         self.assertEqual(
             (requirement.name, requirement.due_date, requirement.notes),
             ("", "", ""),
         )
 
-    def test_contributor_names_resolves_assignees_and_holders(self):
+    def test_contributor_names_resolves_assignees(self):
         _, permits = self.service._permits(DashboardFilter())
         by_permit = self.service._requirement_tiles_by_permit(permits)
-        hca_permits = self.service._hca_permits(permits)
         assignee_ids = self.service._referenced_ids(
-            chain.from_iterable(by_permit.values()), self.service.PA.MINISTRY_ASSIGNEE
+            chain.from_iterable(by_permit.values()), self.service.SR.MINISTRY_ASSIGNEE
         )
 
-        names = self.service._contributor_names(assignee_ids, hca_permits)
+        names = self.service._contributor_names(assignee_ids, {})
 
         self.assertEqual(
             names,
             {
                 self.ada_id: "Lovelace, Ada",
                 self.grace_id: "Hopper, Grace",
-                self.acme_id: "Acme Corp",
             },
         )
 
@@ -476,15 +435,15 @@ class DashboardServiceTests(_DashboardServiceData, TestCase):
 
 
 class DashboardServicePaginationTests(TestCase):
-    """limit/page slicing, against several permits so paging is observable."""
+    """limit/page slicing, against several SRs so paging is observable."""
 
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
-        # Three bare permits are enough to observe limit capping and paging.
-        permits = [build_minimal_permit(builder, f"Permit {i}") for i in range(3)]
-        cls.permit_ids = {str(p.pk) for p in permits}
+        # Three bare SRs are enough to observe limit capping and paging.
+        srs = [build_minimal_sr(builder, f"SR {i}") for i in range(3)]
+        cls.sr_ids = {str(s.pk) for s in srs}
         cls.service = InternalDashboardService()
 
     def test_limit_caps_page_size_but_not_count(self):
@@ -495,14 +454,14 @@ class DashboardServicePaginationTests(TestCase):
         self.assertEqual(page.page, 1)
         self.assertEqual(len(page.results), 2)
 
-    def test_pages_partition_every_permit_without_overlap(self):
+    def test_pages_partition_every_sr_without_overlap(self):
         first = self.service.get_cards(DashboardFilter(limit=2, page=1))
         second = self.service.get_cards(DashboardFilter(limit=2, page=2))
 
         self.assertEqual(len(first.results), 2)
         self.assertEqual(len(second.results), 1)
         seen = {card.id for card in first.results + second.results}
-        self.assertEqual(seen, self.permit_ids)
+        self.assertEqual(seen, self.sr_ids)
 
     def test_page_past_the_end_is_empty_but_count_holds(self):
         page = self.service.get_cards(DashboardFilter(limit=2, page=99))
@@ -511,9 +470,8 @@ class DashboardServicePaginationTests(TestCase):
         self.assertEqual(page.results, [])
 
 
-class DashboardServiceNoPermitsTests(TestCase):
-    """get_cards() with no Permit Application resources in the database. This
-    case builds no graph, so the permit query comes back empty."""
+class DashboardServiceNoSRsTests(TestCase):
+    """get_cards() with no BCAP Service Request resources in the database."""
 
     def test_get_cards_returns_empty_page(self):
         page = InternalDashboardService().get_cards(DashboardFilter())
@@ -522,7 +480,7 @@ class DashboardServiceNoPermitsTests(TestCase):
 
 
 class DashboardServiceVisibilityTests(TestCase):
-    """Which permits reach the dashboard, against one build of every shape that
+    """Which SRs reach the dashboard, against one build of every shape that
     must not: unsubmitted (still a draft), all requirements satisfied (nothing
     actionable), and a blank process_requirement tile (nothing a card could
     surface, which would otherwise build a card from None)."""
@@ -531,13 +489,13 @@ class DashboardServiceVisibilityTests(TestCase):
     def setUpTestData(cls):
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
-        cls.submitted_id = str(build_minimal_permit(builder, "Submitted").pk)
-        build_minimal_permit(builder, "Draft", submitted=False)
-        build_minimal_permit(builder, "Done", satisfied=True)
-        build_permit(builder, "Blank", [RequirementRow()])
+        cls.submitted_id = str(build_minimal_sr(builder, "Submitted").pk)
+        build_minimal_sr(builder, "Draft", submitted=False)
+        build_minimal_sr(builder, "Done", satisfied=True)
+        build_service_request(builder, "Blank", [RequirementRow()])
         cls.service = InternalDashboardService()
 
-    def test_only_the_submitted_actionable_permit_appears(self):
+    def test_only_the_submitted_actionable_sr_appears(self):
         page = self.service.get_cards(DashboardFilter())
 
         self.assertEqual(page.count, 1)
@@ -554,12 +512,12 @@ class RequirementsByIdTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = InternalDashboardService()
         builder = FixtureBuilder()
-        cls.permit = build_minimal_permit(builder, "Reader")
-        cls.permit_id = str(cls.permit.pk)
+        cls.sr = build_minimal_sr(builder, "Reader")
+        cls.sr_id = str(cls.sr.pk)
         attached = ProcessRequirementService().requirement_ids_by_permit(
-            [cls.permit_id]
+            [cls.sr_id], graph_slug=GraphSlugs.BCAP_SERVICE_REQUEST
         )
-        cls.requirement_id = next(iter(attached[cls.permit_id]))
+        cls.requirement_id = next(iter(attached[cls.sr_id]))
 
     def _by_id(self, ids):
         return self.service._requirements_by_id(ids)
@@ -573,7 +531,7 @@ class RequirementsByIdTests(TestCase):
         self.assertEqual(requirement.route, self.requirement_id)
 
     def test_a_requirement_with_no_tiles_is_still_unsatisfied(self):
-        # A deleted requirement leaves the permit's reference dangling; it now
+        # A deleted requirement leaves the SR's reference dangling; it now
         # seeds a blank entry rather than vanishing from the lookup.
         gone = str(uuid4())
 
@@ -583,15 +541,14 @@ class RequirementsByIdTests(TestCase):
         self.assertEqual(requirement.due_date, "")
         self.assertEqual(requirement.route, gone)
 
-    def test_deleting_the_requirement_drops_the_permit_off_the_dashboard(self):
-        # Arches scrubs the reference out of the permit's child tile on delete,
-        # so the permit has no active requirement left to surface -- the blank
-        # seeding above only covers an id that outlives its tiles.
+    def test_deleting_the_requirement_drops_the_sr_off_the_dashboard(self):
+        # Arches scrubs the reference out of the SR's child tile on delete,
+        # so the SR has no active requirement left to surface.
         Resource.objects.get(pk=self.requirement_id).delete()
 
         page = self.service.get_cards(DashboardFilter())
 
-        self.assertNotIn(self.permit_id, [card.id for card in page.results])
+        self.assertNotIn(self.sr_id, [card.id for card in page.results])
 
     def test_a_satisfied_requirement_is_left_out(self):
         satisfied = FixtureBuilder().make_process_requirement(
@@ -609,8 +566,8 @@ class RequirementsByIdTests(TestCase):
 
 
 class DashboardUnresolvedRollupTests(TestCase):
-    """The unresolved-thread roll-up: a permit's card count spans threads on the
-    permit and on the host resources its process requirements' submission_data
+    """The unresolved-thread roll-up: an SR's card count spans threads on the
+    SR and on the host resources its process requirements' submission_data
     points at (its related investigation/alteration/inspection)."""
 
     @classmethod
@@ -618,36 +575,40 @@ class DashboardUnresolvedRollupTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = InternalDashboardService()
         builder = FixtureBuilder()
-        cls.permit, cls.host, requirement = build_permit_with_investigation(
-            builder, "Roll"
-        )
-        cls.permit_id = str(cls.permit.pk)
+        cls.sr, cls.host, requirement = build_sr_with_investigation(builder, "Roll")
+        cls.sr_id = str(cls.sr.pk)
         cls.host_id = str(cls.host.pk)
         cls.requirement = requirement
         cls.requirement_id = str(requirement.pk)
 
-    def test_context_ids_include_the_permit_its_requirement_and_the_host(self):
-        contexts = PermitApplicationService().submission_context_ids_for_permits(
-            [self.permit]
+    def test_context_ids_include_the_sr_its_requirement_and_the_host(self):
+        contexts = (
+            BcapServiceRequestService().submission_context_ids_for_service_requests(
+                [self.sr]
+            )
         )
         self.assertEqual(
             contexts,
-            {self.permit_id: {self.permit_id, self.requirement_id, self.host_id}},
+            {self.sr_id: {self.sr_id, self.requirement_id, self.host_id}},
         )
 
-    def test_a_permit_with_no_submission_maps_to_itself_and_its_requirement(self):
+    def test_an_sr_with_no_submission_maps_to_itself_and_its_requirement(self):
         builder = FixtureBuilder()
         requirement = make_requirement(builder, "Bare")
-        bare = build_permit(builder, "Bare", [RequirementRow(requirement)])
-        contexts = PermitApplicationService().submission_context_ids_for_permits([bare])
+        bare = build_service_request(builder, "Bare", [RequirementRow(requirement)])
+        contexts = (
+            BcapServiceRequestService().submission_context_ids_for_service_requests(
+                [bare]
+            )
+        )
         self.assertEqual(contexts, {str(bare.pk): {str(bare.pk), str(requirement.pk)}})
 
-    def test_card_count_rolls_up_threads_on_the_permit_and_the_host(self):
+    def test_card_count_rolls_up_threads_on_the_sr_and_the_host(self):
         builder = FixtureBuilder()
         _, reader = make_party(builder, "roller", "Ray", "Reader", internal=True)
-        # One open thread on the permit, its requirement and its submission
+        # One open thread on the SR, its requirement and its submission
         # host, and one resolved that must not count.
-        make_message(builder, context=self.permit, recipient=reader, subject="p")
+        make_message(builder, context=self.sr, recipient=reader, subject="p")
         make_message(builder, context=self.host, recipient=reader, subject="h")
         make_message(builder, context=self.requirement, recipient=reader, subject="req")
         make_message(
@@ -660,5 +621,5 @@ class DashboardUnresolvedRollupTests(TestCase):
 
         page = self.service.get_cards(DashboardFilter(), "roller")
 
-        card = next(c for c in page.results if c.id == self.permit_id)
+        card = next(c for c in page.results if c.id == self.sr_id)
         self.assertEqual(card.unresolved_messages, 3)

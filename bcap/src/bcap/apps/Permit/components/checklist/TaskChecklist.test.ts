@@ -13,13 +13,13 @@ vi.mock('vue-router', () => ({
 
 // Only the header and requirement fetches are stubbed; the save path still goes
 // through the real apiFetch so the PATCH assertions stay honest.
-const { fetchPermitDetails } = vi.hoisted(() => ({
-    fetchPermitDetails: vi.fn(),
+const { fetchServiceRequestDetails } = vi.hoisted(() => ({
+    fetchServiceRequestDetails: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
     getProcessRequirementData: vi.fn(),
-    fetchPermitDetails,
+    fetchServiceRequestDetails,
 }));
 
 import { getProcessRequirementData } from '@/bcap/apps/Permit/api.ts';
@@ -130,7 +130,7 @@ const check = async (
 beforeEach(() => {
     mockRouteQuery.value = { id: 'res-1' };
     vi.clearAllMocks();
-    fetchPermitDetails.mockResolvedValue(null);
+    fetchServiceRequestDetails.mockResolvedValue(null);
 });
 
 afterEach(() => {
@@ -184,7 +184,7 @@ describe('TaskChecklist', () => {
             await flushPromises();
 
             expect(wrapper.find('.crumbs').exists()).toBe(false);
-            expect(fetchPermitDetails).not.toHaveBeenCalled();
+            expect(fetchServiceRequestDetails).not.toHaveBeenCalled();
         });
 
         it('crumbs back to the permit and loads its header band', async () => {
@@ -199,7 +199,7 @@ describe('TaskChecklist', () => {
             const wrapper = mount(TaskChecklist);
             await flushPromises();
 
-            expect(fetchPermitDetails).toHaveBeenCalledWith('permit-1');
+            expect(fetchServiceRequestDetails).toHaveBeenCalledWith('permit-1');
             expect(wrapper.find('.crumb-link').text()).toBe('Project Summary');
             expect(wrapper.find('.crumb-current').text()).toBe(
                 'Site Checklist',

@@ -1,12 +1,12 @@
 import { mount, flushPromises } from '@vue/test-utils';
 
-const { fetchResourceData, fetchPermitDetails } = vi.hoisted(() => ({
+const { fetchResourceData, fetchServiceRequestDetails } = vi.hoisted(() => ({
     fetchResourceData: vi.fn(),
-    fetchPermitDetails: vi.fn(),
+    fetchServiceRequestDetails: vi.fn(),
 }));
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     fetchResourceData,
-    fetchPermitDetails,
+    fetchServiceRequestDetails,
 }));
 
 // The real review pulls in the arches_vue_components widget tree, which vitest
@@ -60,7 +60,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     mockQuery.value = {};
     fetchResourceData.mockResolvedValue({ some: 'data' });
-    fetchPermitDetails.mockResolvedValue(null);
+    fetchServiceRequestDetails.mockResolvedValue(null);
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
@@ -87,7 +87,7 @@ describe('with a submission in the store', () => {
         await flushPromises();
 
         expect(fetchResourceData).toHaveBeenCalledWith('investigation', 'r-1');
-        expect(fetchPermitDetails).toHaveBeenCalledWith('permit-1');
+        expect(fetchServiceRequestDetails).toHaveBeenCalledWith('permit-1');
         expect(replace).not.toHaveBeenCalled();
         const review = wrapper.findComponent({ name: 'Step99_Review' });
         expect(review.props('resourceData')).toEqual({ some: 'data' });

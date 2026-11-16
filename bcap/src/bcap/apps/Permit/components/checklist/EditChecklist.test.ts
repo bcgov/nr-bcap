@@ -16,16 +16,19 @@ vi.mock('@/bcap/api.ts', async (importOriginal) => ({
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
     saveChecklist: vi.fn(),
     // The header band loads through the permit header store.
-    fetchPermitDetails: vi.fn(),
+    fetchServiceRequestDetails: vi.fn(),
 }));
 
 import { apiFetchJson } from '@/bcap/api.ts';
-import { saveChecklist, fetchPermitDetails } from '@/bcap/apps/Permit/api.ts';
+import {
+    saveChecklist,
+    fetchServiceRequestDetails,
+} from '@/bcap/apps/Permit/api.ts';
 import EditChecklist from './EditChecklist.vue';
 
 const mockFetchJson = vi.mocked(apiFetchJson);
 const mockSave = vi.mocked(saveChecklist);
-const mockPermitDetails = vi.mocked(fetchPermitDetails);
+const mockPermitDetails = vi.mocked(fetchServiceRequestDetails);
 
 const localized = (value: string) => ({ node_value: { en: { value } } });
 

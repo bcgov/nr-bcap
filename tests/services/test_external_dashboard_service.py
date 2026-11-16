@@ -13,11 +13,10 @@ from bcap.services.dashboard.dashboard_types import (
     DashboardFilter,
     ExternalDashboardStatus,
 )
-from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.permit_fixtures import (
     RequirementRow,
-    build_permit,
+    build_service_request,
     make_requirement,
 )
 from tests.services.contributor_fixtures import (
@@ -29,7 +28,7 @@ from tests.services.message_fixtures import make_message
 
 from tests.controlled_list_fixtures import ControlledListFixtures
 
-# Permit Application lifecycle state ids, keyed by name.
+# BCAP Service Request lifecycle state ids, keyed by name.
 LIFECYCLE_STATE_IDS = {
     "Draft": "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f",
     "Active": "f75bb034-36e3-4ab4-8167-f520cf0b4c58",
@@ -37,45 +36,24 @@ LIFECYCLE_STATE_IDS = {
 }
 
 
-def build_external_permit(
-    builder, name, owner, lifecycle="Active", hca_permit=None, organization=None
-):
-    """A permit_application owned by ``owner`` in the given lifecycle state, with
-    an optional related HCA permit. Pass organization to stamp the company whose
-    members may see it, as the create route does. External permits carry no
-    modules, so it is built without requirement rows."""
-    permit = build_permit(
+def build_external_sr(builder, name, owner, lifecycle="Active", organization=None):
+    """A bcap_service_request owned by ``owner`` in the given lifecycle state.
+    Pass organization to stamp the company whose members may see it, as the
+    create route does. External SRs carry no modules."""
+    service_request = build_service_request(
         builder,
         name,
         submission_date="2026-06-18",
         # Pinned by label so the card's submission_type is assertable.
-        filing_type="Submit a Site Visit",
+        service_request_type="Submit a Site Visit",
         organization=organization,
-        related_permit=hca_permit,
     )
     # The builder sets neither, so stamp them directly.
-    ResourceInstance.objects.filter(pk=permit.pk).update(
+    ResourceInstance.objects.filter(pk=service_request.pk).update(
         principaluser=owner,
         resource_instance_lifecycle_state_id=LIFECYCLE_STATE_IDS[lifecycle],
     )
-    return permit
-
-
-def build_hca_permit(builder, number, holder):
-    permit = builder.new_resource("hca_permit")
-    builder.append_blank_tile_for_group(
-        permit,
-        "permit_identification",
-        {
-            "permit_number": number,
-            "permit_holder": [holder],
-            "hca_permit_type": reference_value(
-                "hca_permit", "hca_permit_type", "Investigation"
-            ),
-        },
-    )
-    permit.save(**builder.save_kwargs)
-    return permit
+    return service_request
 
 
 class ExternalDashboardServiceTests(TestCase):
@@ -99,28 +77,26 @@ class ExternalDashboardServiceTests(TestCase):
         )
         cls.outsider = make_user("outsider")
 
-        hca = build_hca_permit(builder, "HCA-001", acme)
-        cls.mine_active = build_external_permit(
-            builder, "Mine Active", cls.me, "Active", hca_permit=hca, organization=acme
+        cls.mine_active = build_external_sr(
+            builder, "Mine Active", cls.me, "Active", organization=acme
         )
-        cls.mine_draft_state = build_external_permit(
+        cls.mine_draft_state = build_external_sr(
             builder, "Mine Draft", cls.me, "Draft", organization=acme
         )
-        cls.colleagues = build_external_permit(
+        cls.colleagues = build_external_sr(
             builder, "Colleague App", cls.colleague, "Active", organization=acme
         )
-        cls.outsiders = build_external_permit(
+        cls.outsiders = build_external_sr(
             builder, "Outsider App", cls.outsider, "Active"
         )
         # Filed by Grace under a company she has since left.
-        cls.left_behind = build_external_permit(
+        cls.left_behind = build_external_sr(
             builder,
             "Former Company App",
             cls.me,
             "Active",
             organization=make_contributor(builder, "Former Corp"),
         )
-        cls.hca_id = str(hca.pk)
 
     def test_created_by_me_returns_only_the_users_own_applications(self):
         page = self.service.get_cards(
@@ -151,18 +127,19 @@ class ExternalDashboardServiceTests(TestCase):
             {str(self.mine_active.pk), str(self.mine_draft_state.pk)},
         )
 
-    def test_card_fields_map_from_the_permit_and_related_hca(self):
+    def test_card_fields_map_from_the_sr(self):
         page = self.service.get_cards(DashboardFilter(), self.me)
 
         card = next(c for c in page.results if c.id == str(self.mine_active.pk))
         self.assertFalse(card.is_draft)
         self.assertEqual(card.project_name, "Mine Active")
-        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
+        self.assertRegex(card.application_number, r"^[A-Z]+-\d{4}-\d+$")
         self.assertEqual(card.submission_date, "2026-06-18")
         self.assertEqual(card.created_by_name, "Grace Hopper")
-        self.assertEqual(card.permit_id, self.hca_id)
-        self.assertEqual(card.permit_number, "HCA-001")
         self.assertEqual(card.organization, "Acme Corp")
+        # SR has no HCA permit relationship.
+        self.assertIsNone(card.permit_id)
+        self.assertEqual(card.permit_number, "")
         # Personal/internal fields are not on the external card at all.
         self.assertFalse(hasattr(card, "ministry_assignee_name"))
         self.assertFalse(hasattr(card, "project_officer"))
@@ -182,7 +159,7 @@ class ExternalDashboardServiceTests(TestCase):
 
     def test_retired_lifecycle_has_no_mapped_status(self):
         builder = FixtureBuilder()
-        retired = build_external_permit(builder, "Retired App", self.me, "Retired")
+        retired = build_external_sr(builder, "Retired App", self.me, "Retired")
 
         page = self.service.get_cards(DashboardFilter(), self.me)
 
@@ -247,7 +224,7 @@ class ExternalDashboardDraftsTests(TestCase):
         cls.user = make_user("drafter")
         cls.other = make_user("other")
         builder = FixtureBuilder()
-        cls.permit = build_external_permit(
+        cls.permit = build_external_sr(
             builder,
             "Parent Project",
             cls.user,
@@ -302,7 +279,7 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertTrue(card.is_draft)
         self.assertEqual(card.graph_slug, GraphSlugs.INVESTIGATION)
 
-    def test_module_draft_is_named_by_the_permit_it_was_started_from(self):
+    def test_module_draft_is_named_by_the_sr_it_was_started_from(self):
         page = self.service.get_cards(
             DashboardFilter(status=ExternalDashboardStatus.DRAFTS_CREATED_BY_ME),
             self.user,
@@ -311,7 +288,7 @@ class ExternalDashboardDraftsTests(TestCase):
         card = next(c for c in page.results if c.id == str(self.investigation_draft.pk))
         self.assertEqual(card.permit_application_id, str(self.permit.pk))
         self.assertEqual(card.project_name, "Parent Project")
-        self.assertRegex(card.application_number, r"^APP-\d{4}-\d+$")
+        self.assertRegex(card.application_number, r"^[A-Z]+-\d{4}-\d+$")
         self.assertEqual(card.submission_type, "Submit a Site Visit")
         self.assertEqual(card.organization, "Parent Corp")
 
@@ -437,7 +414,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         ControlledListFixtures.seed()
         cls.service = ExternalDashboardService()
         cls.user = make_user("messy")
-        cls.parent = build_external_permit(
+        cls.parent = build_external_sr(
             FixtureBuilder(), "Parent Project", cls.user, "Active"
         )
 
@@ -519,7 +496,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         self.assertEqual(card.submission_type, "Submit a Site Visit")
 
     def test_a_deleted_parent_leaves_blanks_but_keeps_the_permit_id(self):
-        gone = build_external_permit(FixtureBuilder(), "Doomed", self.user, "Active")
+        gone = build_external_sr(FixtureBuilder(), "Doomed", self.user, "Active")
         parent_id = str(gone.pk)
         ResourceInstance.objects.filter(pk=parent_id).delete()
 
@@ -532,8 +509,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
 
 class ExternalDashboardUnresolvedTests(TestCase):
     """The applicant's card counts unresolved threads filed anywhere on their
-    application: the permit, its process requirements, and their submission
-    hosts."""
+    application: the SR, its process requirements, and the host resources."""
 
     @classmethod
     def setUpTestData(cls):
@@ -545,18 +521,18 @@ class ExternalDashboardUnresolvedTests(TestCase):
         cls.host = builder.make_resource(GraphSlugs.INVESTIGATION)
         cls.requirement = make_requirement(builder, "Unread")
         builder.link(str(cls.requirement.pk), submission=cls.host)
-        cls.permit = build_permit(
+        cls.sr = build_service_request(
             builder, "Unread App", [RequirementRow(cls.requirement)]
         )
-        ResourceInstance.objects.filter(pk=cls.permit.pk).update(
+        ResourceInstance.objects.filter(pk=cls.sr.pk).update(
             principaluser=cls.user,
-            resource_instance_lifecycle_state_id=LIFECYCLE_STATE_IDS["Active"],
+            resource_instance_lifecycle_state_id="f75bb034-36e3-4ab4-8167-f520cf0b4c58",
         )
 
         # Staff wrote each, so each waits on the applicant.
         staff = make_party(builder, "dashstaff", "Sam", "Staff", internal=True)[1]
         for context, subject in (
-            (cls.permit, "p"),
+            (cls.sr, "p"),
             (cls.requirement, "req"),
             (cls.host, "h"),
         ):
@@ -576,8 +552,8 @@ class ExternalDashboardUnresolvedTests(TestCase):
             subject="resolved",
         )
 
-    def test_card_count_spans_the_permit_its_requirement_and_the_host(self):
+    def test_card_count_spans_the_sr_its_requirement_and_the_host(self):
         page = self.service.get_cards(DashboardFilter(), self.user)
 
-        card = next(c for c in page.results if c.id == str(self.permit.pk))
+        card = next(c for c in page.results if c.id == str(self.sr.pk))
         self.assertEqual(card.unresolved_messages, 3)

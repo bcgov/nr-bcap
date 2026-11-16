@@ -15,6 +15,10 @@ from arches.app.models.tile import Tile
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.aliases.bcap_service_request import (
+    BcapServiceRequestAliases as sr,
+    BcapServiceRequestGroupAliases as sr_groups,
+)
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,
     PermitApplicationGroupAliases as pa_groups,
@@ -210,13 +214,22 @@ class ProcessRequirementService:
         """Point a module requirement's ministry_assignee at a Contributor, or
         clear it with None. Returns False for a requirement that isn't on the
         module. The save writes the edit log the dashboard reads the assignment
-        date from."""
-        permit = self._load_application_admin(
-            permit_id, [pa.PROCESS_REQUIREMENT, pa.MINISTRY_ASSIGNEE]
-        )
-        module = self._module_by_tileid(
-            permit.aliased_data.application_admin, module_tileid
-        )
+        date from. Supports both BCAP Service Request and Permit Application."""
+        slug = self._resource_graph_slug(permit_id)
+        nodes = [pa.PROCESS_REQUIREMENT, pa.MINISTRY_ASSIGNEE]
+        if slug == GraphSlugs.BCAP_SERVICE_REQUEST:
+            permit = ResourceTileTree.get_tiles(
+                GraphSlugs.BCAP_SERVICE_REQUEST,
+                nodes=nodes_for(GraphSlugs.BCAP_SERVICE_REQUEST, nodes),
+            ).get(pk=permit_id)
+            admin = permit.aliased_data.service_request_admin
+        else:
+            permit = ResourceTileTree.get_tiles(
+                GraphSlugs.PERMIT_APPLICATION,
+                nodes=nodes_for(GraphSlugs.PERMIT_APPLICATION, nodes),
+            ).get(pk=permit_id)
+            admin = permit.aliased_data.application_admin
+        module = self._module_by_tileid(admin, module_tileid)
         child = self._requirement_child(module, requirement_id)
         if child is None:
             return False
@@ -225,6 +238,15 @@ class ProcessRequirementService:
         )
         permit.save(**self._save_as, partial=True)
         return True
+
+    @staticmethod
+    def _resource_graph_slug(resource_id):
+        """Return the graph slug for the given resource id."""
+        from arches.app.models.models import ResourceInstance
+
+        return ResourceInstance.objects.values_list("graph__slug", flat=True).get(
+            pk=resource_id
+        )
 
     def add_blank_requirement(self, permit_id, module_tileid, name="New requirement"):
         """Create a blank process requirement and attach it to the module after
@@ -347,11 +369,14 @@ class ProcessRequirementService:
             return []
         return ResourceTileTree.get_tiles(host_slug, resource_ids=host_ids)
 
-    def requirement_ids_by_permit(self, permit_ids):
-        """Each permit id mapped to the process requirement ids attached to it."""
-        return references_by_source(
-            permit_ids, node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
-        )
+    def requirement_ids_by_permit(self, permit_ids, graph_slug=None):
+        """Each permit id mapped to the process requirement ids attached to it.
+
+        graph_slug selects which graph's process_requirement node UUID to query
+        against; defaults to PERMIT_APPLICATION for backward compatibility with
+        PA → Investigation traversal."""
+        slug = graph_slug or GraphSlugs.PERMIT_APPLICATION
+        return references_by_source(permit_ids, node_id(slug, pa.PROCESS_REQUIREMENT))
 
     def host_ids_by_requirement(self, requirement_ids):
         """Each requirement id mapped to the submission host resource ids its

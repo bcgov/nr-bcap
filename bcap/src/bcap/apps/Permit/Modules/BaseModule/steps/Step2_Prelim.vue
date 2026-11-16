@@ -52,17 +52,6 @@ defineExpose({ isValid });
                 "
             />
             <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.proposed_project?.aliased_data?.project_name
-                "
-                graph-slug="bcap_service_request"
-                node-alias="project_name"
-                @update:aliased-node-data="
-                    updateValue($event, 'project_name', 'proposed_project')
-                "
-            />
-            <GenericWidget
                 class="description-box"
                 :mode="EDIT"
                 :aliased-node-data="
@@ -77,17 +66,6 @@ defineExpose({ isValid });
                         'project_description',
                         'proposed_project',
                     )
-                "
-            />
-            <GenericWidget
-                :mode="EDIT"
-                :aliased-node-data="
-                    draftData?.proposed_project?.aliased_data?.scope_of_work
-                "
-                graph-slug="bcap_service_request"
-                node-alias="scope_of_work"
-                @update:aliased-node-data="
-                    updateValue($event, 'scope_of_work', 'proposed_project')
                 "
             />
         </FieldSet>

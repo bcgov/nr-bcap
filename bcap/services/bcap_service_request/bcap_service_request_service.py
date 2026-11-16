@@ -2,8 +2,10 @@
 service request id on create, and attach the requirement working copies whenever
 a create or update sets the submission date."""
 
+from collections import defaultdict
 from itertools import chain
 
+from arches.app.models.models import ResourceInstance
 from arches_querysets.models import ResourceTileTree
 
 from bcap.permissions.groups import is_internal_user
@@ -46,14 +48,21 @@ class BcapServiceRequestService:
         self, service_requests, requirements_by_service_request=None
     ):
         """Map each service request to the resource ids its unresolved counts
-        span (the service request, its requirements, and their submission
-        hosts); pass known requirement ids to skip a query."""
+        span, two levels deep:
+
+          SR → requirements → hosts (PA, Document Submission, ...)
+          PA hosts → PA requirements → hosts (Investigation, ...)
+
+        Pass known requirement ids to skip the first-level query."""
         service_request_ids = [str(sr.pk) for sr in service_requests]
         contexts = {pk: {pk} for pk in service_request_ids}
 
         if requirements_by_service_request is None:
             requirements_by_service_request = (
-                self._requirements.requirement_ids_by_permit(service_request_ids)
+                self._requirements.requirement_ids_by_permit(
+                    service_request_ids,
+                    graph_slug=GraphSlugs.BCAP_SERVICE_REQUEST,
+                )
             )
         all_requirement_ids = set(
             chain.from_iterable(requirements_by_service_request.values())
@@ -61,11 +70,49 @@ class BcapServiceRequestService:
         hosts_by_requirement = self._requirements.host_ids_by_requirement(
             all_requirement_ids
         )
+
+        # Level 1: SR → requirements → submission hosts (PA, Doc Submission, etc.)
+        all_host_ids = set()
         for sr_id, requirement_ids in requirements_by_service_request.items():
             for requirement_id in requirement_ids:
                 contexts[sr_id].add(str(requirement_id))
-                hosts = hosts_by_requirement.get(str(requirement_id), ())
-                contexts[sr_id].update(hosts)
+                for host_id in hosts_by_requirement.get(str(requirement_id), ()):
+                    contexts[sr_id].add(str(host_id))
+                    all_host_ids.add(str(host_id))
+
+        # Level 2: PA hosts → their requirements → Investigation hosts.
+        # Identify which level-1 hosts are Permit Applications.
+        pa_ids = set(
+            str(pk)
+            for pk in ResourceInstance.objects.filter(
+                pk__in=all_host_ids,
+                graph__slug=GraphSlugs.PERMIT_APPLICATION,
+            ).values_list("pk", flat=True)
+        )
+        if not pa_ids:
+            return contexts
+
+        # Map each PA back to the SR(s) whose context it belongs in.
+        pa_to_sr_ids = defaultdict(set)
+        for sr_id, requirement_ids in requirements_by_service_request.items():
+            for requirement_id in requirement_ids:
+                for host_id in hosts_by_requirement.get(str(requirement_id), ()):
+                    if str(host_id) in pa_ids:
+                        pa_to_sr_ids[str(host_id)].add(sr_id)
+
+        pa_requirements_by_pa = self._requirements.requirement_ids_by_permit(
+            list(pa_ids)
+            # graph_slug defaults to PERMIT_APPLICATION
+        )
+        all_pa_req_ids = set(chain.from_iterable(pa_requirements_by_pa.values()))
+        pa_hosts_by_req = self._requirements.host_ids_by_requirement(all_pa_req_ids)
+
+        for pa_id, pa_req_ids in pa_requirements_by_pa.items():
+            for sr_id in pa_to_sr_ids.get(pa_id, ()):
+                for req_id in pa_req_ids:
+                    contexts[sr_id].add(req_id)
+                    contexts[sr_id].update(pa_hosts_by_req.get(req_id, ()))
+
         return contexts
 
     @staticmethod

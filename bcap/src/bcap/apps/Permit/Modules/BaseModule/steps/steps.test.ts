@@ -86,12 +86,27 @@ describe('BaseModule steps', () => {
     });
 
     it('Step4 routes a BC Property Address field into the draft store', () => {
+        // The street_number widget is inside v-if="showPrivateProperty", so
+        // set the draft to 'Private Property' to make it visible.
+        useDraftStore().draftData = {
+            service_request_location: {
+                aliased_data: {
+                    property_type: {
+                        display_value: 'Private Property',
+                        node_value: null,
+                        details: [],
+                    },
+                },
+            },
+        } as never;
+
         const wrapper = mountStep(Step4);
         const updateValue = vi.spyOn(useDraftStore(), 'updateValue');
 
         const streetNumber = edit('123');
+        // Widget 0 = property_type; widget 1 = street_number (first BC address field).
         wrapper
-            .findComponent({ name: 'GenericWidget' })
+            .findAllComponents({ name: 'GenericWidget' })[1]
             .vm.$emit('update:aliasedNodeData', streetNumber);
 
         expect(updateValue).toHaveBeenCalledWith(

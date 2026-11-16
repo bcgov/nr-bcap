@@ -33,17 +33,17 @@ from tests.builders import FixtureBuilder
 from tests.controlled_list_fixtures import ControlledListFixtures
 from tests.permit_fixtures import seed_requirement_templates
 from tests.services.test_internal_dashboard_service import (
-    build_permit_graph,
-    build_minimal_permit,
+    build_sr_graph,
+    build_minimal_sr,
 )
 
 
 def _load_module(permit_id, index=0):
-    """One of a permit's process_module tiles, fully hydrated."""
-    permit = ResourceTileTree.get_tiles(
-        GraphSlugs.PERMIT_APPLICATION, resource_ids=[str(permit_id)]
+    """One of a BCAP Service Request's process_module tiles, fully hydrated."""
+    sr = ResourceTileTree.get_tiles(
+        GraphSlugs.BCAP_SERVICE_REQUEST, resource_ids=[str(permit_id)]
     ).get()
-    return permit.aliased_data.application_admin.aliased_data.process_module[index]
+    return sr.aliased_data.service_request_admin.aliased_data.process_module[index]
 
 
 def _module_children(module):
@@ -249,17 +249,17 @@ class MinistryAssigneeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         ControlledListFixtures.seed()
-        graph = build_permit_graph()
-        cls.permit_id = str(graph.permit.pk)
+        graph = build_sr_graph()
+        cls.permit_id = str(graph.service_request.pk)
         cls.assessment_id = str(graph.assessment.pk)
         cls.review_id = str(graph.review.pk)
         cls.ada_id = str(graph.ada.pk)
         cls.grace_id = str(graph.grace.pk)
         cls.module_tileid = str(_load_module(cls.permit_id).tileid)
 
-        # A second permit, unassigned so its first assignment registers as an
-        # edit-log change, and foreign to the permit above.
-        other = build_minimal_permit(FixtureBuilder(), "Other Permit")
+        # A second SR, unassigned so its first assignment registers as an
+        # edit-log change, and foreign to the SR above.
+        other = build_minimal_sr(FixtureBuilder(), "Other SR")
         other_module = _load_module(other.pk)
         cls.other_permit_id = str(other.pk)
         cls.other_module_tileid = str(other_module.tileid)

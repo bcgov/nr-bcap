@@ -17,11 +17,12 @@ import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
 import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
 import type {
+    BcapServiceRequestResourceAliasedData,
     PermitApplicationResourceAliasedData,
     StringAliasedNodeData,
 } from '@/bcap/client/types.gen.ts';
 import {
-    fetchPermitDetails,
+    fetchServiceRequestDetails,
     fetchDrafts,
     deleteDraft,
 } from '@/bcap/apps/Permit/api.ts';
@@ -99,6 +100,7 @@ const state = reactive({
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
     rawPermitData: null as PermitApplicationResourceAliasedData | null,
+    rawSrData: null as BcapServiceRequestResourceAliasedData | null,
     permitDrafts: [] as PermitDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
@@ -145,16 +147,24 @@ const isBaseModuleId = (id: string) =>
     (modulesAllowedForFilingType.value[0]?.id ?? GraphSlug.BcapServiceRequest);
 
 const basicInfoFields = computed<ReviewField[]>(() => {
+    if (state.rawSrData) return [];
     return getBasicInfoFields(state.rawPermitData);
 });
 
 // The permit's process_module tiles; the modules panel filters these to the ones
 // with a submission date and renders them as a drag-reorderable accordion.
-const processModules = computed(
-    () =>
+const processModules = computed(() => {
+    if (state.rawSrData) {
+        return (
+            state.rawSrData.service_request_admin?.aliased_data
+                ?.process_module ?? []
+        );
+    }
+    return (
         state.rawPermitData?.application_admin?.aliased_data?.process_module ??
-        [],
-);
+        []
+    );
+});
 
 const getModuleStatus = (moduleId: string) => {
     return state.fetchedModuleData[moduleId]?.status || 'unstarted';
@@ -163,39 +173,27 @@ const getModuleStatus = (moduleId: string) => {
 const loadPermitDetails = async () => {
     state.loadError = '';
     try {
-        const aliased = await fetchPermitDetails(permitId.value);
-        if (!aliased) return;
+        const srData = await fetchServiceRequestDetails(permitId.value);
+        if (!srData) return;
 
-        state.rawPermitData = aliased;
-
-        const appIdent = aliased.application_identification?.aliased_data;
-        const appAdmin = aliased.application_admin;
+        state.rawSrData = srData;
+        state.rawPermitData = null;
 
         state.adminTileMeta = {
-            tileid: appAdmin?.tileid || '',
-            nodegroup: appAdmin?.nodegroup || '',
+            tileid: srData.service_request_admin?.tileid || '',
+            nodegroup: srData.service_request_admin?.nodegroup || '',
         };
 
-        state.permitData = headerStore.setFromAliased(permitId.value, aliased);
-
-        const baseStatus = appIdent?.project_name?.display_value
-            ? 'completed'
-            : 'unstarted';
+        state.permitData = headerStore.setFromServiceRequest(
+            permitId.value,
+            srData,
+        );
         state.fetchedModuleData = {
-            [GraphSlug.PermitApplication]: { status: baseStatus },
-            [GraphSlug.BcapServiceRequest]: { status: baseStatus },
+            [GraphSlug.BcapServiceRequest]: { status: 'completed' },
             // TODO fix in a bit
-            inspection: {
-                status: 'unstarted',
-            },
-            // TODO fix in a bit
-            investigation: {
-                status: 'unstarted',
-            },
-            // TODO fix in a bit
-            alteration: {
-                status: 'unstarted',
-            },
+            inspection: { status: 'unstarted' },
+            investigation: { status: 'unstarted' },
+            alteration: { status: 'unstarted' },
         };
     } catch (error) {
         state.loadError = inlineMessage(error);

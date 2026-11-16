@@ -8,15 +8,10 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
 )
-from bcap.builders.contributor_builder import ContributorSpec
-from bcap.util.controlled_list import reference_value
 from tests.builders import FixtureBuilder, request_as
 from tests.controlled_list_fixtures import ControlledListFixtures
-from tests.services.test_internal_dashboard_service import build_permit_graph
-from tests.services.test_external_dashboard_service import (
-    build_external_permit,
-    build_hca_permit,
-)
+from tests.services.test_internal_dashboard_service import build_sr_graph
+from tests.services.test_external_dashboard_service import build_external_sr
 from tests.views.helpers import AuthTestHelper
 
 
@@ -41,7 +36,7 @@ class DashboardViewAuthTests(AuthTestHelper, TestCase):
 @override_settings(ROOT_URLCONF="tests.test_urls")
 class DashboardViewCardsTests(AuthTestHelper, TestCase):
     """The dashboard endpoint end to end: view -> serializer -> service, against
-    a real permit graph and an authenticated session."""
+    a real SR graph and an authenticated session."""
 
     @classmethod
     def setUpTestData(cls):
@@ -49,8 +44,8 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         cls.user.groups.add(Group.objects.get(name=Groups.ARCHAEOLOGY_BRANCH))
         # Rolled back with the class transaction.
         ControlledListFixtures.seed()
-        graph = build_permit_graph()
-        cls.permit_id = str(graph.permit.pk)
+        graph = build_sr_graph()
+        cls.permit_id = str(graph.service_request.pk)
         cls.ada_id = str(graph.ada.pk)
         cls.grace_id = str(graph.grace.pk)
         cls.acme_id = str(graph.acme.pk)
@@ -70,7 +65,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         card = body["results"][0]
         self.assertEqual(card["id"], self.permit_id)
         self.assertEqual(card["project_name"], "My Project")
-        self.assertRegex(card["application_number"], r"^APP-\d{4}-\d+$")
+        self.assertRegex(card["application_number"], r"^[A-Z]+-\d{4}-\d+$")
         self.assertEqual(card["submission_type"], "Submit a Site Visit")
         # "Review" is satisfied, so the card surfaces "Field Assessment".
         self.assertEqual(card["requirement_name"], "Field Assessment")
@@ -85,7 +80,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
     def test_get_filters_by_assignment_status(self):
         # Grace's bcap_username is the session user "testuser" and she is the
         # assignee of the active ("Field Assessment") requirement, so
-        # ASSIGNED_TO_ME matches the permit.
+        # ASSIGNED_TO_ME matches the SR.
         resp = self.client.get(
             self.url, {"status": InternalDashboardStatus.ASSIGNED_TO_ME}
         )
@@ -95,7 +90,7 @@ class DashboardViewCardsTests(AuthTestHelper, TestCase):
         self.assertEqual([c["id"] for c in body["results"]], [self.permit_id])
 
     def test_limit_and_page_slice_results(self):
-        # One permit on page 1; count is the total and the page/limit echo back.
+        # One SR on page 1; count is the total and the page/limit echo back.
         resp = self.client.get(self.url, {"limit": 1, "page": 1})
         self.assertEqual(resp.status_code, 200)
         body = resp.json()
@@ -145,16 +140,8 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         super().setUpTestData()
         ControlledListFixtures.seed()
         builder = FixtureBuilder()
-        contributor_type = reference_value("contributor", "contributor_type")
-        holder = builder.make_contributor(
-            ContributorSpec(contributor_type, None, "Acme Corp")
-        )
-        hca = build_hca_permit(builder, "HCA-001", holder)
-        cls.hca_id = str(hca.pk)
         # Owned by the session user (testuser), so the created-by scope matches.
-        cls.mine = build_external_permit(
-            builder, "My App", cls.user, "Active", hca_permit=hca
-        )
+        cls.mine = build_external_sr(builder, "My App", cls.user, "Active")
         cls.draft = WorkflowDraftService().create(
             request_as(cls.user),
             "permit_application",
@@ -188,10 +175,11 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         # Blank rather than the username: a login identifier is not a name.
         self.assertEqual(card["created_by_name"], "Unknown")
         self.assertEqual(card["project_name"], "My App")
-        self.assertRegex(card["application_number"], r"^APP-\d{4}-\d+$")
+        self.assertRegex(card["application_number"], r"^[A-Z]+-\d{4}-\d+$")
         self.assertEqual(card["submission_type"], "Submit a Site Visit")
-        self.assertEqual(card["permit_id"], self.hca_id)
-        self.assertEqual(card["permit_number"], "HCA-001")
+        # SR has no HCA permit relationship.
+        self.assertIsNone(card["permit_id"])
+        self.assertEqual(card["permit_number"], "")
 
         # The card carries the module summary, not the per-module list.
         self.assertNotIn("modules", card)

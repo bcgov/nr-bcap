@@ -19,6 +19,7 @@ import type {
     BcapMessage,
     BcapMessageWritable,
     BcapServiceRequest,
+    BcapServiceRequestResourceAliasedData,
     ChecklistStep,
     ContributorSummary,
     ExternalDashboardCard,
@@ -281,6 +282,21 @@ export const fetchPermitDetails = async (
         return null;
     }
 
+    return rawJson.aliased_data;
+};
+
+export const fetchServiceRequestDetails = async (
+    resourceId: string,
+): Promise<BcapServiceRequestResourceAliasedData | null> => {
+    const url = arches.urls.api_resource(
+        GraphSlug.BcapServiceRequest,
+        resourceId,
+    );
+    const rawJson = await apiFetchJson<BcapServiceRequest>(url);
+    if (!rawJson || !rawJson.aliased_data) {
+        console.warn('API payload did not contain aliased_data');
+        return null;
+    }
     return rawJson.aliased_data;
 };
 
