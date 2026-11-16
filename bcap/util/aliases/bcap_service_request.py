@@ -27,9 +27,9 @@ class BcapServiceRequestAliases(AbstractAliases):
     PROCESS_REQUIREMENT = "process_requirement"
     PROCESS_REQUIREMENT_ORDER = "process_requirement_order"
     PROJECT_DESCRIPTION = "project_description"
-    PROPERTY_TYPE = "property_type"
     PROJECT_NAME = "project_name"
     PROJECT_TYPE = "project_type"
+    PROPERTY_TYPE = "property_type"
     RATIONALE_FOR_NO_ARCHAEOLOGIST = "rationale_for_no_archaeologist"
     SCOPE_OF_WORK = "scope_of_work"
     SERVICE_REQUEST_BOUNDARY = "service_request_boundary"
@@ -51,11 +51,11 @@ class BcapServiceRequestGroupAliases(AbstractAliases):
     BC_PROPERTY_LEGAL_DESCRIPTION = "bc_property_legal_description"
     CROWN_LAND_SURVEY_INFORMATION = "crown_land_survey_information"
     PROCESS_MODULE = "process_module"
-    SERVICE_REQUEST_LOCATION = "service_request_location"
     PROPOSED_PROJECT = "proposed_project"
     SERVICE_REQUEST_ADMIN = "service_request_admin"
     SERVICE_REQUEST_CONTACTS = "service_request_contacts"
     SERVICE_REQUEST_IDENTIFICATION = "service_request_identification"
+    SERVICE_REQUEST_LOCATION = "service_request_location"
 
     @staticmethod
     def get_aliases():
