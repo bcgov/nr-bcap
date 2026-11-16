@@ -6,6 +6,7 @@ import GenericWidget from '@/arches_vue_components/generics/GenericWidget/Generi
 import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import type { BcapServiceRequestResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 const emit = defineEmits(['update:step-is-valid']);
 
@@ -16,11 +17,12 @@ const stepSchema = z.object({
 });
 
 // use draft not form state, this is different than bcfms/bcrhp
-const { draftData, resolver, isValid, updateValue } = useDraftStep(
-    stepSchema,
-    'service_request_identification',
-    emit,
-);
+const { draftData, resolver, isValid, updateValue } =
+    useDraftStep<BcapServiceRequestResourceAliasedData>(
+        stepSchema,
+        'service_request_identification',
+        emit,
+    );
 
 defineExpose({ isValid });
 </script>

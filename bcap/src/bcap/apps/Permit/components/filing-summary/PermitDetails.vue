@@ -138,6 +138,12 @@ const activeModule = computed(() => {
     );
 });
 
+// The first entry in the module list is the filing-summary / base module,
+// regardless of whether it is a PermitApplication or BcapServiceRequest.
+const isBaseModuleId = (id: string) =>
+    id ===
+    (modulesAllowedForFilingType.value[0]?.id ?? GraphSlug.BcapServiceRequest);
+
 const basicInfoFields = computed<ReviewField[]>(() => {
     return getBasicInfoFields(state.rawPermitData);
 });
@@ -172,12 +178,12 @@ const loadPermitDetails = async () => {
 
         state.permitData = headerStore.setFromAliased(permitId.value, aliased);
 
+        const baseStatus = appIdent?.project_name?.display_value
+            ? 'completed'
+            : 'unstarted';
         state.fetchedModuleData = {
-            [GraphSlug.PermitApplication]: {
-                status: appIdent?.project_name?.display_value
-                    ? 'completed'
-                    : 'unstarted',
-            },
+            [GraphSlug.PermitApplication]: { status: baseStatus },
+            [GraphSlug.BcapServiceRequest]: { status: baseStatus },
             // TODO fix in a bit
             inspection: {
                 status: 'unstarted',
@@ -251,7 +257,7 @@ watch(permitId, () => {
 });
 
 watch(activeModuleId, (id) => {
-    if (id === GraphSlug.PermitApplication) {
+    if (isBaseModuleId(id)) {
         loadDraftsForPermitApp();
     }
 });
@@ -312,7 +318,7 @@ watch(activeModuleId, (id) => {
                         <i
                             v-else-if="
                                 getModuleStatus(mod.id) !== 'completed' &&
-                                mod.id !== GraphSlug.PermitApplication
+                                !isBaseModuleId(mod.id)
                             "
                             class="fa-solid fa-plus menu-add"
                             title="Start this module"
@@ -362,9 +368,7 @@ watch(activeModuleId, (id) => {
                         </ul>
 
                         <div
-                            v-if="
-                                activeModule.id !== GraphSlug.PermitApplication
-                            "
+                            v-if="!isBaseModuleId(activeModule.id)"
                             class="action-container"
                         >
                             <Button
@@ -382,7 +386,7 @@ watch(activeModuleId, (id) => {
                     </template>
 
                     <div
-                        v-if="activeModule.id === GraphSlug.PermitApplication"
+                        v-if="isBaseModuleId(activeModule.id)"
                         class="investigation-lists"
                     >
                         <section

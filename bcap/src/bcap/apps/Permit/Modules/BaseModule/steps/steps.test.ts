@@ -97,11 +97,11 @@ describe('BaseModule steps', () => {
         expect(updateValue).toHaveBeenCalledWith(
             streetNumber,
             'street_number',
-            ['project_location', 'bc_property_address[0]'],
+            ['service_request_location', 'bc_property_address[0]'],
         );
     });
 
-    it('Step5 routes the geojson boundary to project_location', () => {
+    it('Step5 routes the geojson boundary to service_request_location', () => {
         const wrapper = mountStep(Step5);
         const updateValue = vi.spyOn(useDraftStore(), 'updateValue');
         const widgets = wrapper.findAllComponents({ name: 'GenericWidget' });
@@ -115,7 +115,7 @@ describe('BaseModule steps', () => {
         expect(updateValue).toHaveBeenCalledWith(
             boundary,
             'service_request_boundary',
-            'project_location',
+            'service_request_location',
         );
     });
 });

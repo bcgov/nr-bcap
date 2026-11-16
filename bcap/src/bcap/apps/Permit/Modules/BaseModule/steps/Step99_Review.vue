@@ -19,7 +19,7 @@ const fields = (data: ArchesDraftData): ReviewField[] => {
     const ident = sr.service_request_identification?.aliased_data;
     const contacts = sr.service_request_contacts?.aliased_data;
     const project = sr.proposed_project?.aliased_data;
-    const location = sr.project_location?.aliased_data;
+    const location = sr.service_request_location?.aliased_data;
     return [
         {
             label: 'Service Request Type',

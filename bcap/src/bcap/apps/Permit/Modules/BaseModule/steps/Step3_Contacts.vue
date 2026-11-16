@@ -4,8 +4,10 @@ import GenericWidget from '@/arches_vue_components/generics/GenericWidget/Generi
 import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import type { BcapServiceRequestResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
-const { draftData, isValid, updateValue } = useDraftStep();
+const { draftData, typedDraftData, isValid, updateValue } =
+    useDraftStep<BcapServiceRequestResourceAliasedData>();
 
 // The shapes Arches might return for this field.
 type ArchesNode =
@@ -18,7 +20,7 @@ type ArchesNode =
     | undefined;
 
 const hasRetainedArchaeologist = computed(() => {
-    const node = draftData?.value?.service_request_contacts?.aliased_data
+    const node = typedDraftData?.value?.service_request_contacts?.aliased_data
         ?.has_retained_archaeologist as ArchesNode;
 
     if (node === null || node === undefined) return null;

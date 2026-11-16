@@ -114,7 +114,7 @@ const DRAFT_LABELS: Record<string, string> = {
 const draftLabel = (draft: ExternalDashboardCard) =>
     DRAFT_LABELS[draft.graph_slug ?? ''] ||
     draftModule(draft)?.menuLabel ||
-    'Permit Application';
+    'Service Request';
 
 // A module draft borrows its permit's name and filing type, so it has to say
 // which module it is; an application draft is the application.
@@ -155,7 +155,7 @@ const {
     confirm: performDelete,
 } = useConfirmAction<ExternalDashboardCard>(async (draft) => {
     await deleteDraft(
-        draft.graph_slug || GraphSlug.PermitApplication,
+        draft.graph_slug || GraphSlug.BcapServiceRequest,
         draft.id,
     );
     cards.savedDrafts = cards.savedDrafts.filter((d) => d.id !== draft.id);

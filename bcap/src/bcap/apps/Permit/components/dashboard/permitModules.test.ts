@@ -8,7 +8,7 @@ const idsFor = (filingType: string) =>
 describe('modulesForFilingType', () => {
     it('gives every permit application type the full set', () => {
         const full = [
-            GraphSlug.PermitApplication,
+            GraphSlug.BcapServiceRequest,
             GraphSlug.NoticeOfProjectIntent,
             GraphSlug.Investigation,
             GraphSlug.Inspection,
@@ -23,22 +23,22 @@ describe('modulesForFilingType', () => {
 
     it('narrows a single-module filing type to its own module', () => {
         expect(idsFor(FilingType.SiteVisit)).toEqual([
-            GraphSlug.PermitApplication,
+            GraphSlug.BcapServiceRequest,
             GraphSlug.SiteVisit,
         ]);
         expect(idsFor(FilingType.DocumentSubmission)).toEqual([
-            GraphSlug.PermitApplication,
+            GraphSlug.BcapServiceRequest,
             GraphSlug.DocumentSubmission,
         ]);
         expect(idsFor(FilingType.InformationRequest)).toEqual([
-            GraphSlug.PermitApplication,
+            GraphSlug.BcapServiceRequest,
             GraphSlug.InformationRequest,
         ]);
     });
 
-    it('heads every menu with Project Summary', () => {
+    it('heads every menu with Filing Summary', () => {
         for (const filingType of Object.values(FilingType)) {
-            expect(idsFor(filingType)[0]).toBe(GraphSlug.PermitApplication);
+            expect(idsFor(filingType)[0]).toBe(GraphSlug.BcapServiceRequest);
         }
     });
 
@@ -62,7 +62,7 @@ describe('graphForModule', () => {
         );
     });
 
-    it('never resolves to the permit application itself', () => {
+    it('never resolves to the service request itself', () => {
         expect(graphForModule('Filing Summary')).toBeUndefined();
     });
 

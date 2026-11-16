@@ -17,10 +17,12 @@ import {
     type CrownTenureFeature,
 } from '@/bcap/apps/Permit/api.ts';
 import { area as turfArea } from '@turf/turf';
+import type { BcapServiceRequestResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 const CROWN_TENURES_LAYER = 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW';
 
-const { draftData, isValid, updateValue } = useDraftStep();
+const { draftData, typedDraftData, isValid, updateValue } =
+    useDraftStep<BcapServiceRequestResourceAliasedData>();
 
 const mapOverrides = {
     widget: {
@@ -32,7 +34,7 @@ const mapOverrides = {
 
 const boundaryHectares = computed(() => {
     const geom =
-        draftData.value?.project_location?.aliased_data
+        typedDraftData.value?.service_request_location?.aliased_data
             ?.service_request_boundary?.node_value;
     if (!geom) return null;
     try {
@@ -60,7 +62,7 @@ function normalizePid(raw: string): string {
 }
 
 function currentBoundary() {
-    return draftData.value?.project_location?.aliased_data
+    return typedDraftData.value?.service_request_location?.aliased_data
         ?.service_request_boundary;
 }
 
@@ -82,7 +84,7 @@ function setBoundaryFeatures(features: unknown[]) {
             node_value: newGeom,
         } as AliasedNodeData,
         'service_request_boundary',
-        'project_location',
+        'service_request_location',
     );
 }
 
@@ -137,7 +139,7 @@ const tenuresError = ref('');
 
 watch(
     () =>
-        draftData.value?.project_location?.aliased_data
+        typedDraftData.value?.service_request_location?.aliased_data
             ?.service_request_boundary,
     async (boundary) => {
         const geom = boundary?.node_value as
@@ -176,7 +178,7 @@ defineExpose({ isValid });
         <GenericWidget
             :mode="EDIT"
             :aliased-node-data="
-                draftData?.project_location?.aliased_data
+                draftData?.service_request_location?.aliased_data
                     ?.service_request_boundary
             "
             :card-x-node-x-widget-data-overrides="mapOverrides"
@@ -186,7 +188,7 @@ defineExpose({ isValid });
                 updateValue(
                     $event,
                     'service_request_boundary',
-                    'project_location',
+                    'service_request_location',
                 )
             "
         />
