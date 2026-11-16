@@ -1933,10 +1933,11 @@ export const zBcapServiceRequestServiceRequestAdminTile = z.object({
 });
 
 export const zBcapServiceRequestServiceRequestContactsAliasedData = z.object({
-    application_archaeologist: zResourceInstanceAliasedNodeData.nullish(),
-    rationale_for_no_archaeologist: zStringAliasedNodeData.nullish(),
     application_proponent: zResourceInstanceAliasedNodeData.nullish(),
-    has_retained_archaeologist: zBooleanAliasedNodeData.nullish()
+    responsible_organization: zResourceInstanceAliasedNodeData.nullish(),
+    has_retained_archaeologist: zBooleanAliasedNodeData.nullish(),
+    application_archaeologist: zResourceInstanceAliasedNodeData.nullish(),
+    rationale_for_no_archaeologist: zStringAliasedNodeData.nullish()
 });
 
 export const zBcapServiceRequestServiceRequestContactsTile = z.object({
@@ -7261,10 +7262,11 @@ export const zBcapServiceRequestServiceRequestAdminTileWritable = z.object({
 });
 
 export const zBcapServiceRequestServiceRequestContactsAliasedDataWritable = z.object({
-    application_archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    rationale_for_no_archaeologist: zStringAliasedNodeDataWritable.nullish(),
     application_proponent: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    has_retained_archaeologist: zBooleanAliasedNodeDataWritable.nullish()
+    responsible_organization: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    has_retained_archaeologist: zBooleanAliasedNodeDataWritable.nullish(),
+    application_archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    rationale_for_no_archaeologist: zStringAliasedNodeDataWritable.nullish()
 });
 
 export const zBcapServiceRequestServiceRequestContactsTileWritable = z.object({

@@ -2052,13 +2052,14 @@ export type BcapServiceRequestServiceRequestAdminTile = {
 };
 
 export type BcapServiceRequestServiceRequestContactsAliasedData = {
+    application_proponent?: ResourceInstanceAliasedNodeData | null;
+    responsible_organization?: ResourceInstanceAliasedNodeData | null;
+    has_retained_archaeologist?: BooleanAliasedNodeData | null;
     application_archaeologist?: ResourceInstanceAliasedNodeData | null;
     /**
      * Enter text
      */
     rationale_for_no_archaeologist?: StringAliasedNodeData | null;
-    application_proponent?: ResourceInstanceAliasedNodeData | null;
-    has_retained_archaeologist?: BooleanAliasedNodeData | null;
 };
 
 export type BcapServiceRequestServiceRequestContactsTile = {
@@ -10053,13 +10054,14 @@ export type BcapServiceRequestServiceRequestAdminTileWritable = {
 };
 
 export type BcapServiceRequestServiceRequestContactsAliasedDataWritable = {
+    application_proponent?: ResourceInstanceAliasedNodeDataWritable | null;
+    responsible_organization?: ResourceInstanceAliasedNodeDataWritable | null;
+    has_retained_archaeologist?: BooleanAliasedNodeDataWritable | null;
     application_archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
     rationale_for_no_archaeologist?: StringAliasedNodeDataWritable | null;
-    application_proponent?: ResourceInstanceAliasedNodeDataWritable | null;
-    has_retained_archaeologist?: BooleanAliasedNodeDataWritable | null;
 };
 
 export type BcapServiceRequestServiceRequestContactsTileWritable = {

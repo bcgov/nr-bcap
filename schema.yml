@@ -6451,6 +6451,18 @@ components:
     Bcap_Service_Request_Service_Request_Contacts_Aliased_Data:
       type: object
       properties:
+        application_proponent:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        responsible_organization:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        has_retained_archaeologist:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
         application_archaeologist:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
@@ -6460,14 +6472,6 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
-        application_proponent:
-          allOf:
-          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
-          nullable: true
-        has_retained_archaeologist:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
     Bcap_Service_Request_Service_Request_Contacts_Tile:
       type: object
       properties:

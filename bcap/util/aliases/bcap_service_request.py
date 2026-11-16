@@ -31,6 +31,7 @@ class BcapServiceRequestAliases(AbstractAliases):
     PROJECT_TYPE = "project_type"
     PROPERTY_TYPE = "property_type"
     RATIONALE_FOR_NO_ARCHAEOLOGIST = "rationale_for_no_archaeologist"
+    RESPONSIBLE_ORGANIZATION = "responsible_organization"
     SCOPE_OF_WORK = "scope_of_work"
     SERVICE_REQUEST_BOUNDARY = "service_request_boundary"
     SERVICE_REQUEST_COMPLETION_TARGET = "service_request_completion_target"
