@@ -2230,7 +2230,7 @@
                         "searchString": ""
                     },
                     "datatype": "resource-instance",
-                    "description": null,
+                    "description": "Organization whose members can see this service request",
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "1bdd68a1-feb6-475b-9811-4185f16cb627",
