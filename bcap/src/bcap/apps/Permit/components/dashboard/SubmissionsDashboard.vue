@@ -314,9 +314,7 @@ const openResourceReport = (resourceId: string) => {
                                 "
                                 :body-subtitle2="project.industrial_sector"
                                 :body="[
-                                    project.submission_type
-                                        ? `Type: ${project.submission_type}`
-                                        : '',
+                                    labelled('Type', project.submission_type),
                                     labelled('Permit', project.permit_number),
                                     buildModuleSummary(project.module_progress),
                                     labelled(

@@ -22,6 +22,16 @@ from bcap.util.reference_number import allocate_reference_number
 from bcap.util.tiles import group_data
 from bcap.util.indexing import bulk_index
 
+# Map each service_request_type controlled-list label to the process-requirement
+# module that should be seeded when the service request is first submitted.
+_MODULE_FOR_REQUEST_TYPE = {
+    "Start a New Project (Permit)": "permit",
+    "Submit a Site Visit": "site_visit",
+    "Ask a question": "information_request",
+    "Request Information about a property, area, or site": "information_request",
+    "Submit a non-Project report": "document_submission",
+}
+
 
 class BcapServiceRequestService:
     """Assigns the id and attaches requirements on first submission."""
@@ -139,10 +149,13 @@ class BcapServiceRequestService:
         )
 
     def _attach_requirements_and_save(self, data, save, service_request_id=None):
-        """Clone and attach the requirements, deleting every clone (the grouping
-        parent included) if the save is rejected (the two saves can't share one
-        transaction)."""
-        cloned = self._inject_requirements_from_templates(data)
+        """Clone and attach the requirements for the service request's type,
+        deleting every clone if the save is rejected. Returns save() directly
+        when the request type maps to no module."""
+        module_name = self._module_for_request_type(data)
+        if module_name is None:
+            return save()
+        cloned = self._inject_requirements_from_templates(data, module_name)
         try:
             response = save()
             self._link_service_request_to_itself(
@@ -158,12 +171,13 @@ class BcapServiceRequestService:
             raise
 
     def _link_service_request_to_itself(self, cloned, service_request_id):
-        """Point the module's own-submission requirement at the service request.
-        Deferred until here because on create the resource has no id until save
-        returns."""
+        """Point the module's own-submission requirement at the service request
+        and mark it satisfied — the submission now exists. Deferred until here
+        because on create the resource has no id until save returns."""
         if cloned.self_hosted is None or service_request_id is None:
             return
         self._requirements.link_submission(cloned.self_hosted.pk, service_request_id)
+        self._requirements.builder.set_requirement_status(cloned.self_hosted.pk, True)
 
     @staticmethod
     def _saved_id(response):
@@ -183,6 +197,25 @@ class BcapServiceRequestService:
         admin = data.get(ALIASED_DATA, {}).get(group_aliases.SERVICE_REQUEST_ADMIN, {})
         return admin.get(ALIASED_DATA, {}).get(aliases.APPLICATION_SUBMISSION_DATE)
 
+    @staticmethod
+    def _module_for_request_type(data):
+        """The process-requirement module name for the service request's type,
+        or None when the type is absent or not mapped to a module.
+
+        The reference node arrives as an aliased-data object with a
+        ``display_value`` key already populated by the serializer, so reading
+        that directly is simpler than re-querying the controlled list."""
+        type_node = (
+            data.get(ALIASED_DATA, {})
+            .get(group_aliases.SERVICE_REQUEST_IDENTIFICATION, {})
+            .get(ALIASED_DATA, {})
+            .get(aliases.SERVICE_REQUEST_TYPE)
+        )
+        if not isinstance(type_node, dict):
+            return None
+        label = type_node.get("display_value") or ""
+        return _MODULE_FOR_REQUEST_TYPE.get(label)
+
     def _index_requirements(self, requirements):
         """Index the clones once save has linked them to the service request
         (the descriptor embeds it)."""
@@ -190,13 +223,12 @@ class BcapServiceRequestService:
             requirement.save_descriptors()
         bulk_index(requirements)
 
-    def _inject_requirements_from_templates(self, data):
-        """Clone a working copy of each requirement template, link the children
-        to the service request in flow order, and return the cloned module so a
-        rejected save can delete everything it created. The module id and
-        requirement ids are filled in by the assign-module-ids save hook."""
+    def _inject_requirements_from_templates(self, data, module_name):
+        """Clone a working copy of each requirement template for the given module,
+        link the children to the service request in flow order, and return the
+        cloned module so a rejected save can delete everything it created."""
         admin = group_data(data, group_aliases.SERVICE_REQUEST_ADMIN)
-        cloned = self._requirements.create_working_copies()
+        cloned = self._requirements.create_working_copies(module_name)
         modules = admin.setdefault(group_aliases.PROCESS_MODULE, [])
         modules.append(
             {

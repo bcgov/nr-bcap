@@ -50,8 +50,8 @@ export const modulesForFilingType = (filingType: string): PermitModule[] => {
 export const permitModules: PermitModule[] = [
     {
         id: GraphSlug.BcapServiceRequest,
-        menuLabel: 'Filing Summary',
-        title: 'Filing Summary',
+        menuLabel: 'Service Request Summary',
+        title: 'Service Request Summary',
         description:
             'General information regarding the service request and overall project scope.',
         listItems: ['Project Details', 'Applicant Information'],

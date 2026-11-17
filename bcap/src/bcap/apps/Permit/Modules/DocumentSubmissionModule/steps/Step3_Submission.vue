@@ -71,11 +71,9 @@ const hasUnsavedFile = computed(() => {
     );
 });
 
-const addDocDisabled = computed(() => {
-    return !hasUnsavedFile.value;
-});
-
-const customIsValid = () => {
+// Report title and archaeological consultant must be filled before a document
+// can be saved — they apply to all uploaded files on this step.
+const hasRequiredMetadata = computed(() => {
     const reportData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;
     if (!reportData) return false;
@@ -92,7 +90,13 @@ const customIsValid = () => {
     );
 
     return hasTitle && hasConsultant;
-};
+});
+
+const addDocDisabled = computed(
+    () => !hasUnsavedFile.value || !hasRequiredMetadata.value,
+);
+
+const customIsValid = () => hasRequiredMetadata.value;
 
 watch(
     () => [

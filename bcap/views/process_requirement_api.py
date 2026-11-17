@@ -85,6 +85,19 @@ def _require_permit(pk):
     return _require_exists(pk, GraphSlugs.PERMIT_APPLICATION, "permit application")
 
 
+def _require_permit_or_service_request(pk):
+    """404 unless pk belongs to either a permit application or a BCAP service request."""
+    if ResourceTileTree.objects.filter(
+        pk=pk,
+        graph__slug__in=[
+            GraphSlugs.PERMIT_APPLICATION,
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+        ],
+    ).exists():
+        return
+    raise Http404("No permit application or service request matches the given id.")
+
+
 def _require_requirement(pk):
     return _require_exists(pk, GraphSlugs.PROCESS_REQUIREMENT, "process requirement")
 
@@ -163,13 +176,13 @@ class ProcessRequirementSeedView(APIView):
 
     def _host_serializer_class(self, permit_type, pk):
         """The serializer for the module's host resource. 400 when the type has
-        no host; 404 when the permit application is unknown."""
+        no host; 404 when the permit application or service request is unknown."""
         serializer_class = (
             MODULE_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")
-        _require_permit(pk)
+        _require_permit_or_service_request(pk)
         return serializer_class
 
     @extend_schema(responses=module_host_schema(many=True))

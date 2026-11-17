@@ -179,8 +179,21 @@ describe('DocumentSubmissionModule extended coverage', () => {
 
     it('Step3_Submission exhaustive logic and branch coverage', async () => {
         mockStoreState.draftId = 'test-draft-id';
+        // report_title and archaeological_consultant are now required before the
+        // Save button is enabled, so pre-populate them in the store state.
         mockStoreState.draftData = {
-            report_submission: { aliased_data: {} },
+            report_submission: {
+                aliased_data: {
+                    report_title: {
+                        display_value: 'Test Report',
+                        node_value: { en: { value: 'Test Report' } },
+                    },
+                    archaeological_consultant: {
+                        display_value: 'Consultant Inc.',
+                        node_value: [{ resourceinstanceid: 'cons-1' }],
+                    },
+                },
+            },
         } as DeepPartial<DocumentSubmissionDocumentSubmissionProcessAliasedData>;
 
         const wrapper = shallowMount(Step3, globalMountOptions);

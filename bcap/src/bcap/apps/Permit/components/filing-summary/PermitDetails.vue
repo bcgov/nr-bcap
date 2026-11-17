@@ -15,7 +15,11 @@ import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
-import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
+import {
+    formatDate,
+    getBasicInfoFields,
+    getServiceRequestInfoFields,
+} from '@/bcap/util.ts';
 import type {
     BcapServiceRequestResourceAliasedData,
     PermitApplicationResourceAliasedData,
@@ -25,6 +29,8 @@ import {
     fetchServiceRequestDetails,
     fetchDrafts,
     deleteDraft,
+    fetchWfsIntersect,
+    type CrownTenureFeature,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -37,9 +43,13 @@ import {
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { inlineMessage } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
+const CROWN_TENURES_LAYER = 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW';
+
 const headerStore = usePermitHeaderStore();
 
 const userStore = useUserStore();
+
+const srWfsTenures = ref<CrownTenureFeature[]>([]);
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
@@ -147,7 +157,25 @@ const isBaseModuleId = (id: string) =>
     (modulesAllowedForFilingType.value[0]?.id ?? GraphSlug.BcapServiceRequest);
 
 const basicInfoFields = computed<ReviewField[]>(() => {
-    if (state.rawSrData) return [];
+    if (state.rawSrData) {
+        const fields = getServiceRequestInfoFields(state.rawSrData);
+        if (srWfsTenures.value.length) {
+            fields.push({
+                label: 'Intersecting Crown Tenures',
+                type: 'table',
+                columns: [
+                    { field: 'CROWN_LANDS_FILE', header: 'File' },
+                    { field: 'TENURE_TYPE', header: 'Type' },
+                    { field: 'TENURE_SUBTYPE', header: 'Subtype' },
+                    { field: 'TENURE_PURPOSE', header: 'Purpose' },
+                    { field: 'TENURE_STATUS', header: 'Status' },
+                    { field: 'TENURE_HOLDER_NAME', header: 'Holder' },
+                ],
+                rows: srWfsTenures.value.map((t) => t.properties),
+            });
+        }
+        return fields;
+    }
     return getBasicInfoFields(state.rawPermitData);
 });
 
@@ -195,6 +223,26 @@ const loadPermitDetails = async () => {
             investigation: { status: 'unstarted' },
             alteration: { status: 'unstarted' },
         };
+
+        // Fetch WFS Crown Tenure intersects in the background; failures are
+        // non-fatal and don't prevent the page from loading.
+        srWfsTenures.value = [];
+        const boundary =
+            srData.service_request_location?.aliased_data
+                ?.service_request_boundary?.node_value;
+        if (
+            boundary &&
+            (boundary.type !== 'FeatureCollection' ||
+                (boundary.features?.length ?? 0) > 0)
+        ) {
+            fetchWfsIntersect(CROWN_TENURES_LAYER, boundary as object, 'SHAPE')
+                .then((result) => {
+                    srWfsTenures.value = result;
+                })
+                .catch(() => {
+                    // Silently ignore; the rest of the page is unaffected.
+                });
+        }
     } catch (error) {
         state.loadError = inlineMessage(error);
     } finally {

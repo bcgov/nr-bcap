@@ -23,9 +23,12 @@ import { UserFacingError } from '@/bcap/api.ts';
 const steps = [
     { label: 'Submission Information', component: Step1_About, heading: '' },
     { label: 'Preamble', component: Step2_Prelim },
-    { label: 'Contacts', component: Step3_Contacts },
-    { label: 'Location', component: Step4_Location },
-    { label: 'Details', component: Step5_Details, heading: 'Project Details' },
+    // { label: 'Contacts', component: Step3_Contacts },
+    { label: 'Property Information', component: Step4_Location },
+    {
+        label: 'Spatial Location',
+        component: Step5_Details,
+    },
 ];
 
 const draft = useDraftStore();
@@ -69,7 +72,7 @@ const submit = async (): Promise<BcapServiceRequest> => {
 <template>
     <WorkflowStepper
         :graph-slug="GraphSlug.BcapServiceRequest"
-        title="Submit Filing"
+        title="Submit Service Request"
         :steps="steps"
         :submit="submit"
         :review-component="Step99_Review"

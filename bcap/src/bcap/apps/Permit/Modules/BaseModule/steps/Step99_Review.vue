@@ -1,67 +1,82 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
 import GenericReviewSummary from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import type { ReviewField } from '@/bcap/apps/Permit/Modules/ReviewSummary.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
-import type {
-    BcapServiceRequestResourceAliasedData,
-    GeojsonFeatureCollectionAliasedNodeData,
-} from '@/bcap/client/types.gen.ts';
+import type { BcapServiceRequestResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import { useDraftStore } from '@/bcap/stores/draft.ts';
+import {
+    fetchWfsIntersect,
+    type CrownTenureFeature,
+} from '@/bcap/apps/Permit/api.ts';
+import { getServiceRequestInfoFields } from '@/bcap/util.ts';
 
-defineProps<{
+const CROWN_TENURES_LAYER = 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW';
+
+const props = defineProps<{
     isSubmittedView?: boolean;
     resourceData?: ArchesDraftData | null;
 }>();
 
+const draft = useDraftStore();
+
+// Mirror the same active-data logic as the generic Step99_Review so we can
+// watch the boundary regardless of whether we're in the workflow or review.
+const activeSrData = computed<BcapServiceRequestResourceAliasedData>(() => {
+    const data =
+        props.isSubmittedView && props.resourceData
+            ? props.resourceData
+            : (draft.draftData as ArchesDraftData);
+    return (data as unknown as BcapServiceRequestResourceAliasedData) ?? {};
+});
+
+const tenures = ref<CrownTenureFeature[]>([]);
+
+watch(
+    () =>
+        activeSrData.value?.service_request_location?.aliased_data
+            ?.service_request_boundary?.node_value,
+    async (boundary) => {
+        const hasFeatures =
+            boundary &&
+            (boundary.type !== 'FeatureCollection' ||
+                (boundary.features?.length ?? 0) > 0);
+        if (!hasFeatures) {
+            tenures.value = [];
+            return;
+        }
+        try {
+            tenures.value = await fetchWfsIntersect(
+                CROWN_TENURES_LAYER,
+                boundary as object,
+                'SHAPE',
+            );
+        } catch {
+            tenures.value = [];
+        }
+    },
+    { immediate: true },
+);
+
 const fields = (data: ArchesDraftData): ReviewField[] => {
-    if (!data) return [];
-    const sr = data as unknown as BcapServiceRequestResourceAliasedData;
-    const ident = sr.service_request_identification?.aliased_data;
-    const contacts = sr.service_request_contacts?.aliased_data;
-    const project = sr.proposed_project?.aliased_data;
-    const location = sr.service_request_location?.aliased_data;
-    return [
-        {
-            label: 'Service Request Type',
-            value: ident?.service_request_type?.display_value,
-        },
-        { label: 'Project Name', value: project?.project_name?.display_value },
-        { label: 'Project Type', value: project?.project_type?.display_value },
-        {
-            label: 'Project Description',
-            value: project?.project_description?.display_value,
-            type: 'html',
-        },
-        {
-            label: 'Scope of Work',
-            value: project?.scope_of_work?.display_value,
-            type: 'html',
-        },
-        {
-            label: 'Application Proponent',
-            value: contacts?.application_proponent?.display_value,
-        },
-        {
-            label: 'Has Retained Archaeologist',
-            value: contacts?.has_retained_archaeologist?.display_value,
-        },
-        {
-            label: 'Rationale For No Archaeologist',
-            value: contacts?.rationale_for_no_archaeologist?.display_value,
-        },
-        {
-            label: 'Application Archaeologist',
-            value: contacts?.application_archaeologist?.display_value,
-        },
-        {
-            label: 'Service Request Boundary',
-            value: location?.service_request_boundary as
-                GeojsonFeatureCollectionAliasedNodeData | null | undefined,
-            type: 'map',
-            graphSlug: 'bcap_service_request',
-            nodeAlias: 'service_request_boundary',
-        },
-    ];
+    const result = getServiceRequestInfoFields(data);
+    if (tenures.value.length) {
+        result.push({
+            label: 'Intersecting Crown Tenures',
+            type: 'table',
+            columns: [
+                { field: 'CROWN_LANDS_FILE', header: 'File' },
+                { field: 'TENURE_TYPE', header: 'Type' },
+                { field: 'TENURE_SUBTYPE', header: 'Subtype' },
+                { field: 'TENURE_PURPOSE', header: 'Purpose' },
+                { field: 'TENURE_STATUS', header: 'Status' },
+                { field: 'TENURE_HOLDER_NAME', header: 'Holder' },
+            ],
+            rows: tenures.value.map((t) => t.properties),
+        });
+    }
+    return result;
 };
 
 const isValid = () => true;

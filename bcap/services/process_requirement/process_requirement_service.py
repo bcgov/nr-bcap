@@ -114,10 +114,10 @@ class ProcessRequirementService:
             )
         return self._builder
 
-    def create_working_copies(self):
-        """The default module, cloned for the caller to wrap in a process_module
-        tile."""
-        return self._clone_module(self._DEFAULT_MODULE)
+    def create_working_copies(self, permit_type=None):
+        """The named module (or the default), cloned for the caller to wrap in a
+        process_module tile."""
+        return self._clone_module(permit_type or self._DEFAULT_MODULE)
 
     def submit_module(self, permit_id, permit_type, user, create_host):
         """File a module against a permit: create its host from the caller's body,
@@ -473,10 +473,16 @@ class ProcessRequirementService:
 
     def _attach_to_permit(self, permit_id, cloned):
         """Attach the cloned module's requirements as a new process_module under
-        application_admin, after any modules already there. The module id and the
-        requirement ids are filled in by the assign-module-ids save hook."""
-        permit = self._load_application_admin(permit_id)
-        admin = permit.aliased_data.application_admin
+        application_admin (for permit applications) or service_request_admin (for
+        BCAP service requests), after any modules already there. The module id and
+        the requirement ids are filled in by the assign-module-ids save hook."""
+        slug = self._resource_graph_slug(permit_id)
+        if slug == GraphSlugs.BCAP_SERVICE_REQUEST:
+            permit = self._load_service_request_admin(permit_id)
+            admin = permit.aliased_data.service_request_admin
+        else:
+            permit = self._load_application_admin(permit_id)
+            admin = permit.aliased_data.application_admin
         # Keep only real modules, then append the new one after them.
         self.builder.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
         module_order = len(admin.aliased_data.process_module or []) + 1
@@ -512,4 +518,17 @@ class ProcessRequirementService:
         ).get(pk=permit_id)
         if permit.aliased_data.application_admin is None:
             permit.append_tile(pa_groups.APPLICATION_ADMIN)
+        return permit
+
+    def _load_service_request_admin(self, permit_id, nodes=None):
+        """The service request hydrated with only its service_request_admin module
+        tree, the admin tile created when the resource has none yet."""
+        permit = ResourceTileTree.get_tiles(
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            nodes=nodes_for(
+                GraphSlugs.BCAP_SERVICE_REQUEST, nodes or self._ADMIN_NODES
+            ),
+        ).get(pk=permit_id)
+        if permit.aliased_data.service_request_admin is None:
+            permit.append_tile(sr_groups.SERVICE_REQUEST_ADMIN)
         return permit

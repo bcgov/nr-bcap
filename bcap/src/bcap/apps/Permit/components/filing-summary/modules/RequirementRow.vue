@@ -235,7 +235,7 @@ const moreItems = computed(() => [
                     rel="noopener"
                 >
                     <i class="fa-solid fa-arrow-right"></i>
-                    Enter Submission
+                    Complete Module
                 </a>
                 <Button
                     v-else
