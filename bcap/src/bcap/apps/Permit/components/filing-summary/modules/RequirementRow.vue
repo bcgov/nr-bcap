@@ -249,7 +249,10 @@ const moreItems = computed(() => [
             </span>
             <span
                 class="req-action-slot"
-                :class="{ 'no-submission': !showSubmission }"
+                :class="{
+                    'no-submission':
+                        !showViewSubmission && !showEnterSubmission,
+                }"
             >
                 <template v-if="isStaff && requirement.resourceId">
                     <!-- The everyday action stays on the row; the rest sit behind
