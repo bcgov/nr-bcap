@@ -14,7 +14,7 @@ import { useRoute } from 'vue-router';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
-import Step3_Contacts from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Contacts.vue';
+// import Step3_Contacts from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step3_Contacts.vue';
 import Step4_Location from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step4_Location.vue';
 import Step5_Details from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step5_Details.vue';
 import Step99_Review from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
