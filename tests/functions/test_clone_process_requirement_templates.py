@@ -11,7 +11,7 @@ from arches_querysets.models import ResourceTileTree
 from bcap.functions.clone_process_requirement_templates import (
     CloneProcessRequirementTemplates,
 )
-from bcap.util.aliases.permit_application import PermitApplicationAliases
+from bcap.util.aliases.bcap_service_request import BcapServiceRequestAliases
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.builders.process_requirement_builder import ProcessRequirementBuilder
 from bcap.util.graph import get_node
@@ -33,8 +33,8 @@ class CloneProcessRequirementTemplatesTests(TestCase):
         cls.template = seed_requirement_templates(ProcessRequirementBuilder())[0]
         cls.node_id = str(
             get_node(
-                GraphSlugs.PERMIT_APPLICATION,
-                PermitApplicationAliases.PROCESS_REQUIREMENT,
+                GraphSlugs.BCAP_SERVICE_REQUEST,
+                BcapServiceRequestAliases.PROCESS_REQUIREMENT,
             ).pk
         )
 
@@ -42,7 +42,14 @@ class CloneProcessRequirementTemplatesTests(TestCase):
         self.function = CloneProcessRequirementTemplates()
 
     def _tile(self, resource_id):
-        return SimpleNamespace(data={self.node_id: [relationship(resource_id)]})
+        from uuid import uuid4
+
+        return SimpleNamespace(
+            data={self.node_id: [relationship(resource_id)]},
+            resourceinstance_id=uuid4(),
+            tileid=uuid4(),
+            nodegroup_id=self.node_id,
+        )
 
     def _is_template(self, resource_id):
         return (

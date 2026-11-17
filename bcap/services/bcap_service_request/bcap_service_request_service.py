@@ -151,7 +151,9 @@ class BcapServiceRequestService:
             self._index_requirements(cloned.requirements)
             return response
         except Exception:
-            for requirement in [cloned.parent, *cloned.requirements]:
+            for requirement in [
+                r for r in [cloned.parent, *cloned.requirements] if r is not None
+            ]:
                 requirement.delete()
             raise
 

@@ -108,7 +108,6 @@ const draftModule = (draft: ExternalDashboardCard) =>
 // wrong on a draft card.
 const DRAFT_LABELS: Record<string, string> = {
     [GraphSlug.BcapServiceRequest]: 'Service Request',
-    [GraphSlug.PermitApplication]: 'Permit Application',
 };
 
 const draftLabel = (draft: ExternalDashboardCard) =>
@@ -119,9 +118,7 @@ const draftLabel = (draft: ExternalDashboardCard) =>
 // A module draft borrows its permit's name and filing type, so it has to say
 // which module it is; an application draft is the application.
 const isModuleDraft = (draft: ExternalDashboardCard) =>
-    !!draft.graph_slug &&
-    draft.graph_slug !== GraphSlug.PermitApplication &&
-    draft.graph_slug !== GraphSlug.BcapServiceRequest;
+    !!draft.graph_slug && draft.graph_slug !== GraphSlug.BcapServiceRequest;
 
 // A module draft names the module alone; the permit it hangs off is already on
 // the card as the application number.

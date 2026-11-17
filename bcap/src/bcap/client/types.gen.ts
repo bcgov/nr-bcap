@@ -5886,6 +5886,10 @@ export type ProcessRequirementIsTemplateRequirementAliasedData = {
      */
     process_requirement_type: ReferenceAliasedNodeDataRequired | null;
     parent_module?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter number
+     */
+    sort_order?: NumberAliasedNodeDataMin0 | null;
     is_internal_requirement: BooleanAliasedNodeData | null;
     workflow_url?: UrlAliasedNodeData | null;
     /**
@@ -13271,6 +13275,10 @@ export type ProcessRequirementIsTemplateRequirementAliasedDataWritable = {
      */
     process_requirement_type: ReferenceAliasedNodeDataRequiredWritable | null;
     parent_module?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter number
+     */
+    sort_order?: NumberAliasedNodeDataMin0Writable | null;
     is_internal_requirement: BooleanAliasedNodeDataWritable | null;
     workflow_url?: UrlAliasedNodeDataWritable | null;
     /**

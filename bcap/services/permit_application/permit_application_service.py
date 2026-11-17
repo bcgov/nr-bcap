@@ -89,9 +89,8 @@ class PermitApplicationService:
         return self._attach_requirements_and_save(data, save, permit_id=instance.pk)
 
     def _attach_requirements_and_save(self, data, save, permit_id=None):
-        """Clone and attach the requirements, deleting every clone (the grouping
-        parent included) if the save is rejected (the two saves can't share one
-        transaction)."""
+        """Clone and attach the requirements, deleting every clone if the save is
+        rejected (the two saves can't share one transaction)."""
         cloned = self._inject_requirements_from_templates(data)
         try:
             response = save()
@@ -99,7 +98,9 @@ class PermitApplicationService:
             self._index_requirements(cloned.requirements)
             return response
         except Exception:
-            for requirement in [cloned.parent, *cloned.requirements]:
+            for requirement in [
+                r for r in [cloned.parent, *cloned.requirements] if r is not None
+            ]:
                 requirement.delete()
             raise
 

@@ -14307,6 +14307,11 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
+        sort_order:
+          allOf:
+          - $ref: '#/components/schemas/NumberAliasedNodeDataMin0'
+          nullable: true
+          description: Enter number
         is_internal_requirement:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'

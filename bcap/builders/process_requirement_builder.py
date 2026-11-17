@@ -52,6 +52,7 @@ class ProcessRequirementBuilder(ResourceBuilder):
         template_data = identification.aliased_data.is_template_requirement.aliased_data
         template_data.is_template_requirement = spec.get("is_template", False)
         template_data.is_internal_requirement = spec.get("internal", True)
+        template_data.sort_order = spec.get("sort_order", 0)
         template_data.process_requirement_type = reference_value(
             GraphSlugs.PROCESS_REQUIREMENT,
             aliases.PROCESS_REQUIREMENT_TYPE,

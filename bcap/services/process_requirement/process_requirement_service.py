@@ -140,7 +140,7 @@ class ProcessRequirementService:
         as a new process_module, in flow order; returns the child copies."""
         cloned = self._clone_module(permit_type, host)
         self._attach_to_permit(permit_id, cloned)
-        created = [cloned.parent, *cloned.requirements]
+        created = [r for r in [cloned.parent, *cloned.requirements] if r is not None]
         # Re-save descriptors now the permit link exists, so a requirement's
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
@@ -402,14 +402,13 @@ class ProcessRequirementService:
         return dict(requirements)
 
     def _clone_module(self, permit_type, host=None):
-        """Clone the module's grouping parent and child requirements, linking each
-        child to the parent and to its submission resource (the host or a fresh
-        one) as it is cloned. The module and requirement ids are stamped later by
-        the save hook."""
+        """Clone the module's child requirements, linking each to its submission
+        resource (the host or a fresh one). The grouping parent template is not
+        cloned into working documents, keeping the list flat on the service request.
+        The module and requirement ids are stamped later by the save hook."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
-        parent = self.builder.clone_requirement(templates[parent_spec["id"]].pk)
         requirements = []
         self_hosted = None
         for child in parent_spec["requirements"]:
@@ -420,12 +419,12 @@ class ProcessRequirementService:
             elif child["resource"]:
                 submission = self.builder.make_resource(child["resource"])
             requirement = self.builder.clone_requirement(
-                templates[child["id"]].pk, parent=parent, submission=submission
+                templates[child["id"]].pk, submission=submission
             )
             if own_submission and submission is None:
                 self_hosted = requirement
             requirements.append(requirement)
-        return ClonedModule(parent, requirements, parent_spec["name"], self_hosted)
+        return ClonedModule(None, requirements, parent_spec["name"], self_hosted)
 
     def link_submission(self, requirement_id, resource_id):
         """Point a requirement's submission host at a resource that already

@@ -295,9 +295,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
         self.assertEqual(admin.aliased_data.process_module or [], [])
-        # The module's requirements plus its grouping parent are gone.
+        # The module's requirements are gone (no grouping parent in working docs).
         self.assertEqual(
-            before - self._non_template_requirement_count(), PERMIT_REQUIREMENTS + 1
+            before - self._non_template_requirement_count(), PERMIT_REQUIREMENTS
         )
 
     def test_remove_module_ignores_a_tile_from_another_permit(self):

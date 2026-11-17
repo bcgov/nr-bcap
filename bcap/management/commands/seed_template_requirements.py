@@ -12,15 +12,24 @@ from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
 from bcap.services.process_requirement.template_specs import (
-    flatten,
+    load,
     supported_permit_types,
 )
 from bcap.util.dashboard.requirement_flow_seed import RequirementFlowBuilder
 
 
 def _all_specs():
-    """Every module's grouping parent and child requirements, flattened."""
-    return [spec for module in supported_permit_types() for spec in flatten(module)]
+    """Every module's grouped spec: parent and children in flow order."""
+    return [load(module) for module in supported_permit_types()]
+
+
+def _all_template_ids():
+    """Every template id across all module groups (parents and children)."""
+    return [
+        spec["id"]
+        for group in _all_specs()
+        for spec in [group] + group.get("requirements", [])
+    ]
 
 
 def templates_exist():
@@ -28,7 +37,7 @@ def templates_exist():
     exist. Other (e.g. demo) templates don't count -- those wouldn't be found
     by id when cloning working copies."""
     by_id = ProcessRequirementService()._templates_by_id()
-    return all(spec["id"] in by_id for spec in _all_specs())
+    return all(tid in by_id for tid in _all_template_ids())
 
 
 def reseed_templates():

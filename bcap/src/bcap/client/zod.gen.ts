@@ -5557,6 +5557,7 @@ export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
     is_template_requirement: zBooleanAliasedNodeData.nullable(),
     process_requirement_type: zReferenceAliasedNodeDataRequired.nullable(),
     parent_module: zResourceInstanceAliasedNodeData.nullish(),
+    sort_order: zNumberAliasedNodeDataMin0.nullish(),
     is_internal_requirement: zBooleanAliasedNodeData.nullable(),
     workflow_url: zUrlAliasedNodeData.nullish(),
     default_target_processing_time: zNumberAliasedNodeData.nullish()
@@ -10594,6 +10595,7 @@ export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.obj
     is_template_requirement: zBooleanAliasedNodeDataWritable.nullable(),
     process_requirement_type: zReferenceAliasedNodeDataRequiredWritable.nullable(),
     parent_module: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    sort_order: zNumberAliasedNodeDataMin0Writable.nullish(),
     is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
     workflow_url: zUrlAliasedNodeDataWritable.nullish(),
     default_target_processing_time: zNumberAliasedNodeDataWritable.nullish()

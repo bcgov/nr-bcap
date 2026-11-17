@@ -114,18 +114,14 @@ const stopFocusScroll = watch(
 // already populated here.
 const onViewSubmission = (
     row: ModuleRow,
-    index: number,
+    _index: number,
     requirement: RequirementItem,
 ) => {
-    let graph: string = GraphSlug.PermitApplication;
-    let resourceId = requirement.hostResourceId || props.permitId;
-    if (index !== 0) {
-        const resolved = graphForModule(row.name);
-        const host = requirement.hostResourceId || row.hostResourceId;
-        if (!resolved || !host) return;
-        graph = resolved;
-        resourceId = host;
-    }
+    // graphForModule explicitly excludes BcapServiceRequest, so Filing Summary
+    // modules (which don't resolve) correctly fall back to BcapServiceRequest.
+    const graph = graphForModule(row.name) ?? GraphSlug.BcapServiceRequest;
+    const resourceId = requirement.hostResourceId || row.hostResourceId;
+    if (!resourceId) return;
     headerStore.setReview({
         graph,
         resourceId,

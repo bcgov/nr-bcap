@@ -12,10 +12,10 @@ from arches_querysets.models import ResourceTileTree
 from bcap.services.process_requirement.process_requirement_service import (
     ProcessRequirementService,
 )
-from bcap.util.aliases.permit_application import PermitApplicationAliases
+from bcap.util.aliases.bcap_service_request import BcapServiceRequestAliases
 from bcap.util.aliases.process_requirement import ProcessRequirementAliases
 from bcap.util.bcap_aliases import GraphSlugs
-from bcap.util.graph import get_node, nodes_for
+from bcap.util.graph import get_node, node_id, nodes_for
 from bcap.util.indexing import bulk_index
 
 details = {
@@ -36,15 +36,17 @@ details = {
 class CloneProcessRequirementTemplates(BaseFunction):
     def save(self, tile, request, context=None):
         node = get_node(
-            GraphSlugs.PERMIT_APPLICATION, PermitApplicationAliases.PROCESS_REQUIREMENT
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            BcapServiceRequestAliases.PROCESS_REQUIREMENT,
         )
         service = ProcessRequirementService(request)
         tile._cloned_requirement_ids = []
+        self._stamp_next_order(tile)
         for relationship in tile.data.get(str(node.pk)) or []:
             if self._is_template(relationship.get("resourceId")):
-                clone_id = str(service.clone_by_id(relationship["resourceId"]).pk)
-                relationship["resourceId"] = clone_id
-                tile._cloned_requirement_ids.append(clone_id)
+                clone = service.clone_by_id(relationship["resourceId"])
+                relationship["resourceId"] = str(clone.pk)
+                tile._cloned_requirement_ids.append(str(clone.pk))
 
     def post_save(self, tile, request, context=None):
         clone_ids = getattr(tile, "_cloned_requirement_ids", [])
@@ -57,6 +59,35 @@ class CloneProcessRequirementTemplates(BaseFunction):
         for clone in clones:
             clone.save_descriptors()
         bulk_index(clones)
+
+    @staticmethod
+    def _stamp_next_order(tile):
+        """Set process_requirement_order on the tile to max existing order + 1.
+
+        Skipped when the tile already exists in the database (a partial update
+        such as a ministry-assignee change must not alter an order that is
+        already stored) or when the order is already present in tile.data (the
+        fixture builder sets explicit orders before the resource is first saved).
+        """
+        from arches.app.models.models import TileModel
+
+        order_node = node_id(
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            BcapServiceRequestAliases.PROCESS_REQUIREMENT_ORDER,
+        )
+        if TileModel.objects.filter(pk=tile.tileid).exists():
+            return
+        if tile.data.get(order_node) is not None:
+            return
+        orders = [
+            int(val)
+            for t in TileModel.objects.filter(
+                resourceinstance_id=tile.resourceinstance_id,
+                nodegroup_id=tile.nodegroup_id,
+            ).exclude(pk=tile.tileid)
+            if (val := t.data.get(order_node)) is not None
+        ]
+        tile.data[order_node] = (max(orders) + 1) if orders else 0
 
     @staticmethod
     def _is_template(resource_id):

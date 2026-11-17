@@ -2372,16 +2372,6 @@
                 {
                     "config": {
                         "triggering_nodegroups": [
-                            "c0b5fc20-bab5-4240-87aa-dcd0c96dfa58"
-                        ]
-                    },
-                    "function_id": "60000000-0000-0000-0000-000000002010",
-                    "graph_id": "5c900e2b-257c-4af3-b67f-b5caf3850f71",
-                    "id": "b7e64c2a-2010-4c10-9a10-0000000020aa"
-                },
-                {
-                    "config": {
-                        "triggering_nodegroups": [
                             "e03c1f16-3d9c-4f20-b749-fd49b9bfd05c"
                         ]
                     },
