@@ -36,8 +36,6 @@ from bcap.views.generated import (
     InformationRequestView,
     LegislativeActListView,
     LegislativeActView,
-    LgPersonListView,
-    LgPersonView,
     LocalGovernmentListView,
     LocalGovernmentView,
     NoticeOfProjectIntentListView,
@@ -156,16 +154,6 @@ urlpatterns = [
         "api/legislative_act/<uuid:pk>/",
         LegislativeActView.as_view(),
         name="api_legislative_act",
-    ),
-    path(
-        "api/lg_person",
-        LgPersonListView.as_view(),
-        name="api_lg_person_list",
-    ),
-    path(
-        "api/lg_person/<uuid:pk>/",
-        LgPersonView.as_view(),
-        name="api_lg_person",
     ),
     path(
         "api/local_government",

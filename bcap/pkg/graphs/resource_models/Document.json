@@ -238,6 +238,24 @@
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
+                    "card_id": "b5f5b1ef-e74a-11e6-84a6-026d961c88e6",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "0e650601-21f1-4e29-938c-730864cbb44a",
+                    "label": {
+                        "en": "Keyword"
+                    },
+                    "node_id": "b5f5b1ed-e74a-11e6-84a6-026d961c88e6",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "66575824-fa2d-4657-8c09-62e13a1ed6e5",
                     "config": {
                         "dateFormat": "YYYY",
@@ -1041,7 +1059,7 @@
                     "nodeid": "10517634-be00-11ed-b38b-5254004d77d3",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMsci/S2_Sample_Taking",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1102,7 +1120,7 @@
                     "nodeid": "20c23f8a-be00-11ed-bdf6-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1224,7 +1242,7 @@
                     "nodeid": "45216022-c409-11ed-81a5-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E61_Time_Primitive",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L31_has_starting_date-time",
-                    "sortorder": 5,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1274,7 +1292,7 @@
                     "nodeid": "63960b1a-bc3f-11ed-bd90-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "sortorder": 3,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1340,7 +1358,7 @@
                     "nodeid": "68b9813a-be01-11ed-8b5e-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E92_Spacetime_Volume",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L54i_is_same-as",
-                    "sortorder": 2,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1366,7 +1384,7 @@
                     "nodeid": "83f08723-772b-456c-b693-863b0f84cb07",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1420,7 +1438,7 @@
                     "nodeid": "a5f5c7b4-c40c-11ed-82cd-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1504,7 +1522,7 @@
                     "nodeid": "a5f5d268-c40c-11ed-82cd-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E10_Transfer_of_Custody",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P10_falls_within",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1591,7 +1609,7 @@
                     "nodeid": "c03e8f18-bc30-11ed-bf42-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L33_has_maker",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1627,7 +1645,7 @@
                     "nodeid": "c89a294c-bc35-11ed-9b80-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E18_Physical_Thing",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P10i_contains",
-                    "sortorder": 1,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1652,7 +1670,7 @@
                     "nodeid": "d4f3cb86-bc3e-11ed-9b80-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P9_consists_of",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1677,7 +1695,7 @@
                     "nodeid": "e9366370-bc33-11ed-bf42-5254004d77d3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E13_Attribute_Assignment",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P140i_was_attributed_by",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }
@@ -1686,9 +1704,9 @@
             "publication": {
                 "graph_id": "3caf329f-b8f7-11e6-84a5-026d961c88e6",
                 "most_recent_edit_id": null,
-                "notes": "Fix Copyright Type LOV",
-                "publicationid": "39b836a2-82d1-498e-8868-686959c898bf",
-                "published_time": "2026-10-29T09:38:07.952"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "fd0f3f70-8019-428d-8011-145edd97e08c",
+                "published_time": "2026-11-12T16:07:58.013"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1754,7 +1772,7 @@
                 ]
             },
             "root": {
-                "alias": "bc_information_resource_model",
+                "alias": "document",
                 "config": {},
                 "datatype": "semantic",
                 "description": "",
@@ -1785,11 +1803,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "7.0.14-linuxkit"
-    }
+    ]
 }

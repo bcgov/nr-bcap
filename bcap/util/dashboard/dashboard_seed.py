@@ -271,13 +271,25 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
             for spec, name in zip(self._REQUIREMENTS, names)
         ]
 
-    def make_requirement_templates(self, specs):
-        """Create one is_template_requirement=True requirement per spec. Once
-        per run."""
-        return [
-            self.make_process_requirement({**spec, "is_template": True})
-            for spec in specs
-        ]
+    def make_requirement_templates(self, groups):
+        """Create is_template_requirement=True requirements for each module group.
+        The grouping parent is created first; each child is then linked to it via
+        parent_module. Returns all created templates as a flat list."""
+        templates = []
+        for group in groups:
+            children = group.get("requirements", [])
+            parent_spec = {k: v for k, v in group.items() if k != "requirements"}
+            parent = self.make_process_requirement(
+                {**parent_spec, "is_template": True, "sort_order": 0}
+            )
+            templates.append(parent)
+            for index, child_spec in enumerate(children):
+                child = self.make_process_requirement(
+                    {**child_spec, "is_template": True, "sort_order": index}
+                )
+                self.link(child.pk, parent=parent)
+                templates.append(child)
+        return templates
 
     def _make_working_requirement(self, spec):
         """A working-document requirement built fresh from a template's spec:
@@ -432,7 +444,7 @@ class DashboardDemoBuilder(ProcessRequirementBuilder, ContributorBuilder):
             pa_groups.APPLICATION_IDENTIFICATION,
             {
                 pa.PROJECT_NAME: self.localized(spec.project_name),
-                pa.APPLICATION_ID: self.localized(spec.application_id),
+                pa.APPLICATION_ID: spec.application_id,
                 pa.FILING_TYPE: random_reference_value(
                     GraphSlugs.PERMIT_APPLICATION, pa.FILING_TYPE
                 ),

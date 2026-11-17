@@ -17,6 +17,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as PA,
     PermitApplicationGroupAliases,
 )
+from bcap.views.mixins import SanitizeFeatureIdsMixin
 from bcap.views.organization_helpers import block_organization, stamp_organization
 from bcap.views.generated.permit_application import (
     PermitApplicationListView as GeneratedPermitApplicationListView,
@@ -25,7 +26,7 @@ from bcap.views.generated.permit_application import (
 
 
 @extend_schema(tags=["External: permit_application"])
-class PermitApplicationView(GeneratedPermitApplicationView):
+class PermitApplicationView(SanitizeFeatureIdsMixin, GeneratedPermitApplicationView):
     """GET/PATCH a Permit Application and its nested tiles, for the applicant
     filing it as much as for the staff reviewing it.
 
@@ -50,18 +51,23 @@ class PermitApplicationView(GeneratedPermitApplicationView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
+
+        def save():
+            self.sanitize_all_feature_ids(request.data)
+            return super(PermitApplicationView, self).update(request, *args, **kwargs)
+
         return PermitApplicationService(request).submit(
             self.get_object(),
             request.data,
             request.user,
-            save=lambda: super(PermitApplicationView, self).update(
-                request, *args, **kwargs
-            ),
+            save=save,
         )
 
 
 @extend_schema(tags=["External: permit_application"])
-class PermitApplicationCreateView(GeneratedPermitApplicationListView):
+class PermitApplicationCreateView(
+    SanitizeFeatureIdsMixin, GeneratedPermitApplicationListView
+):
     """POST a new Permit Application, seeding its application id. A body that
     already carries the submission date attaches the requirement working copies
     here; one saved as a draft gets them on the update that submits it (see the
@@ -78,9 +84,14 @@ class PermitApplicationCreateView(GeneratedPermitApplicationListView):
             PermitApplicationGroupAliases.APPLICATION_IDENTIFICATION,
             PA.OWNING_ORGANIZATION,
         )
+
+        def save():
+            self.sanitize_all_feature_ids(request.data)
+            return super(PermitApplicationCreateView, self).create(
+                request, *args, **kwargs
+            )
+
         return PermitApplicationService(request).create(
             request.data,
-            save=lambda: super(PermitApplicationCreateView, self).create(
-                request, *args, **kwargs
-            ),
+            save=save,
         )

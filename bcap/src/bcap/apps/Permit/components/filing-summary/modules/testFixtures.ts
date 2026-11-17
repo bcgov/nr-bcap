@@ -8,8 +8,11 @@ export const requirementDetail = (opts: {
     satisfied?: boolean;
     internal?: boolean;
     host?: string;
+    hostGraph?: string;
+    workflowUrl?: string;
 }) => ({
     resourceinstanceid: opts.id,
+    host_graph_slug: opts.hostGraph ?? null,
     aliased_data: {
         requirement_identification: {
             aliased_data: {
@@ -22,6 +25,9 @@ export const requirementDetail = (opts: {
                         is_internal_requirement: {
                             node_value: opts.internal ?? false,
                         },
+                        workflow_url: opts.workflowUrl
+                            ? { node_value: { url: opts.workflowUrl } }
+                            : null,
                     },
                 },
             },

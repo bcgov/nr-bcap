@@ -16,13 +16,13 @@ from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
 
 from arches_zod_validation.views.mixins import (
     ArchesResourceViewMixin,
-    BCAPResourceSerializer,
+    AppResourceSerializer,
     UserOwnedResourceMixin,
 )
 
 
-class DocumentSerializer(BCAPResourceSerializer):
-    class Meta(BCAPResourceSerializer.Meta):
+class DocumentSerializer(AppResourceSerializer):
+    class Meta(AppResourceSerializer.Meta):
         graph_slug = "document"
 
 

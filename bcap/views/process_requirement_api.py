@@ -15,6 +15,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from arches.app.models.models import ResourceInstance
 from arches_querysets.models import ResourceTileTree
 from arches_querysets.rest_framework.pagination import ArchesLimitOffsetPagination
 from arches_querysets.rest_framework.view_mixins import ArchesModelAPIMixin
@@ -43,6 +44,34 @@ from bcap.views.generated.process_requirement import ProcessRequirementViewMixin
 from bcap.views.parsers import ValidatedMultiPartJSONParser
 
 
+def _host_id_from(req_data):
+    """The submission host resource ID from a serialized ProcessRequirement, or None."""
+    try:
+        node_value = req_data["aliased_data"]["requirement_data"]["aliased_data"][
+            "submission_data"
+        ]["aliased_data"]["submission_data"]["node_value"]
+        return node_value[0]["resourceId"] if node_value else None
+    except (KeyError, TypeError, IndexError):
+        return None
+
+
+def _annotate_host_graph_slugs(results):
+    """Add host_graph_slug to each serialized ProcessRequirement dict in-place (one batch query)."""
+    host_id_per_result = {id(r): _host_id_from(r) for r in results}
+    unique_host_ids = {hid for hid in host_id_per_result.values() if hid}
+    slug_by_id = {}
+    if unique_host_ids:
+        slug_by_id = {
+            str(pk): slug
+            for pk, slug in ResourceInstance.objects.filter(
+                pk__in=unique_host_ids
+            ).values_list("pk", "graph__slug")
+        }
+    for result in results:
+        host_id = host_id_per_result[id(result)]
+        result["host_graph_slug"] = slug_by_id.get(host_id) if host_id else None
+
+
 def _require_exists(pk, slug, label):
     """404 unless a resource of the given graph exists with this pk."""
     if not ResourceTileTree.objects.filter(pk=pk, graph__slug=slug).exists():
@@ -51,6 +80,18 @@ def _require_exists(pk, slug, label):
 
 def _require_permit(pk):
     return _require_exists(pk, GraphSlugs.PERMIT_APPLICATION, "permit application")
+
+
+def _require_permit_or_service_request(pk):
+    if ResourceTileTree.objects.filter(
+        pk=pk,
+        graph__slug__in=[
+            GraphSlugs.PERMIT_APPLICATION,
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+        ],
+    ).exists():
+        return
+    raise Http404("No permit application or service request matches the given id.")
 
 
 def _require_requirement(pk):
@@ -74,6 +115,11 @@ class ProcessRequirementListView(
             self.request.user, resource_ids=self.resource_ids
         )
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        _annotate_host_graph_slugs(response.data.get("results", []))
+        return response
+
 
 @extend_schema(tags=["External: process_requirement"])
 class ProcessRequirementView(
@@ -95,6 +141,11 @@ class ProcessRequirementView(
         return ProcessRequirementService.detail_query(
             self.kwargs["pk"], self.request.user
         )
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        _annotate_host_graph_slugs([response.data])
+        return response
 
 
 @extend_schema(tags=["External: process_requirement"])
@@ -121,13 +172,13 @@ class ProcessRequirementSeedView(APIView):
 
     def _host_serializer_class(self, permit_type, pk):
         """The serializer for the module's host resource. 400 when the type has
-        no host; 404 when the permit application is unknown."""
+        no host; 404 when the permit application or service request is unknown."""
         serializer_class = (
             MODULE_SERIALIZERS.get(permit_type) if host_graph(permit_type) else None
         )
         if serializer_class is None:
             raise ValidationError(f"Module '{permit_type}' has no host resource.")
-        _require_permit(pk)
+        _require_permit_or_service_request(pk)
         return serializer_class
 
     @extend_schema(responses=module_host_schema(many=True))

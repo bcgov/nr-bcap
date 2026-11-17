@@ -10,7 +10,7 @@
     <skos:prefLabel xml:lang="en">Engaged First Nations Community</skos:prefLabel>
     <skos:inScheme>
       <skos:ConceptScheme rdf:about="https://localhost/bcap/22643975-8422-520a-b152-71f0fb6fcad1">
-        <dcterms:title>Participant Role</dcterms:title>
+        <dcterms:title>Engagement Participant Type</dcterms:title>
       </skos:ConceptScheme>
     </skos:inScheme>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
@@ -62,11 +62,5 @@
     <skos:prefLabel xml:lang="en">Consultant</skos:prefLabel>
     <skos:inScheme rdf:resource="https://localhost/bcap/22643975-8422-520a-b152-71f0fb6fcad1"/>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</arches:sortorder>
-  </skos:Concept>
-  <skos:Concept rdf:about="https://localhost/bcap/7fca4541-1b8a-5ce9-b68f-596369b3d0aa">
-    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/7fca4541-1b8a-5ce9-b68f-596369b3d0aa</dcterms:identifier>
-    <skos:prefLabel xml:lang="en">Other Participant</skos:prefLabel>
-    <skos:inScheme rdf:resource="https://localhost/bcap/22643975-8422-520a-b152-71f0fb6fcad1"/>
-    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</arches:sortorder>
   </skos:Concept>
 </rdf:RDF>

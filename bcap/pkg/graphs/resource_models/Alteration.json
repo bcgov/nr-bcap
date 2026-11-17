@@ -244,7 +244,7 @@
                         "en": "Mitigation Measures"
                     },
                     "node_id": "14df9d35-3f54-4bdf-8d73-a5ae2df2d28d",
-                    "sortorder": null,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -272,7 +272,7 @@
                         "en": "HIP Study Details"
                     },
                     "node_id": "26a7761b-d80e-43e2-85f5-855ab982b31b",
-                    "sortorder": null,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -300,7 +300,7 @@
                         "en": "HIP Objectives"
                     },
                     "node_id": "70e8b88b-648d-4926-b7ea-ddb00cfda1fa",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -328,7 +328,7 @@
                         "en": "Related Assessments"
                     },
                     "node_id": "1d0167f8-aad4-4225-8c71-0247938cb35f",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -347,7 +347,7 @@
                         "en": "Arch Workplans and Schedule A"
                     },
                     "node_id": "7d1edd64-2245-4d88-8f7a-bfcb69559084",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000019"
@@ -363,7 +363,7 @@
                         "en": "Are Chance Finds Expected"
                     },
                     "node_id": "4d335cc4-716f-4d31-bf89-30d0582608f2",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -391,7 +391,7 @@
                         "en": "Assessment Approach"
                     },
                     "node_id": "5c3b8e6b-b2a8-4613-a7fe-9c5479e8be3a",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -407,7 +407,7 @@
                         "en": "Are Ancestral Remains Anticipated"
                     },
                     "node_id": "5d62267b-a78d-4716-b22d-159d87768837",
-                    "sortorder": null,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -427,7 +427,7 @@
                         "en": "Affected Sites"
                     },
                     "node_id": "2650d814-7b96-4153-8865-26bf817ef1c6",
-                    "sortorder": null,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -447,7 +447,7 @@
                         "en": "Relevant Arch Studies"
                     },
                     "node_id": "816badca-d53f-4c7e-b871-2cdcbee226c1",
-                    "sortorder": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
@@ -2488,7 +2488,7 @@
                     "nodeid": "0597b7b0-9764-4d74-91a4-a75b4d918238",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2534,7 +2534,7 @@
                     "nodeid": "26a7761b-d80e-43e2-85f5-855ab982b31b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 0,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2557,7 +2557,7 @@
                     "nodeid": "14df9d35-3f54-4bdf-8d73-a5ae2df2d28d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 2,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2589,7 +2589,7 @@
                     "nodeid": "816badca-d53f-4c7e-b871-2cdcbee226c1",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 8,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2612,7 +2612,7 @@
                     "nodeid": "5c3b8e6b-b2a8-4613-a7fe-9c5479e8be3a",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2648,7 +2648,7 @@
                     "nodeid": "2650d814-7b96-4153-8865-26bf817ef1c6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 7,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2679,7 +2679,7 @@
                     "nodeid": "4d335cc4-716f-4d31-bf89-30d0582608f2",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 3,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2707,7 +2707,7 @@
                     "nodeid": "7d1edd64-2245-4d88-8f7a-bfcb69559084",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E31_Document",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 6,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2738,7 +2738,7 @@
                     "nodeid": "5d62267b-a78d-4716-b22d-159d87768837",
                     "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I3_Inference_Logic",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
-                    "sortorder": 5,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2761,7 +2761,7 @@
                     "nodeid": "1d0167f8-aad4-4225-8c71-0247938cb35f",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E87_Curation_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 9,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2871,7 +2871,7 @@
                     "nodeid": "90131c94-eac4-4d41-b29b-065458a7e17b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2902,7 +2902,7 @@
                     "nodeid": "98aacd9d-9957-4eef-9f85-eb1b0fbd1847",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -2925,7 +2925,7 @@
                     "nodeid": "bed33f53-0ee8-486c-a4dd-2f273161b014",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3048,7 +3048,7 @@
                     "nodeid": "4350e799-c982-4a15-8133-41470d32d0f6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 6,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3169,7 +3169,7 @@
                     "nodeid": "58fac7ef-0026-4227-ab6c-82fc1d75ba05",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3231,7 +3231,7 @@
                     "nodeid": "36e0eb12-b961-4803-943f-d6f7375535ca",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 13,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3254,7 +3254,7 @@
                     "nodeid": "19f9b858-ee31-4955-b73a-6938ed8381c1",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 11,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3277,7 +3277,7 @@
                     "nodeid": "eec6dfab-6a62-4913-8d07-d2e1760bd2a3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 17,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3308,7 +3308,7 @@
                     "nodeid": "fa4770d4-35c7-4f66-8ade-9fb0c4f76eea",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 8,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3331,7 +3331,7 @@
                     "nodeid": "8635ea5e-e3f1-4a92-93f6-2bea25d083fa",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 17,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3354,7 +3354,7 @@
                     "nodeid": "1fbd94c3-88ef-4f79-9efa-12dbd52ac599",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 6,
+                    "sortorder": 14,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3377,7 +3377,7 @@
                     "nodeid": "b765140f-ad76-4138-a5b4-459e1ca36ffe",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 12,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3400,7 +3400,7 @@
                     "nodeid": "3a25b0de-5fa0-4465-a7b5-e1f6233ce114",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 16,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3423,7 +3423,7 @@
                     "nodeid": "cccc14ee-5445-472a-a723-8747476c228c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 15,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3454,7 +3454,7 @@
                     "nodeid": "39ca0f15-f96c-42c1-acfd-d5a7c14c80db",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 5,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3485,7 +3485,7 @@
                     "nodeid": "5e2342e8-5ef0-4d5b-8886-cbf468d16fd8",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 3,
+                    "sortorder": 16,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3508,7 +3508,7 @@
                     "nodeid": "0dcaa163-3695-4459-92f6-764a7dc42fdc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 7,
+                    "sortorder": 13,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3531,7 +3531,7 @@
                     "nodeid": "f828f2ac-f07e-42ea-86cb-2c767b317179",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3554,7 +3554,7 @@
                     "nodeid": "55d9948c-da4c-419a-9c6b-d4c37580b1a0",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 14,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3577,7 +3577,7 @@
                     "nodeid": "96529c78-93ab-4fd9-85ee-591706e7bb5e",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 9,
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3600,7 +3600,7 @@
                     "nodeid": "b1131c70-1d55-43e0-bd0f-05ab946f0f26",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 4,
+                    "sortorder": 15,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3631,7 +3631,7 @@
                     "nodeid": "f4e4220e-cd67-4e30-958d-905cc213fb51",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3685,7 +3685,7 @@
                     "nodeid": "3c54fb30-faaf-409c-a9e9-b4fbf010f822",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 10,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3739,7 +3739,7 @@
                     "nodeid": "d07e4103-78a2-4467-b19f-92ea23cbbc3e",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3770,7 +3770,7 @@
                     "nodeid": "cd427508-a8b9-4255-bee6-14617e1cacc6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3847,7 +3847,7 @@
                     "nodeid": "cc204c10-d885-4fcc-9957-82876120981e",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3901,7 +3901,7 @@
                     "nodeid": "7cc60af3-adba-4aad-8712-c01a6f45a238",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3924,7 +3924,7 @@
                     "nodeid": "65c00367-2bfc-4d7c-952f-d7b31b80ecbb",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3955,7 +3955,7 @@
                     "nodeid": "b89bbab4-c535-46e3-9236-d4f6ce57e529",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -3986,7 +3986,7 @@
                     "nodeid": "93744d16-3bbe-4499-86a4-515e5409fd4f",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4009,7 +4009,7 @@
                     "nodeid": "61b6c9fc-982f-4c10-9234-e5ba71262a7d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -4170,7 +4170,7 @@
                     "nodeid": "b2dc9a71-5ec9-4f54-ae05-3e4a0d9d83df",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

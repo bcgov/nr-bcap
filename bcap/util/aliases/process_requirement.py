@@ -20,6 +20,7 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_PROCESS_DUE_DATE = "requirement_process_due_date"
     REQUIREMENT_PROCESS_START_DATE = "requirement_process_start_date"
     REQUIREMENT_STATUS = "requirement_status"
+    SORT_ORDER = "sort_order"
     SUBMISSION_DATA = "submission_data"
     WORKFLOW_URL = "workflow_url"
 

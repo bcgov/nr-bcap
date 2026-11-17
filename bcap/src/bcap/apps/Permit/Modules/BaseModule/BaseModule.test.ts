@@ -5,8 +5,8 @@ import { useDraftStore } from '@/bcap/stores/draft.ts';
 
 // Own the submit mock so the date-stamp assertion can read it without a
 // top-level import (which Vite resolves before the mock applies).
-const { submitApplication } = vi.hoisted(() => ({
-    submitApplication: vi.fn(),
+const { submitServiceRequest } = vi.hoisted(() => ({
+    submitServiceRequest: vi.fn(),
 }));
 
 vi.mock('@primevue/forms', () => ({
@@ -25,7 +25,7 @@ vi.mock('@/bcap/util.ts', () => ({
 
 vi.mock('@/bcap/apps/Permit/api.ts', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@/bcap/apps/Permit/api.ts')>()),
-    submitApplication,
+    submitServiceRequest,
 }));
 
 describe('BaseModule.vue', () => {
@@ -33,12 +33,12 @@ describe('BaseModule.vue', () => {
         vi.restoreAllMocks();
     });
 
-    it('drives the permit application through the shared workflow stepper', () => {
+    it('drives the service request through the shared workflow stepper', () => {
         const wrapper = shallowMount(BaseModule);
 
         const stepper = wrapper.findComponent(WorkflowStepper);
         expect(stepper.exists()).toBe(true);
-        expect(stepper.props('graphSlug')).toBe('permit_application');
+        expect(stepper.props('graphSlug')).toBe('bcap_service_request');
     });
 
     it('stamps today as the submission date before submitting', async () => {
@@ -58,10 +58,10 @@ describe('BaseModule.vue', () => {
         const today = new Date().toISOString().slice(0, 10);
         // The server treats application_submission_date as the "submitted"
         // signal, so the draft must carry today's date (YYYY-MM-DD) on submit.
-        expect(submitApplication).toHaveBeenCalledWith(
+        expect(submitServiceRequest).toHaveBeenCalledWith(
             'mock-draft-id',
             expect.objectContaining({
-                application_admin: expect.objectContaining({
+                service_request_admin: expect.objectContaining({
                     aliased_data: expect.objectContaining({
                         application_submission_date: { node_value: today },
                     }),

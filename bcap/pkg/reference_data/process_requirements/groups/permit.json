@@ -2,7 +2,7 @@
     "id": "REQ-PERMIT-TEMPLATE-000",
     "name": "Permit Application",
     "type": "Module",
-    "graph": "permit_application",
+    "graph": "bcap_service_request",
     "internal": true,
     "resource": null,
     "due": null,
@@ -13,6 +13,102 @@
         {
             "id": "REQ-PERMIT-TEMPLATE-001",
             "name": "Initial Submission",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "bcap_service_request",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-PERMIT-TEMPLATE-002",
+            "name": "Permit Info",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-PERMIT-TEMPLATE-003",
+            "name": "Permit Scope",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-PERMIT-TEMPLATE-004",
+            "name": "Personnel",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-PERMIT-METHODS-005",
+            "name": "Methods",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-RECORDING-006",
+            "name": "Site Recording & Evaluation",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-REMAINS-007",
+            "name": "Ancestral Remains",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-REMAINS-008",
+            "name": "Repository & Curation",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "permit_application",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-CERTIFICATION-010",
+            "name": "References & Certification",
             "type": "Workflow",
             "internal": false,
             "resource": "permit_application",
@@ -363,6 +459,30 @@
                     "sub_satisfied": false
                 }
             ]
+        },
+        {
+            "id": "REQ-FN-CONSULT-001",
+            "name": "Formal Consultation",
+            "type": "Workflow",
+            "internal": false,
+            "resource": "project_engagement",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
+        },
+        {
+            "id": "REQ-PERM-0001",
+            "name": "Issue Permit",
+            "type": "Workflow",
+            "internal": true,
+            "resource": "hca_permit",
+            "url": "plugins/submissions/baseModule",
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "sub_requirements": []
         }
     ]
 }

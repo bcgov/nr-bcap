@@ -1,9 +1,12 @@
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    BcapServiceRequestResourceAliasedData,
+    PermitApplicationResourceAliasedData,
+} from '@/bcap/client/types.gen.ts';
 
-const { fetchPermitDetails } = vi.hoisted(() => ({
-    fetchPermitDetails: vi.fn(),
+const { fetchServiceRequestDetails } = vi.hoisted(() => ({
+    fetchServiceRequestDetails: vi.fn(),
 }));
-vi.mock('@/bcap/apps/Permit/api.ts', () => ({ fetchPermitDetails }));
+vi.mock('@/bcap/apps/Permit/api.ts', () => ({ fetchServiceRequestDetails }));
 
 import { usePermitHeaderStore } from './permitHeader.ts';
 
@@ -44,8 +47,39 @@ const aliased = (
         },
     }) as unknown as PermitApplicationResourceAliasedData;
 
+const srAliased = (
+    opts: {
+        projectName?: string;
+        serviceRequestId?: string;
+        serviceRequestType?: string;
+        submittedDate?: string;
+    } = {},
+) =>
+    ({
+        proposed_project: {
+            aliased_data: {
+                project_name: { display_value: opts.projectName },
+            },
+        },
+        service_request_identification: {
+            aliased_data: {
+                service_request_id: { display_value: opts.serviceRequestId },
+                service_request_type: {
+                    display_value: opts.serviceRequestType,
+                },
+            },
+        },
+        service_request_admin: {
+            aliased_data: {
+                application_submission_date: {
+                    display_value: opts.submittedDate,
+                },
+            },
+        },
+    }) as unknown as BcapServiceRequestResourceAliasedData;
+
 beforeEach(() => {
-    fetchPermitDetails.mockReset();
+    fetchServiceRequestDetails.mockReset();
     vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
@@ -96,15 +130,15 @@ describe('setFromAliased', () => {
 });
 
 describe('load', () => {
-    it('fetches a permit it does not already hold', async () => {
-        fetchPermitDetails.mockResolvedValue(
-            aliased({ projectName: 'Fetched' }),
+    it('fetches a service request it does not already hold', async () => {
+        fetchServiceRequestDetails.mockResolvedValue(
+            srAliased({ projectName: 'Fetched' }),
         );
         const store = usePermitHeaderStore();
 
-        const header = await store.load('permit-1');
+        const header = await store.load('sr-1');
 
-        expect(fetchPermitDetails).toHaveBeenCalledWith('permit-1');
+        expect(fetchServiceRequestDetails).toHaveBeenCalledWith('sr-1');
         expect(header?.projectName).toBe('Fetched');
     });
 
@@ -114,16 +148,16 @@ describe('load', () => {
 
         const header = await store.load('permit-1');
 
-        expect(fetchPermitDetails).not.toHaveBeenCalled();
+        expect(fetchServiceRequestDetails).not.toHaveBeenCalled();
         expect(header?.projectName).toBe('Cached');
     });
 
     it('returns the stale header rather than throwing when the fetch fails', async () => {
         const store = usePermitHeaderStore();
         store.setFromAliased('permit-1', aliased({ projectName: 'Cached' }));
-        fetchPermitDetails.mockRejectedValue(new Error('boom'));
+        fetchServiceRequestDetails.mockRejectedValue(new Error('boom'));
 
-        const header = await store.load('permit-2');
+        const header = await store.load('sr-2');
 
         expect(header?.projectName).toBe('Cached');
         // The permit id is left on the old one, so a retry still fetches.
@@ -134,6 +168,6 @@ describe('load', () => {
         const store = usePermitHeaderStore();
 
         expect(await store.load('')).toBeNull();
-        expect(fetchPermitDetails).not.toHaveBeenCalled();
+        expect(fetchServiceRequestDetails).not.toHaveBeenCalled();
     });
 });

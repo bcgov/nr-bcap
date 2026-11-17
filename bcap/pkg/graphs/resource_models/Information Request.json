@@ -28,7 +28,7 @@
                         "en": "Request Details"
                     },
                     "nodegroup_id": "41cff828-24b9-4601-bfdc-e750301f0bc0",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 }

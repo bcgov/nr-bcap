@@ -15,15 +15,22 @@ import ProcessModules from './modules/ProcessModules.vue';
 import PermitHeaderBand from './PermitHeaderBand.vue';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
-import { formatDate, getBasicInfoFields } from '@/bcap/util.ts';
+import {
+    formatDate,
+    getBasicInfoFields,
+    getServiceRequestInfoFields,
+} from '@/bcap/util.ts';
 import type {
+    BcapServiceRequestResourceAliasedData,
     PermitApplicationResourceAliasedData,
     StringAliasedNodeData,
 } from '@/bcap/client/types.gen.ts';
 import {
-    fetchPermitDetails,
+    fetchServiceRequestDetails,
     fetchDrafts,
     deleteDraft,
+    fetchWfsIntersect,
+    type CrownTenureFeature,
 } from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
@@ -36,9 +43,13 @@ import {
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import { inlineMessage } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
+const CROWN_TENURES_LAYER = 'WHSE_TANTALIS.TA_CROWN_TENURES_SVW';
+
 const headerStore = usePermitHeaderStore();
 
 const userStore = useUserStore();
+
+const srWfsTenures = ref<CrownTenureFeature[]>([]);
 const route = useRoute();
 const router = useRouter();
 const permitId = computed(() => route.params.id as string);
@@ -99,6 +110,7 @@ const state = reactive({
     adminTileMeta: { tileid: '', nodegroup: '' },
     fetchedModuleData: {} as Record<string, ModuleResponse>,
     rawPermitData: null as PermitApplicationResourceAliasedData | null,
+    rawSrData: null as BcapServiceRequestResourceAliasedData | null,
     permitDrafts: [] as PermitDraft[],
     // Completed/existing investigations have no endpoint yet; wired in later.
     completedInvestigations: [] as DraftOf<GraphSlug.Investigation>[],
@@ -138,17 +150,48 @@ const activeModule = computed(() => {
     );
 });
 
+// First module is always the filing-summary base, for both PA and SR.
+const isBaseModuleId = (id: string) =>
+    id ===
+    (modulesAllowedForFilingType.value[0]?.id ?? GraphSlug.BcapServiceRequest);
+
 const basicInfoFields = computed<ReviewField[]>(() => {
+    if (state.rawSrData) {
+        const fields = getServiceRequestInfoFields(state.rawSrData);
+        if (srWfsTenures.value.length) {
+            fields.push({
+                label: 'Intersecting Crown Tenures',
+                type: 'table',
+                columns: [
+                    { field: 'CROWN_LANDS_FILE', header: 'File' },
+                    { field: 'TENURE_TYPE', header: 'Type' },
+                    { field: 'TENURE_SUBTYPE', header: 'Subtype' },
+                    { field: 'TENURE_PURPOSE', header: 'Purpose' },
+                    { field: 'TENURE_STATUS', header: 'Status' },
+                    { field: 'TENURE_HOLDER_NAME', header: 'Holder' },
+                ],
+                rows: srWfsTenures.value.map((t) => t.properties),
+            });
+        }
+        return fields;
+    }
     return getBasicInfoFields(state.rawPermitData);
 });
 
 // The permit's process_module tiles; the modules panel filters these to the ones
 // with a submission date and renders them as a drag-reorderable accordion.
-const processModules = computed(
-    () =>
+const processModules = computed(() => {
+    if (state.rawSrData) {
+        return (
+            state.rawSrData.service_request_admin?.aliased_data
+                ?.process_module ?? []
+        );
+    }
+    return (
         state.rawPermitData?.application_admin?.aliased_data?.process_module ??
-        [],
-);
+        []
+    );
+});
 
 const getModuleStatus = (moduleId: string) => {
     return state.fetchedModuleData[moduleId]?.status || 'unstarted';
@@ -157,40 +200,48 @@ const getModuleStatus = (moduleId: string) => {
 const loadPermitDetails = async () => {
     state.loadError = '';
     try {
-        const aliased = await fetchPermitDetails(permitId.value);
-        if (!aliased) return;
+        const srData = await fetchServiceRequestDetails(permitId.value);
+        if (!srData) return;
 
-        state.rawPermitData = aliased;
-
-        const appIdent = aliased.application_identification?.aliased_data;
-        const appAdmin = aliased.application_admin;
+        state.rawSrData = srData;
+        state.rawPermitData = null;
 
         state.adminTileMeta = {
-            tileid: appAdmin?.tileid || '',
-            nodegroup: appAdmin?.nodegroup || '',
+            tileid: srData.service_request_admin?.tileid || '',
+            nodegroup: srData.service_request_admin?.nodegroup || '',
         };
 
-        state.permitData = headerStore.setFromAliased(permitId.value, aliased);
-
+        state.permitData = headerStore.setFromServiceRequest(
+            permitId.value,
+            srData,
+        );
         state.fetchedModuleData = {
-            [GraphSlug.PermitApplication]: {
-                status: appIdent?.project_name?.display_value
-                    ? 'completed'
-                    : 'unstarted',
-            },
+            [GraphSlug.BcapServiceRequest]: { status: 'completed' },
             // TODO fix in a bit
-            inspection: {
-                status: 'unstarted',
-            },
-            // TODO fix in a bit
-            investigation: {
-                status: 'unstarted',
-            },
-            // TODO fix in a bit
-            alteration: {
-                status: 'unstarted',
-            },
+            inspection: { status: 'unstarted' },
+            investigation: { status: 'unstarted' },
+            alteration: { status: 'unstarted' },
         };
+
+        // Fetch WFS Crown Tenure intersects in the background; failures are
+        // non-fatal and don't prevent the page from loading.
+        srWfsTenures.value = [];
+        const boundary =
+            srData.service_request_location?.aliased_data
+                ?.service_request_boundary?.node_value;
+        if (
+            boundary &&
+            (boundary.type !== 'FeatureCollection' ||
+                (boundary.features?.length ?? 0) > 0)
+        ) {
+            fetchWfsIntersect(CROWN_TENURES_LAYER, boundary as object, 'SHAPE')
+                .then((result) => {
+                    srWfsTenures.value = result;
+                })
+                .catch(() => {
+                    // Silently ignore; the rest of the page is unaffected.
+                });
+        }
     } catch (error) {
         state.loadError = inlineMessage(error);
     } finally {
@@ -251,7 +302,7 @@ watch(permitId, () => {
 });
 
 watch(activeModuleId, (id) => {
-    if (id === GraphSlug.PermitApplication) {
+    if (isBaseModuleId(id)) {
         loadDraftsForPermitApp();
     }
 });
@@ -312,7 +363,7 @@ watch(activeModuleId, (id) => {
                         <i
                             v-else-if="
                                 getModuleStatus(mod.id) !== 'completed' &&
-                                mod.id !== GraphSlug.PermitApplication
+                                !isBaseModuleId(mod.id)
                             "
                             class="fa-solid fa-plus menu-add"
                             title="Start this module"
@@ -362,9 +413,7 @@ watch(activeModuleId, (id) => {
                         </ul>
 
                         <div
-                            v-if="
-                                activeModule.id !== GraphSlug.PermitApplication
-                            "
+                            v-if="!isBaseModuleId(activeModule.id)"
                             class="action-container"
                         >
                             <Button
@@ -382,7 +431,7 @@ watch(activeModuleId, (id) => {
                     </template>
 
                     <div
-                        v-if="activeModule.id === GraphSlug.PermitApplication"
+                        v-if="isBaseModuleId(activeModule.id)"
                         class="investigation-lists"
                     >
                         <section

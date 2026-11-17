@@ -12,6 +12,7 @@ class ProjectEngagementAliases(AbstractAliases):
     ENGAGEMENT_TARGET_LENGTH = "engagement_target_length"
     ENGAGEMENT_TYPE = "engagement_type"
     IS_MANDATORY = "is_mandatory"
+    IS_PART_OF_PACKAGE = "is_part_of_package"
     OTHER_PARTICIPANT = "other_participant"
     PACKAGE_CONFIRMATION_FILES = "package_confirmation_files"
     PACKAGE_DELIVERY_DATE = "package_delivery_date"
@@ -24,9 +25,7 @@ class ProjectEngagementAliases(AbstractAliases):
     PARTICIPANT_NOTES = "participant_notes"
     PARTICIPANT_PHONE_NUMBER = "participant_phone_number"
     PARTICIPANT_PORTAL_URL = "participant_portal_url"
-    PARTICIPANT_ROLE = "participant_role"
     PARTICIPANT_TYPE = "participant_type"
-    SHOULD_BE_DELIVERED = "should_be_delivered"
 
     @staticmethod
     def get_aliases():

@@ -9,7 +9,7 @@ from arches_controlled_lists.utils.skos import SKOSReader
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bcap", "0001d_fix_relational_views_for_reference_datatypes"),
+        ("bcap", "0001e_reference_number_widget"),
     ]
 
     create_resource_proxy_views_sql = """

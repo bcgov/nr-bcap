@@ -56,7 +56,6 @@ PERMISSION_DEFAULTS = {
     GraphIds.SITE_SUBMISSION: grants(STAFF),
     GraphIds.LEGISLATIVE_ACT: grants(STAFF),
     GraphIds.LOCAL_GOVERNMENT: grants(STAFF),
-    GraphIds.LG_PERSON: grants(STAFF),
     GraphIds.PROJECT_ENGAGEMENT: grants(STAFF),
     GraphIds.PROJECT_SANDBOX: grants(STAFF),
     GraphIds.HRIA_DISCONTINUED_DATA: grants(STAFF),

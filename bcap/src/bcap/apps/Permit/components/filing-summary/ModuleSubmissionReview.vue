@@ -11,6 +11,7 @@ import PermitBreadcrumbs from '@/bcap/apps/Permit/components/common/PermitBreadc
 import { permitCrumbs } from '@/bcap/apps/Permit/components/common/permitCrumbs.ts';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
+import BaseModuleReview from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step99_Review.vue';
 import DocumentSubmissionReview from '@/bcap/apps/Permit/Modules/DocumentSubmissionModule/steps/Step99_Review.vue';
 import InvestigationReview from '@/bcap/apps/Permit/Modules/InvestigationModule/steps/Step99_Review.vue';
 import GenericReview from '@/bcap/apps/Permit/Modules/Step99_Review.vue';
@@ -24,6 +25,7 @@ const title = nav?.title || 'Submission';
 
 const ActiveReviewComponent = computed(() => {
     const componentMap: Record<string, Component> = {
+        [GraphSlug.BcapServiceRequest]: BaseModuleReview,
         [GraphSlug.DocumentSubmission]: DocumentSubmissionReview,
         [GraphSlug.Investigation]: InvestigationReview,
     };

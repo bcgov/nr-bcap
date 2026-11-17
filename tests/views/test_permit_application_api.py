@@ -202,7 +202,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         ident = self._permit(
             pk, aliases.APPLICATION_ID
         ).aliased_data.application_identification
-        return localized_string(ident.aliased_data.application_id) if ident else ""
+        return ident.aliased_data.application_id or "" if ident else ""
 
     def _requirement_count(self):
         return ResourceInstance.objects.filter(
@@ -211,7 +211,7 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
     def test_create_seeds_distinct_ids_without_requirements(self):
         draft = self._create()
-        self.assertRegex(self._application_id(draft), r"^APP-\d+$")
+        self.assertRegex(self._application_id(draft), r"^APP-\d{4}-\d+$")
         # The class-level permits came through the same endpoint, so the ids
         # the seeder mints have to differ from theirs.
         self.assertNotEqual(
@@ -295,9 +295,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
 
         admin = self._permit(pk, aliases.MODULE_NAME).aliased_data.application_admin
         self.assertEqual(admin.aliased_data.process_module or [], [])
-        # The module's requirements plus its grouping parent are gone.
+        # The module's requirements are gone (no grouping parent in working docs).
         self.assertEqual(
-            before - self._non_template_requirement_count(), PERMIT_REQUIREMENTS + 1
+            before - self._non_template_requirement_count(), PERMIT_REQUIREMENTS
         )
 
     def test_remove_module_ignores_a_tile_from_another_permit(self):
@@ -587,9 +587,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIn(str(self.investigation_host.pk), ids)
 
     def test_permit_module_hosts_only_what_is_attached(self):
-        """The permit module hosts the permit itself once submitted, and only
-        then: a permit carrying no permit module has no hosts, and a module with
-        requirements but no host resources has none for another type."""
+        """The permit module's host is a bcap_service_request (filed later by
+        the applicant); before that is submitted the host list is empty for both
+        draft and submitted permits, and there are no hosts for unrelated types."""
         service = ProcessRequirementService()
         admin_user = get_user_model().objects.get(username="admin")
 
@@ -597,10 +597,11 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             service.permit_module_tiles(self.draft_pk, "permit", admin_user), []
         )
 
-        # The own-submission requirement points back at the permit, linked after
-        # the save because the id exists only then.
-        hosts = service.permit_module_tiles(self.submitted_pk, "permit", admin_user)
-        self.assertEqual([str(host.pk) for host in hosts], [str(self.submitted_pk)])
+        # The own-submission requirement is waiting for a bcap_service_request
+        # to be filed by the applicant; until then no host exists.
+        self.assertEqual(
+            service.permit_module_tiles(self.submitted_pk, "permit", admin_user), []
+        )
 
         self.assertEqual(
             list(

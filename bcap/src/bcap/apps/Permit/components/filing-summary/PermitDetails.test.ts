@@ -1,13 +1,16 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import PermitDetails from './PermitDetails.vue';
-import { fetchPermitDetails, fetchDrafts } from '@/bcap/apps/Permit/api.ts';
+import {
+    fetchServiceRequestDetails,
+    fetchDrafts,
+} from '@/bcap/apps/Permit/api.ts';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useUserStore } from '@/bcap/stores/user.ts';
 import type { UserResponse } from '@/bcap/client/types.gen.ts';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type { BcapServiceRequestResourceAliasedData } from '@/bcap/client/types.gen.ts';
 
 vi.mock('@/bcap/apps/Permit/api.ts', () => ({
-    fetchPermitDetails: vi.fn(),
+    fetchServiceRequestDetails: vi.fn(),
     fetchDrafts: vi.fn(() => Promise.resolve([])),
     deleteDraft: vi.fn(),
     // Imported by the MessageDialog child; without them its error handlers log
@@ -55,27 +58,24 @@ vi.mock('vue-router', () => ({
     }),
 }));
 
-const mockPermitData = {
-    application_identification: {
+const mockSrData = {
+    service_request_identification: {
         aliased_data: {
-            project_name: { display_value: 'Test Project Name' },
-            application_id: { display_value: 'APP-001' },
+            service_request_id: { display_value: 'APP-001' },
+            service_request_type: { display_value: 'Submit a Site Visit' },
         },
     },
     proposed_project: {
         aliased_data: {
-            development_project_details: {
-                aliased_data: {
-                    industrial_sector: { display_value: 'Forestry' },
-                },
-            },
+            project_name: { display_value: 'Test Project Name' },
         },
     },
-    application_admin: {
+    service_request_admin: {
         tileid: 'mock-tile-123',
         nodegroup: 'mock-nodegroup-123',
         aliased_data: {
             application_submission_date: null,
+            process_module: [],
         },
     },
 };
@@ -99,8 +99,8 @@ describe('PermitDetails.vue', () => {
         mockQuery.value = {};
         mockMeta.value = {};
 
-        vi.mocked(fetchPermitDetails).mockResolvedValue(
-            mockPermitData as unknown as PermitApplicationResourceAliasedData,
+        vi.mocked(fetchServiceRequestDetails).mockResolvedValue(
+            mockSrData as unknown as BcapServiceRequestResourceAliasedData,
         );
         // Default to no drafts; tests that need them override per-case.
         // clearAllMocks resets calls but keeps implementations, so reset here.
@@ -112,13 +112,15 @@ describe('PermitDetails.vue', () => {
 
         await flushPromises();
 
-        expect(fetchPermitDetails).toHaveBeenCalledWith('mock-permit-123');
+        expect(fetchServiceRequestDetails).toHaveBeenCalledWith(
+            'mock-permit-123',
+        );
 
         expect(wrapper.find('.project-name').text()).toBe('Test Project Name');
         expect(wrapper.find('.application-number').text()).toBe('APP-001');
         expect(
             wrapper.findAll('.meta-part').map((part) => part.text()),
-        ).toEqual(['Forestry']);
+        ).toEqual(['Submit a Site Visit']);
     });
 
     it('has no submit action in the header band', async () => {
@@ -346,7 +348,9 @@ describe('PermitDetails.vue', () => {
 
         it('keeps the permit message when both fail', async () => {
             vi.spyOn(console, 'error').mockImplementation(() => {});
-            vi.mocked(fetchPermitDetails).mockRejectedValue(new Error('boom'));
+            vi.mocked(fetchServiceRequestDetails).mockRejectedValue(
+                new Error('boom'),
+            );
             vi.mocked(fetchDrafts).mockRejectedValue(new Error('boom'));
 
             const wrapper = mount(PermitDetails, globalMountOptions);

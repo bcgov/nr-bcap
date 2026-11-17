@@ -6,7 +6,7 @@ graph mechanics (build, clone, submission and parent linking) live in
 ProcessRequirementBuilder; this layer decides what to clone and where it goes."""
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 
 from arches.app.models.models import ResourceInstance, TileModel
@@ -15,6 +15,10 @@ from arches.app.models.tile import Tile
 
 from arches_querysets.models import ResourceTileTree
 
+from bcap.util.aliases.bcap_service_request import (
+    BcapServiceRequestAliases as sr,
+    BcapServiceRequestGroupAliases as sr_groups,
+)
 from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,
     PermitApplicationGroupAliases as pa_groups,
@@ -48,6 +52,9 @@ class ClonedModule:
     # module that resource is the permit application itself, which doesn't exist
     # yet at create time, so the caller links it once the permit is saved.
     self_hosted: object = None
+    # Requirements that were given a submission host at clone time; these are
+    # auto-satisfied in attach_requirements once the host exists.
+    hosted: list = field(default_factory=list)
 
 
 class ProcessRequirementService:
@@ -107,10 +114,10 @@ class ProcessRequirementService:
             )
         return self._builder
 
-    def create_working_copies(self):
-        """The default module, cloned for the caller to wrap in a process_module
-        tile."""
-        return self._clone_module(self._DEFAULT_MODULE)
+    def create_working_copies(self, permit_type=None):
+        """The named module (or the default), cloned for the caller to wrap in a
+        process_module tile."""
+        return self._clone_module(permit_type or self._DEFAULT_MODULE)
 
     def submit_module(self, permit_id, permit_type, user, create_host):
         """File a module against a permit: create its host from the caller's body,
@@ -136,11 +143,14 @@ class ProcessRequirementService:
         as a new process_module, in flow order; returns the child copies."""
         cloned = self._clone_module(permit_type, host)
         self._attach_to_permit(permit_id, cloned)
-        created = [cloned.parent, *cloned.requirements]
+        created = [r for r in [cloned.parent, *cloned.requirements] if r is not None]
         # Re-save descriptors now the permit link exists, so a requirement's
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
             requirement.save_descriptors()
+        # Host was just created, so mark its requirement satisfied.
+        for requirement in cloned.hosted:
+            self.builder.set_requirement_status(requirement.pk, True)
         bulk_index(created)
         return cloned.requirements
 
@@ -193,13 +203,23 @@ class ProcessRequirementService:
     def remove_requirement(self, permit_id, module_tileid, requirement_id):
         """Delete one process requirement from a module: its child tile plus the
         requirement resource and submission host. The module's grouping parent is
-        shared by the other requirements, so it is left in place."""
+        shared by the other requirements, so it is left in place. A submission host
+        shared with a sibling requirement is not deleted."""
         child = self._module_child_tile(permit_id, module_tileid, requirement_id)
         if child is None:
             return
         to_delete = {str(requirement_id)}
+        # Collect host ids that siblings still depend on so we don't delete them.
+        reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
+        sibling_ids = referenced_resource_ids(
+            TileModel.objects.filter(parenttile_id=module_tileid).exclude(pk=child.pk),
+            reference_node,
+        )
+        sibling_host_ids = set().union(
+            *self.host_ids_by_requirement(sibling_ids).values()
+        )
         for hosts in self.host_ids_by_requirement({str(requirement_id)}).values():
-            to_delete.update(hosts)
+            to_delete.update(h for h in hosts if h not in sibling_host_ids)
         to_delete.discard(str(permit_id))
         Tile.objects.get(pk=child.pk).delete()
         self._delete_resources(to_delete)
@@ -210,13 +230,22 @@ class ProcessRequirementService:
         """Point a module requirement's ministry_assignee at a Contributor, or
         clear it with None. Returns False for a requirement that isn't on the
         module. The save writes the edit log the dashboard reads the assignment
-        date from."""
-        permit = self._load_application_admin(
-            permit_id, [pa.PROCESS_REQUIREMENT, pa.MINISTRY_ASSIGNEE]
-        )
-        module = self._module_by_tileid(
-            permit.aliased_data.application_admin, module_tileid
-        )
+        date from. Supports both BCAP Service Request and Permit Application."""
+        slug = self._resource_graph_slug(permit_id)
+        nodes = [pa.PROCESS_REQUIREMENT, pa.MINISTRY_ASSIGNEE]
+        if slug == GraphSlugs.BCAP_SERVICE_REQUEST:
+            permit = ResourceTileTree.get_tiles(
+                GraphSlugs.BCAP_SERVICE_REQUEST,
+                nodes=nodes_for(GraphSlugs.BCAP_SERVICE_REQUEST, nodes),
+            ).get(pk=permit_id)
+            admin = permit.aliased_data.service_request_admin
+        else:
+            permit = ResourceTileTree.get_tiles(
+                GraphSlugs.PERMIT_APPLICATION,
+                nodes=nodes_for(GraphSlugs.PERMIT_APPLICATION, nodes),
+            ).get(pk=permit_id)
+            admin = permit.aliased_data.application_admin
+        module = self._module_by_tileid(admin, module_tileid)
         child = self._requirement_child(module, requirement_id)
         if child is None:
             return False
@@ -225,6 +254,14 @@ class ProcessRequirementService:
         )
         permit.save(**self._save_as, partial=True)
         return True
+
+    @staticmethod
+    def _resource_graph_slug(resource_id):
+        from arches.app.models.models import ResourceInstance
+
+        return ResourceInstance.objects.values_list("graph__slug", flat=True).get(
+            pk=resource_id
+        )
 
     def add_blank_requirement(self, permit_id, module_tileid, name="New requirement"):
         """Create a blank process requirement and attach it to the module after
@@ -347,11 +384,14 @@ class ProcessRequirementService:
             return []
         return ResourceTileTree.get_tiles(host_slug, resource_ids=host_ids)
 
-    def requirement_ids_by_permit(self, permit_ids):
-        """Each permit id mapped to the process requirement ids attached to it."""
-        return references_by_source(
-            permit_ids, node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
-        )
+    def requirement_ids_by_permit(self, permit_ids, graph_slug=None):
+        """Each permit id mapped to the process requirement ids attached to it.
+
+        graph_slug selects which graph's process_requirement node UUID to query
+        against; defaults to PERMIT_APPLICATION for backward compatibility with
+        PA → Investigation traversal."""
+        slug = graph_slug or GraphSlugs.PERMIT_APPLICATION
+        return references_by_source(permit_ids, node_id(slug, pa.PROCESS_REQUIREMENT))
 
     def host_ids_by_requirement(self, requirement_ids):
         """Each requirement id mapped to the submission host resource ids its
@@ -377,30 +417,44 @@ class ProcessRequirementService:
         return dict(requirements)
 
     def _clone_module(self, permit_type, host=None):
-        """Clone the module's grouping parent and child requirements, linking each
-        child to the parent and to its submission resource (the host or a fresh
-        one) as it is cloned. The module and requirement ids are stamped later by
-        the save hook."""
+        """Clone the module's child requirements, linking each to its submission
+        resource (the host or a fresh one). The grouping parent template is not
+        cloned into working documents, keeping the list flat on the service request.
+        The module and requirement ids are stamped later by the save hook.
+
+        Requirements with the same non-own resource type share a single resource
+        instance (e.g. three permit_application requirements share one resource)."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
-        parent = self.builder.clone_requirement(templates[parent_spec["id"]].pk)
         requirements = []
+        hosted = []
         self_hosted = None
+        # Pre-create one shared host per non-own resource type so all requirements
+        # of the same type link to the same instance rather than duplicating it.
+        shared_hosts = {}
+        for child in parent_spec["requirements"]:
+            resource = child.get("resource")
+            if resource and resource != graph and resource not in shared_hosts:
+                shared_hosts[resource] = self.builder.make_resource(resource)
         for child in parent_spec["requirements"]:
             submission = None
             own_submission = child["resource"] == graph
             if own_submission:
                 submission = host
             elif child["resource"]:
-                submission = self.builder.make_resource(child["resource"])
+                submission = shared_hosts[child["resource"]]
             requirement = self.builder.clone_requirement(
-                templates[child["id"]].pk, parent=parent, submission=submission
+                templates[child["id"]].pk, submission=submission
             )
             if own_submission and submission is None:
                 self_hosted = requirement
+            if submission is not None:
+                hosted.append(requirement)
             requirements.append(requirement)
-        return ClonedModule(parent, requirements, parent_spec["name"], self_hosted)
+        return ClonedModule(
+            None, requirements, parent_spec["name"], self_hosted, hosted
+        )
 
     def link_submission(self, requirement_id, resource_id):
         """Point a requirement's submission host at a resource that already
@@ -417,10 +471,16 @@ class ProcessRequirementService:
 
     def _attach_to_permit(self, permit_id, cloned):
         """Attach the cloned module's requirements as a new process_module under
-        application_admin, after any modules already there. The module id and the
-        requirement ids are filled in by the assign-module-ids save hook."""
-        permit = self._load_application_admin(permit_id)
-        admin = permit.aliased_data.application_admin
+        application_admin (for permit applications) or service_request_admin (for
+        BCAP service requests), after any modules already there. The module id and
+        the requirement ids are filled in by the assign-module-ids save hook."""
+        slug = self._resource_graph_slug(permit_id)
+        if slug == GraphSlugs.BCAP_SERVICE_REQUEST:
+            permit = self._load_service_request_admin(permit_id)
+            admin = permit.aliased_data.service_request_admin
+        else:
+            permit = self._load_application_admin(permit_id)
+            admin = permit.aliased_data.application_admin
         # Keep only real modules, then append the new one after them.
         self.builder.prune_blank_tiles(admin, pa_groups.PROCESS_MODULE, pa.MODULE_NAME)
         module_order = len(admin.aliased_data.process_module or []) + 1
@@ -456,4 +516,17 @@ class ProcessRequirementService:
         ).get(pk=permit_id)
         if permit.aliased_data.application_admin is None:
             permit.append_tile(pa_groups.APPLICATION_ADMIN)
+        return permit
+
+    def _load_service_request_admin(self, permit_id, nodes=None):
+        """The service request hydrated with only its service_request_admin module
+        tree, the admin tile created when the resource has none yet."""
+        permit = ResourceTileTree.get_tiles(
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            nodes=nodes_for(
+                GraphSlugs.BCAP_SERVICE_REQUEST, nodes or self._ADMIN_NODES
+            ),
+        ).get(pk=permit_id)
+        if permit.aliased_data.service_request_admin is None:
+            permit.append_tile(sr_groups.SERVICE_REQUEST_ADMIN)
         return permit

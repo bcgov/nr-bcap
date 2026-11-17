@@ -284,6 +284,7 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.hooks.postprocess_schema_enums",
         "arches_zod_validation.schema.sort_generated_schema_properties",
+        "arches_zod_validation.schema.strip_aliased_node_data_titles",
         "arches_zod_validation.schema.type_base_serializer_fields",
         "bcap.schema.normalize_cookie_auth_name",
     ],

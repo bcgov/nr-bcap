@@ -53,12 +53,15 @@ const urls: Record<string, unknown> = {
         requirementId: string,
     ) =>
         `/bcap/api/permit_application/${permitId}/module/${moduleTileId}/requirement/${requirementId}`,
+    bcap_service_request_create: '/bcap/api/bcap_service_request',
     permit_application_create: '/bcap/api/permit_application',
     plugin: (slug: string) => `/plugins/${slug}`,
     registration_link: '/bcap/api/registration_link',
     seed_process_requirements: (permitId: string, permitType: string) =>
         `/bcap/api/permit_application/${permitId}/process_requirement/${permitType}`,
     unlinked_contributors: '/bcap/api/unlinked_contributors',
+    wfs_intersect: '/bcap/api/wfs/intersect',
+    pmbc_parcel: (pid: string) => `/api/pmbc-parcel/${pid}`,
 };
 
 beforeAll(() => {

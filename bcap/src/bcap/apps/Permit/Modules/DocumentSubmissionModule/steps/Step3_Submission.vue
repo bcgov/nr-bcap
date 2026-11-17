@@ -71,11 +71,8 @@ const hasUnsavedFile = computed(() => {
     );
 });
 
-const addDocDisabled = computed(() => {
-    return !hasUnsavedFile.value;
-});
-
-const customIsValid = () => {
+// report_title and archaeological_consultant gate saving; they apply to all uploads.
+const hasRequiredMetadata = computed(() => {
     const reportData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;
     if (!reportData) return false;
@@ -92,7 +89,13 @@ const customIsValid = () => {
     );
 
     return hasTitle && hasConsultant;
-};
+});
+
+const addDocDisabled = computed(
+    () => !hasUnsavedFile.value || !hasRequiredMetadata.value,
+);
+
+const customIsValid = () => hasRequiredMetadata.value;
 
 watch(
     () => [

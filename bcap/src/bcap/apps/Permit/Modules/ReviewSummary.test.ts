@@ -46,4 +46,38 @@ describe('ReviewSummary.vue', () => {
             true,
         );
     });
+
+    it('renders an html field with HTML tags stripped', () => {
+        const wrapper = shallowMount(ReviewSummary, {
+            props: {
+                fields: [
+                    {
+                        label: 'Description',
+                        type: 'html' as const,
+                        value: '<p>Hello <strong>world</strong></p>',
+                    },
+                ],
+            },
+        });
+        expect(wrapper.text()).toContain('Hello world');
+        expect(wrapper.text()).not.toContain('<p>');
+    });
+
+    it('renders a text field with its raw value', () => {
+        const wrapper = shallowMount(ReviewSummary, {
+            props: {
+                fields: [{ label: 'Site Name', value: 'Eagle Creek Site' }],
+            },
+        });
+        expect(wrapper.text()).toContain('Eagle Creek Site');
+    });
+
+    it('hides a non-map field when the value is empty', () => {
+        const wrapper = shallowMount(ReviewSummary, {
+            props: {
+                fields: [{ label: 'Hidden Field', value: '' }],
+            },
+        });
+        expect(wrapper.text()).not.toContain('Hidden Field');
+    });
 });

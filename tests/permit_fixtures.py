@@ -7,6 +7,10 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationAliases as pa,
     PermitApplicationGroupAliases as pa_groups,
 )
+from bcap.util.aliases.bcap_service_request import (
+    BcapServiceRequestAliases as sr,
+    BcapServiceRequestGroupAliases as sr_groups,
+)
 from bcap.util.controlled_list import reference_value
 
 # Distinct test template names; ids are derived from the full name so they never
@@ -94,6 +98,54 @@ def make_requirement(builder, key, satisfied=False, name="Outstanding"):
     )
 
 
+def build_service_request(
+    builder,
+    name,
+    rows=(),
+    submission_date="2026-01-01",
+    service_request_type="Submit a Site Visit",
+    organization=None,
+    admin_values=None,
+):
+    """A bcap_service_request carrying the tiles a dashboard card reads, with one
+    process_module holding the given requirement rows. No rows drops the blank
+    module tile; no submission_date leaves it unsubmitted."""
+    resource = builder.new_resource("bcap_service_request")
+    ident_values = {sr.SERVICE_REQUEST_ID: name}
+    if service_request_type is not None:
+        ident_values[sr.SERVICE_REQUEST_TYPE] = reference_value(
+            "bcap_service_request", sr.SERVICE_REQUEST_TYPE, service_request_type
+        )
+    builder.append_blank_tile_for_group(
+        resource,
+        sr_groups.SERVICE_REQUEST_IDENTIFICATION,
+        ident_values,
+    )
+    builder.append_blank_tile_for_group(
+        resource,
+        sr_groups.PROPOSED_PROJECT,
+        {sr.PROJECT_NAME: builder.localized(name)},
+    )
+    if organization is not None:
+        builder.append_blank_tile_for_group(
+            resource,
+            sr_groups.SERVICE_REQUEST_CONTACTS,
+            {sr.RESPONSIBLE_ORGANIZATION: organization},
+        )
+    values = {**(admin_values or {})}
+    if submission_date:
+        values[sr.APPLICATION_SUBMISSION_DATE] = submission_date
+    admin = builder.append_blank_tile_for_group(
+        resource, sr_groups.SERVICE_REQUEST_ADMIN, values
+    )
+    if rows:
+        attach_module(builder, admin, rows)
+    else:
+        builder.prune_blank_tiles(admin, sr_groups.PROCESS_MODULE, sr.MODULE_NAME)
+    resource.save(**builder.save_kwargs)
+    return resource
+
+
 def build_permit(
     builder,
     name,
@@ -114,7 +166,7 @@ def build_permit(
         pa_groups.APPLICATION_IDENTIFICATION,
         {
             pa.PROJECT_NAME: builder.localized(name),
-            pa.APPLICATION_ID: builder.localized(name),
+            pa.APPLICATION_ID: name,
             pa.FILING_TYPE: reference_value(
                 "permit_application", pa.FILING_TYPE, filing_type
             ),

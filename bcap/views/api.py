@@ -1,5 +1,4 @@
 import json
-from traceback import print_exception
 
 from django.http import Http404, HttpResponse
 from django.utils.decorators import method_decorator
@@ -60,8 +59,7 @@ class BordenNumberBase:
             logger.error("Borden Grid upstream service error: %s", e)
             return_data = '{"status": "error", "message": "%s"}' % str(e)
         except Exception as e:
-            logger.error(f"Unable to generate borden number: %s", e)
-            print_exception(e)
+            logger.error("Unable to generate borden number: %s", e)
             return_data = '{"status": "error", "message": "An unexpected error occurred. Please contact system support."}'
         return_bytes = return_data.encode("utf-8")
         return HttpResponse(return_bytes, content_type="application/json")

@@ -17,7 +17,13 @@ def NODE_ID(_slug, alias):
 
 
 def _tile(data=None, pk="tile-pk"):
-    return SimpleNamespace(data=data if data is not None else {}, pk=pk)
+    return SimpleNamespace(
+        data=data if data is not None else {},
+        pk=pk,
+        resourceinstance=SimpleNamespace(
+            graph=SimpleNamespace(slug="bcap_service_request")
+        ),
+    )
 
 
 class SlugTests(SimpleTestCase):

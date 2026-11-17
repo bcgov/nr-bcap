@@ -24,9 +24,9 @@ import sys
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bcap.settings")
 
-    print(f"PYCHARM_DEBUG: {os.environ.get('PYCHARM_DEBUG', '').lower()}")
-    print(f"RUN_MAIN: {os.environ.get('RUN_MAIN', '').lower()}")
-    if os.environ.get("PYCHARM_DEBUG", "").lower() in ("1", "true"):
+    # print(f"PYCHARM_DEBUG: {os.environ.get('PYCHARM_DEBUG', '').lower()}")
+    # print(f"RUN_MAIN: {os.environ.get('RUN_MAIN', '').lower()}")
+    if os.environ.get("PYCHARM_DEBUG", "").lower() in ("1", "true") or True:
         if os.environ.get("RUN_MAIN") == "true":
             import pydevd_pycharm
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
             pydevd_pycharm.settrace(
                 os.environ.get("PYCHARM_DEBUG_HOST", "host.docker.internal"),
-                port=int(os.environ.get("PYCHARM_DEBUG_PORT", 5678)),
+                port=int(os.environ.get("PYCHARM_DEBUG_PORT", 5680)),
                 stdout_to_server=True,
                 stderr_to_server=True,
                 suspend=False,

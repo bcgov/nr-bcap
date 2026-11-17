@@ -1,9 +1,13 @@
+from itertools import chain
+
 from arches_querysets.models import ResourceTileTree
 
 from bcap.util.graph import nodes_for
+from bcap.services.bcap_service_request.bcap_service_request_service import (
+    BcapServiceRequestService,
+)
 from bcap.services.dashboard.base_dashboard_service import BaseDashboardService
 from bcap.services.message.thread_service import ThreadService
-from bcap.permissions.permit_access import PermitAccess
 from bcap.services.workflow_draft_service import WorkflowDraftService
 from bcap.services.dashboard.dashboard_types import (
     ApplicationCore,
@@ -11,8 +15,11 @@ from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardCard,
     ExternalDashboardPage,
     ExternalDashboardStatus,
+    ModuleProgress,
 )
+from bcap.util.aliases.bcap_service_request import BcapServiceRequestAliases
 from bcap.util.aliases.permit_application import PermitApplicationGroupAliases
+from bcap.permissions.permit_access import PermitAccess
 from bcap.util.aliases.workflow_drafts import WorkflowDraftsAliases
 from bcap.util.bcap_aliases import GraphSlugs
 from bcap.util.dates import to_iso
@@ -20,13 +27,25 @@ from bcap.util.user import display_name
 
 
 class ExternalDashboardService(BaseDashboardService):
-    """The applicant-facing dashboard: a user's own and their associated
-    companies' permit applications, plus their drafts. Internal/personal fields
-    are dropped (the creator's name is kept). Scoped on created-by
-    (principaluser) for now -- see _filter_by_status."""
+    """The applicant-facing dashboard: a user's own BCAP Service Requests, plus
+    their drafts. Internal/personal fields are dropped (the creator's name is
+    kept). Scoped on created-by (principaluser) for now -- see
+    _filter_by_status."""
 
-    # Permit lifecycle state -> applicant-facing status. TODO: confirm the real
-    # derivation (no finer workflow signal in the data yet).
+    SR = BcapServiceRequestAliases
+
+    CARD_NODES = [
+        SR.PROJECT_NAME,
+        SR.SERVICE_REQUEST_ID,
+        SR.SERVICE_REQUEST_TYPE,
+        SR.MODULE_ID,
+        SR.MODULE_NAME,
+        SR.MODULE_ORDER,
+        SR.MODULE_COMPLETED_DATE,
+        SR.IS_MODULE_COMPLETED,
+    ]
+
+    # Service request lifecycle state -> applicant-facing status.
     _STATUS_BY_LIFECYCLE = {
         "Active": "Permit Active",
         "Draft": "Under Review",
@@ -34,19 +53,22 @@ class ExternalDashboardService(BaseDashboardService):
 
     @classmethod
     def base_query(cls, user):
-        """The filings this user or their company made, card nodes loaded. No
-        staff widening, unlike the permit routes: this dashboard answers "my
-        work"."""
+        """The service requests this user filed, card nodes loaded. No staff
+        widening: this dashboard answers "my work"."""
         return (
             ResourceTileTree.get_tiles(
-                GraphSlugs.PERMIT_APPLICATION,
+                GraphSlugs.BCAP_SERVICE_REQUEST,
                 nodes=nodes_for(
-                    GraphSlugs.PERMIT_APPLICATION,
-                    cls.CARD_NODES + [cls.PA.APPLICATION_SUBMISSION_DATE],
+                    GraphSlugs.BCAP_SERVICE_REQUEST,
+                    cls.CARD_NODES
+                    + [
+                        cls.SR.APPLICATION_SUBMISSION_DATE,
+                        cls.SR.RESPONSIBLE_ORGANIZATION,
+                    ],
                 ),
                 as_representation=True,
             )
-            .filter(PermitAccess.own_or_company_permits(user))
+            .filter(PermitAccess.own_or_company_service_requests(user))
             .select_related(
                 "graph", "principaluser", "resource_instance_lifecycle_state"
             )
@@ -83,23 +105,83 @@ class ExternalDashboardService(BaseDashboardService):
         return count, cards
 
     def _filter_by_status(self, queryset, status, user):
-        """Narrow the base query to the tab asked for. The seam for a future
-        applicant-field match: only this method knows how a user/company maps to
-        applications."""
+        """Narrow the base query to the tab asked for."""
         match status:
             case ExternalDashboardStatus.FILINGS_BY_ASSOCIATED_ORGANIZATIONS:
                 # Inclusive: the organizations' filings plus the user's own, so
                 # the client swaps one list for the other rather than merging.
                 return queryset
             case _:
-                # Created by me, and anything unrecognized. Narrows what they may
-                # see rather than replacing it, so a filing left behind at a
-                # former company doesn't come back on this tab.
+                # Created by me, and anything unrecognized.
                 return queryset.filter(principaluser=user)
+
+    def _hca_permits(self, permits):
+        """BCAP Service Requests have no HCA permit relationship."""
+        return {}
+
+    def _application_core(self, aliased) -> ApplicationCore:
+        """The service-request card fields for the external applicant view."""
+
+        def display(alias):
+            return self.node_value(aliased, alias).get("display_value", "") or ""
+
+        return ApplicationCore(
+            project_name=display(self.SR.PROJECT_NAME),
+            application_number=display(self.SR.SERVICE_REQUEST_ID),
+            submission_type=display(self.SR.SERVICE_REQUEST_TYPE),
+            industrial_sector="",
+            priority_level="",
+            organization=display(self.SR.RESPONSIBLE_ORGANIZATION),
+            related_permit_id=None,
+        )
+
+    def _module_progress(self, service_request) -> ModuleProgress:
+        """How many modules are complete, and the lowest-ordered outstanding
+        one. Traverses service_request_admin instead of application_admin."""
+        modules = sorted(
+            (
+                module.aliased_data
+                for admin in self._nested_tiles(
+                    service_request.aliased_data.service_request_admin
+                )
+                for module in self._nested_tiles(admin.aliased_data.process_module)
+            ),
+            key=lambda data: self._raw_value(data, self.SR.MODULE_ORDER) or 0,
+        )
+        outstanding = [
+            data
+            for data in modules
+            if not self._raw_value(data, self.SR.IS_MODULE_COMPLETED)
+        ]
+        return ModuleProgress(
+            current_module=(
+                self.display_text(self.node_value(outstanding[0], self.SR.MODULE_NAME))
+                if outstanding
+                else ""
+            ),
+            completed=len(modules) - len(outstanding),
+            total=len(modules),
+        )
+
+    def _unresolved_counts_by_permit(
+        self, service_requests, username, requirements_by_permit=None
+    ):
+        """Unresolved thread counts keyed by service request id."""
+        contexts = (
+            BcapServiceRequestService().submission_context_ids_for_service_requests(
+                service_requests, requirements_by_permit
+            )
+        )
+        counts = ThreadService().unresolved_counts_by_context(
+            set(chain.from_iterable(contexts.values())), username
+        )
+        return {
+            sr_id: sum(counts.get(cid, 0) for cid in context_ids)
+            for sr_id, context_ids in contexts.items()
+        }
 
     def _application_card(self, permit, hca_permits, unresolved_messages=0):
         core = self._application_core(permit.aliased_data)
-        hca = self._related_hca(core.related_permit_id, hca_permits)
         return ExternalDashboardCard(
             id=str(permit.pk),
             is_draft=False,
@@ -107,7 +189,7 @@ class ExternalDashboardService(BaseDashboardService):
             created_by_name=display_name(permit.principaluser),
             created_date=to_iso(permit.createdtime),
             submission_date=self._raw_value(
-                permit.aliased_data, self.PA.APPLICATION_SUBMISSION_DATE
+                permit.aliased_data, self.SR.APPLICATION_SUBMISSION_DATE
             )
             or "",
             project_name=core.project_name,
@@ -115,8 +197,8 @@ class ExternalDashboardService(BaseDashboardService):
             submission_type=core.submission_type,
             industrial_sector=core.industrial_sector,
             organization=core.organization,
-            permit_id=core.related_permit_id,
-            permit_number=hca.number,
+            permit_id=None,
+            permit_number="",
             urgency=0,
             priority_level=core.priority_level,
             unresolved_messages=unresolved_messages,
@@ -132,7 +214,10 @@ class ExternalDashboardService(BaseDashboardService):
     def _draft_cards(self, user, query):
         store = WorkflowDraftService()
         own_only = query.status == ExternalDashboardStatus.DRAFTS_CREATED_BY_ME
-        count, drafts = self._page(store.base_query(user, own_only=own_only), query)
+        drafts_qs = store.base_query(user, own_only=own_only).exclude(
+            **{WorkflowDraftsAliases.GRAPH_SLUG: GraphSlugs.PERMIT_APPLICATION}
+        )
+        count, drafts = self._page(drafts_qs, query)
         unresolved = ThreadService().unresolved_counts_by_context(
             {str(draft.pk) for draft in drafts}, user.username
         )
@@ -148,9 +233,9 @@ class ExternalDashboardService(BaseDashboardService):
         ]
 
     def _draft_parents(self, drafts):
-        """Identification of the permit applications the drafts were started
-        from, keyed by id, so a module draft can name the permit it belongs to.
-        A draft's own blob holds nothing about its parent beyond the id."""
+        """Identification of the service requests the drafts were started from,
+        keyed by id, so a module draft can name the service request it belongs
+        to. A draft's own blob holds nothing about its parent beyond the id."""
         ids = {
             parent
             for draft in drafts
@@ -158,19 +243,18 @@ class ExternalDashboardService(BaseDashboardService):
         }
         if not ids:
             return {}
-        permits = self._tiles(
-            GraphSlugs.PERMIT_APPLICATION,
+        service_requests = self._tiles(
+            GraphSlugs.BCAP_SERVICE_REQUEST,
             ids,
             [
-                self.PA.PROJECT_NAME,
-                self.PA.APPLICATION_ID,
-                self.PA.FILING_TYPE,
-                self.PA.OWNING_ORGANIZATION,
+                self.SR.PROJECT_NAME,
+                self.SR.SERVICE_REQUEST_ID,
+                self.SR.SERVICE_REQUEST_TYPE,
             ],
         )
         return {
-            str(permit.pk): self._application_core(permit.aliased_data)
-            for permit in permits
+            str(sr.pk): self._application_core(sr.aliased_data)
+            for sr in service_requests
         }
 
     def _draft_card(self, draft, user, unresolved_messages=0, parent=None):

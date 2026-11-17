@@ -28,7 +28,7 @@
                         "en": "Engagement Document"
                     },
                     "nodegroup_id": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
-                    "sortorder": null,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -57,7 +57,7 @@
                         "en": "Notification"
                     },
                     "nodegroup_id": "24f3fb86-cc90-48a7-a919-e766bf529e23",
-                    "sortorder": null,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -86,7 +86,7 @@
                         "en": "First Nation"
                     },
                     "nodegroup_id": "0fb9d675-e68a-498a-a647-007a0d423850",
-                    "sortorder": null,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -171,7 +171,7 @@
                         "en": "Document Type"
                     },
                     "node_id": "82846265-0e0f-49c1-b646-8d5708dbf0f5",
-                    "sortorder": 5,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -220,7 +220,7 @@
                         "en": "Delivery Date"
                     },
                     "node_id": "346f45c7-a9af-4b8a-862b-73112a8f0db3",
-                    "sortorder": 4,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
@@ -248,10 +248,29 @@
                         "en": "Perliminary Terms"
                     },
                     "node_id": "4445b2d9-e048-49d7-a0c1-9349b38db0a6",
-                    "sortorder": 2,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "e50e986e-76a4-4d15-ba28-cdd51b26e822",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "3c404cad-4726-4a8e-88bb-2a0df1885b39",
+                    "label": {
+                        "en": "Calculated Impacted First Nations"
+                    },
+                    "node_id": "596d4ede-a0f0-41c8-a188-227303de0c43",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
@@ -293,6 +312,25 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000004"
+                },
+                {
+                    "card_id": "e50e986e-76a4-4d15-ba28-cdd51b26e822",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "73da0d5a-446b-4f91-8b44-8052e765fe2a",
+                    "label": {
+                        "en": "Proposed First Nations Consultations"
+                    },
+                    "node_id": "04a3fa8c-c0f5-4419-ad00-7609654b51fb",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
                 },
                 {
                     "card_id": "66064bae-aa94-4d66-963f-b301b1d6c02c",
@@ -372,7 +410,7 @@
                         "en": "Is For Distribution"
                     },
                     "node_id": "a4cf22a2-cf53-4cbd-a572-7bcb28f344c3",
-                    "sortorder": 3,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -400,7 +438,7 @@
                         "en": "Project Description"
                     },
                     "node_id": "53da3e92-6ca7-4ea6-82a7-1f4533f3d05a",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -653,7 +691,7 @@
                     "nodeid": "04a3fa8c-c0f5-4419-ad00-7609654b51fb",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -689,7 +727,7 @@
                     "nodeid": "0fb9d675-e68a-498a-a647-007a0d423850",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
-                    "sortorder": 2,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -712,7 +750,7 @@
                     "nodeid": "24f3fb86-cc90-48a7-a919-e766bf529e23",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P11i_participated_in",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -737,7 +775,7 @@
                     "nodeid": "346f45c7-a9af-4b8a-862b-73112a8f0db3",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P128_carries",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -760,7 +798,7 @@
                     "nodeid": "4445b2d9-e048-49d7-a0c1-9349b38db0a6",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -819,7 +857,7 @@
                     "nodeid": "596d4ede-a0f0-41c8-a188-227303de0c43",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -869,7 +907,7 @@
                     "nodeid": "730adc9b-4f84-4c81-8143-60abdd9b36fc",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E84_Information_Carrier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P105i_has_right_on",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -892,7 +930,7 @@
                     "nodeid": "82846265-0e0f-49c1-b646-8d5708dbf0f5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -940,7 +978,7 @@
                     "nodeid": "8a598f35-26b0-4e8e-a65e-4494a4cd0b42",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -1072,7 +1110,7 @@
                     "nodeid": "c2898307-d0f6-4760-8a6d-0ca4c1c1fa54",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P14_carried_out_by",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 }
@@ -1081,9 +1119,9 @@
             "publication": {
                 "graph_id": "6ca13de7-f5b3-4e38-a947-64eaf2a04b65",
                 "most_recent_edit_id": null,
-                "notes": "Widget tweaks, put notification and documents on separate cards",
-                "publicationid": "0006465b-d95f-4abd-a2ea-4174d29bd153",
-                "published_time": "2026-07-23T14:49:33.420"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "d40584e3-c234-4858-92c2-4a78ba19c02c",
+                "published_time": "2026-11-12T16:07:57.939"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1180,11 +1218,5 @@
             "user_permissions": {},
             "version": ""
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "22f8c0b1b3 2026-06-03 18:00:05 -0700",
-        "os": "Linux",
-        "os version": "6.12.76-linuxkit"
-    }
+    ]
 }

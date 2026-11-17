@@ -58,12 +58,13 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
         capLabel: rawItem.requirement_name || '',
         capDate: rawItem.requirement_due_date || 'Pending',
 
+        submissionType: rawItem.submission_type || '',
+
         icon: 'fa-solid fa-folder-open',
         bodyTitle: rawItem.project_name || 'Unknown Project',
         bodySubtitle1: rawItem.application_number || 'No App #',
-        bodySubtitle2: rawItem.industrial_sector || 'Sector',
+        bodySubtitle2: rawItem.industrial_sector || 'Sector Not Specified',
 
-        submissionType: rawItem.submission_type || '',
         permitNumber: rawItem.permit_number || '',
         permitHolder: rawItem.permit_holder || '',
         projectOfficer: rawItem.project_officer || '',
@@ -89,7 +90,8 @@ const mapToDashboardCard = (rawItem: InternalDashboardCard): ProjectData => {
 
 const sortOptions = [
     { label: 'Default (Urgency)', value: 'default' },
-    { label: 'Application Number', value: 'bodySubtitle1' },
+    { label: 'Request ID', value: 'bodyTitle' },
+    { label: 'Request Type', value: 'bodySubtitle1' },
     { label: 'Assigned To', value: 'footerName' },
     { label: 'Created Date', value: 'footerDate' },
     { label: 'Due Date', value: 'capDate' },
@@ -100,7 +102,6 @@ const sortOptions = [
     { label: 'Process', value: 'capLabel' },
     { label: 'Project Officer', value: 'projectOfficer' },
     { label: 'Sector', value: 'bodySubtitle2' },
-    { label: 'Submission Type', value: 'submissionType' },
 ];
 
 const internalTabs = [

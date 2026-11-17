@@ -41,11 +41,12 @@ class AssignModuleIds(BaseFunction):
     def save(self, tile, request, context=None):
         """Mint the module id; post_save reads it back to stamp the
         requirements."""
-        module_id_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.MODULE_ID)
+        graph_slug = tile.resourceinstance.graph.slug
+        module_id_node = node_id(graph_slug, pa.MODULE_ID)
         tile._minted_module_id = None
         if tile.data.get(module_id_node):
             return
-        name_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.MODULE_NAME)
+        name_node = node_id(graph_slug, pa.MODULE_NAME)
         module_type = self._slug(localized_string(tile.data.get(name_node)))
         module_id = f"{module_type}-{self._next_sequence()}"
         tile.data[module_id_node] = module_id
@@ -57,10 +58,9 @@ class AssignModuleIds(BaseFunction):
         module_id = getattr(tile, "_minted_module_id", None)
         if not module_id:
             return
-        order_node = node_id(
-            GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT_ORDER
-        )
-        reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
+        graph_slug = tile.resourceinstance.graph.slug
+        order_node = node_id(graph_slug, pa.PROCESS_REQUIREMENT_ORDER)
+        reference_node = node_id(graph_slug, pa.PROCESS_REQUIREMENT)
         for child in TileModel.objects.filter(parenttile_id=tile.pk):
             order = int(child.data.get(order_node) or 0)
             for requirement_id in referenced_resource_ids([child], reference_node):

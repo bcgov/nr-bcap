@@ -1,5 +1,6 @@
 from io import StringIO
 
+from django.utils.translation import gettext as _
 from arches.app.models.system_settings import settings
 from arches.app.utils.response import JSONResponse
 import arches.app.tasks as arches_tasks
@@ -29,7 +30,7 @@ def export_results(request):
     if format in ("tilecsv", "shp"):
         if total <= settings.SEARCH_EXPORT_IMMEDIATE_DOWNLOAD_THRESHOLD:
             exporter = BCAPSearchResultsExporter(search_request=request)
-            export_files, _ = exporter.export(format, report_link)
+            export_files, _ignored = exporter.export(format, report_link)
             if format == "shp" and len(export_files) == 0:
                 message = _(
                     "Either no instances were identified for export or no resources have "

@@ -19,6 +19,7 @@ import { inlineMessage, notifyError } from '@/bcap/notify.ts';
 import InlineError from '@/bcap/components/InlineError.vue';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 import type {
+    BcapServiceRequest,
     DraftPayloadWritable,
     PermitApplication,
 } from '@/bcap/client/types.gen.ts';
@@ -49,7 +50,7 @@ const props = withDefaults(
         // How to persist on the final step. Defaults to the module-filing flow
         // (submitModule against the parent permit). The base permit application
         // has no parent, so it passes its own that calls submitApplication.
-        submit?: () => Promise<PermitApplication | null>;
+        submit?: () => Promise<PermitApplication | BcapServiceRequest | null>;
         // The Review/Submitted step body. Defaults to the generic summary of
         // every filled node; the base permit passes a curated version.
         reviewComponent?: Component;
@@ -88,7 +89,8 @@ const state = reactive({
     savingDraft: false,
     confirmingExit: false,
     isDataLoaded: false,
-    finalizedResourceData: null as PermitApplication | null,
+    finalizedResourceData: null as
+        PermitApplication | BcapServiceRequest | null,
     // Shown under the header, beside the button that failed, until the next try.
     submissionError: '',
     loadError: '',

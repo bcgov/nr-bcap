@@ -4,8 +4,6 @@ create or update sets the submission date."""
 
 from itertools import chain
 
-from django.db import connection
-
 from arches_querysets.models import ResourceTileTree
 
 from bcap.permissions.groups import is_internal_user
@@ -18,6 +16,7 @@ from bcap.util.aliases.permit_application import (
     PermitApplicationGroupAliases as group_aliases,
 )
 from bcap.util.bcap_aliases import ALIASED_DATA, GraphSlugs
+from bcap.util.reference_number import allocate_reference_number
 from bcap.util.tiles import group_data
 from bcap.util.indexing import bulk_index
 
@@ -69,10 +68,9 @@ class PermitApplicationService:
 
     @staticmethod
     def allocate_permit_application_id():
-        """Next APP-<n> from the sequence (atomic across concurrent saves)."""
-        with connection.cursor() as cur:
-            cur.execute("SELECT nextval('bcap_permit_application_id_seq')")
-            return f"APP-{cur.fetchone()[0]}"
+        return allocate_reference_number(
+            GraphSlugs.PERMIT_APPLICATION, aliases.APPLICATION_ID
+        )
 
     def create(self, data, save):
         """If the create body already sets the submission date, attach the
@@ -91,9 +89,8 @@ class PermitApplicationService:
         return self._attach_requirements_and_save(data, save, permit_id=instance.pk)
 
     def _attach_requirements_and_save(self, data, save, permit_id=None):
-        """Clone and attach the requirements, deleting every clone (the grouping
-        parent included) if the save is rejected (the two saves can't share one
-        transaction)."""
+        """Clone and attach the requirements, deleting every clone if the save is
+        rejected (the two saves can't share one transaction)."""
         cloned = self._inject_requirements_from_templates(data)
         try:
             response = save()
@@ -101,7 +98,9 @@ class PermitApplicationService:
             self._index_requirements(cloned.requirements)
             return response
         except Exception:
-            for requirement in [cloned.parent, *cloned.requirements]:
+            for requirement in [
+                r for r in [cloned.parent, *cloned.requirements] if r is not None
+            ]:
                 requirement.delete()
             raise
 

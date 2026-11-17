@@ -12,7 +12,7 @@ export interface PermitModule {
 }
 
 const PERMIT_APPLICATION_MODULES: string[] = [
-    GraphSlug.PermitApplication,
+    GraphSlug.BcapServiceRequest,
     GraphSlug.NoticeOfProjectIntent,
     GraphSlug.Investigation,
     GraphSlug.Inspection,
@@ -33,7 +33,7 @@ const MODULES_BY_FILING_TYPE: Record<FilingType, string[]> = {
 export const graphForModule = (name: string): string | undefined =>
     permitModules.find(
         (mod) =>
-            mod.id !== GraphSlug.PermitApplication &&
+            mod.id !== GraphSlug.BcapServiceRequest &&
             name.toLowerCase().includes(mod.menuLabel.toLowerCase()),
     )?.id;
 
@@ -42,17 +42,18 @@ export const modulesForFilingType = (filingType: string): PermitModule[] => {
         MODULES_BY_FILING_TYPE[filingType as FilingType] ??
         PERMIT_APPLICATION_MODULES;
     return permitModules.filter(
-        (mod) => mod.id === GraphSlug.PermitApplication || ids.includes(mod.id),
+        (mod) =>
+            mod.id === GraphSlug.BcapServiceRequest || ids.includes(mod.id),
     );
 };
 
 export const permitModules: PermitModule[] = [
     {
-        id: GraphSlug.PermitApplication,
-        menuLabel: 'Filing Summary',
-        title: 'Filing Summary',
+        id: GraphSlug.BcapServiceRequest,
+        menuLabel: 'Service Request Summary',
+        title: 'Service Request Summary',
         description:
-            'General information regarding the permit application and overall project scope.',
+            'General information regarding the service request and overall project scope.',
         listItems: ['Project Details', 'Applicant Information'],
         routeName: 'baseModule',
         disabled: false,

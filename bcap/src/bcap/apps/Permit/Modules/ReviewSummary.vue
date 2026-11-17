@@ -19,6 +19,11 @@ export type ReviewField =
           type: 'map';
           value?: GeojsonFeatureCollectionAliasedNodeData | null;
       })
+    | (FieldBase & {
+          type: 'table';
+          columns: { field: string; header: string }[];
+          rows: Record<string, unknown>[];
+      })
     | (FieldBase & { type?: 'text' | 'html'; value?: unknown });
 
 defineProps<{
@@ -61,7 +66,7 @@ const hasGeometry = (
 ): boolean => !!val?.node_value?.features?.length;
 
 const isRow = (field: ReviewField): boolean =>
-    field.type === 'map' || hasValue(field.value);
+    field.type === 'map' || field.type === 'table' || hasValue(field.value);
 </script>
 
 <template>
@@ -71,7 +76,9 @@ const isRow = (field: ReviewField): boolean =>
             :key="index"
         >
             <template v-if="isRow(field)">
-                <dt>{{ field.label }}</dt>
+                <dt :class="{ 'full-span': field.type === 'table' }">
+                    {{ field.label }}
+                </dt>
 
                 <dd v-if="field.type === 'map'">
                     <div
@@ -91,6 +98,36 @@ const isRow = (field: ReviewField): boolean =>
                         />
                     </div>
                     <template v-else>No geometry has been uploaded</template>
+                </dd>
+                <dd
+                    v-else-if="field.type === 'table'"
+                    class="full-span"
+                >
+                    <table class="review-table">
+                        <thead>
+                            <tr>
+                                <th
+                                    v-for="col in field.columns"
+                                    :key="col.field"
+                                >
+                                    {{ col.header }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(row, ri) in field.rows"
+                                :key="ri"
+                            >
+                                <td
+                                    v-for="col in field.columns"
+                                    :key="col.field"
+                                >
+                                    {{ row[col.field] }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </dd>
                 <dd v-else-if="field.type === 'html'">
                     {{ stripHtml(field.value) }}
@@ -150,6 +187,35 @@ const isRow = (field: ReviewField): boolean =>
    maplibre controls step up to clear it. */
 .centered-map :deep(.map-wrap) {
     position: relative;
+}
+
+/* Table fields span both grid columns: label on its own row, table beneath. */
+.div-grid-cols dt.full-span,
+.div-grid-cols dd.full-span {
+    grid-column: 1 / -1;
+}
+
+.div-grid-cols dt.full-span {
+    padding-bottom: 0;
+}
+
+.review-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.review-table th,
+.review-table td {
+    text-align: left;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #e5e7eb;
+}
+
+.review-table thead th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
 }
 
 .centered-map :deep(.map-wrap > .panel) {

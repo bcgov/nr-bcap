@@ -1,0 +1,1 @@
+python3 -m celery -A bcap.celery worker --hostname=bcap_dlvr@%h --loglevel=WARNING --beat -s ./celerybeat-schedule.db

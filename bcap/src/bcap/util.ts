@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
 import type {
+    BcapServiceRequestResourceAliasedData,
     FileListAliasedNodeData,
     FileListAliasedNodeDataWritable,
     GeojsonFeatureCollectionAliasedNodeData,
@@ -201,6 +202,154 @@ export const getBasicInfoFields = (
             nodeAlias: 'project_boundary',
         },
     ];
+};
+
+const SR_PROPERTY_PRIVATE = 'Private Property';
+const SR_PROPERTY_CROWN = 'Public (Crown) Land';
+
+export const getServiceRequestInfoFields = (
+    srData:
+        | BcapServiceRequestResourceAliasedData
+        | ArchesDraftData
+        | null
+        | undefined,
+): ReviewField[] => {
+    if (!srData) return [];
+    const sr = srData as unknown as BcapServiceRequestResourceAliasedData;
+    const ident = sr.service_request_identification?.aliased_data;
+    const contacts = sr.service_request_contacts?.aliased_data;
+    const project = sr.proposed_project?.aliased_data;
+    const location = sr.service_request_location?.aliased_data;
+
+    const propertyType = location?.property_type?.display_value ?? '';
+    const isPrivate = propertyType === SR_PROPERTY_PRIVATE;
+    const isCrownLand = propertyType === SR_PROPERTY_CROWN;
+    // "Other" shows any fields that were entered, so it falls through to both.
+    const isOther = !isPrivate && !isCrownLand && Boolean(propertyType);
+
+    const fields: ReviewField[] = [
+        {
+            label: 'Service Request Type',
+            value: ident?.service_request_type?.display_value,
+        },
+        { label: 'Project Name', value: project?.project_name?.display_value },
+        { label: 'Project Type', value: project?.project_type?.display_value },
+        {
+            label: 'Project Description',
+            value: project?.project_description?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Scope of Work',
+            value: project?.scope_of_work?.display_value,
+            type: 'html',
+        },
+        {
+            label: 'Application Proponent',
+            value: contacts?.application_proponent?.display_value,
+        },
+        {
+            label: 'Has Retained Archaeologist',
+            value: contacts?.has_retained_archaeologist?.display_value,
+        },
+        {
+            label: 'Rationale For No Archaeologist',
+            value: contacts?.rationale_for_no_archaeologist?.display_value,
+        },
+        {
+            label: 'Application Archaeologist',
+            value: contacts?.application_archaeologist?.display_value,
+        },
+        { label: 'Property Type', value: propertyType || undefined },
+    ];
+
+    // Private or Other: show street address fields.
+    if (isPrivate || isOther) {
+        const addr = location?.bc_property_address?.[0]?.aliased_data;
+        if (addr) {
+            fields.push(
+                {
+                    label: 'Street Number',
+                    value: addr.street_number?.display_value,
+                },
+                {
+                    label: 'Street Name',
+                    value: addr.street_name?.display_value,
+                },
+                { label: 'City', value: addr.city?.display_value },
+                {
+                    label: 'Postal Code',
+                    value: addr.postal_code?.display_value,
+                },
+                {
+                    label: 'Address Remarks',
+                    value: addr.address_remarks?.display_value,
+                },
+            );
+        }
+    }
+
+    // PIDs are stored as feature properties when parcels are added via the PID
+    // lookup on the Details step. Extract unique values from the boundary.
+    const boundaryFeatures =
+        location?.service_request_boundary?.node_value?.features ?? [];
+    const pids = [
+        ...new Set(
+            boundaryFeatures
+                .map(
+                    (f) =>
+                        (f.properties?.['PID_FORMATTED'] ||
+                            f.properties?.['PID']) as string | undefined,
+                )
+                .filter((pid): pid is string => Boolean(pid)),
+        ),
+    ];
+    if (pids.length) {
+        fields.push({ label: 'Parcel ID(s)', value: pids.join(', ') });
+    }
+
+    // Crown Land or Other: show tenure fields.
+    if (isCrownLand || isOther) {
+        const tenureData = location?.crown_land_tenure_type?.aliased_data;
+        if (tenureData) {
+            fields.push(
+                {
+                    label: 'Crown Land Tenure Type',
+                    value: tenureData.crown_land_tenure_type?.display_value,
+                },
+                {
+                    label: 'Tenure Description',
+                    value: tenureData.tenure_description?.display_value,
+                },
+            );
+            const survey =
+                tenureData.crown_land_survey_information?.aliased_data;
+            if (survey) {
+                fields.push(
+                    {
+                        label: 'Districts',
+                        value: survey.districts?.display_value,
+                    },
+                    {
+                        label: 'Land Title',
+                        value: survey.land_title?.display_value,
+                    },
+                    { label: 'PIN', value: survey.pin_n1?.display_value },
+                );
+            }
+        }
+    }
+
+    fields.push({
+        label: 'Service Request Boundary',
+        value: location?.service_request_boundary as
+            GeojsonFeatureCollectionAliasedNodeData | null | undefined,
+        type: 'map',
+        graphSlug: 'bcap_service_request',
+        nodeAlias: 'service_request_boundary',
+    });
+
+    return fields;
 };
 
 export const localized = (value: string) => ({

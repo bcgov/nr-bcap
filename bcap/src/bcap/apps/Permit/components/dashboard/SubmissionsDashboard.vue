@@ -107,18 +107,18 @@ const draftModule = (draft: ExternalDashboardCard) =>
 // The module list calls the application itself "Filing Summary", which reads
 // wrong on a draft card.
 const DRAFT_LABELS: Record<string, string> = {
-    [GraphSlug.PermitApplication]: 'Permit Application',
+    [GraphSlug.BcapServiceRequest]: 'Service Request',
 };
 
 const draftLabel = (draft: ExternalDashboardCard) =>
     DRAFT_LABELS[draft.graph_slug ?? ''] ||
     draftModule(draft)?.menuLabel ||
-    'Permit Application';
+    'Service Request';
 
 // A module draft borrows its permit's name and filing type, so it has to say
 // which module it is; an application draft is the application.
 const isModuleDraft = (draft: ExternalDashboardCard) =>
-    !!draft.graph_slug && draft.graph_slug !== GraphSlug.PermitApplication;
+    !!draft.graph_slug && draft.graph_slug !== GraphSlug.BcapServiceRequest;
 
 // A module draft names the module alone; the permit it hangs off is already on
 // the card as the application number.
@@ -130,7 +130,7 @@ const draftTitle = (draft: ExternalDashboardCard) =>
 const draftDescription = (draft: ExternalDashboardCard) =>
     isModuleDraft(draft)
         ? `${draftLabel(draft)} Draft`
-        : draft.submission_type || 'Permit Application Draft';
+        : draft.submission_type || `${draftLabel(draft)} Draft`;
 
 // A draft under a permit opens that permit's filing summary; one with no permit
 // yet has nothing to summarise, so it resumes its workflow instead.
@@ -152,7 +152,7 @@ const {
     confirm: performDelete,
 } = useConfirmAction<ExternalDashboardCard>(async (draft) => {
     await deleteDraft(
-        draft.graph_slug || GraphSlug.PermitApplication,
+        draft.graph_slug || GraphSlug.BcapServiceRequest,
         draft.id,
     );
     cards.savedDrafts = cards.savedDrafts.filter((d) => d.id !== draft.id);
@@ -251,7 +251,7 @@ const openResourceReport = (resourceId: string) => {
                     :to="{ name: routeNames.baseModule }"
                 >
                     <i class="fa-solid fa-plus"></i>
-                    {{ $gettext('New HCA permit application') }}
+                    {{ $gettext('Start Service Request') }}
                 </router-link>
             </div>
 
@@ -314,9 +314,7 @@ const openResourceReport = (resourceId: string) => {
                                 "
                                 :body-subtitle2="project.industrial_sector"
                                 :body="[
-                                    project.submission_type
-                                        ? `Type: ${project.submission_type}`
-                                        : '',
+                                    labelled('Type', project.submission_type),
                                     labelled('Permit', project.permit_number),
                                     buildModuleSummary(project.module_progress),
                                     labelled(

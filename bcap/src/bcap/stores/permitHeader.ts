@@ -1,9 +1,12 @@
 import { reactive } from 'vue';
 import { defineStore } from 'pinia';
-import { fetchPermitDetails } from '@/bcap/apps/Permit/api.ts';
+import { fetchServiceRequestDetails } from '@/bcap/apps/Permit/api.ts';
 import { notifyError } from '@/bcap/notify.ts';
 import type { PermitHeader } from '@/bcap/apps/Permit/components/filing-summary/PermitHeaderBand.vue';
-import type { PermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
+import type {
+    BcapServiceRequestResourceAliasedData,
+    PermitApplicationResourceAliasedData,
+} from '@/bcap/client/types.gen.ts';
 
 const headerFrom = (
     aliased: PermitApplicationResourceAliasedData,
@@ -63,17 +66,39 @@ export const usePermitHeaderStore = defineStore('bcapPermitHeader', () => {
         return state.header;
     }
 
+    function setFromServiceRequest(
+        permitId: string,
+        aliased: BcapServiceRequestResourceAliasedData,
+    ) {
+        const ident = aliased.service_request_identification?.aliased_data;
+        state.permitId = permitId;
+        state.header = {
+            projectName:
+                aliased.proposed_project?.aliased_data?.project_name
+                    ?.display_value || 'Unnamed Project',
+            applicationNumber:
+                ident?.service_request_id?.display_value || 'Pending',
+            submissionType: ident?.service_request_type?.display_value || '',
+            sector: '',
+            organization: '',
+            submittedDate:
+                aliased.service_request_admin?.aliased_data
+                    ?.application_submission_date?.display_value || null,
+        };
+        return state.header;
+    }
+
     // A page opened in its own tab starts with an empty store, so it loads.
     async function load(permitId: string): Promise<PermitHeader | null> {
         if (!permitId || state.permitId === permitId) return state.header;
         try {
-            const aliased = await fetchPermitDetails(permitId);
-            if (aliased) setFromAliased(permitId, aliased);
+            const srData = await fetchServiceRequestDetails(permitId);
+            if (srData) setFromServiceRequest(permitId, srData);
         } catch (error) {
             notifyError('Failed to load permit header', error);
         }
         return state.header;
     }
 
-    return { state, setReview, setFromAliased, load };
+    return { state, setReview, setFromAliased, setFromServiceRequest, load };
 });
