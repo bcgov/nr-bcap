@@ -62,12 +62,10 @@ class CloneProcessRequirementTemplates(BaseFunction):
 
     @staticmethod
     def _stamp_next_order(tile):
-        """Set process_requirement_order on the tile to max existing order + 1.
+        """Set process_requirement_order to max existing order + 1.
 
-        Skipped when the tile already exists in the database (a partial update
-        such as a ministry-assignee change must not alter an order that is
-        already stored) or when the order is already present in tile.data (the
-        fixture builder sets explicit orders before the resource is first saved).
+        Skipped when the tile already exists (avoid overwriting a stored order)
+        or when tile.data already carries the value (fixture builder sets it explicitly).
         """
         from arches.app.models.models import TileModel
 

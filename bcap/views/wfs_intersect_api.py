@@ -1,6 +1,4 @@
-"""WFS Intersects view: proxy a DataBC (or compatible) WFS Intersects query
-so the browser does not have to reach the external service directly and the
-request travels through the application's outbound proxy when configured."""
+"""WFS Intersects proxy: forwards browser requests to DataBC via the configured outbound proxy."""
 
 import logging
 
@@ -39,12 +37,7 @@ _request_schema = inline_serializer(
 
 @extend_schema(tags=["External: wfs"], request=_request_schema)
 class WfsIntersectView(APIView):
-    """POST a GeoJSON geometry and receive the WFS features that intersect it.
-
-    The request is forwarded to the configured DataBC WFS endpoint via the
-    application's outbound proxy (``TILESERVER_OUTBOUND_PROXY``) when set.
-    Returns the raw GeoJSON FeatureCollection from the WFS server.
-    """
+    """POST a GeoJSON geometry; returns the WFS FeatureCollection of intersecting features."""
 
     permission_classes = [SubmitterOrInternal]
 
@@ -61,7 +54,6 @@ class WfsIntersectView(APIView):
         if errors:
             raise ValidationError(errors)
 
-        # Empty FeatureCollection — nothing to query, return early.
         if (
             isinstance(geometry, dict)
             and geometry.get("type") == "FeatureCollection"

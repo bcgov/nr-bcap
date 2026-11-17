@@ -50,8 +50,7 @@ class BcapServiceRequestService:
         return queryset.filter(createdby=user)
 
     def __init__(self, request=None, requirement_service=None):
-        # The request rides along so requirement saves name the acting user in
-        # the edit log; the read-only callers build one without it.
+        # Passed through so requirement saves log the acting user.
         self._requirements = requirement_service or ProcessRequirementService(request)
 
     def submission_context_ids_for_service_requests(
@@ -91,7 +90,6 @@ class BcapServiceRequestService:
                     all_host_ids.add(str(host_id))
 
         # Level 2: PA hosts → their requirements → Investigation hosts.
-        # Identify which level-1 hosts are Permit Applications.
         pa_ids = set(
             str(pk)
             for pk in ResourceInstance.objects.filter(
@@ -149,9 +147,8 @@ class BcapServiceRequestService:
         )
 
     def _attach_requirements_and_save(self, data, save, service_request_id=None):
-        """Clone and attach the requirements for the service request's type,
-        deleting every clone if the save is rejected. Returns save() directly
-        when the request type maps to no module."""
+        """Clone and attach requirements for the SR type; delete clones on rejection.
+        Falls through to save() when the type has no module."""
         module_name = self._module_for_request_type(data)
         if module_name is None:
             return save()
@@ -171,9 +168,8 @@ class BcapServiceRequestService:
             raise
 
     def _link_service_request_to_itself(self, cloned, service_request_id):
-        """Point the module's own-submission requirement at the service request
-        and mark it satisfied — the submission now exists. Deferred until here
-        because on create the resource has no id until save returns."""
+        """Link and satisfy the module's self-hosted requirement. Deferred
+        because create provides no resource id until save returns."""
         if cloned.self_hosted is None or service_request_id is None:
             return
         self._requirements.link_submission(cloned.self_hosted.pk, service_request_id)
@@ -181,8 +177,7 @@ class BcapServiceRequestService:
 
     @staticmethod
     def _saved_id(response):
-        """The service request id out of the create response, or None if it
-        carries none."""
+        """Resource id from the create response, or None."""
         return (getattr(response, "data", None) or {}).get("resourceinstanceid")
 
     def _first_submission(self, instance, data):
@@ -199,12 +194,8 @@ class BcapServiceRequestService:
 
     @staticmethod
     def _module_for_request_type(data):
-        """The process-requirement module name for the service request's type,
-        or None when the type is absent or not mapped to a module.
-
-        The reference node arrives as an aliased-data object with a
-        ``display_value`` key already populated by the serializer, so reading
-        that directly is simpler than re-querying the controlled list."""
+        """Module name for the SR type, or None if unmapped.
+        Reads ``display_value`` from the reference node directly (no list lookup)."""
         type_node = (
             data.get(ALIASED_DATA, {})
             .get(group_aliases.SERVICE_REQUEST_IDENTIFICATION, {})

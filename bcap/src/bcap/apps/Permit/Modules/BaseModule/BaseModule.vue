@@ -34,10 +34,8 @@ const steps = [
 const draft = useDraftStore();
 const route = useRoute();
 
-// The service request is the root resource (no parent permit), so it creates
-// a new service request rather than filing a module against one. After saving,
-// if the workflow was opened from a process requirement (requirementId on the
-// URL), mark that requirement satisfied so "View Submission" becomes available.
+// Creates a new service request (no parent permit). Marks the opening
+// process requirement satisfied after saving so "View Submission" appears.
 const submit = async (): Promise<BcapServiceRequest> => {
     if (!draft.draftId) throw new UserFacingError('No active draft found.');
 

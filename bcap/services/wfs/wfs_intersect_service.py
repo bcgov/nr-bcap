@@ -1,10 +1,3 @@
-"""WFS Intersects query service.
-
-Queries a DataBC (or compatible) WFS endpoint for features that spatially
-intersect a given geometry. The geometry can be supplied directly as a GeoJSON
-dict or resolved from an Arches resource instance by node alias.
-"""
-
 import json
 import logging
 
@@ -61,7 +54,6 @@ class WfsIntersectService:
 
     @classmethod
     def _geometry_from_resource(cls, resource_id, node_alias):
-        """Return the raw tile-data GeoJSON dict for *node_alias* on *resource_id*."""
         node = arches_models.Node.objects.filter(alias=node_alias).first()
         if not node:
             raise MissingGeometryError(f"No node found with alias '{node_alias}'")
@@ -82,11 +74,8 @@ class WfsIntersectService:
 
     @staticmethod
     def _to_geos(geojson):
-        """Convert a GeoJSON FeatureCollection, Feature, or bare Geometry to GEOS.
-
-        For a FeatureCollection the member geometries are unioned so the filter
-        covers the full extent of the resource boundary.
-        """
+        """Convert GeoJSON (FeatureCollection, Feature, or bare Geometry) to GEOS.
+        FeatureCollection geometries are unioned."""
         geojson_type = geojson.get("type") if isinstance(geojson, dict) else None
 
         if geojson_type == "FeatureCollection":
@@ -109,12 +98,10 @@ class WfsIntersectService:
                 raise MissingGeometryError("Feature has no geometry")
             return GEOSGeometry(json.dumps(inner), srid=4326)
 
-        # Bare geometry object
         return GEOSGeometry(json.dumps(geojson), srid=4326)
 
     @staticmethod
     def _ring_poslist(ring):
-        """Render a GEOS LinearRing as a GML 3 posList string (lon lat ...)."""
         return " ".join(f"{x} {y}" for x, y in ring.coords)
 
     @classmethod
@@ -165,7 +152,6 @@ class WfsIntersectService:
 
     @staticmethod
     def _build_filter_xml(geos_geom, geometry_property, layer):
-        """Return a WFS 1.1.0 GetFeature POST body with an OGC Intersects filter."""
         gml = WfsIntersectService._to_gml3(geos_geom)
         return (
             '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -199,20 +185,11 @@ class WfsIntersectService:
     ):
         """Query *layer* for features that intersect the given geometry.
 
-        Args:
-            layer: WFS type name, e.g. ``"WHSE_TANTALIS.TA_CROWN_TENURES_SVW"``.
-            resource_id: Arches resource instance UUID.  Requires *node_alias*.
-            node_alias: Alias of the geometry node on the resource.
-            geometry: GeoJSON dict (FeatureCollection, Feature, or bare Geometry).
-            geometry_property: WFS geometry property name (default ``"geometry"``).
-
-        Returns:
-            Parsed GeoJSON FeatureCollection dict from the WFS server.
-
-        Raises:
-            ValueError: if *resource_id* is given without *node_alias*.
-            MissingGeometryError: if no usable geometry can be resolved.
-            WfsError: if the WFS server returns a non-200 response.
+        Supply either ``geometry`` (a GeoJSON dict) or ``resource_id`` +
+        ``node_alias`` to resolve the geometry from an Arches resource.
+        Raises ``ValueError`` when ``resource_id`` is given without
+        ``node_alias``, ``MissingGeometryError`` when no geometry can be
+        resolved, and ``WfsError`` on a non-200 WFS response.
         """
         if resource_id is not None:
             if node_alias is None:

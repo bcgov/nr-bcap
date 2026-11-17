@@ -15,12 +15,8 @@ from arches.app.search.search_export import SearchResultsExporter
 class _PlainTextExtractor(HTMLParser):
     """SAX-style HTML → plain text converter.
 
-    Block-level opening tags inject a newline so paragraphs and list items
-    start on their own line. <ul> items are prefixed with " - " and <ol>
-    items with " N. " (1-based, per nesting level). Inline tags (strong, em,
-    a, span …) are silently dropped; their text content is kept.
-    convert_charrefs=True (the Python 3 default) automatically decodes
-    &amp;, &nbsp;, &#39;, etc. through handle_data.
+    Block-level tags inject a newline. <ul> items are prefixed with " - " and
+    <ol> items with " N. ". Inline tags are dropped; their text is kept.
     """
 
     _BLOCK = frozenset({"p", "div", "br", "h1", "h2", "h3", "h4", "h5", "h6"})
@@ -28,8 +24,7 @@ class _PlainTextExtractor(HTMLParser):
     def __init__(self):
         super().__init__()
         self.parts = []
-        # Each entry is ["ul"] or ["ol", counter].  Mutable lists so the ol
-        # counter can be incremented in place without replacing the entry.
+        # Each entry is ["ul"] or ["ol", counter].
         self._lists = []
 
     def handle_starttag(self, tag, attrs):
@@ -66,22 +61,17 @@ class BCAPSearchResultsExporter(SearchResultsExporter):
 
     @staticmethod
     def _html_to_text(value, multiline=True):
-        """Strip HTML tags from a string, mapping block-level elements to
-        newlines. Values that contain no '<' are returned as-is to avoid
-        parser overhead on the majority of plain-text fields.
-
-        multiline=False collapses all whitespace runs to single spaces,
-        suitable for shapefile DBF fields where newlines cause problems in
-        most GIS tools.
+        """Strip HTML tags, mapping block-level elements to newlines.
+        Plain strings (no '<') are returned unchanged.
+        multiline=False collapses whitespace to spaces (for shapefile DBF fields).
         """
         if not isinstance(value, str) or "<" not in value:
             return value
         extractor = _PlainTextExtractor()
         extractor.feed(re.sub(r"\s+", " ", value))
         text = "".join(extractor.parts)
-        # Spaces flanking newlines are artefacts of collapsing source whitespace
-        # between tags (e.g. "</p> <p>" → "\n \n"). Strip only spaces (not tabs)
-        # on each side: tabs after a newline are intentional list indentation.
+        # Strip spaces flanking newlines (tag-collapse artefacts); tabs are
+        # intentional list indentation and must be preserved.
         text = re.sub(r" *\n *", "\n", text)
         text = re.sub(r"\n{2,}", "\n", text)
         text = text.strip()

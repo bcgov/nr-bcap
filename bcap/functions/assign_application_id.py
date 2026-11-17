@@ -1,8 +1,5 @@
-"""Resource save hook that stamps a fresh sequence id on the first save of any
-resource model that uses a reference-number-widget node.  The function is
-graph-agnostic: it locates the reference-number-widget node for the saving
-resource's graph at runtime, so the same function works for Permit Application,
-BCAP Service Request, and any future graph that carries one such node."""
+"""Resource save hook that stamps a sequence id on the first save of any
+resource model with a reference-number-widget node."""
 
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.functions.base import BaseFunction
@@ -31,11 +28,9 @@ details = {
 
 class AssignApplicationId(BaseFunction):
     def save(self, tile, request, context=None):
-        # Only on the first save of this tile.
         if TileModel.objects.filter(pk=tile.pk).exists():
             return
 
-        # Find the reference-number-widget node for this graph.
         card_widget = (
             arches_models.CardXNodeXWidget.objects.filter(
                 widget_id=_REFERENCE_NUMBER_WIDGET_ID,
@@ -50,7 +45,6 @@ class AssignApplicationId(BaseFunction):
 
         node = card_widget.node
 
-        # Only act when the reference-number node lives in this tile's nodegroup.
         if str(node.nodegroup_id) != str(tile.nodegroup_id):
             return
 

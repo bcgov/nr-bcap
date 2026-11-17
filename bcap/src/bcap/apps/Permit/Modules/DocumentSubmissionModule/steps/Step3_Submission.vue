@@ -71,8 +71,7 @@ const hasUnsavedFile = computed(() => {
     );
 });
 
-// Report title and archaeological consultant must be filled before a document
-// can be saved — they apply to all uploaded files on this step.
+// report_title and archaeological_consultant gate saving; they apply to all uploads.
 const hasRequiredMetadata = computed(() => {
     const reportData = draftData.value.report_submission?.aliased_data as
         DocumentSubmissionReportSubmissionAliasedData | undefined;

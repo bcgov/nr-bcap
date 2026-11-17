@@ -56,10 +56,7 @@ def _host_id_from(req_data):
 
 
 def _annotate_host_graph_slugs(results):
-    """Add host_graph_slug to each serialized ProcessRequirement dict in-place.
-
-    Uses a single batch query so the cost is one round-trip regardless of how
-    many requirements are in the page."""
+    """Add host_graph_slug to each serialized ProcessRequirement dict in-place (one batch query)."""
     host_id_per_result = {id(r): _host_id_from(r) for r in results}
     unique_host_ids = {hid for hid in host_id_per_result.values() if hid}
     slug_by_id = {}
@@ -86,7 +83,6 @@ def _require_permit(pk):
 
 
 def _require_permit_or_service_request(pk):
-    """404 unless pk belongs to either a permit application or a BCAP service request."""
     if ResourceTileTree.objects.filter(
         pk=pk,
         graph__slug__in=[

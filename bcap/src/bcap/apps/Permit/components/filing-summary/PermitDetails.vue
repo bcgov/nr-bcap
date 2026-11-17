@@ -150,8 +150,7 @@ const activeModule = computed(() => {
     );
 });
 
-// The first entry in the module list is the filing-summary / base module,
-// regardless of whether it is a PermitApplication or BcapServiceRequest.
+// First module is always the filing-summary base, for both PA and SR.
 const isBaseModuleId = (id: string) =>
     id ===
     (modulesAllowedForFilingType.value[0]?.id ?? GraphSlug.BcapServiceRequest);

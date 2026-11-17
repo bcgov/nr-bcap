@@ -148,8 +148,7 @@ class ProcessRequirementService:
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
             requirement.save_descriptors()
-        # Mark requirements that have a submission host as satisfied — the host
-        # was just created, so the submission is considered complete.
+        # Host was just created, so mark its requirement satisfied.
         for requirement in cloned.hosted:
             self.builder.set_requirement_status(requirement.pk, True)
         bulk_index(created)
@@ -258,7 +257,6 @@ class ProcessRequirementService:
 
     @staticmethod
     def _resource_graph_slug(resource_id):
-        """Return the graph slug for the given resource id."""
         from arches.app.models.models import ResourceInstance
 
         return ResourceInstance.objects.values_list("graph__slug", flat=True).get(
