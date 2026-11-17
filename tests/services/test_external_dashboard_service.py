@@ -233,7 +233,7 @@ class ExternalDashboardDraftsTests(TestCase):
         )
         cls.draft = WorkflowDraftService().create(
             request_as(cls.user),
-            "permit_application",
+            GraphSlugs.BCAP_SERVICE_REQUEST,
             {
                 "application_identification": {
                     "aliased_data": {
@@ -250,7 +250,9 @@ class ExternalDashboardDraftsTests(TestCase):
             parent_resource_id=str(cls.permit.pk),
         )
         # Another user's draft, which must not surface.
-        WorkflowDraftService().create(request_as(cls.other), "permit_application", {})
+        WorkflowDraftService().create(
+            request_as(cls.other), GraphSlugs.BCAP_SERVICE_REQUEST, {}
+        )
 
     def test_drafts_scope_returns_only_the_users_drafts(self):
         page = self.service.get_cards(
@@ -261,7 +263,7 @@ class ExternalDashboardDraftsTests(TestCase):
         self.assertEqual(page.count, 2)
         card = next(c for c in page.results if c.id == str(self.draft.pk))
         self.assertTrue(card.is_draft)
-        self.assertEqual(card.graph_slug, GraphSlugs.PERMIT_APPLICATION)
+        self.assertEqual(card.graph_slug, GraphSlugs.BCAP_SERVICE_REQUEST)
         self.assertEqual(card.status, "Submission Required")
         self.assertEqual(card.project_name, "Draft Project")
         self.assertEqual(card.application_number, "DRAFT-1")
@@ -352,15 +354,20 @@ class ExternalDashboardCompanyDraftsTests(TestCase):
 
         store = WorkflowDraftService()
         cls.mine = store.create(
-            request_as(cls.me), "permit_application", {}, organization_id=cls.acme_id
-        )
-        cls.colleagues = store.create(
-            request_as(cls.colleague),
-            "permit_application",
+            request_as(cls.me),
+            GraphSlugs.BCAP_SERVICE_REQUEST,
             {},
             organization_id=cls.acme_id,
         )
-        cls.outsiders = store.create(request_as(cls.outsider), "permit_application", {})
+        cls.colleagues = store.create(
+            request_as(cls.colleague),
+            GraphSlugs.BCAP_SERVICE_REQUEST,
+            {},
+            organization_id=cls.acme_id,
+        )
+        cls.outsiders = store.create(
+            request_as(cls.outsider), GraphSlugs.BCAP_SERVICE_REQUEST, {}
+        )
 
     def test_organization_scope_spans_the_organizations_drafts(self):
         page = self.service.get_cards(
@@ -425,7 +432,7 @@ class ExternalDashboardDraftRobustnessTests(TestCase):
         ).delete()
         WorkflowDraftService().create(
             request_as(self.user),
-            "permit_application",
+            GraphSlugs.BCAP_SERVICE_REQUEST,
             data,
             parent_resource_id=parent_resource_id,
         )

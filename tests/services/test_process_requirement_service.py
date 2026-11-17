@@ -81,13 +81,14 @@ class TemplateSpecTests(SimpleTestCase):
     lives. Plain JSON reads, so no database."""
 
     def test_module_graph_defaults_to_the_permit_type(self):
-        # Only the permit group names a graph; the rest are their own type.
-        self.assertEqual(module_graph("permit"), GraphSlugs.PERMIT_APPLICATION)
+        # The permit group names the bcap_service_request graph; the rest are
+        # their own type.
+        self.assertEqual(module_graph("permit"), GraphSlugs.BCAP_SERVICE_REQUEST)
         self.assertEqual(module_graph("investigation"), GraphSlugs.INVESTIGATION)
 
     def test_host_graph_is_the_child_matching_the_modules_graph(self):
-        # The permit module hosts its submission on the permit itself.
-        self.assertEqual(host_graph("permit"), GraphSlugs.PERMIT_APPLICATION)
+        # The permit module's own-submission child is a bcap_service_request.
+        self.assertEqual(host_graph("permit"), GraphSlugs.BCAP_SERVICE_REQUEST)
         self.assertEqual(host_graph("investigation"), GraphSlugs.INVESTIGATION)
 
     def test_an_unsupported_permit_type_has_no_host_graph(self):

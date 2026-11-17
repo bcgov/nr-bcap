@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from bcap.permissions.groups import Groups
 from bcap.services.workflow_draft_service import WorkflowDraftService
+from bcap.util.bcap_aliases import GraphSlugs
 from bcap.services.dashboard.dashboard_types import (
     ExternalDashboardStatus,
     InternalDashboardStatus,
@@ -144,13 +145,11 @@ class ExternalDashboardViewCardsTests(AuthTestHelper, TestCase):
         cls.mine = build_external_sr(builder, "My App", cls.user, "Active")
         cls.draft = WorkflowDraftService().create(
             request_as(cls.user),
-            "permit_application",
+            GraphSlugs.BCAP_SERVICE_REQUEST,
             {
-                "aliased_data": {
-                    "application_identification": {
-                        "aliased_data": {
-                            "project_name": {"en": {"value": "Draft Project"}},
-                        }
+                "application_identification": {
+                    "aliased_data": {
+                        "project_name": {"en": {"value": "Draft Project"}},
                     }
                 }
             },

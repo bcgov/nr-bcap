@@ -587,9 +587,9 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIn(str(self.investigation_host.pk), ids)
 
     def test_permit_module_hosts_only_what_is_attached(self):
-        """The permit module hosts the permit itself once submitted, and only
-        then: a permit carrying no permit module has no hosts, and a module with
-        requirements but no host resources has none for another type."""
+        """The permit module's host is a bcap_service_request (filed later by
+        the applicant); before that is submitted the host list is empty for both
+        draft and submitted permits, and there are no hosts for unrelated types."""
         service = ProcessRequirementService()
         admin_user = get_user_model().objects.get(username="admin")
 
@@ -597,10 +597,11 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
             service.permit_module_tiles(self.draft_pk, "permit", admin_user), []
         )
 
-        # The own-submission requirement points back at the permit, linked after
-        # the save because the id exists only then.
-        hosts = service.permit_module_tiles(self.submitted_pk, "permit", admin_user)
-        self.assertEqual([str(host.pk) for host in hosts], [str(self.submitted_pk)])
+        # The own-submission requirement is waiting for a bcap_service_request
+        # to be filed by the applicant; until then no host exists.
+        self.assertEqual(
+            service.permit_module_tiles(self.submitted_pk, "permit", admin_user), []
+        )
 
         self.assertEqual(
             list(

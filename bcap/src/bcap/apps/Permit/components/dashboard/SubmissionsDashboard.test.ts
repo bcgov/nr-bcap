@@ -75,7 +75,7 @@ function makeDraft(overrides: Record<string, unknown> = {}) {
     return {
         id: 'draft-1',
         is_draft: true,
-        graph_slug: 'permit_application',
+        graph_slug: 'bcap_service_request',
         permit_application_id: '',
         application_number: 'APP-1',
         status: 'Submission Required',
@@ -429,7 +429,7 @@ describe('draft card labels', () => {
         ]);
         const wrapper = await mountDashboard();
         expect(wrapper.findComponent(ProjectCard).props('bodyTitle')).toBe(
-            'Untitled Permit Application',
+            'Untitled Service Request',
         );
     });
 
@@ -438,7 +438,7 @@ describe('draft card labels', () => {
         const wrapper = await mountDashboard();
         expect(
             (wrapper.findComponent(ProjectCard).props('body') as string[])[0],
-        ).toBe('Type: Permit Application Draft');
+        ).toBe('Type: Service Request Draft');
     });
 
     it('labels a service request draft as Service Request', async () => {
@@ -566,7 +566,7 @@ describe('delete draft', () => {
         await flushPromises();
 
         expect(deleteDraft).toHaveBeenCalledWith(
-            'permit_application',
+            'bcap_service_request',
             'draft-1',
         );
         expect(wrapper.findAllComponents(ProjectCard)).toHaveLength(0);
