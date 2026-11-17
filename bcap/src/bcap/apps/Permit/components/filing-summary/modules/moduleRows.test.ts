@@ -227,6 +227,42 @@ describe('hydrateRows', () => {
         expect(rows.rowsNeedingDetails([first, second])).toEqual([]);
     });
 
+    it('populates hostGraphSlug from the annotated API field', async () => {
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', host: 'host-1', hostGraph: 'investigation' }),
+        ]);
+        const row = rowWith('t-1', 'r-1');
+        await rows.hydrateRows([row]);
+        expect(row.requirements[0].hostGraphSlug).toBe('investigation');
+    });
+
+    it('leaves hostGraphSlug empty when the API does not annotate it', async () => {
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', host: 'host-1' }),
+        ]);
+        const row = rowWith('t-1', 'r-1');
+        await rows.hydrateRows([row]);
+        expect(row.requirements[0].hostGraphSlug).toBe('');
+    });
+
+    it('populates workflowUrl from the workflow_url node', async () => {
+        fetchRequirementDetails.mockResolvedValue([
+            detail({ id: 'r-1', workflowUrl: 'https://example.com/submit' }),
+        ]);
+        const row = rowWith('t-1', 'r-1');
+        await rows.hydrateRows([row]);
+        expect(row.requirements[0].workflowUrl).toBe(
+            'https://example.com/submit',
+        );
+    });
+
+    it('leaves workflowUrl empty when the node is absent', async () => {
+        fetchRequirementDetails.mockResolvedValue([detail({ id: 'r-1' })]);
+        const row = rowWith('t-1', 'r-1');
+        await rows.hydrateRows([row]);
+        expect(row.requirements[0].workflowUrl).toBe('');
+    });
+
     it('leaves a requirement the fetch did not return alone', async () => {
         fetchRequirementDetails.mockResolvedValue([]);
         const row = rowWith('t-1', 'r-1');

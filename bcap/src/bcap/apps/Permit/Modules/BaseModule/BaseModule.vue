@@ -2,11 +2,15 @@
 import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { submitServiceRequest } from '@/bcap/apps/Permit/api.ts';
+import {
+    submitServiceRequest,
+    setRequirementSatisfied,
+} from '@/bcap/apps/Permit/api.ts';
 import type {
     BcapServiceRequest,
     BcapServiceRequestResourceAliasedDataWritable as BcapServiceRequestDraftData,
 } from '@/bcap/client/types.gen.ts';
+import { useRoute } from 'vue-router';
 
 import Step1_About from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step1_About.vue';
 import Step2_Prelim from '@/bcap/apps/Permit/Modules/BaseModule/steps/Step2_Prelim.vue';
@@ -25,10 +29,13 @@ const steps = [
 ];
 
 const draft = useDraftStore();
+const route = useRoute();
 
 // The service request is the root resource (no parent permit), so it creates
-// a new service request rather than filing a module against one.
-const submit = (): Promise<BcapServiceRequest> => {
+// a new service request rather than filing a module against one. After saving,
+// if the workflow was opened from a process requirement (requirementId on the
+// URL), mark that requirement satisfied so "View Submission" becomes available.
+const submit = async (): Promise<BcapServiceRequest> => {
     if (!draft.draftId) throw new UserFacingError('No active draft found.');
 
     // Stamp the submission date: the server treats application_submission_date
@@ -44,11 +51,18 @@ const submit = (): Promise<BcapServiceRequest> => {
         },
     };
 
-    return submitServiceRequest(
+    const result = await submitServiceRequest(
         draft.draftId,
         draft.draftData,
         GraphSlug.BcapServiceRequest,
     );
+
+    const requirementId = route.query.requirementId as string | undefined;
+    if (requirementId) {
+        await setRequirementSatisfied(requirementId, true);
+    }
+
+    return result;
 };
 </script>
 

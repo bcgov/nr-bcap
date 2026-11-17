@@ -9,7 +9,6 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { routeNames } from '@/bcap/apps/Permit/routes.ts';
-import { graphForModule } from '@/bcap/apps/Permit/components/dashboard/permitModules.ts';
 import { usePermitHeaderStore } from '@/bcap/stores/permitHeader.ts';
 import { useDragReorder } from '@/bcap/apps/Permit/composables/useDragReorder.ts';
 import { useModuleActions } from '@/bcap/apps/Permit/composables/useModuleActions.ts';
@@ -117,10 +116,12 @@ const onViewSubmission = (
     _index: number,
     requirement: RequirementItem,
 ) => {
-    // graphForModule explicitly excludes BcapServiceRequest, so Filing Summary
-    // modules (which don't resolve) correctly fall back to BcapServiceRequest.
-    const graph = graphForModule(row.name) ?? GraphSlug.BcapServiceRequest;
-    const resourceId = requirement.hostResourceId || row.hostResourceId;
+    // Each requirement carries the graph slug of its own host resource, so
+    // modules whose requirements have different host types (e.g. the Permit
+    // Application module has both a bcap_service_request and a
+    // permit_application requirement) navigate to the correct resource.
+    const graph = requirement.hostGraphSlug || GraphSlug.BcapServiceRequest;
+    const resourceId = requirement.hostResourceId;
     if (!resourceId) return;
     headerStore.setReview({
         graph,

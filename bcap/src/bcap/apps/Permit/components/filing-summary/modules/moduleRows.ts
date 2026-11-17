@@ -16,6 +16,8 @@ export interface RequirementItem {
     internal: boolean | null;
     href: string;
     hostResourceId: string;
+    hostGraphSlug: string;
+    workflowUrl: string;
 }
 
 export interface ModuleRow {
@@ -71,6 +73,8 @@ interface RequirementMeta {
     satisfied: boolean;
     internal: boolean;
     hostResourceId: string;
+    hostGraphSlug: string;
+    workflowUrl: string;
 }
 const detailCache = new Map<string, RequirementMeta>();
 
@@ -95,6 +99,19 @@ const requirementInternal = (requirement: ProcessRequirement): boolean =>
 const requirementHost = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_data?.aliased_data?.submission_data
         ?.aliased_data?.submission_data?.node_value?.[0]?.resourceId ?? '';
+
+// host_graph_slug is added by the API view (not part of the generated schema),
+// so we widen the type locally rather than touching the auto-generated types.
+type EnrichedProcessRequirement = ProcessRequirement & {
+    host_graph_slug?: string | null;
+};
+const requirementHostGraph = (requirement: ProcessRequirement): string =>
+    (requirement as EnrichedProcessRequirement).host_graph_slug ?? '';
+
+const requirementWorkflowUrl = (requirement: ProcessRequirement): string =>
+    requirement.aliased_data?.requirement_identification?.aliased_data
+        ?.is_template_requirement?.aliased_data?.workflow_url?.node_value
+        ?.url ?? '';
 
 const moduleHost = (requirements: RequirementItem[]): string =>
     requirements
@@ -140,6 +157,8 @@ const requirementItems = (
                 internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
                 hostResourceId: meta?.hostResourceId ?? '',
+                hostGraphSlug: meta?.hostGraphSlug ?? '',
+                workflowUrl: meta?.workflowUrl ?? '',
             };
         });
 
@@ -191,6 +210,8 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             satisfied: requirementSatisfied(detail),
             internal: requirementInternal(detail),
             hostResourceId: requirementHost(detail),
+            hostGraphSlug: requirementHostGraph(detail),
+            workflowUrl: requirementWorkflowUrl(detail),
         });
     }
     for (const row of rows) {
@@ -203,6 +224,8 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             requirement.satisfied = meta.satisfied;
             requirement.internal = meta.internal;
             requirement.hostResourceId = meta.hostResourceId;
+            requirement.hostGraphSlug = meta.hostGraphSlug;
+            requirement.workflowUrl = meta.workflowUrl;
         }
         row.hostResourceId = moduleHost(row.requirements);
     }

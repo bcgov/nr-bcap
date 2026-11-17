@@ -51,8 +51,18 @@ const assigneeOptions = computed(() => [
     ...(props.assignees ?? []),
 ]);
 
-const showSubmission = computed(
-    () => props.canViewSubmission && hasSubmission(props.requirement.type),
+const showViewSubmission = computed(
+    () =>
+        props.canViewSubmission &&
+        hasSubmission(props.requirement.type) &&
+        props.requirement.satisfied === true,
+);
+
+const showEnterSubmission = computed(
+    () =>
+        hasSubmission(props.requirement.type) &&
+        props.requirement.satisfied === false &&
+        Boolean(props.requirement.workflowUrl),
 );
 
 const assigneeName = (id: string) =>
@@ -214,10 +224,21 @@ const moreItems = computed(() => [
                 />
             </span>
             <span
-                v-if="showSubmission"
+                v-if="showViewSubmission || showEnterSubmission"
                 class="req-submission-slot"
             >
+                <a
+                    v-if="showEnterSubmission"
+                    class="req-action req-primary req-enter-submission"
+                    :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    <i class="fa-solid fa-arrow-right"></i>
+                    Enter Submission
+                </a>
                 <Button
+                    v-else
                     type="button"
                     class="req-action req-primary req-view-submission"
                     @click="$emit('view-submission')"
@@ -553,7 +574,8 @@ const moreItems = computed(() => [
 /* Buttons styled as req-actions; the layout comes from .req-action above. */
 .req-satisfy,
 .req-view-arches,
-.req-view-submission {
+.req-view-submission,
+.req-enter-submission {
     cursor: pointer;
     font-family: inherit;
 }

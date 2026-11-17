@@ -6,7 +6,7 @@ graph mechanics (build, clone, submission and parent linking) live in
 ProcessRequirementBuilder; this layer decides what to clone and where it goes."""
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 
 from arches.app.models.models import ResourceInstance, TileModel
@@ -52,6 +52,9 @@ class ClonedModule:
     # module that resource is the permit application itself, which doesn't exist
     # yet at create time, so the caller links it once the permit is saved.
     self_hosted: object = None
+    # Requirements that were given a submission host at clone time; these are
+    # auto-satisfied in attach_requirements once the host exists.
+    hosted: list = field(default_factory=list)
 
 
 class ProcessRequirementService:
@@ -145,6 +148,10 @@ class ProcessRequirementService:
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
             requirement.save_descriptors()
+        # Mark requirements that have a submission host as satisfied — the host
+        # was just created, so the submission is considered complete.
+        for requirement in cloned.hosted:
+            self.builder.set_requirement_status(requirement.pk, True)
         bulk_index(created)
         return cloned.requirements
 
@@ -197,13 +204,23 @@ class ProcessRequirementService:
     def remove_requirement(self, permit_id, module_tileid, requirement_id):
         """Delete one process requirement from a module: its child tile plus the
         requirement resource and submission host. The module's grouping parent is
-        shared by the other requirements, so it is left in place."""
+        shared by the other requirements, so it is left in place. A submission host
+        shared with a sibling requirement is not deleted."""
         child = self._module_child_tile(permit_id, module_tileid, requirement_id)
         if child is None:
             return
         to_delete = {str(requirement_id)}
+        # Collect host ids that siblings still depend on so we don't delete them.
+        reference_node = node_id(GraphSlugs.PERMIT_APPLICATION, pa.PROCESS_REQUIREMENT)
+        sibling_ids = referenced_resource_ids(
+            TileModel.objects.filter(parenttile_id=module_tileid).exclude(pk=child.pk),
+            reference_node,
+        )
+        sibling_host_ids = set().union(
+            *self.host_ids_by_requirement(sibling_ids).values()
+        )
         for hosts in self.host_ids_by_requirement({str(requirement_id)}).values():
-            to_delete.update(hosts)
+            to_delete.update(h for h in hosts if h not in sibling_host_ids)
         to_delete.discard(str(permit_id))
         Tile.objects.get(pk=child.pk).delete()
         self._delete_resources(to_delete)
@@ -405,26 +422,41 @@ class ProcessRequirementService:
         """Clone the module's child requirements, linking each to its submission
         resource (the host or a fresh one). The grouping parent template is not
         cloned into working documents, keeping the list flat on the service request.
-        The module and requirement ids are stamped later by the save hook."""
+        The module and requirement ids are stamped later by the save hook.
+
+        Requirements with the same non-own resource type share a single resource
+        instance (e.g. three permit_application requirements share one resource)."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
         requirements = []
+        hosted = []
         self_hosted = None
+        # Pre-create one shared host per non-own resource type so all requirements
+        # of the same type link to the same instance rather than duplicating it.
+        shared_hosts = {}
+        for child in parent_spec["requirements"]:
+            resource = child.get("resource")
+            if resource and resource != graph and resource not in shared_hosts:
+                shared_hosts[resource] = self.builder.make_resource(resource)
         for child in parent_spec["requirements"]:
             submission = None
             own_submission = child["resource"] == graph
             if own_submission:
                 submission = host
             elif child["resource"]:
-                submission = self.builder.make_resource(child["resource"])
+                submission = shared_hosts[child["resource"]]
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, submission=submission
             )
             if own_submission and submission is None:
                 self_hosted = requirement
+            if submission is not None:
+                hosted.append(requirement)
             requirements.append(requirement)
-        return ClonedModule(None, requirements, parent_spec["name"], self_hosted)
+        return ClonedModule(
+            None, requirements, parent_spec["name"], self_hosted, hosted
+        )
 
     def link_submission(self, requirement_id, resource_id):
         """Point a requirement's submission host at a resource that already
