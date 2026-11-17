@@ -2016,12 +2016,8 @@ paths:
   /bcap/api/wfs/intersect:
     post:
       operationId: api_wfs_intersect_create
-      description: |-
-        POST a GeoJSON geometry and receive the WFS features that intersect it.
-
-        The request is forwarded to the configured DataBC WFS endpoint via the
-        application's outbound proxy (``TILESERVER_OUTBOUND_PROXY``) when set.
-        Returns the raw GeoJSON FeatureCollection from the WFS server.
+      description: POST a GeoJSON geometry; returns the WFS FeatureCollection of intersecting
+        features.
       tags:
       - 'External: wfs'
       requestBody:
