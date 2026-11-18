@@ -8749,7 +8749,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Non-Alignment Rationale
+          title: Non Alignment Rationale
         ancestral_remains_management_approach:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -8811,15 +8811,44 @@ components:
     Hca_Permit_Application_Application_Contacts_Aliased_Data:
       type: object
       properties:
-        archaeologist_contact:
+        archaeologist:
           allOf:
-          - $ref: '#/components/schemas/Hca_Permit_Application_Archaeologist_Contact_Tile'
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        proponent_contact:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hca_Permit_Application_Proponent_Contact_Tile'
+        is_first_permit_applciation:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
+          title: 'This is the archaeologist’s first permit issued under the HCA, or
+            the applicant has been informed they are subject to first-time permit
+            holder conditions.  '
+        proponent_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_company:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_address:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_phone:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_email:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - is_first_permit_applciation
     Hca_Permit_Application_Application_Contacts_Tile:
       type: object
       properties:
@@ -8873,17 +8902,19 @@ components:
       properties:
         permit_type:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
-        is_first_time_holder:
+          description: Select an option
+        standard_permit_term:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          title: Is First-Time Permit Holder
-        permit_term:
+          title: Permit for a 3-year term (from issuance)
+        other_permit_term:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          description: Please describe the permet term being requested
         is_replacement_permit:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -8896,24 +8927,30 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          title: Has Concurrent HCA Permits
+          title: 'Is this permit related to any known concurrent HCA permits or pending
+            applications? '
         concurrent_permit_numbers:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          title: Concurrent Permit Number(s)
         deliverables_due_date_type:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
-          title: Deliverables Due Date
+          title: Final deliverables due date
+          description: Select an option
         sector:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
+          description: Select an option
         project_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+          description: Describe the proponent&#39;s proposed project, associated archaeological
+            work, location and timeline (start date and duration)
     Hca_Permit_Application_Application_Overview_Tile:
       type: object
       properties:
@@ -8935,82 +8972,6 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Hca_Permit_Application_Application_Overview_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
-    Hca_Permit_Application_Archaeologist_Contact_Aliased_Data:
-      type: object
-      properties:
-        archaeologist_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Name
-        archaeologist_company:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Company
-        archaeologist_address:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Address
-        archaeologist_phone:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Phone
-        archaeologist_email:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Email
-    Hca_Permit_Application_Archaeologist_Contact_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hca_Permit_Application_Archaeologist_Contact_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
@@ -9062,7 +9023,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Sampling Non-Alignment Rationale
+          title: Sampling Non Alignment Rationale
         confirms_material_analysis_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9072,7 +9033,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Material Analysis Non-Alignment Rationale
+          title: Material Analysis Non Alignment Rationale
         confirms_sample_analysis_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9082,7 +9043,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Sample Analysis Non-Alignment Rationale
+          title: Sample Analysis Non Alignment Rationale
         confirms_significance_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9092,7 +9053,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Significance Non-Alignment Rationale
+          title: Significance Non Alignment Rationale
         confirms_impacts_assessment_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9102,7 +9063,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Impacts Assessment Non-Alignment Rationale
+          title: Impacts Assessment Non Alignment Rationale
         collection_additional_discussion:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9168,7 +9129,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Methods Non-Alignment Rationale
+          title: Methods Non Alignment Rationale
         research_design:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9183,7 +9144,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Pre-Field Research Non-Alignment Rationale
+          title: Pre-Field Research Non Alignment Rationale
         confirms_survey_coverage_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9193,7 +9154,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Survey Coverage Non-Alignment Rationale
+          title: Survey Coverage Non Alignment Rationale
         confirms_arch_potential_aligns:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9203,7 +9164,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Archaeological Potential Non-Alignment Rationale
+          title: Archaeological Potential Non Alignment Rationale
         arch_bearing_sediment_approach:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9218,7 +9179,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Subsurface Testing Non-Alignment Rationale
+          title: Subsurface Testing Non Alignment Rationale
         has_machine_assisted_methods:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9482,7 +9443,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Objectives Non-Alignment Rationale
+          title: Objectives Non Alignment Rationale
         hip_other_objectives:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9720,82 +9681,6 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
-    Hca_Permit_Application_Proponent_Contact_Aliased_Data:
-      type: object
-      properties:
-        proponent_name:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Name
-        proponent_organization:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Organization
-        proponent_address:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Address
-        proponent_phone:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Phone
-        proponent_email:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Email
-    Hca_Permit_Application_Proponent_Contact_Tile:
-      type: object
-      properties:
-        tileid:
-          type: string
-          format: uuid
-          nullable: true
-        resourceinstance:
-          type: string
-          format: uuid
-          nullable: true
-        nodegroup:
-          type: string
-          format: uuid
-          nullable: true
-        parenttile:
-          type: string
-          format: uuid
-          nullable: true
-        aliased_data:
-          $ref: '#/components/schemas/Hca_Permit_Application_Proponent_Contact_Aliased_Data'
-        sortorder:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-          nullable: true
-        provisionaledits:
-          type: object
-          nullable: true
-          additionalProperties:
-            type: object
-            properties:
-              value:
-                type: object
-                additionalProperties: true
-              status:
-                type: string
-              action:
-                type: string
-              reviewer:
-                type: integer
-                nullable: true
-              timestamp:
-                type: string
-                nullable: true
-              reviewtimestamp:
-                type: string
-                nullable: true
     Hca_Permit_Application_References_Certification_Aliased_Data:
       type: object
       properties:
@@ -9811,7 +9696,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Schedule Non-Alignment Description
+          title: Schedule Non Alignment Description
         archaeologist_certification_date:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9954,7 +9839,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Repository Materials Non-Alignment Rationale
+          title: Repository Materials Non Alignment Rationale
         repository_additional_comments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -10063,7 +9948,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Site Recording Non-Alignment Rationale
+          title: Site Recording Non Alignment Rationale
         excavation_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -10078,7 +9963,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Excavation Non-Alignment Rationale
+          title: Excavation Non Alignment Rationale
         has_cmt_survey:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -10087,7 +9972,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: CMT Non-Alignment Rationale
+          title: CMT Non Alignment Rationale
         is_rock_art_compliant:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -10097,7 +9982,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Rock Art Non-Alignment Rationale
+          title: Rock Art Non Alignment Rationale
         has_wet_sites:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -10106,7 +9991,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Wet Sites Non-Alignment Rationale
+          title: Wet Sites Non Alignment Rationale
         has_historical_sites:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'

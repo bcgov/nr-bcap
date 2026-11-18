@@ -2240,25 +2240,22 @@ export const zHcaPermitApplicationAncestralRemainsTile = z.object({
     })).nullish()
 });
 
-export const zHcaPermitApplicationApplicationOverviewAliasedData = z.object({
-    permit_type: zStringAliasedNodeData.nullish(),
-    is_first_time_holder: zBooleanAliasedNodeData.nullish(),
-    permit_term: zStringAliasedNodeData.nullish(),
-    is_replacement_permit: zBooleanAliasedNodeData.nullish(),
-    existing_permit_number: zStringAliasedNodeData.nullish(),
-    has_concurrent_permits: zBooleanAliasedNodeData.nullish(),
-    concurrent_permit_numbers: zStringAliasedNodeData.nullish(),
-    deliverables_due_date_type: zStringAliasedNodeData.nullish(),
-    sector: zStringAliasedNodeData.nullish(),
-    project_description: zStringAliasedNodeData.nullish()
+export const zHcaPermitApplicationApplicationContactsAliasedData = z.object({
+    archaeologist: zResourceInstanceAliasedNodeData.nullish(),
+    is_first_permit_applciation: zBooleanAliasedNodeData.nullable(),
+    proponent_name: zStringAliasedNodeData.nullish(),
+    proponent_company: zStringAliasedNodeData.nullish(),
+    proponent_address: zStringAliasedNodeData.nullish(),
+    proponent_phone: zStringAliasedNodeData.nullish(),
+    proponent_email: zStringAliasedNodeData.nullish()
 });
 
-export const zHcaPermitApplicationApplicationOverviewTile = z.object({
+export const zHcaPermitApplicationApplicationContactsTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationApplicationOverviewAliasedData.optional(),
+    aliased_data: zHcaPermitApplicationApplicationContactsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -2270,20 +2267,25 @@ export const zHcaPermitApplicationApplicationOverviewTile = z.object({
     })).nullish()
 });
 
-export const zHcaPermitApplicationArchaeologistContactAliasedData = z.object({
-    archaeologist_name: zStringAliasedNodeData.nullish(),
-    archaeologist_company: zStringAliasedNodeData.nullish(),
-    archaeologist_address: zStringAliasedNodeData.nullish(),
-    archaeologist_phone: zStringAliasedNodeData.nullish(),
-    archaeologist_email: zStringAliasedNodeData.nullish()
+export const zHcaPermitApplicationApplicationOverviewAliasedData = z.object({
+    permit_type: zReferenceAliasedNodeData.nullish(),
+    standard_permit_term: zBooleanAliasedNodeData.nullish(),
+    other_permit_term: zStringAliasedNodeData.nullish(),
+    is_replacement_permit: zBooleanAliasedNodeData.nullish(),
+    existing_permit_number: zStringAliasedNodeData.nullish(),
+    has_concurrent_permits: zBooleanAliasedNodeData.nullish(),
+    concurrent_permit_numbers: zStringAliasedNodeData.nullish(),
+    deliverables_due_date_type: zReferenceAliasedNodeData.nullish(),
+    sector: zReferenceAliasedNodeData.nullish(),
+    project_description: zStringAliasedNodeData.nullish()
 });
 
-export const zHcaPermitApplicationArchaeologistContactTile = z.object({
+export const zHcaPermitApplicationApplicationOverviewTile = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationArchaeologistContactAliasedData.optional(),
+    aliased_data: zHcaPermitApplicationApplicationOverviewAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -2481,53 +2483,6 @@ export const zHcaPermitApplicationPersonnelTile = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zHcaPermitApplicationPersonnelAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zHcaPermitApplicationProponentContactAliasedData = z.object({
-    proponent_name: zStringAliasedNodeData.nullish(),
-    proponent_organization: zStringAliasedNodeData.nullish(),
-    proponent_address: zStringAliasedNodeData.nullish(),
-    proponent_phone: zStringAliasedNodeData.nullish(),
-    proponent_email: zStringAliasedNodeData.nullish()
-});
-
-export const zHcaPermitApplicationProponentContactTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationProponentContactAliasedData.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zHcaPermitApplicationApplicationContactsAliasedData = z.object({
-    archaeologist_contact: zHcaPermitApplicationArchaeologistContactTile.nullish(),
-    proponent_contact: z.array(zHcaPermitApplicationProponentContactTile).nullish()
-});
-
-export const zHcaPermitApplicationApplicationContactsTile = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationApplicationContactsAliasedData.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -8019,25 +7974,22 @@ export const zHcaPermitApplicationAncestralRemainsTileWritable = z.object({
     })).nullish()
 });
 
-export const zHcaPermitApplicationApplicationOverviewAliasedDataWritable = z.object({
-    permit_type: zStringAliasedNodeDataWritable.nullish(),
-    is_first_time_holder: zBooleanAliasedNodeDataWritable.nullish(),
-    permit_term: zStringAliasedNodeDataWritable.nullish(),
-    is_replacement_permit: zBooleanAliasedNodeDataWritable.nullish(),
-    existing_permit_number: zStringAliasedNodeDataWritable.nullish(),
-    has_concurrent_permits: zBooleanAliasedNodeDataWritable.nullish(),
-    concurrent_permit_numbers: zStringAliasedNodeDataWritable.nullish(),
-    deliverables_due_date_type: zStringAliasedNodeDataWritable.nullish(),
-    sector: zStringAliasedNodeDataWritable.nullish(),
-    project_description: zStringAliasedNodeDataWritable.nullish()
+export const zHcaPermitApplicationApplicationContactsAliasedDataWritable = z.object({
+    archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    is_first_permit_applciation: zBooleanAliasedNodeDataWritable.nullable(),
+    proponent_name: zStringAliasedNodeDataWritable.nullish(),
+    proponent_company: zStringAliasedNodeDataWritable.nullish(),
+    proponent_address: zStringAliasedNodeDataWritable.nullish(),
+    proponent_phone: zStringAliasedNodeDataWritable.nullish(),
+    proponent_email: zStringAliasedNodeDataWritable.nullish()
 });
 
-export const zHcaPermitApplicationApplicationOverviewTileWritable = z.object({
+export const zHcaPermitApplicationApplicationContactsTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationApplicationOverviewAliasedDataWritable.optional(),
+    aliased_data: zHcaPermitApplicationApplicationContactsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -8049,20 +8001,25 @@ export const zHcaPermitApplicationApplicationOverviewTileWritable = z.object({
     })).nullish()
 });
 
-export const zHcaPermitApplicationArchaeologistContactAliasedDataWritable = z.object({
-    archaeologist_name: zStringAliasedNodeDataWritable.nullish(),
-    archaeologist_company: zStringAliasedNodeDataWritable.nullish(),
-    archaeologist_address: zStringAliasedNodeDataWritable.nullish(),
-    archaeologist_phone: zStringAliasedNodeDataWritable.nullish(),
-    archaeologist_email: zStringAliasedNodeDataWritable.nullish()
+export const zHcaPermitApplicationApplicationOverviewAliasedDataWritable = z.object({
+    permit_type: zReferenceAliasedNodeDataWritable.nullish(),
+    standard_permit_term: zBooleanAliasedNodeDataWritable.nullish(),
+    other_permit_term: zStringAliasedNodeDataWritable.nullish(),
+    is_replacement_permit: zBooleanAliasedNodeDataWritable.nullish(),
+    existing_permit_number: zStringAliasedNodeDataWritable.nullish(),
+    has_concurrent_permits: zBooleanAliasedNodeDataWritable.nullish(),
+    concurrent_permit_numbers: zStringAliasedNodeDataWritable.nullish(),
+    deliverables_due_date_type: zReferenceAliasedNodeDataWritable.nullish(),
+    sector: zReferenceAliasedNodeDataWritable.nullish(),
+    project_description: zStringAliasedNodeDataWritable.nullish()
 });
 
-export const zHcaPermitApplicationArchaeologistContactTileWritable = z.object({
+export const zHcaPermitApplicationApplicationOverviewTileWritable = z.object({
     tileid: z.uuid().nullish(),
     resourceinstance: z.uuid().nullish(),
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationArchaeologistContactAliasedDataWritable.optional(),
+    aliased_data: zHcaPermitApplicationApplicationOverviewAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),
@@ -8260,53 +8217,6 @@ export const zHcaPermitApplicationPersonnelTileWritable = z.object({
     nodegroup: z.uuid().nullish(),
     parenttile: z.uuid().nullish(),
     aliased_data: zHcaPermitApplicationPersonnelAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zHcaPermitApplicationProponentContactAliasedDataWritable = z.object({
-    proponent_name: zStringAliasedNodeDataWritable.nullish(),
-    proponent_organization: zStringAliasedNodeDataWritable.nullish(),
-    proponent_address: zStringAliasedNodeDataWritable.nullish(),
-    proponent_phone: zStringAliasedNodeDataWritable.nullish(),
-    proponent_email: zStringAliasedNodeDataWritable.nullish()
-});
-
-export const zHcaPermitApplicationProponentContactTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationProponentContactAliasedDataWritable.optional(),
-    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
-    provisionaledits: z.record(z.string(), z.object({
-        value: z.record(z.string(), z.unknown()).optional(),
-        status: z.string().optional(),
-        action: z.string().optional(),
-        reviewer: z.int().nullish(),
-        timestamp: z.string().nullish(),
-        reviewtimestamp: z.string().nullish()
-    })).nullish()
-});
-
-export const zHcaPermitApplicationApplicationContactsAliasedDataWritable = z.object({
-    archaeologist_contact: zHcaPermitApplicationArchaeologistContactTileWritable.nullish(),
-    proponent_contact: z.array(zHcaPermitApplicationProponentContactTileWritable).nullish()
-});
-
-export const zHcaPermitApplicationApplicationContactsTileWritable = z.object({
-    tileid: z.uuid().nullish(),
-    resourceinstance: z.uuid().nullish(),
-    nodegroup: z.uuid().nullish(),
-    parenttile: z.uuid().nullish(),
-    aliased_data: zHcaPermitApplicationApplicationContactsAliasedDataWritable.optional(),
     sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
     provisionaledits: z.record(z.string(), z.object({
         value: z.record(z.string(), z.unknown()).optional(),

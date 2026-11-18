@@ -7,11 +7,15 @@ import { createSectionDraft } from '@/bcap/apps/Permit/api.ts';
 import { useRoute, useRouter } from 'vue-router';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
-import Step1_Overview from './steps/Step1_Overview.vue';
+import Step1_Contacts from './steps/Step1_Contacts.vue';
+import Step2_Overview from './steps/Step2_Overview.vue';
 
-const SECTION = 'application_overview';
+const SECTION = 'application_contacts';
 
-const steps = [{ label: 'Application Overview', component: Step1_Overview }];
+const steps = [
+    { label: 'Application Contacts', component: Step1_Contacts },
+    { label: 'Application Overview', component: Step2_Overview },
+];
 
 const draft = useDraftStore();
 const route = useRoute();
@@ -55,7 +59,7 @@ const submit = async () => {
 <template>
     <WorkflowStepper
         :graph-slug="GraphSlug.HcaPermitApplication"
-        title="HCA Permit Application — Application Overview"
+        title="HCA Permit Application — Permit Info"
         :steps="steps"
         submit-label="Save Section"
         :submit="submit"

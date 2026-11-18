@@ -3142,8 +3142,28 @@ export type HcaPermitApplicationAncestralRemainsTile = {
 };
 
 export type HcaPermitApplicationApplicationContactsAliasedData = {
-    archaeologist_contact?: HcaPermitApplicationArchaeologistContactTile | null;
-    proponent_contact?: Array<HcaPermitApplicationProponentContactTile> | null;
+    archaeologist?: ResourceInstanceAliasedNodeData | null;
+    is_first_permit_applciation: BooleanAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_name?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_company?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_address?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_phone?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_email?: StringAliasedNodeData | null;
 };
 
 export type HcaPermitApplicationApplicationContactsTile = {
@@ -3168,15 +3188,30 @@ export type HcaPermitApplicationApplicationContactsTile = {
 };
 
 export type HcaPermitApplicationApplicationOverviewAliasedData = {
-    permit_type?: StringAliasedNodeData | null;
-    is_first_time_holder?: BooleanAliasedNodeData | null;
-    permit_term?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    permit_type?: ReferenceAliasedNodeData | null;
+    standard_permit_term?: BooleanAliasedNodeData | null;
+    /**
+     * Please describe the permet term being requested
+     */
+    other_permit_term?: StringAliasedNodeData | null;
     is_replacement_permit?: BooleanAliasedNodeData | null;
     existing_permit_number?: StringAliasedNodeData | null;
     has_concurrent_permits?: BooleanAliasedNodeData | null;
     concurrent_permit_numbers?: StringAliasedNodeData | null;
-    deliverables_due_date_type?: StringAliasedNodeData | null;
-    sector?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    deliverables_due_date_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    sector?: ReferenceAliasedNodeData | null;
+    /**
+     * Describe the proponent&#39;s proposed project, associated archaeological work, location and timeline (start date and duration)
+     */
     project_description?: StringAliasedNodeData | null;
 };
 
@@ -3186,35 +3221,6 @@ export type HcaPermitApplicationApplicationOverviewTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationApplicationOverviewAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type HcaPermitApplicationArchaeologistContactAliasedData = {
-    archaeologist_name?: StringAliasedNodeData | null;
-    archaeologist_company?: StringAliasedNodeData | null;
-    archaeologist_address?: StringAliasedNodeData | null;
-    archaeologist_phone?: StringAliasedNodeData | null;
-    archaeologist_email?: StringAliasedNodeData | null;
-};
-
-export type HcaPermitApplicationArchaeologistContactTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: HcaPermitApplicationArchaeologistContactAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -3436,35 +3442,6 @@ export type HcaPermitApplicationPersonnelTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationPersonnelAliasedData;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type HcaPermitApplicationProponentContactAliasedData = {
-    proponent_name?: StringAliasedNodeData | null;
-    proponent_organization?: StringAliasedNodeData | null;
-    proponent_address?: StringAliasedNodeData | null;
-    proponent_phone?: StringAliasedNodeData | null;
-    proponent_email?: StringAliasedNodeData | null;
-};
-
-export type HcaPermitApplicationProponentContactTile = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: HcaPermitApplicationProponentContactAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -11471,8 +11448,28 @@ export type HcaPermitApplicationAncestralRemainsTileWritable = {
 };
 
 export type HcaPermitApplicationApplicationContactsAliasedDataWritable = {
-    archaeologist_contact?: HcaPermitApplicationArchaeologistContactTileWritable | null;
-    proponent_contact?: Array<HcaPermitApplicationProponentContactTileWritable> | null;
+    archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
+    is_first_permit_applciation: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_name?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_company?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_address?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_phone?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_email?: StringAliasedNodeDataWritable | null;
 };
 
 export type HcaPermitApplicationApplicationContactsTileWritable = {
@@ -11497,15 +11494,30 @@ export type HcaPermitApplicationApplicationContactsTileWritable = {
 };
 
 export type HcaPermitApplicationApplicationOverviewAliasedDataWritable = {
-    permit_type?: StringAliasedNodeDataWritable | null;
-    is_first_time_holder?: BooleanAliasedNodeDataWritable | null;
-    permit_term?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    permit_type?: ReferenceAliasedNodeDataWritable | null;
+    standard_permit_term?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Please describe the permet term being requested
+     */
+    other_permit_term?: StringAliasedNodeDataWritable | null;
     is_replacement_permit?: BooleanAliasedNodeDataWritable | null;
     existing_permit_number?: StringAliasedNodeDataWritable | null;
     has_concurrent_permits?: BooleanAliasedNodeDataWritable | null;
     concurrent_permit_numbers?: StringAliasedNodeDataWritable | null;
-    deliverables_due_date_type?: StringAliasedNodeDataWritable | null;
-    sector?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    deliverables_due_date_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    sector?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Describe the proponent&#39;s proposed project, associated archaeological work, location and timeline (start date and duration)
+     */
     project_description?: StringAliasedNodeDataWritable | null;
 };
 
@@ -11515,35 +11527,6 @@ export type HcaPermitApplicationApplicationOverviewTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationApplicationOverviewAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type HcaPermitApplicationArchaeologistContactAliasedDataWritable = {
-    archaeologist_name?: StringAliasedNodeDataWritable | null;
-    archaeologist_company?: StringAliasedNodeDataWritable | null;
-    archaeologist_address?: StringAliasedNodeDataWritable | null;
-    archaeologist_phone?: StringAliasedNodeDataWritable | null;
-    archaeologist_email?: StringAliasedNodeDataWritable | null;
-};
-
-export type HcaPermitApplicationArchaeologistContactTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: HcaPermitApplicationArchaeologistContactAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -11765,35 +11748,6 @@ export type HcaPermitApplicationPersonnelTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationPersonnelAliasedDataWritable;
-    sortorder?: number | null;
-    provisionaledits?: {
-        [key: string]: {
-            value?: {
-                [key: string]: unknown;
-            };
-            status?: string;
-            action?: string;
-            reviewer?: number | null;
-            timestamp?: string | null;
-            reviewtimestamp?: string | null;
-        };
-    } | null;
-};
-
-export type HcaPermitApplicationProponentContactAliasedDataWritable = {
-    proponent_name?: StringAliasedNodeDataWritable | null;
-    proponent_organization?: StringAliasedNodeDataWritable | null;
-    proponent_address?: StringAliasedNodeDataWritable | null;
-    proponent_phone?: StringAliasedNodeDataWritable | null;
-    proponent_email?: StringAliasedNodeDataWritable | null;
-};
-
-export type HcaPermitApplicationProponentContactTileWritable = {
-    tileid?: string | null;
-    resourceinstance?: string | null;
-    nodegroup?: string | null;
-    parenttile?: string | null;
-    aliased_data?: HcaPermitApplicationProponentContactAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
