@@ -380,6 +380,33 @@
                     "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "76c305e6-9943-40dd-9207-d6962ceb64aa",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Standard Permit Term"
+                    },
+                    "nodegroup_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
@@ -387,19 +414,20 @@
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "i18n_properties": ["placeholder"],
+                        "label": "Permit Type",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         }
                     },
                     "id": "d93f0259-2bbb-4669-9a2b-3a685d70b43a",
                     "label": {
                         "en": "Permit Type"
                     },
-                    "node_id": "d1956868-052a-49e2-810c-cb8d9a80c817",
+                    "node_id": "94bc47ad-6e84-4574-bc48-a6416e5ab339",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
@@ -420,19 +448,22 @@
                     "widget_id": "10000000-0000-0000-0000-000000000006"
                 },
                 {
-                    "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
+                    "card_id": "76c305e6-9943-40dd-9207-d6962ceb64aa",
                     "config": {
                         "i18n_properties": ["placeholder"],
+                        "label": "Permit Term",
+                        "maxLength": null,
                         "placeholder": {
-                            "en": ""
-                        }
+                            "en": "Enter text"
+                        },
+                        "width": "100%"
                     },
                     "id": "3678d617-9f24-4aa4-8c04-59360a4b1154",
                     "label": {
                         "en": "Permit Term"
                     },
                     "node_id": "b4661384-1cda-45a9-8dd7-191a63509f96",
-                    "sortorder": 2,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
@@ -513,37 +544,39 @@
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "i18n_properties": ["placeholder"],
+                        "label": "Deliverables Due Date",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         }
                     },
                     "id": "d2362276-7615-4544-9d2f-495672eced3a",
                     "label": {
                         "en": "Deliverables Due Date"
                     },
-                    "node_id": "6d32102e-e592-4e6d-94ab-60f14325be43",
+                    "node_id": "cd660043-8358-4411-bd40-58f53db677cf",
                     "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "i18n_properties": ["placeholder"],
+                        "label": "Sector",
                         "placeholder": {
-                            "en": ""
+                            "en": "Select an option"
                         }
                     },
                     "id": "08317212-41c4-457a-b504-90c4a7e4ef39",
                     "label": {
                         "en": "Sector"
                     },
-                    "node_id": "82e74657-e9ad-4569-9d93-cfb3b56da441",
+                    "node_id": "fe0edd05-a05e-45d8-a03c-85b10273ff6c",
                     "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
@@ -2902,6 +2935,22 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "76c305e6-9943-40dd-9207-d6962ceb64aa",
+                    "config": {
+                        "trueLabel": "Yes",
+                        "falseLabel": "No"
+                    },
+                    "id": "af08d9df-11ff-428c-a1a9-e5848378c6db",
+                    "label": {
+                        "en": "Standard Permit Term"
+                    },
+                    "node_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
                 }
             ],
             "color": null,
@@ -2909,7 +2958,7 @@
             "deploymentdate": null,
             "deploymentfile": null,
             "description": {
-                "en": "Heritage Conservation Act permit application \u2014 all sections."
+                "en": "Heritage Conservation Act permit application — all sections."
             },
             "edges": [
                 {
@@ -2929,7 +2978,7 @@
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "d1956868-052a-49e2-810c-cb8d9a80c817",
+                    "rangenode_id": "94bc47ad-6e84-4574-bc48-a6416e5ab339",
                     "source_identifier_id": null
                 },
                 {
@@ -2948,8 +2997,8 @@
                     "edgeid": "107b0da1-57a0-4abc-87ae-d5a555189d99",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "b4661384-1cda-45a9-8dd7-191a63509f96",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
                     "source_identifier_id": null
                 },
                 {
@@ -2999,7 +3048,7 @@
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "6d32102e-e592-4e6d-94ab-60f14325be43",
+                    "rangenode_id": "cd660043-8358-4411-bd40-58f53db677cf",
                     "source_identifier_id": null
                 },
                 {
@@ -3009,7 +3058,7 @@
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "82e74657-e9ad-4569-9d93-cfb3b56da441",
+                    "rangenode_id": "fe0edd05-a05e-45d8-a03c-85b10273ff6c",
                     "source_identifier_id": null
                 },
                 {
@@ -4451,6 +4500,16 @@
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "e48f1cdc-1aec-4ba4-acde-f02f16dd17a4",
                     "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "edgeid": "3ffdc0ba-53cb-477d-a52a-8b0eea0e9896",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "b4661384-1cda-45a9-8dd7-191a63509f96",
+                    "source_identifier_id": null
                 }
             ],
             "functions_x_graphs": [
@@ -4467,7 +4526,7 @@
                             },
                             "name": {
                                 "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                                "string_template": "<Permit Type> \u2014 <Project Description>"
+                                "string_template": "<Permit Type> — <Project Description>"
                             }
                         },
                         "triggering_nodegroups": []
@@ -4586,6 +4645,14 @@
                     "legacygroupid": null,
                     "nodegroupid": "22f69055-7040-4616-8769-5a56738ec9d2",
                     "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "grouping_node_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "legacygroupid": null,
+                    "nodegroupid": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "parentnodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
+                    "source_identifier_id": null
                 }
             ],
             "nodes": [
@@ -4642,9 +4709,10 @@
                 {
                     "alias": "permit_type",
                     "config": {
-                        "en": ""
+                        "controlledList": "f88307b2-99e8-54cf-bbb4-aac72a017f0f",
+                        "multiValue": true
                     },
-                    "datatype": "string",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4657,7 +4725,7 @@
                     "istopnode": false,
                     "name": "Permit Type",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                    "nodeid": "d1956868-052a-49e2-810c-cb8d9a80c817",
+                    "nodeid": "94bc47ad-6e84-4574-bc48-a6416e5ab339",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
@@ -4706,7 +4774,7 @@
                     "issearchable": true,
                     "istopnode": false,
                     "name": "Permit Term",
-                    "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
+                    "nodegroup_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
                     "nodeid": "b4661384-1cda-45a9-8dd7-191a63509f96",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
@@ -4817,9 +4885,10 @@
                 {
                     "alias": "deliverables_due_date_type",
                     "config": {
-                        "en": ""
+                        "controlledList": "4ec02c41-14d5-4f0f-a764-1d7d671edf47",
+                        "multiValue": false
                     },
-                    "datatype": "string",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4832,7 +4901,7 @@
                     "istopnode": false,
                     "name": "Deliverables Due Date",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                    "nodeid": "6d32102e-e592-4e6d-94ab-60f14325be43",
+                    "nodeid": "cd660043-8358-4411-bd40-58f53db677cf",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
@@ -4842,9 +4911,10 @@
                 {
                     "alias": "sector",
                     "config": {
-                        "en": ""
+                        "controlledList": "553328cc-16ab-4c84-9a15-35e2a4dc90d5",
+                        "multiValue": false
                     },
-                    "datatype": "string",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -4857,7 +4927,7 @@
                     "istopnode": false,
                     "name": "Sector",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                    "nodeid": "82e74657-e9ad-4569-9d93-cfb3b56da441",
+                    "nodeid": "fe0edd05-a05e-45d8-a03c-85b10273ff6c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
@@ -8460,6 +8530,29 @@
                     "nodeid": "e48f1cdc-1aec-4ba4-acde-f02f16dd17a4",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "standard_permit_term",
+                    "config": {},
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Standard Permit Term",
+                    "nodegroup_id": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "nodeid": "809e4653-e58a-4560-9ac2-8ce4a02d682f",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
