@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "inspection",
-            "url": "plugins/submissions/inspectionModule",
+            "url": "submissions/inspectionModule",
             "due": null,
             "notes": "",
             "satisfied": false,

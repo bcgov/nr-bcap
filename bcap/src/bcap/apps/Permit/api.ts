@@ -76,6 +76,31 @@ export const createDraft = async (
     );
 };
 
+// Create a draft scoped to one section of a multi-section workflow. The
+// draft_session_id groups all section drafts toward the same target resource.
+// The backend enforces one draft per (session_id, section, graph_slug).
+export const createSectionDraft = async (
+    graphSlug: string,
+    section: string,
+    draftSessionId: string,
+    parentResourceId?: string,
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
+        arches.urls.api_workflow_draft(graphSlug),
+        {
+            method: HttpMethod.Post,
+            body: {
+                data: {},
+                section,
+                draft_session_id: draftSessionId,
+                ...(parentResourceId
+                    ? { parent_resource_id: parentResourceId }
+                    : {}),
+            },
+        },
+    );
+};
+
 export const fetchDrafts = async (
     parentResourceId?: string,
 ): Promise<WorkflowDraft[]> => {

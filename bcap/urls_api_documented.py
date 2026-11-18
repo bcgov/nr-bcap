@@ -21,6 +21,7 @@ from bcap.views.workflow_draft_api import (
     WorkflowDraftAllListView,
     WorkflowDraftListCreateView,
     WorkflowDraftDetailView,
+    WorkflowSessionView,
 )
 from bcap.views.bcap_service_request_api import (
     BcapServiceRequestCreateView,
@@ -94,6 +95,12 @@ documented_api_patterns = [
         "api/workflow_draft/<slug:graph_slug>/<uuid:pk>",
         WorkflowDraftDetailView.as_view(),
         name="workflow_draft_detail",
+    ),
+    # Submitter - object level user filtering
+    path(
+        "api/workflow_session/<slug:graph_slug>/<uuid:session_id>",
+        WorkflowSessionView.as_view(),
+        name="workflow_session_detail",
     ),
     # Submitter - object level user filtering - override
     path(

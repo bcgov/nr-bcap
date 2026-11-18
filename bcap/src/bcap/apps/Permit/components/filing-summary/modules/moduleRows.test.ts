@@ -245,14 +245,14 @@ describe('hydrateRows', () => {
         expect(row.requirements[0].hostGraphSlug).toBe('');
     });
 
-    it('populates workflowUrl from the workflow_url node', async () => {
+    it('populates workflowUrl from the workflow_slug node', async () => {
         fetchRequirementDetails.mockResolvedValue([
-            detail({ id: 'r-1', workflowUrl: 'https://example.com/submit' }),
+            detail({ id: 'r-1', workflowUrl: 'submissions/baseModule' }),
         ]);
         const row = rowWith('t-1', 'r-1');
         await rows.hydrateRows([row]);
         expect(row.requirements[0].workflowUrl).toBe(
-            'https://example.com/submit',
+            '/plugins/submissions/baseModule',
         );
     });
 

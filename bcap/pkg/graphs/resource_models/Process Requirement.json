@@ -532,28 +532,25 @@
                 {
                     "card_id": "d11d5b64-9c25-4233-a300-67c78eeed2ed",
                     "config": {
-                        "i18n_properties": [
-                            "url_label_placeholder",
-                            "url_placeholder"
-                        ],
-                        "label": "Workflow URL",
-                        "link_color": "#0055a0",
-                        "url_label_placeholder": {
-                            "en": "Workflow Name"
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Workflow Slug",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
                         },
-                        "url_placeholder": {
-                            "en": "Workflow entrypoint URL"
-                        }
+                        "uneditable": false,
+                        "width": "100%"
                     },
-                    "id": "8895b5f7-8b86-4995-9a22-39926e0314e9",
+                    "id": "25fff8b2-6104-4f53-8891-030f644b41ad",
                     "label": {
-                        "en": "Workflow URL"
+                        "en": "Workflow Slug"
                     },
-                    "node_id": "ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566",
+                    "node_id": "53201c22-6dc4-4820-9d02-02effd8cc77b",
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "ca0c43ff-af73-4349-bafd-53ff9f22eebd"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "d11d5b64-9c25-4233-a300-67c78eeed2ed",
@@ -877,11 +874,11 @@
                 {
                     "description": null,
                     "domainnode_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
-                    "edgeid": "ae98c9fd-1ba5-4daf-ba17-25bda37da873",
+                    "edgeid": "d8f6f937-f5c6-4764-9307-6ace41643d56",
                     "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P125i_was_type_of_object_used_in",
-                    "rangenode_id": "ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566",
+                    "rangenode_id": "53201c22-6dc4-4820-9d02-02effd8cc77b",
                     "source_identifier_id": null
                 },
                 {
@@ -1544,7 +1541,7 @@
                             }
                         ],
                         "searchDsl": "",
-                        "searchString": "/bcap/search?advanced-search=[{\"op\":\"and\",\"41f13399-15e5-40ce-b325-2605782d68a4\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"48b46918-aeeb-4b8f-a919-b75d4853c6f8\",\"language_id\":\"en\",\"list_item_id\":\"5cbc8c6c-5be4-476b-bb55-cb6125b5268c\",\"value\":\"Module\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/5cbc8c6c-5be4-476b-bb55-cb6125b5268c\"}]},\"62ffee00-47d5-4b48-84fc-8e76de1cfd94\":{\"val\":\"\"},\"967bd749-09d3-4931-b1cf-6bb6d06a2b84\":{\"op\":\"\",\"val\":\"\"},\"610647c4-77c3-4775-9772-3832f39e2447\":{\"val\":\"\"},\"ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566\":{\"op\":\"~\",\"val\":\"\"},\"1974cf1e-e31a-428a-b64e-7eefbe2f4e5c\":{\"op\":\"eq\",\"val\":\"\"}}]"
+                        "searchString": "/bcap/search?advanced-search=[{\"op\":\"and\",\"41f13399-15e5-40ce-b325-2605782d68a4\":{\"op\":\"eq\",\"val\":[{\"labels\":[{\"id\":\"48b46918-aeeb-4b8f-a919-b75d4853c6f8\",\"language_id\":\"en\",\"list_item_id\":\"5cbc8c6c-5be4-476b-bb55-cb6125b5268c\",\"value\":\"Module\",\"valuetype_id\":\"prefLabel\"}],\"uri\":\"https://localhost/bcap/plugins/controlled-list-manager/item/5cbc8c6c-5be4-476b-bb55-cb6125b5268c\"}]},\"62ffee00-47d5-4b48-84fc-8e76de1cfd94\":{\"val\":\"\"},\"967bd749-09d3-4931-b1cf-6bb6d06a2b84\":{\"op\":\"\",\"val\":\"\"},\"610647c4-77c3-4775-9772-3832f39e2447\":{\"val\":\"\"},\"53201c22-6dc4-4820-9d02-02effd8cc77b\":{\"op\":\"~\",\"val\":\"\"},\"1974cf1e-e31a-428a-b64e-7eefbe2f4e5c\":{\"op\":\"eq\",\"val\":\"\"}}]"
                     },
                     "datatype": "resource-instance",
                     "description": "The module this Process Requirement is part of.",
@@ -1684,9 +1681,9 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "workflow_url",
+                    "alias": "workflow_slug",
                     "config": {},
-                    "datatype": "url",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -1697,9 +1694,9 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Workflow URL",
+                    "name": "Workflow Slug",
                     "nodegroup_id": "62ffee00-47d5-4b48-84fc-8e76de1cfd94",
-                    "nodeid": "ebe3bed7-6d1c-4a5e-b1f4-ecc462e37566",
+                    "nodeid": "53201c22-6dc4-4820-9d02-02effd8cc77b",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P125i_was_type_of_object_used_in",
                     "sortorder": 4,

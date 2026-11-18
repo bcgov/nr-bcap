@@ -25,8 +25,8 @@ export const requirementDetail = (opts: {
                         is_internal_requirement: {
                             node_value: opts.internal ?? false,
                         },
-                        workflow_url: opts.workflowUrl
-                            ? { node_value: { url: opts.workflowUrl } }
+                        workflow_slug: opts.workflowUrl
+                            ? { node_value: opts.workflowUrl }
                             : null,
                     },
                 },

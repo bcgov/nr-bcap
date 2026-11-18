@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "investigation",
-            "url": "plugins/submissions/investigationModule",
+            "url": "submissions/investigationModule",
             "due": null,
             "notes": "",
             "satisfied": false,

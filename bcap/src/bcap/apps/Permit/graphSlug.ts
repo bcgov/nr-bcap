@@ -1,5 +1,6 @@
 export enum GraphSlug {
     BcapServiceRequest = 'bcap_service_request',
+    HcaPermitApplication = 'hca_permit_application',
     PermitApplication = 'permit_application',
     Investigation = 'investigation',
     Inspection = 'inspection',

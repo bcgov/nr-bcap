@@ -22,7 +22,7 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_STATUS = "requirement_status"
     SORT_ORDER = "sort_order"
     SUBMISSION_DATA = "submission_data"
-    WORKFLOW_URL = "workflow_url"
+    WORKFLOW_SLUG = "workflow_slug"
 
     @staticmethod
     def get_aliases():

@@ -3,6 +3,7 @@ define, and the process-requirement templates, so a dev database matches what is
 checked in."""
 
 import json
+import uuid
 from pathlib import Path
 
 from django.apps import apps
@@ -55,6 +56,12 @@ def _read_graph_meta(path):
     return graph["graphid"], graph["slug"]
 
 
+def _read_json_nodes(path):
+    """Return {nodeid: datatype} for every node in a graph JSON file."""
+    graph = json.loads(Path(path).read_text())["graph"][0]
+    return {n["nodeid"]: n["datatype"] for n in graph.get("nodes", [])}
+
+
 class Command(BaseCommand):
     help = (
         "Reimport the permit resource models, the SKOS controlled lists, and the "
@@ -92,6 +99,8 @@ class Command(BaseCommand):
         if options["delete_tiles"]:
             self.delete_permit_data()
         if not options["skip_graphs"]:
+            if not options["delete_tiles"]:
+                self._check_graph_structural_changes()
             self.reload_graphs()
         if not options["skip_lists"]:
             self.reload_lists()
@@ -108,6 +117,7 @@ class Command(BaseCommand):
         for path in models:
             _, slug = _read_graph_meta(path)
             self.stdout.write(f"  resource model: {slug}")
+        self._rotate_datatype_changed_uuids(branches + models)
         self._prepare_graphs_for_import(branches + models)
         PackagesCommand().import_graphs(branches + models)
         self._publish_and_sync_resources(models)
@@ -178,6 +188,22 @@ class Command(BaseCommand):
                 graph_id=graphid,
                 source_identifier__isnull=True,
             ).delete()
+            # promote_draft_graph_to_active_graph restores nodes from the
+            # published snapshot, so nodes that were removed or given new UUIDs
+            # in the JSON are still present in the DB after the promote. Delete
+            # any source node whose UUID no longer appears in the JSON so
+            # import_graphs can INSERT replacements without hitting the
+            # unique_nodename_nodegroup constraint. Edges cascade from their
+            # nodes, so no explicit edge deletion is needed.
+            json_node_ids = set(_read_json_nodes(path))
+            removed_count, _ = arches_models.Node.objects.filter(
+                graph_id=graphid,
+                source_identifier__isnull=True,
+            ).exclude(nodeid__in=json_node_ids).delete()
+            if removed_count:
+                self.stdout.write(
+                    f"  {slug}: removed {removed_count} node(s) absent from JSON"
+                )
             self.stdout.write(f"  prepared: {slug}")
 
     def _publish_and_sync_resources(self, paths):
@@ -216,6 +242,98 @@ class Command(BaseCommand):
                 "for permit resource models."
             )
         )
+
+    def _rotate_datatype_changed_uuids(self, paths):
+        """Auto-rotate node UUIDs whose datatype changed between the JSON and DB.
+
+        Elasticsearch cannot remap an existing field (e.g. from an object type
+        like 'url' to a scalar type like 'non-localized-string') in place. Giving
+        the node a new UUID abandons the old ES field and lets the new datatype
+        create a fresh mapping.
+
+        The JSON package files are updated on disk. Commit the changes after a
+        successful reload so the rotated UUIDs are the new canonical values.
+        """
+        for path in paths:
+            graphid, slug = _read_graph_meta(path)
+            graph_data = json.loads(Path(path).read_text())["graph"][0]
+            json_node_map = {
+                n["nodeid"]: (n.get("alias", n["nodeid"]), n["datatype"])
+                for n in graph_data.get("nodes", [])
+            }
+            db_datatype_map = {
+                str(nodeid): datatype
+                for nodeid, datatype in arches_models.Node.objects.filter(
+                    graph_id=graphid,
+                    source_identifier__isnull=True,
+                ).values_list("nodeid", "datatype")
+            }
+            rotations = {
+                old_id: str(uuid.uuid4())
+                for old_id, (_, json_datatype) in json_node_map.items()
+                if old_id in db_datatype_map
+                and json_datatype != db_datatype_map[old_id]
+            }
+            if not rotations:
+                continue
+            text = Path(path).read_text()
+            for old, new in rotations.items():
+                text = text.replace(old, new)
+            Path(path).write_text(text)
+            for old, new in rotations.items():
+                alias, _ = json_node_map[old]
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"  {slug}: rotated UUID for '{alias}' "
+                        f"({old} → {new}); commit {Path(path).name}"
+                    )
+                )
+
+    def _check_graph_structural_changes(self):
+        """Refuse to reload graphs if any structural changes are detected.
+
+        Compares each graph JSON against the live database. If any node UUID
+        was removed from the JSON, or if a node's datatype changed, existing
+        tiles may carry incompatible data under the old UUID. The caller must
+        pass --delete-tiles to clear that data before reimporting.
+
+        When --delete-tiles is used, UUID rotation for datatype-changed nodes
+        is handled automatically by _rotate_datatype_changed_uuids.
+        """
+        all_paths = (
+            self._graph_paths("branches", BRANCHES) + self._permit_model_paths()
+        )
+        issues = []
+        for path in all_paths:
+            graphid, slug = _read_graph_meta(path)
+            json_nodes = _read_json_nodes(path)
+            db_nodes = {
+                str(nodeid): datatype
+                for nodeid, datatype in arches_models.Node.objects.filter(
+                    graph_id=graphid,
+                    source_identifier__isnull=True,
+                ).values_list("nodeid", "datatype")
+            }
+            for nodeid, db_datatype in db_nodes.items():
+                if nodeid not in json_nodes:
+                    issues.append(f"  {slug}: node {nodeid} removed from JSON")
+                elif json_nodes[nodeid] != db_datatype:
+                    issues.append(
+                        f"  {slug}: node {nodeid} datatype changed "
+                        f"{db_datatype!r} → {json_nodes[nodeid]!r}"
+                    )
+        if issues:
+            detail = "\n".join(issues)
+            raise SystemExit(
+                self.style.ERROR(
+                    f"\nStructural changes detected in the resource model JSON:\n\n"
+                    f"{detail}\n\n"
+                    "Existing tiles may reference nodes that have been removed or\n"
+                    "whose datatype changed. Re-run with --delete-tiles to clear\n"
+                    "tile data and auto-rotate UUIDs for datatype-changed nodes:\n\n"
+                    "    python3 manage.py reload_permit_models --delete-tiles\n"
+                )
+            )
 
     @staticmethod
     def _permit_model_paths():

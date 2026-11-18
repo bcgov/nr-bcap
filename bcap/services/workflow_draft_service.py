@@ -32,6 +32,11 @@ class DraftRecord:
     graph_slug: str
     graph_publication_id: str
     frontend_version: str
+    # Which sub-workflow section this draft covers. Empty for single-section workflows.
+    section: str = ""
+    # UUID grouping all section drafts for the same target resource creation.
+    # Empty for standalone (non-session) drafts.
+    draft_session_id: str = ""
     # The resource the draft was started from, so that resource's page can list
     # its own drafts. Empty when the draft has no parent.
     parent_resource_id: str = ""
@@ -48,13 +53,17 @@ class WorkflowDraftService(AliasedDataReader):
     resume and delete a draft as well as see it."""
 
     @staticmethod
-    def base_query(user, graph_slug=None, parent_resource_id=None, own_only=False):
+    def base_query(
+        user,
+        graph_slug=None,
+        parent_resource_id=None,
+        own_only=False,
+        section=None,
+        draft_session_id=None,
+    ):
         """The drafts this user started and their company's, optionally narrowed
-        to one graph, one parent, or the ones they created. Branch staff get no
-        widening: a draft is personal scratch data. own_only narrows within what
-        they may see rather than instead of it, so a draft left at a former
-        company stays hidden. Graph and parent filter in SQL, so no caller loads
-        them all."""
+        to one graph, one parent, one section, one session, or the ones they
+        created. Graph, parent, section, and session filter in SQL."""
         qs = ResourceTileTree.get_tiles(
             GraphSlugs.WORKFLOW_DRAFTS, as_representation=True
         ).filter(PermitAccess.own_or_company_drafts(user))
@@ -70,6 +79,10 @@ class WorkflowDraftService(AliasedDataReader):
                     )
                 }
             )
+        if section is not None:
+            qs = qs.filter(**{WorkflowDraftsAliases.SECTION: section})
+        if draft_session_id is not None:
+            qs = qs.filter(**{WorkflowDraftsAliases.DRAFT_SESSION_ID: draft_session_id})
         return qs.select_related("principaluser").order_by("createdtime")
 
     def get(self, user, pk):
@@ -85,11 +98,12 @@ class WorkflowDraftService(AliasedDataReader):
         frontend_version="",
         parent_resource_id="",
         organization_id="",
+        section="",
+        draft_session_id="",
     ):
         """Create a draft owned by the user, stamping the graph publication, the
-        organization whose members may see it, and the save time. The caller
-        settles which organization that is (see organization_to_stamp). Takes the
-        request so the edit log records who saved."""
+        organization whose members may see it, section, session, and save time.
+        Takes the request so the edit log records who saved."""
         user = request.user
         draft = ResourceTileTree(
             graph_id=get_current_graph(GraphSlugs.WORKFLOW_DRAFTS).pk,
@@ -103,6 +117,8 @@ class WorkflowDraftService(AliasedDataReader):
                     WorkflowDraftsAliases.OWNING_ORGANIZATION: (
                         resource_instance_value(organization_id)
                     ),
+                    WorkflowDraftsAliases.SECTION: section or "",
+                    WorkflowDraftsAliases.DRAFT_SESSION_ID: draft_session_id or "",
                 },
                 # Empty: the tile is created here so it exists, but the blob
                 # itself is written past the audit below.
@@ -167,6 +183,8 @@ class WorkflowDraftService(AliasedDataReader):
             graph_slug=field(WorkflowDraftsAliases.GRAPH_SLUG),
             graph_publication_id=field(WorkflowDraftsAliases.GRAPH_PUBLICATION_ID),
             frontend_version=field(WorkflowDraftsAliases.FRONTEND_VERSION),
+            section=field(WorkflowDraftsAliases.SECTION),
+            draft_session_id=field(WorkflowDraftsAliases.DRAFT_SESSION_ID),
             parent_resource_id=cls.parent_id(resource),
             data=cls.blob(resource),
             current_step=field(WorkflowDraftsAliases.CURRENT_STEP),

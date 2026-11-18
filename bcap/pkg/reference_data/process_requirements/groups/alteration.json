@@ -15,7 +15,7 @@
             "type": "Workflow",
             "internal": false,
             "resource": "alteration",
-            "url": "plugins/submissions/alterationModule",
+            "url": "submissions/alterationModule",
             "due": null,
             "notes": "",
             "satisfied": false,

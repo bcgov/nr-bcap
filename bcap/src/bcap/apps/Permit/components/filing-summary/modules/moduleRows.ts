@@ -108,10 +108,14 @@ type EnrichedProcessRequirement = ProcessRequirement & {
 const requirementHostGraph = (requirement: ProcessRequirement): string =>
     (requirement as EnrichedProcessRequirement).host_graph_slug ?? '';
 
-const requirementWorkflowUrl = (requirement: ProcessRequirement): string =>
-    requirement.aliased_data?.requirement_identification?.aliased_data
-        ?.is_template_requirement?.aliased_data?.workflow_url?.node_value
-        ?.url ?? '';
+const requirementWorkflowUrl = (requirement: ProcessRequirement): string => {
+    // workflow_slug stores a route slug (e.g. "submissions/baseModule"); build
+    // the full path via arches.urls.plugin so host/prefix are always correct.
+    const slug =
+        requirement.aliased_data?.requirement_identification?.aliased_data
+            ?.is_template_requirement?.aliased_data?.workflow_slug?.node_value;
+    return slug ? arches.urls.plugin(slug) : '';
+};
 
 const moduleHost = (requirements: RequirementItem[]): string =>
     requirements

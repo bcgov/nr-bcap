@@ -7,6 +7,7 @@
     "document": ["GET"],
     "document_submission": ["GET"],
     "hca_permit": ["GET"],
+    "hca_permit_application": ["GET"],
     "hria_discontinued_data": ["GET"],
     "information_request": ["GET"],
     "inspection": [],

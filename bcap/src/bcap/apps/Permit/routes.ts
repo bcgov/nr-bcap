@@ -69,6 +69,15 @@ const routes = [
         },
     },
     {
+        path: arches.urls.plugin('submissions/hcaPermitApplication'),
+        name: 'hcaPermitApplicationModule',
+        component: () =>
+            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/HcaPermitApplicationModule.vue'),
+        meta: {
+            shouldShowNavigation: true,
+        },
+    },
+    {
         path: arches.urls.plugin('submissions/collectionModule'),
         name: 'collectionModule',
         component: () =>
@@ -151,6 +160,7 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     moduleReview: string;
     alterationsModule: string;
     baseModule: string;
+    hcaPermitApplicationModule: string;
     collectionModule: string;
     inspectionModule: string;
     investigationModule: string;
@@ -169,6 +179,7 @@ const routeNames: ExternalPermitRouteNamesType = {
     moduleReview: 'moduleReview',
     alterationsModule: 'alterationsModule',
     baseModule: 'baseModule',
+    hcaPermitApplicationModule: 'hcaPermitApplicationModule',
     collectionModule: 'collectionModule',
     inspectionModule: 'inspectionModule',
     investigationModule: 'investigationModule',

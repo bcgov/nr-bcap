@@ -113,6 +113,52 @@
                     "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
+                    "card_id": "5c9a1e77-2b40-4d6e-8f13-c0a7b2d95e64",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Section",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "e3b8d1a7-4c0f-4e92-a7b6-3d5f2c1e8a94",
+                    "label": {
+                        "en": "Section"
+                    },
+                    "node_id": "c8a2f134-5b7e-4d91-a830-1f2e9b0c6a47",
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
+                    "card_id": "5c9a1e77-2b40-4d6e-8f13-c0a7b2d95e64",
+                    "config": {
+                        "defaultValue": "",
+                        "i18n_properties": ["placeholder"],
+                        "label": "Draft Session Id",
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "b6e1f4a2-8c3d-4b97-a5c0-9d7e1b4f2c68",
+                    "label": {
+                        "en": "Draft Session Id"
+                    },
+                    "node_id": "f1a4c8e2-7d3b-4f92-b6a1-5e2d9c0b8f47",
+                    "sortorder": 5,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
+                },
+                {
                     "card_id": "e04b6d18-9a72-4c35-b6ef-1d8305f7ac29",
                     "config": {
                         "defaultValue": "",
@@ -340,6 +386,26 @@
                     "name": null,
                     "ontologyproperty": null,
                     "rangenode_id": "19c1c1cb-11e3-463e-a6d9-ae9ca44be242",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
+                    "edgeid": "d7f3a258-6c9b-4e21-b945-2c3f8a0e7b61",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "c8a2f134-5b7e-4d91-a830-1f2e9b0c6a47",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
+                    "edgeid": "a9d2b6e4-3f1c-4a87-9c5b-7e4a0d2f1b83",
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "name": null,
+                    "ontologyproperty": null,
+                    "rangenode_id": "f1a4c8e2-7d3b-4f92-b6a1-5e2d9c0b8f47",
                     "source_identifier_id": null
                 },
                 {
@@ -648,6 +714,52 @@
                     "ontologyclass": null,
                     "parentproperty": null,
                     "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "section",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "The sub-workflow section this draft covers",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Section",
+                    "nodegroup_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
+                    "nodeid": "c8a2f134-5b7e-4d91-a830-1f2e9b0c6a47",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 4,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "draft_session_id",
+                    "config": {},
+                    "datatype": "non-localized-string",
+                    "description": "UUID grouping all section drafts for the same target resource",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "fb6a3fbf-070d-43ae-b52c-0d1bfb78f206",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Draft Session Id",
+                    "nodegroup_id": "3f1c8a26-8d4b-4a51-9c26-5a1b7f0e2d31",
+                    "nodeid": "f1a4c8e2-7d3b-4f92-b6a1-5e2d9c0b8f47",
+                    "ontologyclass": null,
+                    "parentproperty": null,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

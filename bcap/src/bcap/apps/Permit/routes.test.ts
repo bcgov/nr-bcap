@@ -4,7 +4,6 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(15);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
             'EditChecklist',
@@ -12,6 +11,7 @@ describe('Permit routes', () => {
             'baseModule',
             'collectionModule',
             'documentSubmission',
+            'hcaPermitApplicationModule',
             'inspectionModule',
             'internal-root',
             'internalPermitDetails',

@@ -6,7 +6,6 @@ linking a Document Submission requirement to a submission resource. The service
 layer decides what to link where; the seed builders inherit these."""
 
 from functools import cached_property
-from urllib.parse import urlparse
 
 from django.db import transaction
 from django.utils import timezone
@@ -27,7 +26,6 @@ from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.controlled_list import reference_value
 from bcap.util.graph import node_id, nodegroup_id, nodes_for
 from bcap.util.i18n import localized_string
-from bcap.util.links import app_url
 
 
 class ProcessRequirementBuilder(ResourceBuilder):
@@ -58,17 +56,8 @@ class ProcessRequirementBuilder(ResourceBuilder):
             aliases.PROCESS_REQUIREMENT_TYPE,
             label=spec.get("type", "Checklist"),
         )
-        # TODO: Clean url up stuff later
         if spec.get("url"):
-            url = app_url(spec["url"])
-            # The url datatype rejects hosts without a dot, so use the loopback IP
-            # in dev. TODO: drop once a public (dotted) origin is configured.
-            if "." not in urlparse(url).netloc:
-                url = url.replace("localhost", "127.0.0.1")
-            template_data.workflow_url = {
-                "url": url,
-                "url_label": spec["resource"].replace("_", " ").title(),
-            }
+            template_data.workflow_slug = spec["url"]
         self.append_blank_tile_for_group(
             requirement,
             groups.REQUIREMENT_EXECUTION_DURATION,
