@@ -35,6 +35,8 @@ const urls: Record<string, unknown> = {
     api_workflow_draft: (graphSlug: string) =>
         `/bcap/api/workflow_draft/${graphSlug}`,
     api_workflow_draft_all: '/bcap/api/workflow_draft',
+    api_workflow_session: (graphSlug: string, sessionId: string) =>
+        `/bcap/api/workflow_session/${graphSlug}/${sessionId}`,
     assignable_contributors: '/bcap/api/contributors/assignable',
     assignable_groups: '/bcap/api/assignable_groups',
     bcap_message_detail: (messageId: string) =>

@@ -8,6 +8,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -20,6 +21,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -32,6 +34,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -44,6 +47,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -56,6 +60,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -68,6 +73,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -80,6 +86,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -92,6 +99,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -104,6 +112,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -116,6 +125,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         },
         {
@@ -127,6 +137,7 @@
             "due": "2026-01-02",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Recommendation",
@@ -265,6 +276,7 @@
             "due": "2026-02-15",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Recommendation",
@@ -385,6 +397,7 @@
             "due": "2026-03-30",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Decision rendered",
@@ -464,12 +477,13 @@
             "id": "REQ-FN-CONSULT-001",
             "name": "Formal Consultation",
             "type": "Workflow",
-            "internal": false,
+            "internal": true,
             "resource": "project_engagement",
             "url": "submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": []
         },
         {
@@ -482,6 +496,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": []
         }
     ]

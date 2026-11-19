@@ -14,6 +14,7 @@ class ProcessRequirementAliases(AbstractAliases):
     IS_TEMPLATE_REQUIREMENT = "is_template_requirement"
     PARENT_MODULE = "parent_module"
     PROCESS_REQUIREMENT_TYPE = "process_requirement_type"
+    PROCESS_STATUS = "process_status"
     REQUIREMENT_IDENTIFICATION = "requirement_identification"
     REQUIREMENT_NAME = "requirement_name"
     REQUIREMENT_PROCESS_COMPLETION_DATE = "requirement_process_completion_date"

@@ -17,6 +17,7 @@ import type {
     ApiDashboardExternalRetrieveData,
     ApiWorkflowDraftListAllData,
     BcapMessage,
+    WorkflowSession,
     BcapMessageWritable,
     BcapServiceRequest,
     BcapServiceRequestResourceAliasedData,
@@ -98,6 +99,20 @@ export const createSectionDraft = async (
                     : {}),
             },
         },
+    );
+};
+
+// Fetch all section drafts for a multi-section workflow session.
+export const fetchWorkflowSession = async (
+    graphSlug: string,
+    sessionId: string,
+): Promise<WorkflowSession> => {
+    const _urls = arches.urls as Record<
+        string,
+        (a: string, b: string) => string
+    >;
+    return apiFetchJson<WorkflowSession>(
+        _urls.api_workflow_session(graphSlug, sessionId),
     );
 };
 
@@ -416,15 +431,15 @@ export const setModuleCompleted = async (
     });
 };
 
-// Mark a non-checklist requirement satisfied/unsatisfied. The dedicated route
-// sets the assessment tile server-side, so the client just sends the flag.
-export const setRequirementSatisfied = async (
+// Set a non-checklist requirement's process status. The dedicated route writes
+// the assessment tile server-side; the client sends the status label string.
+export const setRequirementStatus = async (
     requirementResourceId: string,
-    satisfied: boolean,
+    processStatus: string,
 ): Promise<void> => {
     await apiFetch(arches.urls.requirement_status(requirementResourceId), {
         method: HttpMethod.Patch,
-        body: { satisfied },
+        body: { process_status: processStatus },
     });
 };
 

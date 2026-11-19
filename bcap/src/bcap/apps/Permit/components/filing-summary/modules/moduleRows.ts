@@ -12,7 +12,7 @@ export interface RequirementItem {
     type: string;
     ministryAssignee: string;
     ministryAssigneeId: string;
-    satisfied: boolean | null;
+    processStatus: string | null;
     internal: boolean | null;
     href: string;
     hostResourceId: string;
@@ -70,7 +70,7 @@ const hrefFor = (type: string, id: string): string => {
 interface RequirementMeta {
     name: string;
     type: string;
-    satisfied: boolean;
+    processStatus: string;
     internal: boolean;
     hostResourceId: string;
     hostGraphSlug: string;
@@ -87,9 +87,9 @@ const requirementType = (requirement: ProcessRequirement): string =>
         ?.is_template_requirement?.aliased_data?.process_requirement_type
         ?.display_value || '';
 
-const requirementSatisfied = (requirement: ProcessRequirement): boolean =>
+const requirementProcessStatus = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.sub_requirement_assessment_n1?.aliased_data
-        ?.requirement_status?.node_value === true;
+        ?.process_status?.display_value || '';
 
 const requirementInternal = (requirement: ProcessRequirement): boolean =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -157,7 +157,7 @@ const requirementItems = (
                 type,
                 ministryAssignee,
                 ministryAssigneeId,
-                satisfied: meta?.satisfied ?? null,
+                processStatus: meta?.processStatus ?? null,
                 internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
                 hostResourceId: meta?.hostResourceId ?? '',
@@ -211,7 +211,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
         detailCache.set(detail.resourceinstanceid ?? '', {
             name: requirementName(detail),
             type: requirementType(detail),
-            satisfied: requirementSatisfied(detail),
+            processStatus: requirementProcessStatus(detail),
             internal: requirementInternal(detail),
             hostResourceId: requirementHost(detail),
             hostGraphSlug: requirementHostGraph(detail),
@@ -225,7 +225,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             requirement.title = meta.name || requirement.name;
             requirement.type = meta.type;
             requirement.href = hrefFor(meta.type, requirement.resourceId);
-            requirement.satisfied = meta.satisfied;
+            requirement.processStatus = meta.processStatus;
             requirement.internal = meta.internal;
             requirement.hostResourceId = meta.hostResourceId;
             requirement.hostGraphSlug = meta.hostGraphSlug;
@@ -236,9 +236,12 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
 };
 
 // Keeps the cached status in step with an optimistic row update.
-export const cacheSatisfied = (resourceId: string, satisfied: boolean) => {
+export const cacheProcessStatus = (
+    resourceId: string,
+    processStatus: string,
+) => {
     const meta = detailCache.get(resourceId);
-    if (meta) meta.satisfied = satisfied;
+    if (meta) meta.processStatus = processStatus;
 };
 
 export const clearRequirementCache = () => detailCache.clear();

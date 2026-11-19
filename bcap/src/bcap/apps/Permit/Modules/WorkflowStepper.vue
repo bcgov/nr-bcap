@@ -54,11 +54,15 @@ const props = withDefaults(
         // The Review/Submitted step body. Defaults to the generic summary of
         // every filled node; the base permit passes a curated version.
         reviewComponent?: Component;
+        // Open directly on the review step, hiding the submit button, so a
+        // completed section can be browsed without re-submitting.
+        viewOnly?: boolean;
     }>(),
     {
         submitLabel: 'Create Filing',
         reviewComponent: Step99_Review,
         submit: undefined,
+        viewOnly: false,
     },
 );
 
@@ -81,7 +85,12 @@ const router = useRouter();
 const draft = useDraftStore();
 // The permit this filing was started from. From the URL when starting fresh, or
 // the loaded draft's parent_resource_id when resuming.
-draft.initDraft(props.graphSlug, (route.query.permitId as string) ?? null);
+// Module-filing links pass the parent as ?permit=; direct-to-workflow links use
+// ?permitId=. Accept both so section-only workflows (HCA) get the back link.
+draft.initDraft(
+    props.graphSlug,
+    (route.query.permitId as string) ?? (route.query.permit as string) ?? null,
+);
 
 const state = reactive({
     submitted: false,
@@ -228,6 +237,12 @@ const showPrevious = computed(
     () => !(currentStep.value === totalSteps.value || currentStep.value === 1),
 );
 
+// In viewOnly mode, hide the Next/Submit button once the user reaches the
+// review step — they can still navigate backwards through the form steps.
+const showNextButton = computed(
+    () => !props.viewOnly || currentStep.value < reviewStepNumber.value,
+);
+
 const headingFor = (step: WorkflowStep) => step.heading ?? step.label;
 
 // The last step only follows a submission, so a draft is never left on it.
@@ -261,6 +276,12 @@ onMounted(async () => {
                 loaded.parent_resource_id || draft.parentPermitId;
             resumeStep.value = stepNumberOf(loaded.current_step || '');
             lastStep = resumeStep.value;
+        }
+        // View-only mode opens directly on the review step so the user can
+        // read their submitted answers without being able to re-submit.
+        if (props.viewOnly) {
+            resumeStep.value = reviewStepNumber.value;
+            lastStep = reviewStepNumber.value;
         }
         state.isDataLoaded = true;
     } catch (error) {
@@ -356,6 +377,7 @@ onMounted(async () => {
                                 :step-number="currentStep"
                                 :is-valid="currentStepIsValid"
                                 :show-previous="false"
+                                :show-next="showNextButton"
                                 :next-label="nextLabel"
                                 @next-click="activateNextStep"
                                 @previous-click="activatePreviousStep"
@@ -441,6 +463,7 @@ onMounted(async () => {
                                 :step-number="currentStep"
                                 :is-valid="currentStepIsValid"
                                 :show-previous="showPrevious"
+                                :show-next="showNextButton"
                                 :next-label="nextLabel"
                                 @next-click="activateNextStep"
                                 @previous-click="activatePreviousStep"

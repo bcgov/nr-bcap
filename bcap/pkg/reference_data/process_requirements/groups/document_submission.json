@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -18,6 +19,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         }
     ]

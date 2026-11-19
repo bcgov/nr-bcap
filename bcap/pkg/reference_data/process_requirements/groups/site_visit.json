@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -18,6 +19,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Purpose confirmed",
@@ -48,6 +50,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Date of visit",
@@ -84,6 +87,7 @@
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Required",
             "sub_requirements": []
         }
     ]

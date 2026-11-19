@@ -3,7 +3,11 @@ import { onMounted } from 'vue';
 import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
-import { createSectionDraft } from '@/bcap/apps/Permit/api.ts';
+import {
+    createSectionDraft,
+    fetchWorkflowSession,
+    setRequirementStatus,
+} from '@/bcap/apps/Permit/api.ts';
 import { useRoute, useRouter } from 'vue-router';
 import type { ArchesDraftData } from '@/bcap/types.ts';
 
@@ -24,16 +28,37 @@ const router = useRouter();
 // WorkflowStepper handles ?draftId= loading in its own onMounted. This runs
 // after that so a section draft is only created when no draft was resumed.
 // The draft_session_id groups all section drafts for a single HCA application.
+// requirementId is used as the stable session key so returning via Edit reloads
+// the same section drafts that were saved on first completion.
 onMounted(async () => {
     if (route.query.draftId) return;
+    const requirementId = route.query.requirementId as string | undefined;
     const sessionId =
-        (route.query.sessionId as string | undefined) ?? crypto.randomUUID();
+        (route.query.sessionId as string | undefined) ??
+        requirementId ??
+        crypto.randomUUID();
     try {
-        const sectionDraft = await createSectionDraft(
-            GraphSlug.HcaPermitApplication,
-            SECTION,
-            sessionId,
-        );
+        // Check for an existing section draft before creating a new one — the
+        // backend rejects a second create for the same (session_id, section)
+        // with a 409. If one already exists, resume from it.
+        let sectionDraft = null;
+        try {
+            const session = await fetchWorkflowSession(
+                GraphSlug.HcaPermitApplication,
+                sessionId,
+            );
+            sectionDraft =
+                session.drafts.find((d) => d.section === SECTION) ?? null;
+        } catch {
+            // No session yet — fall through to create.
+        }
+        if (sectionDraft === null) {
+            sectionDraft = await createSectionDraft(
+                GraphSlug.HcaPermitApplication,
+                SECTION,
+                sessionId,
+            );
+        }
         draft.loadDraft(
             sectionDraft.id,
             (sectionDraft.data || {}) as ArchesDraftData,
@@ -47,11 +72,15 @@ onMounted(async () => {
     }
 });
 
-// Save the current section draft and return. The full HCA Permit Application
-// submission (creating the resource from all section drafts) is handled
-// separately once all sections are complete.
+// Save the current section draft and mark the linked requirement Completed.
+// The full HCA Permit Application submission (creating the resource from all
+// section drafts) is handled separately once all sections are complete.
 const submit = async () => {
     await draft.saveNow();
+    const requirementId = route.query.requirementId as string | undefined;
+    if (requirementId) {
+        await setRequirementStatus(requirementId, 'Completed');
+    }
     return null;
 };
 </script>
@@ -63,5 +92,6 @@ const submit = async () => {
         :steps="steps"
         submit-label="Save Section"
         :submit="submit"
+        :view-only="!!route.query.view"
     />
 </template>

@@ -5816,7 +5816,7 @@ export type PatchedRequirementAssignee = {
  * The status PATCH body: whether the requirement is satisfied.
  */
 export type PatchedRequirementStatus = {
-    satisfied?: boolean;
+    process_status?: string;
 };
 
 export type PermitApplication = {
@@ -6543,6 +6543,10 @@ export type ProcessRequirementSubRequirementAssessmentN1AliasedData = {
      * Enter text
      */
     assessment_notes?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    process_status?: ReferenceAliasedNodeData | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1Tile = {
@@ -14444,6 +14448,10 @@ export type ProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = {
      * Enter text
      */
     assessment_notes?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    process_status?: ReferenceAliasedNodeDataWritable | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1TileWritable = {

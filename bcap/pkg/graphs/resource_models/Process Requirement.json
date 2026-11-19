@@ -250,6 +250,25 @@
                     "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
+                    "card_id": "0a6676bc-d1e9-4f8c-a5e6-7ffdf846db62",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Process Status",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "5c1e8b4a-f7d3-4a9c-be04-2d9f1c6e8a05",
+                    "label": {
+                        "en": "Process Status"
+                    },
+                    "node_id": "3a8f4c7d-e1b9-4f5a-9c2e-8b6d0a3f7e14",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
                     "card_id": "53bc8b8e-16a4-4add-8bd9-a13c1d4b6ab2",
                     "config": {
                         "dateFormat": "YYYY-MM-DD",
@@ -949,6 +968,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "e2690235-db8f-416d-adb7-c526cfc85408",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
+                    "edgeid": "7d4c9e2a-b5f8-4c1d-9e3a-6b8f0d2e4c71",
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "3a8f4c7d-e1b9-4f5a-9c2e-8b6d0a3f7e14",
                     "source_identifier_id": null
                 },
                 {
@@ -1677,6 +1706,32 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "process_status",
+                    "config": {
+                        "controlledList": "c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "0e74b1fa-1da4-4f17-9e65-dd79fbc96313",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Process Status",
+                    "nodegroup_id": "4ae57336-30e2-4d9a-bcfd-e89af0251fbe",
+                    "nodeid": "3a8f4c7d-e1b9-4f5a-9c2e-8b6d0a3f7e14",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

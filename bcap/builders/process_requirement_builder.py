@@ -69,6 +69,11 @@ class ProcessRequirementBuilder(ResourceBuilder):
             {
                 aliases.REQUIREMENT_STATUS: spec.get("satisfied", False),
                 aliases.ASSESSMENT_NOTES: self.localized(spec.get("notes", "")),
+                aliases.PROCESS_STATUS: reference_value(
+                    GraphSlugs.PROCESS_REQUIREMENT,
+                    aliases.PROCESS_STATUS,
+                    label=spec.get("process_status", "Required"),
+                ),
             },
         )
         # Drop requirement_data's auto-created blank row and add the real items.
@@ -137,20 +142,25 @@ class ProcessRequirementBuilder(ResourceBuilder):
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
 
-    def set_requirement_status(self, requirement_id, satisfied):
-        """Set a requirement's assessment status (satisfied yes/no), creating the
-        assessment tile if it has none. A partial save, so only the assessment
-        nodegroup is touched."""
+    def set_requirement_status(self, requirement_id, process_status):
+        """Set a requirement's process status (reference), creating the assessment
+        tile if it has none. A partial save, so only the assessment nodegroup is
+        touched."""
         requirement = self._get_requirement_by_id(requirement_id)
         assessment = requirement.aliased_data.sub_requirement_assessment_n1
+        status_value = reference_value(
+            GraphSlugs.PROCESS_REQUIREMENT,
+            aliases.PROCESS_STATUS,
+            label=process_status,
+        )
         if assessment is None:
-            assessment = self.append_blank_tile_for_group(
+            self.append_blank_tile_for_group(
                 requirement,
                 groups.SUB_REQUIREMENT_ASSESSMENT_N1,
-                {aliases.REQUIREMENT_STATUS: satisfied},
+                {aliases.PROCESS_STATUS: status_value},
             )
         else:
-            assessment.aliased_data.requirement_status = satisfied
+            assessment.aliased_data.process_status = status_value
         requirement.save(**self._save_as, partial=True, index=False)
         return requirement
 

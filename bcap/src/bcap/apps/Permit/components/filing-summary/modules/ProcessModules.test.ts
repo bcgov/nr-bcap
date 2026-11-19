@@ -26,7 +26,7 @@ const api = vi.hoisted(() => ({
     addBlankRequirement: vi.fn(),
     removeRequirement: vi.fn(),
     setModuleCompleted: vi.fn(),
-    setRequirementSatisfied: vi.fn(),
+    setRequirementStatus: vi.fn(),
     setRequirementAssignee: vi.fn(),
     fetchAssignableContributors: vi.fn().mockResolvedValue([]),
     // The message store badges unresolved counts per module on mount, and
@@ -124,7 +124,7 @@ beforeEach(() => {
     api.removeRequirement.mockResolvedValue(undefined);
     api.patchModuleOrder.mockResolvedValue(undefined);
     api.setModuleCompleted.mockResolvedValue(undefined);
-    api.setRequirementSatisfied.mockResolvedValue(undefined);
+    api.setRequirementStatus.mockResolvedValue(undefined);
     api.setRequirementAssignee.mockResolvedValue(undefined);
     // The reset above drops the hoisted default; without a list the staff
     // assignee control renders nothing and takes its requirement row with it.
@@ -210,7 +210,7 @@ describe('ProcessModules requirement detail loading', () => {
             requirementDetail({
                 id: 'r-1',
                 type: 'Checklist',
-                satisfied: true,
+                processStatus: 'Completed',
             }),
         ]);
         const wrapper = mountModules({
@@ -494,7 +494,7 @@ describe('ProcessModules staff controls', () => {
         expect(wrapper.emitted('changed')).toHaveLength(1);
     });
 
-    it('toggling a requirement satisfies it and updates the row in place', async () => {
+    it('toggling a requirement completes it and updates the row in place', async () => {
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
@@ -502,20 +502,23 @@ describe('ProcessModules staff controls', () => {
         const vm = wrapper.vm as unknown as {
             onToggleRequirement: (r: {
                 resourceId: string;
-                satisfied: boolean | null;
+                processStatus: string | null;
             }) => Promise<void>;
         };
-        const requirement = { resourceId: 'r-9', satisfied: false };
+        const requirement = { resourceId: 'r-9', processStatus: 'Required' };
         await vm.onToggleRequirement(requirement);
 
-        expect(api.setRequirementSatisfied).toHaveBeenCalledWith('r-9', true);
+        expect(api.setRequirementStatus).toHaveBeenCalledWith(
+            'r-9',
+            'Completed',
+        );
         // The row flips locally so the status icon updates without a reload.
-        expect(requirement.satisfied).toBe(true);
+        expect(requirement.processStatus).toBe('Completed');
     });
 
     it('tells the user when a write fails, leaving the row alone', async () => {
         const failure = new Error('nope');
-        api.setRequirementSatisfied.mockRejectedValue(failure);
+        api.setRequirementStatus.mockRejectedValue(failure);
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
@@ -523,13 +526,13 @@ describe('ProcessModules staff controls', () => {
         const vm = wrapper.vm as unknown as {
             onToggleRequirement: (r: {
                 resourceId: string;
-                satisfied: boolean | null;
+                processStatus: string | null;
             }) => Promise<void>;
         };
-        const requirement = { resourceId: 'r-9', satisfied: false };
+        const requirement = { resourceId: 'r-9', processStatus: 'Required' };
         await vm.onToggleRequirement(requirement);
 
-        expect(requirement.satisfied).toBe(false);
+        expect(requirement.processStatus).toBe('Required');
         expect(notifyError).toHaveBeenCalledWith(
             'Failed to change requirement status',
             failure,
@@ -709,7 +712,7 @@ describe('ProcessModules in-flight guards', () => {
     const pending = () => new Promise<void>(() => {});
 
     it('ignores a second requirement toggle while the first is in flight', async () => {
-        api.setRequirementSatisfied.mockReturnValue(pending());
+        api.setRequirementStatus.mockReturnValue(pending());
         const wrapper = mountModules({
             modules: [staffModule()],
             isStaff: true,
@@ -717,15 +720,15 @@ describe('ProcessModules in-flight guards', () => {
         const vm = wrapper.vm as unknown as {
             onToggleRequirement: (r: {
                 resourceId: string;
-                satisfied: boolean | null;
+                processStatus: string | null;
             }) => Promise<void>;
         };
-        const requirement = { resourceId: 'r-9', satisfied: false };
+        const requirement = { resourceId: 'r-9', processStatus: 'Required' };
 
         vm.onToggleRequirement(requirement);
         vm.onToggleRequirement(requirement);
 
-        expect(api.setRequirementSatisfied).toHaveBeenCalledTimes(1);
+        expect(api.setRequirementStatus).toHaveBeenCalledTimes(1);
     });
 });
 

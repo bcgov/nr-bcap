@@ -476,7 +476,7 @@ export const zPatchedRequirementAssignee = z.object({
  * The status PATCH body: whether the requirement is satisfied.
  */
 export const zPatchedRequirementStatus = z.object({
-    satisfied: z.boolean().optional()
+    process_status: z.string().optional()
 });
 
 export const zPermitApplicationArchaeologicalAssessmentPlanTile = z.object({
@@ -3931,7 +3931,8 @@ export const zProcessRequirementRequirementIdentificationTile = z.object({
 
 export const zProcessRequirementSubRequirementAssessmentN1AliasedData = z.object({
     requirement_status: zBooleanAliasedNodeData.nullish(),
-    assessment_notes: zStringAliasedNodeData.nullish()
+    assessment_notes: zStringAliasedNodeData.nullish(),
+    process_status: zReferenceAliasedNodeData.nullish()
 });
 
 export const zProcessRequirementSubRequirementAssessmentN1Tile = z.object({
@@ -9567,7 +9568,8 @@ export const zProcessRequirementRequirementIdentificationTileWritable = z.object
 
 export const zProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = z.object({
     requirement_status: zBooleanAliasedNodeDataWritable.nullish(),
-    assessment_notes: zStringAliasedNodeDataWritable.nullish()
+    assessment_notes: zStringAliasedNodeDataWritable.nullish(),
+    process_status: zReferenceAliasedNodeDataWritable.nullish()
 });
 
 export const zProcessRequirementSubRequirementAssessmentN1TileWritable = z.object({

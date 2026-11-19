@@ -7,13 +7,13 @@ import {
     addBlankRequirement,
     removeRequirement,
     setModuleCompleted,
-    setRequirementSatisfied,
+    setRequirementStatus,
     setRequirementAssignee,
     fetchAssignableContributors,
 } from '@/bcap/apps/Permit/api.ts';
 import { useConfirmAction } from '@/bcap/apps/Permit/composables/useConfirmAction.ts';
 import {
-    cacheSatisfied,
+    cacheProcessStatus,
     clearRequirementCache,
     hydrateRows,
     rowsNeedingDetails,
@@ -131,16 +131,19 @@ export const useModuleActions = (options: {
         }
     };
 
-    // Toggle a non-checklist requirement's satisfied status. Updates the row and
+    // Toggle a non-checklist requirement's process status. Updates the row and
     // the detail cache in place so the status icon flips without a full reload.
     const onToggleRequirement = async (requirement: RequirementItem) => {
         if (ui.togglingRequirement) return;
         ui.togglingRequirement = requirement.resourceId;
-        const next = !requirement.satisfied;
+        const next =
+            requirement.processStatus === 'Completed'
+                ? 'In Progress'
+                : 'Completed';
         try {
-            await setRequirementSatisfied(requirement.resourceId, next);
-            requirement.satisfied = next;
-            cacheSatisfied(requirement.resourceId, next);
+            await setRequirementStatus(requirement.resourceId, next);
+            requirement.processStatus = next;
+            cacheProcessStatus(requirement.resourceId, next);
         } catch (error) {
             notifyError('Failed to change requirement status', error);
         } finally {

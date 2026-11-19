@@ -196,10 +196,14 @@ class Command(BaseCommand):
             # unique_nodename_nodegroup constraint. Edges cascade from their
             # nodes, so no explicit edge deletion is needed.
             json_node_ids = set(_read_json_nodes(path))
-            removed_count, _ = arches_models.Node.objects.filter(
-                graph_id=graphid,
-                source_identifier__isnull=True,
-            ).exclude(nodeid__in=json_node_ids).delete()
+            removed_count, _ = (
+                arches_models.Node.objects.filter(
+                    graph_id=graphid,
+                    source_identifier__isnull=True,
+                )
+                .exclude(nodeid__in=json_node_ids)
+                .delete()
+            )
             if removed_count:
                 self.stdout.write(
                     f"  {slug}: removed {removed_count} node(s) absent from JSON"
@@ -300,9 +304,7 @@ class Command(BaseCommand):
         When --delete-tiles is used, UUID rotation for datatype-changed nodes
         is handled automatically by _rotate_datatype_changed_uuids.
         """
-        all_paths = (
-            self._graph_paths("branches", BRANCHES) + self._permit_model_paths()
-        )
+        all_paths = self._graph_paths("branches", BRANCHES) + self._permit_model_paths()
         issues = []
         for path in all_paths:
             graphid, slug = _read_graph_meta(path)

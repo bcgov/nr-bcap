@@ -148,9 +148,9 @@ class ProcessRequirementService:
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
             requirement.save_descriptors()
-        # Host was just created, so mark its requirement satisfied.
+        # Host was just created, so mark its requirement completed.
         for requirement in cloned.hosted:
-            self.builder.set_requirement_status(requirement.pk, True)
+            self.builder.set_requirement_status(requirement.pk, "Completed")
         bulk_index(created)
         return cloned.requirements
 
@@ -298,10 +298,11 @@ class ProcessRequirementService:
         bulk_index([Resource.objects.get(pk=requirement.pk)])
         return requirement
 
-    def set_requirement_status(self, requirement_id, satisfied):
-        """Mark a requirement satisfied/unsatisfied on its assessment tile, then
-        index."""
-        requirement = self.builder.set_requirement_status(requirement_id, satisfied)
+    def set_requirement_status(self, requirement_id, process_status):
+        """Set a requirement's process status on its assessment tile, then index."""
+        requirement = self.builder.set_requirement_status(
+            requirement_id, process_status
+        )
         bulk_index([Resource.objects.get(pk=requirement.pk)])
         return requirement
 

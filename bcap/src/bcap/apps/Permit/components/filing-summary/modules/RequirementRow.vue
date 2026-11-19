@@ -27,14 +27,22 @@ const props = defineProps<{
     position?: number;
 }>();
 
+const STATUS_MAP: Record<string, { label: string; tone: string }> = {
+    Future: { label: 'Future', tone: 'is-future' },
+    Required: { label: 'Required', tone: 'is-required' },
+    'In Progress': { label: 'In progress', tone: 'is-in-progress' },
+    Incomplete: { label: 'Incomplete', tone: 'is-incomplete' },
+    Submitted: { label: 'Submitted', tone: 'is-submitted' },
+    Completed: { label: 'Complete', tone: 'is-complete' },
+};
+
 const status = computed(() => {
-    if (props.requirement.satisfied === null) {
-        return { label: 'Loading', tone: 'is-unknown' };
-    }
-    return props.requirement.satisfied
-        ? { label: 'Complete', tone: 'is-complete' }
-        : { label: 'In progress', tone: 'is-in-progress' };
+    const s = props.requirement.processStatus;
+    if (s === null) return { label: 'Loading', tone: 'is-unknown' };
+    return STATUS_MAP[s] ?? { label: s || 'Unknown', tone: 'is-unknown' };
 });
+
+const isComplete = (s: string | null) => s === 'Completed' || s === 'Submitted';
 
 const emit = defineEmits<{
     (event: 'toggle'): void;
@@ -51,17 +59,29 @@ const assigneeOptions = computed(() => [
     ...(props.assignees ?? []),
 ]);
 
+// A completed workflow requirement with no host resource (e.g. the HCA
+// multi-section form) shows View Section + Edit links rather than "View
+// Submission", since there is no separate host resource to navigate to.
+const showWorkflowLinks = computed(
+    () =>
+        isComplete(props.requirement.processStatus) &&
+        Boolean(props.requirement.workflowUrl) &&
+        !props.requirement.hostResourceId,
+);
+
 const showViewSubmission = computed(
     () =>
+        !showWorkflowLinks.value &&
         props.canViewSubmission &&
         hasSubmission(props.requirement.type) &&
-        props.requirement.satisfied === true,
+        isComplete(props.requirement.processStatus),
 );
 
 const showEnterSubmission = computed(
     () =>
         hasSubmission(props.requirement.type) &&
-        props.requirement.satisfied === false &&
+        props.requirement.processStatus !== null &&
+        !isComplete(props.requirement.processStatus) &&
         Boolean(props.requirement.workflowUrl),
 );
 
@@ -224,11 +244,35 @@ const moreItems = computed(() => [
                 />
             </span>
             <span
-                v-if="showViewSubmission || showEnterSubmission"
+                v-if="
+                    showWorkflowLinks ||
+                    showViewSubmission ||
+                    showEnterSubmission
+                "
                 class="req-submission-slot"
             >
+                <template v-if="showWorkflowLinks">
+                    <a
+                        class="req-action req-primary req-view-submission"
+                        :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}&view=1`"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <i class="fa-solid fa-eye"></i>
+                        View Section
+                    </a>
+                    <a
+                        class="req-action req-primary req-enter-submission"
+                        :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                    </a>
+                </template>
                 <a
-                    v-if="showEnterSubmission"
+                    v-else-if="showEnterSubmission"
                     class="req-action req-primary req-enter-submission"
                     :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
                     target="_blank"
@@ -238,7 +282,7 @@ const moreItems = computed(() => [
                     Complete Module
                 </a>
                 <Button
-                    v-else
+                    v-else-if="showViewSubmission"
                     type="button"
                     class="req-action req-primary req-view-submission"
                     @click="$emit('view-submission')"
@@ -251,7 +295,9 @@ const moreItems = computed(() => [
                 class="req-action-slot"
                 :class="{
                     'no-submission':
-                        !showViewSubmission && !showEnterSubmission,
+                        !showWorkflowLinks &&
+                        !showViewSubmission &&
+                        !showEnterSubmission,
                 }"
             >
                 <template v-if="isStaff && requirement.resourceId">
@@ -284,15 +330,15 @@ const moreItems = computed(() => [
                             :class="
                                 toggling === requirement.resourceId
                                     ? 'fa-circle-notch fa-spin'
-                                    : requirement.satisfied
+                                    : requirement.processStatus === 'Completed'
                                       ? 'fa-rotate-left'
                                       : 'fa-check'
                             "
                         ></i>
                         {{
-                            requirement.satisfied
-                                ? 'Mark unsatisfied'
-                                : 'Mark satisfied'
+                            requirement.processStatus === 'Completed'
+                                ? 'Mark in progress'
+                                : 'Mark complete'
                         }}
                     </Button>
                 </template>
@@ -399,6 +445,24 @@ const moreItems = computed(() => [
     background: #16a34a;
 }
 
+/* Muted grey: not yet applicable. */
+.req-position.is-future,
+.requirement-status.is-future {
+    color: #64748b;
+}
+.requirement-status.is-future .status-dot {
+    background: #94a3b8;
+}
+
+/* Required but not started: amber, same weight as in-progress. */
+.req-position.is-required,
+.requirement-status.is-required {
+    color: #b45309;
+}
+.requirement-status.is-required .status-dot {
+    background: #e3a82b;
+}
+
 /* Gold marks the row as in progress, matching the module status glyph. */
 .requirement-status.is-in-progress {
     color: #b45309;
@@ -406,6 +470,24 @@ const moreItems = computed(() => [
 
 .requirement-status.is-in-progress .status-dot {
     background: #e3a82b;
+}
+
+/* Incomplete: needs attention — red-orange. */
+.req-position.is-incomplete,
+.requirement-status.is-incomplete {
+    color: #c8102e;
+}
+.requirement-status.is-incomplete .status-dot {
+    background: #ef4444;
+}
+
+/* Submitted: awaiting review — blue. */
+.req-position.is-submitted,
+.requirement-status.is-submitted {
+    color: #1d4ed8;
+}
+.requirement-status.is-submitted .status-dot {
+    background: #3b82f6;
 }
 
 /* The assignee holds a fixed column so the names line up down the list; the

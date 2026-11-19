@@ -5,7 +5,7 @@ export const requirementDetail = (opts: {
     id: string;
     name?: string;
     type?: string;
-    satisfied?: boolean;
+    processStatus?: string;
     internal?: boolean;
     host?: string;
     hostGraph?: string;
@@ -34,7 +34,7 @@ export const requirementDetail = (opts: {
         },
         sub_requirement_assessment_n1: {
             aliased_data: {
-                requirement_status: { node_value: opts.satisfied ?? false },
+                process_status: { display_value: opts.processStatus ?? '' },
             },
         },
         requirement_data: {

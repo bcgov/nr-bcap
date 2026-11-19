@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/a1b7f3d2-e1c8-4b4f-be05-3d6c9b4a2f17">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/a1b7f3d2-e1c8-4b4f-be05-3d6c9b4a2f17</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Future</skos:prefLabel>
+    <skos:definition xml:lang="en">The requirement is not yet applicable. Used for internal requirements that will become relevant at a later stage.</skos:definition>
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4">
+        <dcterms:title>Process Requirement Status</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/b2c8e4f3-d571-4a9e-8c16-4e7d0b5c3a28">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/b2c8e4f3-d571-4a9e-8c16-4e7d0b5c3a28</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Required</skos:prefLabel>
+    <skos:definition xml:lang="en">The requirement is mandatory but has not yet been started. Used for multi-section resources completed by multiple workflows where this section is outstanding.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/c9d4e5f6-b237-4c8f-9a07-5f8e1c6d7b39">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/c9d4e5f6-b237-4c8f-9a07-5f8e1c6d7b39</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">In Progress</skos:prefLabel>
+    <skos:definition xml:lang="en">Work on the requirement has begun but is not yet complete.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/d1e2f3a4-b589-4d9e-8b18-6a9f2d7e8c40">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/d1e2f3a4-b589-4d9e-8b18-6a9f2d7e8c40</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Incomplete</skos:prefLabel>
+    <skos:definition xml:lang="en">The requirement has been partially completed but returned or flagged as requiring further action before it can be submitted.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/e5f6a7b8-c934-4e0f-9c29-7b0a3e8f9d51">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/e5f6a7b8-c934-4e0f-9c29-7b0a3e8f9d51</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Submitted</skos:prefLabel>
+    <skos:definition xml:lang="en">The requirement has been submitted and is awaiting review or approval.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/f8a9b0c1-d245-4f1a-ad3a-8c1b4f9a0e62">
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/f8a9b0c1-d245-4f1a-ad3a-8c1b4f9a0e62</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Completed</skos:prefLabel>
+    <skos:definition xml:lang="en">The requirement has been fully completed and accepted.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/bcap/c3f7a1e2-b945-4d8c-9f03-7e5b8a21d6c4"/>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

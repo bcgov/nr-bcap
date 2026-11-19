@@ -14580,8 +14580,8 @@ components:
       type: object
       description: 'The status PATCH body: whether the requirement is satisfied.'
       properties:
-        satisfied:
-          type: boolean
+        process_status:
+          type: string
     PermitApplication:
       type: object
       properties:
@@ -16163,6 +16163,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        process_status:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
     Process_Requirement_Sub_Requirement_Assessment_N1_Tile:
       type: object
       properties:

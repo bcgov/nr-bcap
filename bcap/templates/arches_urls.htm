@@ -22,6 +22,7 @@
      api_site_related_resources='(graph_slug, resource_id) => {return "{% url "api-related-site-resources" "----p1" "00000000-0000-0000-0000-000000000000" %}".replace("----p1", graph_slug).replace("00000000-0000-0000-0000-000000000000", resource_id)}'
      api_workflow_draft="(graph_slug) => {return `/bcap/api/workflow_draft/${graph_slug}`}"
      api_workflow_draft_all="{% url 'workflow_draft_list_all' %}"
+     api_workflow_session="(graph_slug, session_id) => {return `/bcap/api/workflow_session/${graph_slug}/${session_id}`}"
      api_resource_create="(graph_slug) => {return `/bcap/api/resource/${graph_slug}`}"
      bcap_service_request_create="{% url 'bcap_service_request_create' %}"
      permit_application_create="{% url 'permit_application_create' %}"

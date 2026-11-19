@@ -58,7 +58,8 @@ defineExpose({ isValid });
             <GenericWidget
                 :mode="EDIT"
                 :aliased-node-data="
-                    draftData?.application_contacts?.aliased_data?.proponent_name
+                    draftData?.application_contacts?.aliased_data
+                        ?.proponent_name
                 "
                 graph-slug="hca_permit_application"
                 node-alias="proponent_name"
