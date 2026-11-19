@@ -43,6 +43,7 @@ const status = computed(() => {
 });
 
 const isComplete = (s: string | null) => s === 'Completed' || s === 'Submitted';
+const isInProgress = (s: string | null) => s === 'In Progress';
 
 const emit = defineEmits<{
     (event: 'toggle'): void;
@@ -79,10 +80,13 @@ const showViewSubmission = computed(
 
 const showEnterSubmission = computed(
     () =>
-        hasSubmission(props.requirement.type) &&
         props.requirement.processStatus !== null &&
+        hasSubmission(props.requirement.type) &&
         !isComplete(props.requirement.processStatus) &&
-        Boolean(props.requirement.workflowUrl),
+        ((props.isStaff && props.requirement.internal) ||
+            (!props.isStaff &&
+                Boolean(props.requirement.workflowUrl) &&
+                !props.requirement.internal)),
 );
 
 const assigneeName = (id: string) =>
@@ -164,7 +168,10 @@ const moreItems = computed(() => [
         class="req-right"
         :class="{ 'is-readonly': !isStaff }"
     >
-        <span class="req-lead">
+        <span
+            v-if="requirement.internal"
+            class="req-lead"
+        >
             <Select
                 v-if="isStaff && requirement.resourceId"
                 :model-value="requirement.ministryAssigneeId"
