@@ -12,19 +12,6 @@
     "sub_requirements": [],
     "requirements": [
         {
-            "id": "REQ-PERMIT-TEMPLATE-001",
-            "name": "Initial Submission",
-            "type": "Workflow",
-            "internal": false,
-            "due": null,
-            "notes": "",
-            "satisfied": false,
-            "process_status": "Required",
-            "sub_requirements": [],
-            "workflow_slug": "submissions/baseModule",
-            "graph_slug": "bcap_service_request"
-        },
-        {
             "id": "REQ-PERMIT-TEMPLATE-002",
             "name": "Permit Info",
             "type": "Workflow",

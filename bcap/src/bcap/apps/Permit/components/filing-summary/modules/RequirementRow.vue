@@ -101,15 +101,19 @@ const moreItems = computed(() => [
     {
         label: 'View in Arches',
         icon: 'fa-solid fa-share-from-square',
-        // A workflow/document requirement's subject is the resource it was filed
-        // against (the permit application itself for the submission module), not
-        // the requirement resource.
-        url: `/bcap/resource/${
-            hasSubmission(props.requirement.type)
-                ? props.requirement.hostResourceId ||
-                  props.requirement.resourceId
-                : props.requirement.resourceId
-        }`,
+        // Direct-entry: open the linked submission resource, or redirect to
+        // create one. Workflow/document: show the host resource (the permit
+        // application or submission). Everything else: the requirement itself.
+        url: isDirectEntry(props.requirement.type)
+            ? `${arches.urls.requirement_resource_editor}
+                  ${props.requirement.resourceId}`
+            : `${arches.urls.requirement_resource_editor}
+                  ${
+                      hasSubmission(props.requirement.type)
+                          ? props.requirement.hostResourceId ||
+                            props.requirement.resourceId
+                          : props.requirement.resourceId
+                  }`,
         target: '_blank',
     },
     ...(isChecklist(props.requirement.type)
@@ -270,6 +274,7 @@ const moreItems = computed(() => [
                         View Section
                     </a>
                     <a
+                        v-if="!props.isStaff"
                         class="req-action req-primary req-enter-submission"
                         :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
                         target="_blank"
@@ -327,19 +332,21 @@ const moreItems = computed(() => [
                         Open checklist
                     </a>
                     <a
-                        v-else-if="isDirectEntry(requirement.type)"
+                        v-else-if="
+                            isDirectEntry(requirement.type) &&
+                            requirement.internal
+                        "
                         class="req-action req-primary"
+                        style="background: red"
                         :href="
-                            requirement.resourceId
-                                ? `${arches.urls.resource_editor}${requirement.resourceId}`
-                                : arches.urls.api_resource_create(
-                                      requirement.graphSlug,
-                                  )
+                            arches.urls.requirement_resource_editor(
+                                requirement.resourceId,
+                            )
                         "
                         target="_blank"
                         rel="noopener"
                         :title="
-                            requirement.resourceId
+                            requirement.hostResourceId
                                 ? 'Edit this resource in Arches'
                                 : 'Create a new resource in Arches'
                         "
@@ -347,10 +354,12 @@ const moreItems = computed(() => [
                         <i
                             class="fa-solid"
                             :class="
-                                requirement.resourceId ? 'fa-pen' : 'fa-plus'
+                                requirement.hostResourceId
+                                    ? 'fa-pen'
+                                    : 'fa-plus'
                             "
                         ></i>
-                        {{ requirement.resourceId ? 'Edit' : 'Create' }}
+                        {{ requirement.hostResourceId ? 'Edit' : 'Create' }}
                     </a>
                     <Button
                         v-else

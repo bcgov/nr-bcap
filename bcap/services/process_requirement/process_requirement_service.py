@@ -45,10 +45,23 @@ def _template_graph_slug(template):
         return ""
     try:
         return (
-            template.aliased_data.requirement_identification.aliased_data.is_template_requirement.aliased_data.graph_slug.node_value
+            template.aliased_data.requirement_identification.aliased_data.is_template_requirement.aliased_data.graph_slug
         ) or ""
     except AttributeError:
         return ""
+
+
+def _graph_slug_from_tile(requirement_id):
+    """Read graph_slug directly from the requirement's tile data.
+
+    Bypasses the aliased-data chain so a missing or mis-wired alias cannot
+    silently return '' when the value is present in the tile."""
+    slug_node = node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.GRAPH_SLUG)
+    tile = TileModel.objects.filter(
+        resourceinstance_id=requirement_id,
+        data__has_key=slug_node,
+    ).first()
+    return (tile.data.get(slug_node) or "") if tile else ""
 
 
 @dataclass
@@ -478,6 +491,30 @@ class ProcessRequirementService:
         self.builder.link(
             requirement_id, submission=Resource.objects.get(pk=resource_id)
         )
+
+    def get_or_create_submission_resource(self, requirement_id):
+        """Return the submission host already linked to this requirement, or
+        create a fresh one and link it. The graph type is read from the
+        requirement's own graph_slug node, falling back to the seeded template
+        for working copies cloned before graph_slug was added to the model."""
+        hosts = self.host_ids_by_requirement([str(requirement_id)])
+        host_ids = hosts.get(str(requirement_id), set())
+        if host_ids:
+            return Resource.objects.get(pk=next(iter(host_ids)))
+        graph_slug = _graph_slug_from_tile(requirement_id)
+        if not graph_slug:
+            requirement = self.builder._get_requirement_by_id(requirement_id)
+            req_id = self.builder._requirement_identification(requirement)
+            graph_slug = _template_graph_slug(
+                self.builder.templates_by_id().get(req_id)
+            )
+        if not graph_slug:
+            raise ValueError(
+                f"Requirement {requirement_id} has no graph_slug; cannot create a submission resource."
+            )
+        new_resource = self.builder.make_resource(graph_slug)
+        self.link_submission(requirement_id, new_resource.pk)
+        return new_resource
 
     def clone_by_id(self, template_id):
         return self.builder.clone_requirement(template_id)
