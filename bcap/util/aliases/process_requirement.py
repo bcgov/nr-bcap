@@ -23,6 +23,7 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_STATUS = "requirement_status"
     SORT_ORDER = "sort_order"
     SUBMISSION_DATA = "submission_data"
+    GRAPH_SLUG = "graph_slug"
     WORKFLOW_SLUG = "workflow_slug"
 
     @staticmethod

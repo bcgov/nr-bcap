@@ -39,6 +39,18 @@ from bcap.services.process_requirement.template_specs import (
 )
 
 
+def _template_graph_slug(template):
+    """Read the graph_slug stored on a template resource, or '' if absent."""
+    if template is None:
+        return ""
+    try:
+        return (
+            template.aliased_data.requirement_identification.aliased_data.is_template_requirement.aliased_data.graph_slug.node_value
+        ) or ""
+    except AttributeError:
+        return ""
+
+
 @dataclass
 class ClonedModule:
     """A cloned module ready to attach to a permit: its grouping parent resource,
@@ -423,28 +435,31 @@ class ProcessRequirementService:
         cloned into working documents, keeping the list flat on the service request.
         The module and requirement ids are stamped later by the save hook.
 
-        Requirements with the same non-own resource type share a single resource
-        instance (e.g. three permit_application requirements share one resource)."""
+        Requirements with the same non-own graph_slug share a single resource
+        instance (e.g. three permit_application requirements share one resource).
+        The graph_slug for each requirement is read from the template resource so
+        the JSON spec is not the runtime source of truth for that value."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
         requirements = []
         hosted = []
         self_hosted = None
-        # Pre-create one shared host per non-own resource type so all requirements
+        # Pre-create one shared host per non-own graph_slug so all requirements
         # of the same type link to the same instance rather than duplicating it.
         shared_hosts = {}
         for child in parent_spec["requirements"]:
-            resource = child.get("resource")
-            if resource and resource != graph and resource not in shared_hosts:
-                shared_hosts[resource] = self.builder.make_resource(resource)
+            graph_slug = _template_graph_slug(templates.get(child["id"]))
+            if graph_slug and graph_slug != graph and graph_slug not in shared_hosts:
+                shared_hosts[graph_slug] = self.builder.make_resource(graph_slug)
         for child in parent_spec["requirements"]:
+            graph_slug = _template_graph_slug(templates.get(child["id"]))
             submission = None
-            own_submission = child["resource"] == graph
+            own_submission = graph_slug == graph
             if own_submission:
                 submission = host
-            elif child["resource"]:
-                submission = shared_hosts[child["resource"]]
+            elif graph_slug:
+                submission = shared_hosts[graph_slug]
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, submission=submission
             )

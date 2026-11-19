@@ -18,6 +18,7 @@ export interface RequirementItem {
     hostResourceId: string;
     hostGraphSlug: string;
     workflowUrl: string;
+    graphSlug: string;
 }
 
 export interface ModuleRow {
@@ -49,6 +50,9 @@ export const hasSubmission = (type: string): boolean =>
 export const isChecklist = (type: string): boolean =>
     type.toLowerCase().includes('checklist');
 
+export const isDirectEntry = (type: string): boolean =>
+    type.toLowerCase() === 'direct resource entry';
+
 export const checklistHref = (id: string): string =>
     `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${id}`;
 
@@ -75,6 +79,7 @@ interface RequirementMeta {
     hostResourceId: string;
     hostGraphSlug: string;
     workflowUrl: string;
+    graphSlug: string;
 }
 const detailCache = new Map<string, RequirementMeta>();
 
@@ -107,6 +112,10 @@ type EnrichedProcessRequirement = ProcessRequirement & {
 };
 const requirementHostGraph = (requirement: ProcessRequirement): string =>
     (requirement as EnrichedProcessRequirement).host_graph_slug ?? '';
+
+const requirementGraphSlug = (requirement: ProcessRequirement): string =>
+    requirement.aliased_data?.requirement_identification?.aliased_data
+        ?.is_template_requirement?.aliased_data?.graph_slug?.node_value ?? '';
 
 const requirementWorkflowUrl = (requirement: ProcessRequirement): string => {
     // workflow_slug stores a route slug (e.g. "submissions/baseModule"); build
@@ -163,6 +172,7 @@ const requirementItems = (
                 hostResourceId: meta?.hostResourceId ?? '',
                 hostGraphSlug: meta?.hostGraphSlug ?? '',
                 workflowUrl: meta?.workflowUrl ?? '',
+                graphSlug: meta?.graphSlug ?? '',
             };
         });
 
@@ -216,6 +226,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             hostResourceId: requirementHost(detail),
             hostGraphSlug: requirementHostGraph(detail),
             workflowUrl: requirementWorkflowUrl(detail),
+            graphSlug: requirementGraphSlug(detail),
         });
     }
     for (const row of rows) {
@@ -230,6 +241,7 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             requirement.hostResourceId = meta.hostResourceId;
             requirement.hostGraphSlug = meta.hostGraphSlug;
             requirement.workflowUrl = meta.workflowUrl;
+            requirement.graphSlug = meta.graphSlug;
         }
         row.hostResourceId = moduleHost(row.requirements);
     }

@@ -15,20 +15,19 @@
             "name": "Submit Alteration Approach",
             "type": "Workflow",
             "internal": false,
-            "resource": "alteration",
-            "url": "submissions/alterationModule",
             "due": null,
             "notes": "",
             "satisfied": false,
             "process_status": "Required",
-            "sub_requirements": []
+            "sub_requirements": [],
+            "workflow_slug": "submissions/alterationModule",
+            "graph_slug": "alteration"
         },
         {
             "id": "REQ-ALT-TEMPLATE-002",
             "name": "Review Alteration Approach",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
@@ -52,26 +51,26 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-ALT-TEMPLATE-003",
             "name": "Submit Alteration Outcome",
             "type": "Document Submission",
             "internal": false,
-            "resource": "document_submission",
             "due": null,
             "notes": "",
             "satisfied": false,
             "process_status": "Required",
-            "sub_requirements": []
+            "sub_requirements": [],
+            "graph_slug": "document_submission"
         },
         {
             "id": "REQ-ALT-TEMPLATE-004",
             "name": "Review Alteration Outcome",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
@@ -95,7 +94,8 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         }
     ]
 }

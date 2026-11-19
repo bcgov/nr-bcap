@@ -56,8 +56,10 @@ class ProcessRequirementBuilder(ResourceBuilder):
             aliases.PROCESS_REQUIREMENT_TYPE,
             label=spec.get("type", "Checklist"),
         )
-        if spec.get("url"):
-            template_data.workflow_slug = spec["url"]
+        if spec.get("workflow_slug"):
+            template_data.workflow_slug = spec["workflow_slug"]
+        if spec.get("graph_slug"):
+            template_data.graph_slug = spec["graph_slug"]
         self.append_blank_tile_for_group(
             requirement,
             groups.REQUIREMENT_EXECUTION_DURATION,
@@ -321,7 +323,11 @@ class ProcessRequirementBuilder(ResourceBuilder):
         if id_only:
             nodes = nodes_for(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                [aliases.REQUIREMENT_IDENTIFICATION, aliases.IS_TEMPLATE_REQUIREMENT],
+                [
+                    aliases.REQUIREMENT_IDENTIFICATION,
+                    aliases.IS_TEMPLATE_REQUIREMENT,
+                    aliases.GRAPH_SLUG,
+                ],
             )
         return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT, nodes=nodes)
 

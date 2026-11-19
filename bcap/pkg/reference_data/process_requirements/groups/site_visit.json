@@ -15,7 +15,6 @@
             "name": "Plan Site Visit",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
@@ -39,14 +38,14 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-SV-TEMPLATE-002",
             "name": "Record Site Visit",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
@@ -76,19 +75,20 @@
                     "sort_order": 4,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-SV-TEMPLATE-003",
             "name": "Submit Site Visit",
             "type": "Workflow",
             "internal": false,
-            "resource": "site_visit",
             "due": null,
             "notes": "",
             "satisfied": false,
             "process_status": "Required",
-            "sub_requirements": []
+            "sub_requirements": [],
+            "graph_slug": "site_visit"
         }
     ]
 }

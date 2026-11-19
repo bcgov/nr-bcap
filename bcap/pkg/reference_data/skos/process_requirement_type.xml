@@ -16,13 +16,7 @@
       </skos:ConceptScheme>
     </skos:inScheme>
   </skos:Concept>
-  <skos:Concept rdf:about="https://localhost/44ecc87d-9d39-465b-bdf0-00ee31b35dc3">
-    <skos:definition xml:lang="en">This is a Requirement that is a simple document submission. (eg Final Report, Preliminary Field Report, etc). It is backed by the Requirement Submission resource model, which is qualified by different document types.</skos:definition>
-    <skos:inScheme rdf:resource="https://localhost/b35aa446-66a0-4ab0-95cf-c51bf1d043d4"/>
-    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
-    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/44ecc87d-9d39-465b-bdf0-00ee31b35dc3</dcterms:identifier>
-    <skos:prefLabel xml:lang="en">Document Submission</skos:prefLabel>
-  </skos:Concept>
+
   <skos:Concept rdf:about="https://localhost/923ffd23-a15d-44f9-a664-7a8a9359d649">
     <skos:inScheme rdf:resource="https://localhost/b35aa446-66a0-4ab0-95cf-c51bf1d043d4"/>
     <skos:prefLabel xml:lang="en">Workflow</skos:prefLabel>
@@ -36,5 +30,12 @@
     <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/5cbc8c6c-5be4-476b-bb55-cb6125b5268c</dcterms:identifier>
     <skos:prefLabel xml:lang="en">Module</skos:prefLabel>
     <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/c7d8e9f0-a1b2-4c3d-8e4f-5a6b7c8d9e0f">
+    <skos:definition xml:lang="en">This is a requirement that is fulfilled by directly editing a resource in Arches using the standard edit screens, rather than a custom workflow or document submission.</skos:definition>
+    <skos:inScheme rdf:resource="https://localhost/b35aa446-66a0-4ab0-95cf-c51bf1d043d4"/>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/c7d8e9f0-a1b2-4c3d-8e4f-5a6b7c8d9e0f</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Direct Resource Entry</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
   </skos:Concept>
 </rdf:RDF>

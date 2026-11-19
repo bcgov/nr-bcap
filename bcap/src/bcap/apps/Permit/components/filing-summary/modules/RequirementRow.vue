@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import arches from 'arches';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import Select from 'primevue/select';
@@ -11,6 +12,7 @@ import {
     editChecklistHref,
     hasSubmission,
     isChecklist,
+    isDirectEntry,
     withPermitContext,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
@@ -43,7 +45,6 @@ const status = computed(() => {
 });
 
 const isComplete = (s: string | null) => s === 'Completed' || s === 'Submitted';
-const isInProgress = (s: string | null) => s === 'In Progress';
 
 const emit = defineEmits<{
     (event: 'toggle'): void;
@@ -324,6 +325,32 @@ const moreItems = computed(() => [
                         title="Open the checklist to complete this requirement"
                     >
                         Open checklist
+                    </a>
+                    <a
+                        v-else-if="isDirectEntry(requirement.type)"
+                        class="req-action req-primary"
+                        :href="
+                            requirement.resourceId
+                                ? `${arches.urls.resource_editor}${requirement.resourceId}`
+                                : arches.urls.api_resource_create(
+                                      requirement.graphSlug,
+                                  )
+                        "
+                        target="_blank"
+                        rel="noopener"
+                        :title="
+                            requirement.resourceId
+                                ? 'Edit this resource in Arches'
+                                : 'Create a new resource in Arches'
+                        "
+                    >
+                        <i
+                            class="fa-solid"
+                            :class="
+                                requirement.resourceId ? 'fa-pen' : 'fa-plus'
+                            "
+                        ></i>
+                        {{ requirement.resourceId ? 'Edit' : 'Create' }}
                     </a>
                     <Button
                         v-else
