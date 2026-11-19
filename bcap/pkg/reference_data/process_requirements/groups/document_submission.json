@@ -1,6 +1,6 @@
 {
     "id": "REQ-DOC-TEMPLATE-000",
-    "name": "Document Submission",
+    "name": "Workflow",
     "type": "Module",
     "internal": true,
     "resource": null,
@@ -13,7 +13,7 @@
         {
             "id": "REQ-DOC-TEMPLATE-001",
             "name": "Submit Documents",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
             "due": null,
             "notes": "",

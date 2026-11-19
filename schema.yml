@@ -15886,6 +15886,11 @@ components:
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
+        graph_slug:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter graph slug
       required:
       - is_internal_requirement
       - is_template_requirement

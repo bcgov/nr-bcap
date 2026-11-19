@@ -57,7 +57,7 @@
         {
             "id": "REQ-INS-TEMPLATE-003",
             "name": "Submit Inspection Outcome",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
             "due": null,
             "notes": "",

@@ -851,7 +851,8 @@ export const zProcessRequirementIsTemplateRequirementAliasedData = z.object({
     sort_order: zNumberAliasedNodeDataMin0.nullish(),
     is_internal_requirement: zBooleanAliasedNodeData.nullable(),
     workflow_slug: zNonLocalizedStringAliasedNodeData.nullish(),
-    default_target_processing_time: zNumberAliasedNodeData.nullish()
+    default_target_processing_time: zNumberAliasedNodeData.nullish(),
+    graph_slug: zNonLocalizedStringAliasedNodeData.nullish()
 });
 
 export const zProcessRequirementIsTemplateRequirementTile = z.object({
@@ -6662,7 +6663,8 @@ export const zProcessRequirementIsTemplateRequirementAliasedDataWritable = z.obj
     sort_order: zNumberAliasedNodeDataMin0Writable.nullish(),
     is_internal_requirement: zBooleanAliasedNodeDataWritable.nullable(),
     workflow_slug: zNonLocalizedStringAliasedNodeDataWritable.nullish(),
-    default_target_processing_time: zNumberAliasedNodeDataWritable.nullish()
+    default_target_processing_time: zNumberAliasedNodeDataWritable.nullish(),
+    graph_slug: zNonLocalizedStringAliasedNodeDataWritable.nullish()
 });
 
 export const zProcessRequirementIsTemplateRequirementTileWritable = z.object({

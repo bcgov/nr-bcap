@@ -57,7 +57,7 @@
         {
             "id": "REQ-INV-TEMPLATE-003",
             "name": "Submit Investigation Outcome",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
             "due": null,
             "notes": "",

@@ -6412,6 +6412,10 @@ export type ProcessRequirementIsTemplateRequirementAliasedData = {
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeData | null;
+    /**
+     * Enter graph slug
+     */
+    graph_slug?: NonLocalizedStringAliasedNodeData | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTile = {
@@ -14316,6 +14320,10 @@ export type ProcessRequirementIsTemplateRequirementAliasedDataWritable = {
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeDataWritable | null;
+    /**
+     * Enter graph slug
+     */
+    graph_slug?: NonLocalizedStringAliasedNodeDataWritable | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTileWritable = {

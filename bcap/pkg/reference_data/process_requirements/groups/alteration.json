@@ -57,7 +57,7 @@
         {
             "id": "REQ-ALT-TEMPLATE-003",
             "name": "Submit Alteration Outcome",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
             "due": null,
             "notes": "",
