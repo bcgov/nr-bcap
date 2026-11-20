@@ -3675,7 +3675,7 @@
             "deploymentdate": null,
             "deploymentfile": null,
             "description": {
-                "en": "Heritage Conservation Act permit application \u2014 all sections."
+                "en": "Heritage Conservation Act permit application — all sections."
             },
             "edges": [
                 {
@@ -3724,7 +3724,7 @@
                     "edgeid": "0d654de0-e600-43c5-8a4c-aa66ffd8f8ad",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
                     "rangenode_id": "fe829634-797d-41cf-9f55-dd0d5bdcadd5",
                     "source_identifier_id": null
                 },
@@ -3764,7 +3764,7 @@
                     "edgeid": "103aa284-0960-4121-9500-1d4a5c2de278",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
                     "rangenode_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
                     "source_identifier_id": null
                 },
@@ -3964,7 +3964,7 @@
                     "edgeid": "2615490d-8dbe-49bd-a476-317a9060082c",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
                     "rangenode_id": "3c46bd39-909f-4e53-a728-6d37bf5cc164",
                     "source_identifier_id": null
                 },
@@ -4114,7 +4114,7 @@
                     "edgeid": "4f77575c-e713-4fea-b7f4-ee3954604e19",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
                     "rangenode_id": "bb0582e8-f072-42f0-8bb6-c73c53ac485e",
                     "source_identifier_id": null
                 },
@@ -4334,7 +4334,7 @@
                     "edgeid": "7a8e54a0-ed4a-4e91-8a14-2e362f15b701",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
                     "rangenode_id": "8c3db87b-ace7-4ed0-bc13-2e5808b99307",
                     "source_identifier_id": null
                 },
@@ -4384,7 +4384,7 @@
                     "edgeid": "85b0eb88-387e-4552-9c33-51ecdef148a8",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
                     "rangenode_id": "663a3290-307e-41fd-b373-198b81aaaaa0",
                     "source_identifier_id": null
                 },
@@ -4424,7 +4424,7 @@
                     "edgeid": "8dcd2404-4a9e-42fb-92ff-22128ae9bb68",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "fe0edd05-a05e-45d8-a03c-85b10273ff6c",
                     "source_identifier_id": null
                 },
@@ -4484,7 +4484,7 @@
                     "edgeid": "94d84022-6cfb-4ea9-a3d3-95d247cc9435",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
                     "rangenode_id": "ebee893d-4f63-43f7-bb76-0d0ac72bde14",
                     "source_identifier_id": null
                 },
@@ -4614,7 +4614,7 @@
                     "edgeid": "b2be9db2-0879-4c2f-b047-16c2d63d795a",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
                     "rangenode_id": "2e0e6384-a32d-4599-8c68-a42fbaba4cf9",
                     "source_identifier_id": null
                 },
@@ -4764,7 +4764,7 @@
                     "edgeid": "c4029098-17a8-484a-b960-757c2828f0b3",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "94bc47ad-6e84-4574-bc48-a6416e5ab339",
                     "source_identifier_id": null
                 },
@@ -4804,7 +4804,7 @@
                     "edgeid": "c5c2d69d-996b-41c6-9d04-c589aea56810",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P11_had_participant",
                     "rangenode_id": "fe39122a-032f-4c78-854c-af1d7442c1eb",
                     "source_identifier_id": null
                 },
@@ -4844,7 +4844,7 @@
                     "edgeid": "cd64b6bd-36d1-4522-b39b-f730d62c5c7e",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
                     "rangenode_id": "22f69055-7040-4616-8769-5a56738ec9d2",
                     "source_identifier_id": null
                 },
@@ -4924,7 +4924,7 @@
                     "edgeid": "d364b913-da93-4b3c-8cfc-882724224070",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
                     "rangenode_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "source_identifier_id": null
                 },
@@ -5004,7 +5004,7 @@
                     "edgeid": "da60276c-8057-4426-8842-74832673444f",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P105_right_held_by",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
                     "rangenode_id": "1fb44010-94fc-428a-b0ff-185d6e864f00",
                     "source_identifier_id": null
                 },
@@ -5024,7 +5024,7 @@
                     "edgeid": "dc61d27f-595a-4ffa-9831-556c3b4f10ad",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "cd660043-8358-4411-bd40-58f53db677cf",
                     "source_identifier_id": null
                 },
@@ -5193,7 +5193,7 @@
                             },
                             "name": {
                                 "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                                "string_template": "<Permit Type> \u2014 <Project Description>"
+                                "string_template": "<Permit Type> — <Project Description>"
                             }
                         },
                         "triggering_nodegroups": []
@@ -5965,7 +5965,7 @@
                     "name": "References and Certification",
                     "nodegroup_id": "22f69055-7040-4616-8769-5a56738ec9d2",
                     "nodeid": "22f69055-7040-4616-8769-5a56738ec9d2",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 3,
                     "source_identifier_id": null,
@@ -6072,7 +6072,7 @@
                     "name": "Repository and Curation",
                     "nodegroup_id": "2e0e6384-a32d-4599-8c68-a42fbaba4cf9",
                     "nodeid": "2e0e6384-a32d-4599-8c68-a42fbaba4cf9",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E78_Collection",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 9,
                     "source_identifier_id": null,
@@ -6261,7 +6261,7 @@
                     "name": "Personnel",
                     "nodegroup_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
                     "nodeid": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 8,
                     "source_identifier_id": null,
@@ -7311,7 +7311,7 @@
                     "name": "Application Overview",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "nodeid": "867a5275-79b7-473f-b43e-d8dc425c21b2",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -7626,7 +7626,7 @@
                     "name": "Permit Type",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "nodeid": "94bc47ad-6e84-4574-bc48-a6416e5ab339",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 4,
                     "source_identifier_id": null,
@@ -7726,7 +7726,7 @@
                     "name": "HCA Permit Application",
                     "nodegroup_id": null,
                     "nodeid": "9e45b71c-074b-430f-982a-16a7451a3452",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E7_Activity",
                     "parentproperty": "",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -8494,7 +8494,7 @@
                     "name": "Deliverables Due Date",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "nodeid": "cd660043-8358-4411-bd40-58f53db677cf",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 6,
                     "source_identifier_id": null,
@@ -9315,7 +9315,7 @@
                     "name": "Sector",
                     "nodegroup_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "nodeid": "fe0edd05-a05e-45d8-a03c-85b10273ff6c",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 7,
                     "source_identifier_id": null,
@@ -9340,7 +9340,7 @@
                     "name": "Application Contacts",
                     "nodegroup_id": "fe39122a-032f-4c78-854c-af1d7442c1eb",
                     "nodeid": "fe39122a-032f-4c78-854c-af1d7442c1eb",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 1,
                     "source_identifier_id": null,
