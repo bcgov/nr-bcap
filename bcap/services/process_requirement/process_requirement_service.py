@@ -458,10 +458,14 @@ class ProcessRequirementService:
         requirements = []
         hosted = []
         self_hosted = None
-        # Pre-create one shared host per non-own graph_slug so all requirements
-        # of the same type link to the same instance rather than duplicating it.
+        # Pre-create one shared host per non-own graph_slug for workflow
+        # requirements only. Direct Resource Entry requirements (graph_slug set
+        # but no workflow_slug) have their resource created on demand when staff
+        # first open them, so no blank resource is pre-created here.
         shared_hosts = {}
         for child in parent_spec["requirements"]:
+            if not child.get("workflow_slug"):
+                continue
             graph_slug = _template_graph_slug(templates.get(child["id"]))
             if graph_slug and graph_slug != graph and graph_slug not in shared_hosts:
                 shared_hosts[graph_slug] = self.builder.make_resource(graph_slug)
@@ -471,7 +475,7 @@ class ProcessRequirementService:
             own_submission = graph_slug == graph
             if own_submission:
                 submission = host
-            elif graph_slug:
+            elif graph_slug and child.get("workflow_slug"):
                 submission = shared_hosts[graph_slug]
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, submission=submission

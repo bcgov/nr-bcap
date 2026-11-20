@@ -14,6 +14,7 @@ describe('Permit routes', () => {
             'hcaPermitApplicationModule',
             'inspectionModule',
             'internal-root',
+            'internalHcaPermitApplicationModule',
             'internalPermitDetails',
             'investigationModule',
             'methodsModule',
@@ -68,6 +69,7 @@ describe('Permit routes', () => {
             'Checklist',
             'EditChecklist',
             'internal-root',
+            'internalHcaPermitApplicationModule',
             'internalPermitDetails',
         ]);
         expect(byName['root'].meta?.requiresInternal).toBeUndefined();

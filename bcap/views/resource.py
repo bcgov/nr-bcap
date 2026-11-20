@@ -18,6 +18,7 @@ from bcap.services.process_requirement.process_requirement_service import (
 )
 
 
+@internal_only_django_view
 class RequirementResourceView(View):
     """Get-or-create the submission resource for a Direct Resource Entry
     requirement and redirect to its Arches editor.

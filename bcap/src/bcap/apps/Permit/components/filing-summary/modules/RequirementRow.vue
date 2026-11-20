@@ -113,19 +113,15 @@ const moreItems = computed(() => [
     {
         label: 'View in Arches',
         icon: 'fa-solid fa-share-from-square',
-        // Direct-entry: open the linked submission resource, or redirect to
-        // create one. Workflow/document: show the host resource (the permit
-        // application or submission). Everything else: the requirement itself.
-        url: isDirectEntry(props.requirement.type)
-            ? arches.urls.requirement_resource_editor(
-                  props.requirement.resourceId,
-              )
-            : `${arches.urls.resource_editor}${
-                  hasSubmission(props.requirement.type)
-                      ? props.requirement.hostResourceId ||
-                        props.requirement.resourceId
-                      : props.requirement.resourceId
-              }`,
+        // Open the linked submission resource when one exists, otherwise fall
+        // back to the requirement itself. Never auto-create here — creation is
+        // the job of the dedicated Create button.
+        url: arches.urls.resource_editor(
+            hasSubmission(props.requirement.type)
+                ? props.requirement.hostResourceId ||
+                      props.requirement.resourceId
+                : props.requirement.resourceId,
+        ),
 
         target: '_blank',
     },
