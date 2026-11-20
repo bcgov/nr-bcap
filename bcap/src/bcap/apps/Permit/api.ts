@@ -17,6 +17,7 @@ import type {
     ApiDashboardExternalRetrieveData,
     ApiWorkflowDraftListAllData,
     BcapMessage,
+    WorkflowSession,
     BcapMessageWritable,
     BcapServiceRequest,
     BcapServiceRequestResourceAliasedData,
@@ -73,6 +74,45 @@ export const createDraft = async (
                     : {}),
             },
         },
+    );
+};
+
+// Create a draft scoped to one section of a multi-section workflow. The
+// draft_session_id groups all section drafts toward the same target resource.
+// The backend enforces one draft per (session_id, section, graph_slug).
+export const createSectionDraft = async (
+    graphSlug: string,
+    section: string,
+    draftSessionId: string,
+    parentResourceId?: string,
+): Promise<DraftRecord> => {
+    return apiFetchJson<DraftRecord>(
+        arches.urls.api_workflow_draft(graphSlug),
+        {
+            method: HttpMethod.Post,
+            body: {
+                data: {},
+                section,
+                draft_session_id: draftSessionId,
+                ...(parentResourceId
+                    ? { parent_resource_id: parentResourceId }
+                    : {}),
+            },
+        },
+    );
+};
+
+// Fetch all section drafts for a multi-section workflow session.
+export const fetchWorkflowSession = async (
+    graphSlug: string,
+    sessionId: string,
+): Promise<WorkflowSession> => {
+    const _urls = arches.urls as Record<
+        string,
+        (a: string, b: string) => string
+    >;
+    return apiFetchJson<WorkflowSession>(
+        _urls.api_workflow_session(graphSlug, sessionId),
     );
 };
 
@@ -391,15 +431,15 @@ export const setModuleCompleted = async (
     });
 };
 
-// Mark a non-checklist requirement satisfied/unsatisfied. The dedicated route
-// sets the assessment tile server-side, so the client just sends the flag.
-export const setRequirementSatisfied = async (
+// Set a non-checklist requirement's process status. The dedicated route writes
+// the assessment tile server-side; the client sends the status label string.
+export const setRequirementStatus = async (
     requirementResourceId: string,
-    satisfied: boolean,
+    processStatus: string,
 ): Promise<void> => {
     await apiFetch(arches.urls.requirement_status(requirementResourceId), {
         method: HttpMethod.Patch,
-        body: { satisfied },
+        body: { process_status: processStatus },
     });
 };
 

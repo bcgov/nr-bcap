@@ -10,10 +10,12 @@ class ProcessRequirementAliases(AbstractAliases):
     CHECKLIST_ITEM_NAME = "checklist_item_name"
     CHECKLIST_ITEM_SORT_ORDER = "checklist_item_sort_order"
     DEFAULT_TARGET_PROCESSING_TIME = "default_target_processing_time"
+    GRAPH_SLUG = "graph_slug"
     IS_INTERNAL_REQUIREMENT = "is_internal_requirement"
     IS_TEMPLATE_REQUIREMENT = "is_template_requirement"
     PARENT_MODULE = "parent_module"
     PROCESS_REQUIREMENT_TYPE = "process_requirement_type"
+    PROCESS_STATUS = "process_status"
     REQUIREMENT_IDENTIFICATION = "requirement_identification"
     REQUIREMENT_NAME = "requirement_name"
     REQUIREMENT_PROCESS_COMPLETION_DATE = "requirement_process_completion_date"
@@ -22,7 +24,7 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_STATUS = "requirement_status"
     SORT_ORDER = "sort_order"
     SUBMISSION_DATA = "submission_data"
-    WORKFLOW_URL = "workflow_url"
+    WORKFLOW_SLUG = "workflow_slug"
 
     @staticmethod
     def get_aliases():

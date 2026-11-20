@@ -7,9 +7,36 @@ from bcap.permissions.route_guards import (
 )
 from arches.app.models import models
 from arches.app.models.system_settings import settings
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.views import View
 from arches.app.models.resource import Resource
+from bcap.services.process_requirement.process_requirement_service import (
+    ProcessRequirementService,
+)
+
+
+@internal_only_django_view
+class RequirementResourceView(View):
+    """Get-or-create the submission resource for a Direct Resource Entry
+    requirement and redirect to its Arches editor.
+
+    If the requirement already has a submission host, redirects there directly.
+    If not, creates a blank resource of the requirement's graph_slug type,
+    links it as the submission host, then redirects to the editor for the new
+    resource. Using GET is appropriate here because the operation is idempotent:
+    a second request finds the now-existing resource and simply redirects."""
+
+    def get(self, request, requirement_id):
+        try:
+            resource = ProcessRequirementService(
+                request
+            ).get_or_create_submission_resource(requirement_id)
+        except ValueError as exc:
+            raise Http404(str(exc)) from exc
+        return redirect(reverse("resource_editor", args=[resource.pk]))
 
 
 @resource_editor_only_django_view

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="http://localhost:82/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <skos:Concept rdf:about="http://localhost:82/671d38fb-fe63-4730-9c51-5b058ce0d47c">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="http://localhost:82/4ec02c41-14d5-4f0f-a764-1d7d671edf47">
+        <dcterms:title>Permit Deliverables Due Date</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Permit Expiry Date</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/671d38fb-fe63-4730-9c51-5b058ce0d47c</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/8005fddf-1f2f-4894-854d-003622ddc417">
+    <skos:inScheme rdf:resource="http://localhost:82/4ec02c41-14d5-4f0f-a764-1d7d671edf47"/>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/8005fddf-1f2f-4894-854d-003622ddc417</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Permit Expiry Date + 6 Months</skos:prefLabel>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

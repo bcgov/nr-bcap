@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -14,22 +15,23 @@
             "name": "Submit Inspection Approach",
             "type": "Workflow",
             "internal": false,
-            "resource": "inspection",
-            "url": "plugins/submissions/inspectionModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/inspectionModule",
+            "graph_slug": "inspection"
         },
         {
             "id": "REQ-INS-TEMPLATE-002",
             "name": "Review Inspection Approach",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Scope appropriate",
@@ -49,28 +51,30 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-INS-TEMPLATE-003",
             "name": "Submit Inspection Outcome",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
-            "resource": "document_submission",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "graph_slug": "document_submission"
         },
         {
             "id": "REQ-INS-TEMPLATE-004",
             "name": "Review Inspection Outcome",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Inspection report received",
@@ -90,7 +94,8 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         }
     ]
 }

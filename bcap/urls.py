@@ -15,7 +15,11 @@ from bcap.views.registration_link_api import RegistrationClaimView
 from bcap.urls_api_documented import api_documented_patterns
 from bcap.views.auth import auth_callback
 from bcap.views.file import BCAPFileView
-from bcap.views.resource import ResourceReportView, ResourceEditLogView
+from bcap.views.resource import (
+    RequirementResourceView,
+    ResourceReportView,
+    ResourceEditLogView,
+)
 from bcap.views.search import export_results
 from bcap.views.translate_api import (
     TranslatableResourceTypesView,
@@ -91,6 +95,11 @@ bcap_patterns = [
         "report/<uuid:resourceid>",
         ResourceReportView.as_view(),
         name="resource_report",
+    ),
+    path(
+        "resource/requirement/<uuid:requirement_id>",
+        RequirementResourceView.as_view(),
+        name="requirement_resource_editor",
     ),
     path(
         "resource/history",

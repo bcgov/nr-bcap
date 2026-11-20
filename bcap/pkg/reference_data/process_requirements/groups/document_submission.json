@@ -1,24 +1,26 @@
 {
     "id": "REQ-DOC-TEMPLATE-000",
-    "name": "Document Submission",
+    "name": "Workflow",
     "type": "Module",
     "internal": true,
     "resource": null,
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
             "id": "REQ-DOC-TEMPLATE-001",
             "name": "Submit Documents",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
-            "resource": "document_submission",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "graph_slug": "document_submission"
         }
     ]
 }

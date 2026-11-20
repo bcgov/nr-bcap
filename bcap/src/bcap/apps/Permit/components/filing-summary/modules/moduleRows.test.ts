@@ -163,7 +163,7 @@ describe('toRow', () => {
         expect(row.requirements[0]).toMatchObject({
             title: 'Alpha',
             type: '',
-            satisfied: null,
+            processStatus: null,
             internal: null,
             href: '/bcap/resource/r-a',
         });
@@ -189,7 +189,7 @@ describe('hydrateRows', () => {
                 id: 'r-1',
                 name: 'Real Name',
                 type: 'Checklist',
-                satisfied: true,
+                processStatus: 'Completed',
                 internal: true,
                 host: 'host-1',
             }),
@@ -205,7 +205,7 @@ describe('hydrateRows', () => {
         expect(requirement).toMatchObject({
             title: 'Real Name',
             type: 'Checklist',
-            satisfied: true,
+            processStatus: 'Completed',
             internal: true,
             hostResourceId: 'host-1',
             href: '/plugins/internal-permit-dashboard/checklist?id=r-1',
@@ -245,14 +245,14 @@ describe('hydrateRows', () => {
         expect(row.requirements[0].hostGraphSlug).toBe('');
     });
 
-    it('populates workflowUrl from the workflow_url node', async () => {
+    it('populates workflowUrl from the workflow_slug node', async () => {
         fetchRequirementDetails.mockResolvedValue([
-            detail({ id: 'r-1', workflowUrl: 'https://example.com/submit' }),
+            detail({ id: 'r-1', workflowUrl: 'submissions/baseModule' }),
         ]);
         const row = rowWith('t-1', 'r-1');
         await rows.hydrateRows([row]);
         expect(row.requirements[0].workflowUrl).toBe(
-            'https://example.com/submit',
+            '/plugins/submissions/baseModule',
         );
     });
 
@@ -269,7 +269,7 @@ describe('hydrateRows', () => {
 
         await rows.hydrateRows([row]);
 
-        expect(row.requirements[0].satisfied).toBeNull();
+        expect(row.requirements[0].processStatus).toBeNull();
         expect(row.requirements[0].type).toBe('');
     });
 });
@@ -290,10 +290,10 @@ describe('rowsNeedingDetails', () => {
     });
 });
 
-describe('cacheSatisfied', () => {
+describe('cacheProcessStatus', () => {
     it('keeps the cache in step so a rebuilt row seeds the new status', async () => {
         fetchRequirementDetails.mockResolvedValue([
-            detail({ id: 'r-1', name: 'Alpha', satisfied: false }),
+            detail({ id: 'r-1', name: 'Alpha', processStatus: 'Required' }),
         ]);
         const tile = moduleTile({
             tileid: 't-1',
@@ -301,16 +301,18 @@ describe('cacheSatisfied', () => {
         });
         await rows.hydrateRows([rows.toRow(tile)]);
 
-        rows.cacheSatisfied('r-1', true);
+        rows.cacheProcessStatus('r-1', 'Completed');
 
-        expect(rows.toRow(tile).requirements[0].satisfied).toBe(true);
+        expect(rows.toRow(tile).requirements[0].processStatus).toBe(
+            'Completed',
+        );
     });
 });
 
 describe('clearRequirementCache', () => {
     it('drops what was cached, so the next permit refetches', async () => {
         fetchRequirementDetails.mockResolvedValue([
-            detail({ id: 'r-1', name: 'Alpha', satisfied: true }),
+            detail({ id: 'r-1', name: 'Alpha', processStatus: 'Completed' }),
         ]);
         const tile = moduleTile({
             tileid: 't-1',
@@ -321,7 +323,7 @@ describe('clearRequirementCache', () => {
         rows.clearRequirementCache();
 
         const row = rows.toRow(tile);
-        expect(row.requirements[0].satisfied).toBeNull();
+        expect(row.requirements[0].processStatus).toBeNull();
         expect(rows.rowsNeedingDetails([row])).toEqual([row]);
     });
 });

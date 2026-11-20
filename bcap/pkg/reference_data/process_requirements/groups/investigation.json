@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -14,22 +15,23 @@
             "name": "Submit Investigation Approach",
             "type": "Workflow",
             "internal": false,
-            "resource": "investigation",
-            "url": "plugins/submissions/investigationModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/investigationModule",
+            "graph_slug": "investigation"
         },
         {
             "id": "REQ-INV-TEMPLATE-002",
             "name": "Review Investigation Approach",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Methodology appropriate",
@@ -49,28 +51,30 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-INV-TEMPLATE-003",
             "name": "Submit Investigation Outcome",
-            "type": "Document Submission",
+            "type": "Workflow",
             "internal": false,
-            "resource": "document_submission",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "graph_slug": "document_submission"
         },
         {
             "id": "REQ-INV-TEMPLATE-004",
             "name": "Review Investigation Outcome",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": null,
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Final report received",
@@ -90,7 +94,8 @@
                     "sort_order": 3,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         }
     ]
 }

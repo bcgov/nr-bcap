@@ -62,6 +62,7 @@ PERMISSION_DEFAULTS = {
     GraphIds.REPOSITORY: grants(STAFF),
     # The issued permit, written by staff once a decision is made.
     GraphIds.HCA_PERMIT: grants(STAFF),
+    GraphIds.HCA_PERMIT_APPLICATION: grants(STAFF),
     # An applicant's unsubmitted work, and staff filling one in for them.
     GraphIds.WORKFLOW_DRAFTS: grants(STAFF, APPLICANT_OWNS),
     # The filing, the staff review of it, and everything hanging off one.

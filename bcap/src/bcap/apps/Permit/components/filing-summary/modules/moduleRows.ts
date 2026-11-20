@@ -12,12 +12,13 @@ export interface RequirementItem {
     type: string;
     ministryAssignee: string;
     ministryAssigneeId: string;
-    satisfied: boolean | null;
+    processStatus: string | null;
     internal: boolean | null;
     href: string;
     hostResourceId: string;
     hostGraphSlug: string;
     workflowUrl: string;
+    graphSlug: string;
 }
 
 export interface ModuleRow {
@@ -49,6 +50,9 @@ export const hasSubmission = (type: string): boolean =>
 export const isChecklist = (type: string): boolean =>
     type.toLowerCase().includes('checklist');
 
+export const isDirectEntry = (type: string): boolean =>
+    type.toLowerCase() === 'direct resource entry';
+
 export const checklistHref = (id: string): string =>
     `${arches.urls.plugin('internal-permit-dashboard')}/checklist?id=${id}`;
 
@@ -70,11 +74,12 @@ const hrefFor = (type: string, id: string): string => {
 interface RequirementMeta {
     name: string;
     type: string;
-    satisfied: boolean;
+    processStatus: string;
     internal: boolean;
     hostResourceId: string;
     hostGraphSlug: string;
     workflowUrl: string;
+    graphSlug: string;
 }
 const detailCache = new Map<string, RequirementMeta>();
 
@@ -87,9 +92,9 @@ const requirementType = (requirement: ProcessRequirement): string =>
         ?.is_template_requirement?.aliased_data?.process_requirement_type
         ?.display_value || '';
 
-const requirementSatisfied = (requirement: ProcessRequirement): boolean =>
+const requirementProcessStatus = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.sub_requirement_assessment_n1?.aliased_data
-        ?.requirement_status?.node_value === true;
+        ?.process_status?.display_value || '';
 
 const requirementInternal = (requirement: ProcessRequirement): boolean =>
     requirement.aliased_data?.requirement_identification?.aliased_data
@@ -108,10 +113,18 @@ type EnrichedProcessRequirement = ProcessRequirement & {
 const requirementHostGraph = (requirement: ProcessRequirement): string =>
     (requirement as EnrichedProcessRequirement).host_graph_slug ?? '';
 
-const requirementWorkflowUrl = (requirement: ProcessRequirement): string =>
+const requirementGraphSlug = (requirement: ProcessRequirement): string =>
     requirement.aliased_data?.requirement_identification?.aliased_data
-        ?.is_template_requirement?.aliased_data?.workflow_url?.node_value
-        ?.url ?? '';
+        ?.is_template_requirement?.aliased_data?.graph_slug?.node_value ?? '';
+
+const requirementWorkflowUrl = (requirement: ProcessRequirement): string => {
+    // workflow_slug stores a route slug (e.g. "submissions/baseModule"); build
+    // the full path via arches.urls.plugin so host/prefix are always correct.
+    const slug =
+        requirement.aliased_data?.requirement_identification?.aliased_data
+            ?.is_template_requirement?.aliased_data?.workflow_slug?.node_value;
+    return slug ? arches.urls.plugin(slug) : '';
+};
 
 const moduleHost = (requirements: RequirementItem[]): string =>
     requirements
@@ -153,12 +166,13 @@ const requirementItems = (
                 type,
                 ministryAssignee,
                 ministryAssigneeId,
-                satisfied: meta?.satisfied ?? null,
+                processStatus: meta?.processStatus ?? null,
                 internal: meta?.internal ?? null,
                 href: hrefFor(type, resourceId),
                 hostResourceId: meta?.hostResourceId ?? '',
                 hostGraphSlug: meta?.hostGraphSlug ?? '',
                 workflowUrl: meta?.workflowUrl ?? '',
+                graphSlug: meta?.graphSlug ?? '',
             };
         });
 
@@ -207,11 +221,12 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
         detailCache.set(detail.resourceinstanceid ?? '', {
             name: requirementName(detail),
             type: requirementType(detail),
-            satisfied: requirementSatisfied(detail),
+            processStatus: requirementProcessStatus(detail),
             internal: requirementInternal(detail),
             hostResourceId: requirementHost(detail),
             hostGraphSlug: requirementHostGraph(detail),
             workflowUrl: requirementWorkflowUrl(detail),
+            graphSlug: requirementGraphSlug(detail),
         });
     }
     for (const row of rows) {
@@ -221,20 +236,24 @@ export const hydrateRows = async (rows: ModuleRow[]) => {
             requirement.title = meta.name || requirement.name;
             requirement.type = meta.type;
             requirement.href = hrefFor(meta.type, requirement.resourceId);
-            requirement.satisfied = meta.satisfied;
+            requirement.processStatus = meta.processStatus;
             requirement.internal = meta.internal;
             requirement.hostResourceId = meta.hostResourceId;
             requirement.hostGraphSlug = meta.hostGraphSlug;
             requirement.workflowUrl = meta.workflowUrl;
+            requirement.graphSlug = meta.graphSlug;
         }
         row.hostResourceId = moduleHost(row.requirements);
     }
 };
 
 // Keeps the cached status in step with an optimistic row update.
-export const cacheSatisfied = (resourceId: string, satisfied: boolean) => {
+export const cacheProcessStatus = (
+    resourceId: string,
+    processStatus: string,
+) => {
     const meta = detailCache.get(resourceId);
-    if (meta) meta.satisfied = satisfied;
+    if (meta) meta.processStatus = processStatus;
 };
 
 export const clearRequirementCache = () => detailCache.clear();

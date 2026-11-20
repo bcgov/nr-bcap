@@ -87,8 +87,11 @@ class TemplateSpecTests(SimpleTestCase):
         self.assertEqual(module_graph("investigation"), GraphSlugs.INVESTIGATION)
 
     def test_host_graph_is_the_child_matching_the_modules_graph(self):
-        # The permit module's own-submission child is a bcap_service_request.
-        self.assertEqual(host_graph("permit"), GraphSlugs.BCAP_SERVICE_REQUEST)
+        # The permit module's workflows all target permit_application, not the
+        # module's own bcap_service_request graph, so there is no matching
+        # own-submission child and host_graph returns None.
+        # Investigation has an explicit own-submission child (REQ-INV-TEMPLATE-001).
+        self.assertIsNone(host_graph("permit"))
         self.assertEqual(host_graph("investigation"), GraphSlugs.INVESTIGATION)
 
     def test_an_unsupported_permit_type_has_no_host_graph(self):

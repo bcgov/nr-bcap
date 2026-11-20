@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import arches from 'arches';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 import Select from 'primevue/select';
@@ -11,6 +12,7 @@ import {
     editChecklistHref,
     hasSubmission,
     isChecklist,
+    isDirectEntry,
     withPermitContext,
     type RequirementItem,
 } from '@/bcap/apps/Permit/components/filing-summary/modules/moduleRows.ts';
@@ -27,14 +29,22 @@ const props = defineProps<{
     position?: number;
 }>();
 
+const STATUS_MAP: Record<string, { label: string; tone: string }> = {
+    Future: { label: 'Future', tone: 'is-future' },
+    Required: { label: 'Required', tone: 'is-required' },
+    'In Progress': { label: 'In progress', tone: 'is-in-progress' },
+    Incomplete: { label: 'Incomplete', tone: 'is-incomplete' },
+    Submitted: { label: 'Submitted', tone: 'is-submitted' },
+    Completed: { label: 'Complete', tone: 'is-complete' },
+};
+
 const status = computed(() => {
-    if (props.requirement.satisfied === null) {
-        return { label: 'Loading', tone: 'is-unknown' };
-    }
-    return props.requirement.satisfied
-        ? { label: 'Complete', tone: 'is-complete' }
-        : { label: 'In progress', tone: 'is-in-progress' };
+    const s = props.requirement.processStatus;
+    if (s === null) return { label: 'Loading', tone: 'is-unknown' };
+    return STATUS_MAP[s] ?? { label: s || 'Unknown', tone: 'is-unknown' };
 });
+
+const isComplete = (s: string | null) => s === 'Completed' || s === 'Submitted';
 
 const emit = defineEmits<{
     (event: 'toggle'): void;
@@ -51,18 +61,45 @@ const assigneeOptions = computed(() => [
     ...(props.assignees ?? []),
 ]);
 
+// View Section URL: staff see the internal-dashboard context; external users
+// see the submissions context. Both carry view=1 to open read-only.
+const viewSectionHref = computed(() => {
+    const url = props.isStaff
+        ? (props.requirement.workflowUrl ?? '').replace(
+              'plugins/submissions/',
+              'plugins/internal-permit-dashboard/',
+          )
+        : props.requirement.workflowUrl;
+    return `${url}?requirementId=${props.requirement.resourceId}&permit=${props.permitId}&view=1`;
+});
+
+// A completed workflow requirement with no host resource (e.g. the HCA
+// multi-section form) shows View Section + Edit links rather than "View
+// Submission", since there is no separate host resource to navigate to.
+const showWorkflowLinks = computed(
+    () =>
+        isComplete(props.requirement.processStatus) &&
+        Boolean(props.requirement.workflowUrl) &&
+        !props.requirement.hostResourceId,
+);
+
 const showViewSubmission = computed(
     () =>
+        !showWorkflowLinks.value &&
         props.canViewSubmission &&
         hasSubmission(props.requirement.type) &&
-        props.requirement.satisfied === true,
+        isComplete(props.requirement.processStatus),
 );
 
 const showEnterSubmission = computed(
     () =>
+        props.requirement.processStatus !== null &&
         hasSubmission(props.requirement.type) &&
-        props.requirement.satisfied === false &&
-        Boolean(props.requirement.workflowUrl),
+        !isComplete(props.requirement.processStatus) &&
+        ((props.isStaff && props.requirement.internal) ||
+            (!props.isStaff &&
+                Boolean(props.requirement.workflowUrl) &&
+                !props.requirement.internal)),
 );
 
 const assigneeName = (id: string) =>
@@ -76,15 +113,16 @@ const moreItems = computed(() => [
     {
         label: 'View in Arches',
         icon: 'fa-solid fa-share-from-square',
-        // A workflow/document requirement's subject is the resource it was filed
-        // against (the permit application itself for the submission module), not
-        // the requirement resource.
-        url: `/bcap/resource/${
+        // Open the linked submission resource when one exists, otherwise fall
+        // back to the requirement itself. Never auto-create here — creation is
+        // the job of the dedicated Create button.
+        url: arches.urls.resource_editor(
             hasSubmission(props.requirement.type)
                 ? props.requirement.hostResourceId ||
-                  props.requirement.resourceId
-                : props.requirement.resourceId
-        }`,
+                      props.requirement.resourceId
+                : props.requirement.resourceId,
+        ),
+
         target: '_blank',
     },
     ...(isChecklist(props.requirement.type)
@@ -144,7 +182,10 @@ const moreItems = computed(() => [
         class="req-right"
         :class="{ 'is-readonly': !isStaff }"
     >
-        <span class="req-lead">
+        <span
+            v-if="requirement.internal"
+            class="req-lead"
+        >
             <Select
                 v-if="isStaff && requirement.resourceId"
                 :model-value="requirement.ministryAssigneeId"
@@ -224,11 +265,36 @@ const moreItems = computed(() => [
                 />
             </span>
             <span
-                v-if="showViewSubmission || showEnterSubmission"
+                v-if="
+                    showWorkflowLinks ||
+                    showViewSubmission ||
+                    showEnterSubmission
+                "
                 class="req-submission-slot"
             >
+                <template v-if="showWorkflowLinks">
+                    <a
+                        class="req-action req-primary req-view-submission"
+                        :href="viewSectionHref"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <i class="fa-solid fa-eye"></i>
+                        View Section
+                    </a>
+                    <a
+                        v-if="!props.isStaff"
+                        class="req-action req-primary req-enter-submission"
+                        :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                    </a>
+                </template>
                 <a
-                    v-if="showEnterSubmission"
+                    v-else-if="showEnterSubmission"
                     class="req-action req-primary req-enter-submission"
                     :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}`"
                     target="_blank"
@@ -238,7 +304,7 @@ const moreItems = computed(() => [
                     Complete Module
                 </a>
                 <Button
-                    v-else
+                    v-else-if="showViewSubmission"
                     type="button"
                     class="req-action req-primary req-view-submission"
                     @click="$emit('view-submission')"
@@ -251,7 +317,9 @@ const moreItems = computed(() => [
                 class="req-action-slot"
                 :class="{
                     'no-submission':
-                        !showViewSubmission && !showEnterSubmission,
+                        !showWorkflowLinks &&
+                        !showViewSubmission &&
+                        !showEnterSubmission,
                 }"
             >
                 <template v-if="isStaff && requirement.resourceId">
@@ -272,6 +340,35 @@ const moreItems = computed(() => [
                     >
                         Open checklist
                     </a>
+                    <a
+                        v-else-if="
+                            isDirectEntry(requirement.type) &&
+                            requirement.internal
+                        "
+                        class="req-action req-primary"
+                        :href="
+                            arches.urls.requirement_resource_editor(
+                                requirement.resourceId,
+                            )
+                        "
+                        target="_blank"
+                        rel="noopener"
+                        :title="
+                            requirement.hostResourceId
+                                ? 'Edit this resource in Arches'
+                                : 'Create a new resource in Arches'
+                        "
+                    >
+                        <i
+                            class="fa-solid"
+                            :class="
+                                requirement.hostResourceId
+                                    ? 'fa-pen'
+                                    : 'fa-plus'
+                            "
+                        ></i>
+                        {{ requirement.hostResourceId ? 'Edit' : 'Create' }}
+                    </a>
                     <Button
                         v-else
                         type="button"
@@ -284,15 +381,15 @@ const moreItems = computed(() => [
                             :class="
                                 toggling === requirement.resourceId
                                     ? 'fa-circle-notch fa-spin'
-                                    : requirement.satisfied
+                                    : requirement.processStatus === 'Completed'
                                       ? 'fa-rotate-left'
                                       : 'fa-check'
                             "
                         ></i>
                         {{
-                            requirement.satisfied
-                                ? 'Mark unsatisfied'
-                                : 'Mark satisfied'
+                            requirement.processStatus === 'Completed'
+                                ? 'Mark in progress'
+                                : 'Mark complete'
                         }}
                     </Button>
                 </template>
@@ -399,6 +496,24 @@ const moreItems = computed(() => [
     background: #16a34a;
 }
 
+/* Muted grey: not yet applicable. */
+.req-position.is-future,
+.requirement-status.is-future {
+    color: #64748b;
+}
+.requirement-status.is-future .status-dot {
+    background: #94a3b8;
+}
+
+/* Required but not started: amber, same weight as in-progress. */
+.req-position.is-required,
+.requirement-status.is-required {
+    color: #b45309;
+}
+.requirement-status.is-required .status-dot {
+    background: #e3a82b;
+}
+
 /* Gold marks the row as in progress, matching the module status glyph. */
 .requirement-status.is-in-progress {
     color: #b45309;
@@ -406,6 +521,24 @@ const moreItems = computed(() => [
 
 .requirement-status.is-in-progress .status-dot {
     background: #e3a82b;
+}
+
+/* Incomplete: needs attention — red-orange. */
+.req-position.is-incomplete,
+.requirement-status.is-incomplete {
+    color: #c8102e;
+}
+.requirement-status.is-incomplete .status-dot {
+    background: #ef4444;
+}
+
+/* Submitted: awaiting review — blue. */
+.req-position.is-submitted,
+.requirement-status.is-submitted {
+    color: #1d4ed8;
+}
+.requirement-status.is-submitted .status-dot {
+    background: #3b82f6;
 }
 
 /* The assignee holds a fixed column so the names line up down the list; the

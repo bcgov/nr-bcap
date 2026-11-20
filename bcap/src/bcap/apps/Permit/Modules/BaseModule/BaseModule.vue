@@ -4,7 +4,7 @@ import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
 import {
     submitServiceRequest,
-    setRequirementSatisfied,
+    setRequirementStatus,
 } from '@/bcap/apps/Permit/api.ts';
 import type {
     BcapServiceRequest,
@@ -60,7 +60,7 @@ const submit = async (): Promise<BcapServiceRequest> => {
 
     const requirementId = route.query.requirementId as string | undefined;
     if (requirementId) {
-        await setRequirementSatisfied(requirementId, true);
+        await setRequirementStatus(requirementId, 'Completed');
     }
 
     return result;

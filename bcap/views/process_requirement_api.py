@@ -309,7 +309,7 @@ class RequirementStatusView(APIView):
         body = RequirementStatusSerializer(data=request.data)
         body.is_valid(raise_exception=True)
         ProcessRequirementService(request).set_requirement_status(
-            requirement_id, body.validated_data.satisfied
+            requirement_id, body.validated_data.process_status
         )
         return Response(status=204)
 

@@ -65,6 +65,6 @@ def host_graph(permit_type):
     graph = module_graph(permit_type)
     children = load(permit_type)["requirements"]
     return next(
-        (c["resource"] for c in children if c["resource"] == graph),
+        (c["graph_slug"] for c in children if c.get("graph_slug") == graph),
         None,
     )

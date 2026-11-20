@@ -4,6 +4,12 @@ back to rehydrate on resume, then POSTs to the resource's create view to submit
 (validated only then) and DELETEs the draft. Drafts are stored as resources of
 the standalone 'drafts' graph via WorkflowDraftService (raw ORM, no edit log/index).
 
+Multi-section workflows: a single resource can be composed from multiple sections
+(e.g. "permit_info", "permit_scope"), each a separate draft. Related drafts share
+a draft_session_id UUID. POST to create each section's draft; GET the session at
+api/workflow_session/<graph_slug>/<session_id> for progress across all sections.
+Only one draft may exist per (session_id, section, graph_slug) combination.
+
 File uploads are held by reference: the front end uploads to Arches' `/temp_file`
 (bytes in `files_temporary`, unattached) and keeps the `file_id` + file-list
 metadata in `data`. GOTCHA: Arches won't auto-promote a TempFile's bytes into a
@@ -56,17 +62,37 @@ class WorkflowDraftSerializer(DataclassSerializer):
         return bool(graph) and str(graph.publication_id) != obj.graph_publication_id
 
 
+class WorkflowSessionSerializer(serializers.Serializer):
+    """Response for a session progress query: all section drafts for one session."""
+
+    session_id = serializers.UUIDField()
+    graph_slug = serializers.CharField()
+    drafts = WorkflowDraftSerializer(many=True)
+
+
 @dataclass
 class DraftsQuery:
-    """Query params for the all-graphs draft list."""
+    """Query params for the draft list endpoints."""
 
     parent: UUID | None = None
+    session_id: str | None = None
+    section: str | None = None
 
 
 class DraftsQuerySerializer(DataclassSerializer):
     parent = serializers.UUIDField(
         required=False,
         help_text="Only drafts started from this resource.",
+    )
+    session_id = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        help_text="Only drafts belonging to this session.",
+    )
+    section = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        help_text="Only drafts for this workflow section.",
     )
 
     class Meta:
@@ -81,12 +107,15 @@ class DraftPayload:
     frontend_version: str = ""
     parent_resource_id: str = ""
     organization_id: str = ""
+    # Which sub-workflow section this draft covers.
+    section: str = ""
+    # UUID grouping all section drafts for the same target resource creation.
+    draft_session_id: str = ""
 
 
 class DraftPayloadSerializer(DataclassSerializer):
     """Request body for create/update: the whole draft blob, plus the step the
-    user is on and an optional frontend version, parent resource and owning
-    organization stamped on create."""
+    user is on and optional metadata stamped on create."""
 
     data = DraftDataField()
     # Blank is meaningful here: it clears the stored step, where omitting it keeps.
@@ -97,6 +126,22 @@ class DraftPayloadSerializer(DataclassSerializer):
         help_text=(
             "Organization to file the draft under, so colleagues can pick it up. "
             "Must be one the user belongs to."
+        ),
+    )
+    section = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text=(
+            "Sub-workflow section this draft covers (e.g. 'permit_info'). "
+            "Immutable after create."
+        ),
+    )
+    draft_session_id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text=(
+            "UUID grouping all section drafts for the same target resource. "
+            "Immutable after create."
         ),
     )
 
@@ -148,9 +193,8 @@ class WorkflowDraftBaseView(APIView):
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftAllListView(WorkflowDraftBaseView):
     """GET the drafts the user can see, across graphs. Each carries its own
-    graph_slug, so the dashboard lists them all in one round trip. Narrow to one
-    permit's drafts with ?parent=<resourceinstanceid>: staff see every user's, so
-    an unfiltered call hands back every draft blob in the system."""
+    graph_slug, so the dashboard lists them all in one round trip. Narrow with
+    ?parent=<resourceinstanceid>, ?session_id=<uuid>, or ?section=<slug>."""
 
     @extend_schema(
         operation_id="api_workflow_draft_list_all",
@@ -160,25 +204,66 @@ class WorkflowDraftAllListView(WorkflowDraftBaseView):
     def get(self, request):
         params = DraftsQuerySerializer(data=request.query_params)
         params.is_valid(raise_exception=True)
+        q = params.save()
         drafts = self.store.base_query(
-            request.user, parent_resource_id=params.validated_data.parent
+            request.user,
+            parent_resource_id=q.parent,
+            section=q.section,
+            draft_session_id=q.session_id,
         )
         return Response([self.serialize(draft) for draft in drafts])
 
 
 @extend_schema(tags=["External: workflow_draft"])
 class WorkflowDraftListCreateView(WorkflowDraftBaseView):
-    """GET the current user's drafts for a graph; POST a new draft."""
+    """GET the current user's drafts for a graph; POST a new draft.
 
-    @extend_schema(responses=WorkflowDraftSerializer(many=True))
+    Narrow the GET with ?parent=, ?session_id=, or ?section=. POST accepts
+    section and draft_session_id to create a section-scoped draft within a
+    multi-section workflow. Only one draft per (session_id, section) is allowed;
+    a 409 is returned if one already exists."""
+
+    @extend_schema(
+        parameters=[DraftsQuerySerializer],
+        responses=WorkflowDraftSerializer(many=True),
+    )
     def get(self, request, graph_slug):
-        drafts = self.store.base_query(request.user, graph_slug)
+        params = DraftsQuerySerializer(data=request.query_params)
+        params.is_valid(raise_exception=True)
+        q = params.save()
+        drafts = self.store.base_query(
+            request.user,
+            graph_slug,
+            parent_resource_id=q.parent,
+            section=q.section,
+            draft_session_id=q.session_id,
+        )
         return Response([self.serialize(draft) for draft in drafts])
 
     @extend_schema(request=DraftPayloadSerializer, responses=WorkflowDraftSerializer)
     def post(self, request, graph_slug):
         body = self.payload(request)
         self.verify_parent_resource_access(body.parent_resource_id)
+
+        # Reject duplicate section within a session: one draft per section per session.
+        if body.section and body.draft_session_id:
+            existing = self.store.base_query(
+                request.user,
+                graph_slug,
+                section=body.section,
+                draft_session_id=body.draft_session_id,
+            ).first()
+            if existing:
+                return Response(
+                    {
+                        "detail": (
+                            "A draft for this section already exists in this session."
+                        ),
+                        "existing_id": str(existing.pk),
+                    },
+                    status=409,
+                )
+
         graph = get_current_graph(graph_slug)
         draft = self.store.create(
             request,
@@ -188,6 +273,8 @@ class WorkflowDraftListCreateView(WorkflowDraftBaseView):
             frontend_version=body.frontend_version,
             parent_resource_id=body.parent_resource_id,
             organization_id=organization_to_stamp(request.user, body.organization_id),
+            section=body.section,
+            draft_session_id=body.draft_session_id,
         )
         return self.respond(draft, status=201)
 
@@ -221,3 +308,28 @@ class WorkflowDraftDetailView(WorkflowDraftBaseView):
     def delete(self, request, graph_slug, pk):
         self._get_or_404(request, pk).delete()
         return Response(status=204)
+
+
+@extend_schema(tags=["External: workflow_draft"])
+class WorkflowSessionView(WorkflowDraftBaseView):
+    """GET all section drafts for a workflow session. The session groups the
+    drafts being built toward one target resource, keyed by session_id. The
+    frontend compares drafts[].section against the workflow's expected sections
+    to determine which are in-progress and which haven't been started yet."""
+
+    @extend_schema(
+        operation_id="api_workflow_session_get",
+        responses=WorkflowSessionSerializer,
+    )
+    def get(self, request, graph_slug, session_id):
+        drafts = self.store.base_query(
+            request.user, graph_slug, draft_session_id=str(session_id)
+        )
+        serializer = WorkflowSessionSerializer(
+            {
+                "session_id": session_id,
+                "graph_slug": graph_slug,
+                "drafts": [WorkflowDraftService.record(draft) for draft in drafts],
+            }
+        )
+        return Response(serializer.data)

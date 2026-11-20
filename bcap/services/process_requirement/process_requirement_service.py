@@ -39,6 +39,31 @@ from bcap.services.process_requirement.template_specs import (
 )
 
 
+def _template_graph_slug(template):
+    """Read the graph_slug stored on a template resource, or '' if absent."""
+    if template is None:
+        return ""
+    try:
+        return (
+            template.aliased_data.requirement_identification.aliased_data.is_template_requirement.aliased_data.graph_slug
+        ) or ""
+    except AttributeError:
+        return ""
+
+
+def _graph_slug_from_tile(requirement_id):
+    """Read graph_slug directly from the requirement's tile data.
+
+    Bypasses the aliased-data chain so a missing or mis-wired alias cannot
+    silently return '' when the value is present in the tile."""
+    slug_node = node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.GRAPH_SLUG)
+    tile = TileModel.objects.filter(
+        resourceinstance_id=requirement_id,
+        data__has_key=slug_node,
+    ).first()
+    return (tile.data.get(slug_node) or "") if tile else ""
+
+
 @dataclass
 class ClonedModule:
     """A cloned module ready to attach to a permit: its grouping parent resource,
@@ -148,9 +173,9 @@ class ProcessRequirementService:
         # descriptor resolves the application id instead of showing "(Unknown)".
         for requirement in created:
             requirement.save_descriptors()
-        # Host was just created, so mark its requirement satisfied.
+        # Host was just created, so mark its requirement completed.
         for requirement in cloned.hosted:
-            self.builder.set_requirement_status(requirement.pk, True)
+            self.builder.set_requirement_status(requirement.pk, "Completed")
         bulk_index(created)
         return cloned.requirements
 
@@ -298,10 +323,11 @@ class ProcessRequirementService:
         bulk_index([Resource.objects.get(pk=requirement.pk)])
         return requirement
 
-    def set_requirement_status(self, requirement_id, satisfied):
-        """Mark a requirement satisfied/unsatisfied on its assessment tile, then
-        index."""
-        requirement = self.builder.set_requirement_status(requirement_id, satisfied)
+    def set_requirement_status(self, requirement_id, process_status):
+        """Set a requirement's process status on its assessment tile, then index."""
+        requirement = self.builder.set_requirement_status(
+            requirement_id, process_status
+        )
         bulk_index([Resource.objects.get(pk=requirement.pk)])
         return requirement
 
@@ -422,28 +448,35 @@ class ProcessRequirementService:
         cloned into working documents, keeping the list flat on the service request.
         The module and requirement ids are stamped later by the save hook.
 
-        Requirements with the same non-own resource type share a single resource
-        instance (e.g. three permit_application requirements share one resource)."""
+        Requirements with the same non-own graph_slug share a single resource
+        instance (e.g. three permit_application requirements share one resource).
+        The graph_slug for each requirement is read from the template resource so
+        the JSON spec is not the runtime source of truth for that value."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
         requirements = []
         hosted = []
         self_hosted = None
-        # Pre-create one shared host per non-own resource type so all requirements
-        # of the same type link to the same instance rather than duplicating it.
+        # Pre-create one shared host per non-own graph_slug for workflow
+        # requirements only. Direct Resource Entry requirements (graph_slug set
+        # but no workflow_slug) have their resource created on demand when staff
+        # first open them, so no blank resource is pre-created here.
         shared_hosts = {}
         for child in parent_spec["requirements"]:
-            resource = child.get("resource")
-            if resource and resource != graph and resource not in shared_hosts:
-                shared_hosts[resource] = self.builder.make_resource(resource)
+            if not child.get("workflow_slug"):
+                continue
+            graph_slug = _template_graph_slug(templates.get(child["id"]))
+            if graph_slug and graph_slug != graph and graph_slug not in shared_hosts:
+                shared_hosts[graph_slug] = self.builder.make_resource(graph_slug)
         for child in parent_spec["requirements"]:
+            graph_slug = _template_graph_slug(templates.get(child["id"]))
             submission = None
-            own_submission = child["resource"] == graph
+            own_submission = graph_slug == graph
             if own_submission:
                 submission = host
-            elif child["resource"]:
-                submission = shared_hosts[child["resource"]]
+            elif graph_slug and child.get("workflow_slug"):
+                submission = shared_hosts[graph_slug]
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, submission=submission
             )
@@ -462,6 +495,30 @@ class ProcessRequirementService:
         self.builder.link(
             requirement_id, submission=Resource.objects.get(pk=resource_id)
         )
+
+    def get_or_create_submission_resource(self, requirement_id):
+        """Return the submission host already linked to this requirement, or
+        create a fresh one and link it. The graph type is read from the
+        requirement's own graph_slug node, falling back to the seeded template
+        for working copies cloned before graph_slug was added to the model."""
+        hosts = self.host_ids_by_requirement([str(requirement_id)])
+        host_ids = hosts.get(str(requirement_id), set())
+        if host_ids:
+            return Resource.objects.get(pk=next(iter(host_ids)))
+        graph_slug = _graph_slug_from_tile(requirement_id)
+        if not graph_slug:
+            requirement = self.builder._get_requirement_by_id(requirement_id)
+            req_id = self.builder._requirement_identification(requirement)
+            graph_slug = _template_graph_slug(
+                self.builder.templates_by_id().get(req_id)
+            )
+        if not graph_slug:
+            raise ValueError(
+                f"Requirement {requirement_id} has no graph_slug; cannot create a submission resource."
+            )
+        new_resource = self.builder.make_resource(graph_slug)
+        self.link_submission(requirement_id, new_resource.pk)
+        return new_resource
 
     def clone_by_id(self, template_id):
         return self.builder.clone_requirement(template_id)
