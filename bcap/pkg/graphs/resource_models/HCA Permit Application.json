@@ -1738,11 +1738,11 @@
                 {
                     "card_id": "c60c3dc2-40ae-402f-84e0-d48b3292a009",
                     "config": {
-                        "label": "This is the archaeologist\u2019s first permit issued under the HCA, or the applicant has been informed they are subject to first-time permit holder conditions.  "
+                        "label": "This is the archaeologist's first permit issued under the HCA, or the applicant has been informed they are subject to first-time permit holder conditions.  "
                     },
                     "id": "66c35673-4537-4ca3-8c38-b5a09b1cdb3d",
                     "label": {
-                        "en": "This is the archaeologist\u2019s first permit issued under the HCA, or the applicant has been informed they are subject to first-time permit holder conditions.  "
+                        "en": "This is the archaeologist's first permit issued under the HCA, or the applicant has been informed they are subject to first-time permit holder conditions.  "
                     },
                     "node_id": "72c6ee63-e688-4e62-8893-d51d839ab080",
                     "sortorder": 1,
@@ -3554,7 +3554,7 @@
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
-                            "en": "Describe the proponent&#39;s proposed project, associated archaeological work, location and timeline (start date and duration)"
+                            "en": "Describe the proponent's proposed project, associated archaeological work, location and timeline (start date and duration)"
                         },
                         "uneditable": false,
                         "width": "100%"
@@ -6960,7 +6960,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "is_first_permit_applciation",
+                    "alias": "is_first_permit_application",
                     "config": {
                         "falseLabel": {
                             "en": "No"
@@ -6981,7 +6981,7 @@
                     "isrequired": true,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Is First Permit Applciation",
+                    "name": "Is First Permit Application",
                     "nodegroup_id": "fe39122a-032f-4c78-854c-af1d7442c1eb",
                     "nodeid": "72c6ee63-e688-4e62-8893-d51d839ab080",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",

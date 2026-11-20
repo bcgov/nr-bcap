@@ -8815,12 +8815,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
           nullable: true
-        is_first_permit_applciation:
+        is_first_permit_application:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          title: 'This is the archaeologist’s first permit issued under the HCA, or
-            the applicant has been informed they are subject to first-time permit
+          title: 'This is the archaeologist''s first permit issued under the HCA,
+            or the applicant has been informed they are subject to first-time permit
             holder conditions.  '
         proponent_name:
           allOf:
@@ -8848,7 +8848,7 @@ components:
           nullable: true
           description: Enter text
       required:
-      - is_first_permit_applciation
+      - is_first_permit_application
     Hca_Permit_Application_Application_Contacts_Tile:
       type: object
       properties:
@@ -8949,7 +8949,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          description: Describe the proponent&#39;s proposed project, associated archaeological
+          description: Describe the proponent's proposed project, associated archaeological
             work, location and timeline (start date and duration)
     Hca_Permit_Application_Application_Overview_Tile:
       type: object

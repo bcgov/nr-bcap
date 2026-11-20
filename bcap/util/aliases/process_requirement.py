@@ -10,6 +10,7 @@ class ProcessRequirementAliases(AbstractAliases):
     CHECKLIST_ITEM_NAME = "checklist_item_name"
     CHECKLIST_ITEM_SORT_ORDER = "checklist_item_sort_order"
     DEFAULT_TARGET_PROCESSING_TIME = "default_target_processing_time"
+    GRAPH_SLUG = "graph_slug"
     IS_INTERNAL_REQUIREMENT = "is_internal_requirement"
     IS_TEMPLATE_REQUIREMENT = "is_template_requirement"
     PARENT_MODULE = "parent_module"
@@ -23,7 +24,6 @@ class ProcessRequirementAliases(AbstractAliases):
     REQUIREMENT_STATUS = "requirement_status"
     SORT_ORDER = "sort_order"
     SUBMISSION_DATA = "submission_data"
-    GRAPH_SLUG = "graph_slug"
     WORKFLOW_SLUG = "workflow_slug"
 
     @staticmethod

@@ -40,14 +40,14 @@ defineExpose({ isValid });
                 :mode="EDIT"
                 :aliased-node-data="
                     draftData?.application_contacts?.aliased_data
-                        ?.is_first_permit_applciation
+                        ?.is_first_permit_application
                 "
                 graph-slug="hca_permit_application"
-                node-alias="is_first_permit_applciation"
+                node-alias="is_first_permit_application"
                 @update:aliased-node-data="
                     updateValue(
                         $event,
-                        'is_first_permit_applciation',
+                        'is_first_permit_application',
                         'application_contacts',
                     )
                 "

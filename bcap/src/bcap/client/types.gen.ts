@@ -3143,7 +3143,7 @@ export type HcaPermitApplicationAncestralRemainsTile = {
 
 export type HcaPermitApplicationApplicationContactsAliasedData = {
     archaeologist?: ResourceInstanceAliasedNodeData | null;
-    is_first_permit_applciation: BooleanAliasedNodeData | null;
+    is_first_permit_application: BooleanAliasedNodeData | null;
     /**
      * Enter text
      */
@@ -3210,7 +3210,7 @@ export type HcaPermitApplicationApplicationOverviewAliasedData = {
      */
     sector?: ReferenceAliasedNodeData | null;
     /**
-     * Describe the proponent&#39;s proposed project, associated archaeological work, location and timeline (start date and duration)
+     * Describe the proponent's proposed project, associated archaeological work, location and timeline (start date and duration)
      */
     project_description?: StringAliasedNodeData | null;
 };
@@ -11457,7 +11457,7 @@ export type HcaPermitApplicationAncestralRemainsTileWritable = {
 
 export type HcaPermitApplicationApplicationContactsAliasedDataWritable = {
     archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
-    is_first_permit_applciation: BooleanAliasedNodeDataWritable | null;
+    is_first_permit_application: BooleanAliasedNodeDataWritable | null;
     /**
      * Enter text
      */
@@ -11524,7 +11524,7 @@ export type HcaPermitApplicationApplicationOverviewAliasedDataWritable = {
      */
     sector?: ReferenceAliasedNodeDataWritable | null;
     /**
-     * Describe the proponent&#39;s proposed project, associated archaeological work, location and timeline (start date and duration)
+     * Describe the proponent's proposed project, associated archaeological work, location and timeline (start date and duration)
      */
     project_description?: StringAliasedNodeDataWritable | null;
 };

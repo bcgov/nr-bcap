@@ -123,6 +123,17 @@ const permitBackLink = computed(() => {
     return id ? { name: routeNames.permitDetails, params: { id } } : null;
 });
 
+// In view-only mode the user arrives from either the internal or external
+// dashboard. Use the route guard flag to send them back to the right one.
+const viewOnlyBackLink = computed(() => {
+    const id = draft.parentPermitId;
+    if (!id) return null;
+    const name = route.meta.requiresInternal
+        ? routeNames.internalPermitDetails
+        : routeNames.permitDetails;
+    return { name, params: { id } };
+});
+
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
     if (!state.finalizedResourceData?.aliased_data) return null;
     return state.finalizedResourceData.aliased_data as ArchesDraftData;
@@ -313,8 +324,21 @@ onMounted(async () => {
             class="submission-error"
         />
 
+        <!-- View-only: render just the review content, no stepper chrome. -->
+        <div v-else-if="viewOnly">
+            <RouterLink
+                v-if="viewOnlyBackLink"
+                :to="viewOnlyBackLink"
+                class="back-to-permit"
+            >
+                <i class="fa-solid fa-chevron-left"></i>
+                Back to Filing Summary
+            </RouterLink>
+            <component :is="reviewComponent" />
+        </div>
+
         <Stepper
-            v-if="state.isDataLoaded && !state.loadError"
+            v-if="state.isDataLoaded && !state.loadError && !viewOnly"
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"

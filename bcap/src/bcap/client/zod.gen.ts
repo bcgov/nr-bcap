@@ -2243,7 +2243,7 @@ export const zHcaPermitApplicationAncestralRemainsTile = z.object({
 
 export const zHcaPermitApplicationApplicationContactsAliasedData = z.object({
     archaeologist: zResourceInstanceAliasedNodeData.nullish(),
-    is_first_permit_applciation: zBooleanAliasedNodeData.nullable(),
+    is_first_permit_application: zBooleanAliasedNodeData.nullable(),
     proponent_name: zStringAliasedNodeData.nullish(),
     proponent_company: zStringAliasedNodeData.nullish(),
     proponent_address: zStringAliasedNodeData.nullish(),
@@ -7979,7 +7979,7 @@ export const zHcaPermitApplicationAncestralRemainsTileWritable = z.object({
 
 export const zHcaPermitApplicationApplicationContactsAliasedDataWritable = z.object({
     archaeologist: zResourceInstanceAliasedNodeDataWritable.nullish(),
-    is_first_permit_applciation: zBooleanAliasedNodeDataWritable.nullable(),
+    is_first_permit_application: zBooleanAliasedNodeDataWritable.nullable(),
     proponent_name: zStringAliasedNodeDataWritable.nullish(),
     proponent_company: zStringAliasedNodeDataWritable.nullish(),
     proponent_address: zStringAliasedNodeDataWritable.nullish(),

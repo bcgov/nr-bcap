@@ -32,6 +32,7 @@ const router = useRouter();
 // the same section drafts that were saved on first completion.
 onMounted(async () => {
     if (route.query.draftId) return;
+    const isViewOnly = !!route.query.view;
     const requirementId = route.query.requirementId as string | undefined;
     const sessionId =
         (route.query.sessionId as string | undefined) ??
@@ -50,9 +51,10 @@ onMounted(async () => {
             sectionDraft =
                 session.drafts.find((d) => d.section === SECTION) ?? null;
         } catch {
-            // No session yet — fall through to create.
+            // No session yet — fall through to create (or bail in view mode).
         }
         if (sectionDraft === null) {
+            if (isViewOnly) return; // Nothing to view yet.
             sectionDraft = await createSectionDraft(
                 GraphSlug.HcaPermitApplication,
                 SECTION,
@@ -64,7 +66,7 @@ onMounted(async () => {
             (sectionDraft.data || {}) as ArchesDraftData,
             sectionDraft.current_step || '',
         );
-        if (!route.query.sessionId) {
+        if (!isViewOnly && !route.query.sessionId) {
             router.replace({ query: { ...route.query, sessionId } });
         }
     } catch {

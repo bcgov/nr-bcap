@@ -61,6 +61,18 @@ const assigneeOptions = computed(() => [
     ...(props.assignees ?? []),
 ]);
 
+// View Section URL: staff see the internal-dashboard context; external users
+// see the submissions context. Both carry view=1 to open read-only.
+const viewSectionHref = computed(() => {
+    const url = props.isStaff
+        ? (props.requirement.workflowUrl ?? '').replace(
+              'plugins/submissions/',
+              'plugins/internal-permit-dashboard/',
+          )
+        : props.requirement.workflowUrl;
+    return `${url}?requirementId=${props.requirement.resourceId}&permit=${props.permitId}&view=1`;
+});
+
 // A completed workflow requirement with no host resource (e.g. the HCA
 // multi-section form) shows View Section + Edit links rather than "View
 // Submission", since there is no separate host resource to navigate to.
@@ -105,15 +117,16 @@ const moreItems = computed(() => [
         // create one. Workflow/document: show the host resource (the permit
         // application or submission). Everything else: the requirement itself.
         url: isDirectEntry(props.requirement.type)
-            ? `${arches.urls.requirement_resource_editor}
-                  ${props.requirement.resourceId}`
-            : `${arches.urls.requirement_resource_editor}
-                  ${
-                      hasSubmission(props.requirement.type)
-                          ? props.requirement.hostResourceId ||
-                            props.requirement.resourceId
-                          : props.requirement.resourceId
-                  }`,
+            ? arches.urls.requirement_resource_editor(
+                  props.requirement.resourceId,
+              )
+            : `${arches.urls.resource_editor}${
+                  hasSubmission(props.requirement.type)
+                      ? props.requirement.hostResourceId ||
+                        props.requirement.resourceId
+                      : props.requirement.resourceId
+              }`,
+
         target: '_blank',
     },
     ...(isChecklist(props.requirement.type)
@@ -266,7 +279,7 @@ const moreItems = computed(() => [
                 <template v-if="showWorkflowLinks">
                     <a
                         class="req-action req-primary req-view-submission"
-                        :href="`${requirement.workflowUrl}?requirementId=${requirement.resourceId}&permit=${permitId}&view=1`"
+                        :href="viewSectionHref"
                         target="_blank"
                         rel="noopener"
                     >
@@ -337,7 +350,6 @@ const moreItems = computed(() => [
                             requirement.internal
                         "
                         class="req-action req-primary"
-                        style="background: red"
                         :href="
                             arches.urls.requirement_resource_editor(
                                 requirement.resourceId,
