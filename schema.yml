@@ -9200,13 +9200,18 @@ components:
           nullable: true
         winter_methods_align:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Winter Methods Align with Appendix A
         winter_methods_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
+        winter_methods_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Winter Methods Non Alignment Rationale
         other_field_methods:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'

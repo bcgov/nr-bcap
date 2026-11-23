@@ -2349,8 +2349,9 @@ export const zHcaPermitApplicationMethodologyAliasedData = z.object({
     machine_assisted_methods_description: zReferenceAliasedNodeData.nullish(),
     machine_assisted_approach: zStringAliasedNodeData.nullish(),
     has_winter_methods: zBooleanAliasedNodeData.nullish(),
-    winter_methods_align: zStringAliasedNodeData.nullish(),
+    winter_methods_align: zBooleanAliasedNodeData.nullish(),
     winter_methods_description: zStringAliasedNodeData.nullish(),
+    winter_methods_non_alignment: zStringAliasedNodeData.nullish(),
     other_field_methods: zStringAliasedNodeData.nullish()
 });
 
@@ -8085,8 +8086,9 @@ export const zHcaPermitApplicationMethodologyAliasedDataWritable = z.object({
     machine_assisted_methods_description: zReferenceAliasedNodeDataWritable.nullish(),
     machine_assisted_approach: zStringAliasedNodeDataWritable.nullish(),
     has_winter_methods: zBooleanAliasedNodeDataWritable.nullish(),
-    winter_methods_align: zStringAliasedNodeDataWritable.nullish(),
+    winter_methods_align: zBooleanAliasedNodeDataWritable.nullish(),
     winter_methods_description: zStringAliasedNodeDataWritable.nullish(),
+    winter_methods_non_alignment: zStringAliasedNodeDataWritable.nullish(),
     other_field_methods: zStringAliasedNodeDataWritable.nullish()
 });
 

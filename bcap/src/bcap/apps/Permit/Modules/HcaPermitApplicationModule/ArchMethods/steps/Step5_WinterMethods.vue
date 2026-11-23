@@ -22,6 +22,12 @@ const winterMethodsFieldsVisible = computed(
             ?.node_value === true,
 );
 
+const winterMethodsAlignNo = computed(
+    () =>
+        typedDraftData.value?.methodology?.aliased_data?.winter_methods_align
+            ?.node_value === false,
+);
+
 defineExpose({ isValid });
 </script>
 
@@ -68,6 +74,23 @@ defineExpose({ isValid });
                     updateValue(
                         $event,
                         'winter_methods_description',
+                        'methodology',
+                    )
+                "
+            />
+            <GenericWidget
+                v-if="winterMethodsFieldsVisible && winterMethodsAlignNo"
+                :mode="EDIT"
+                :aliased-node-data="
+                    draftData?.methodology?.aliased_data
+                        ?.winter_methods_non_alignment
+                "
+                graph-slug="hca_permit_application"
+                node-alias="winter_methods_non_alignment"
+                @update:aliased-node-data="
+                    updateValue(
+                        $event,
+                        'winter_methods_non_alignment',
                         'methodology',
                     )
                 "

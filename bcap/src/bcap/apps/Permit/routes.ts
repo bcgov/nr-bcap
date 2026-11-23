@@ -88,7 +88,7 @@ const routes = [
         'hcaPermitApplication/methods',
         'hcaPermitMethods',
         () =>
-            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/Methods/ArchMethods.vue'),
+            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/ArchMethods/ArchMethods.vue'),
     ),
     {
         path: arches.urls.plugin('submissions/collectionModule'),

@@ -493,7 +493,7 @@
                         "en": "Other Field Methods"
                     },
                     "node_id": "5dbcdfc5-dda9-4980-98d1-8808791ba399",
-                    "sortorder": 18,
+                    "sortorder": 19,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1830,6 +1830,25 @@
                 {
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
+                        "defaultValue": null,
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "75b69565-37d5-498b-8414-ac43227d5692",
+                    "label": {
+                        "en": "Winter Methods Align with Appendix A"
+                    },
+                    "node_id": "176df390-a5b7-4068-93ce-479729ba838e",
+                    "sortorder": 16,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
+                    "config": {
                         "defaultValue": {
                             "en": {
                                 "direction": "ltr",
@@ -1844,12 +1863,12 @@
                         "uneditable": false,
                         "width": "100%"
                     },
-                    "id": "75b69565-37d5-498b-8414-ac43227d5692",
+                    "id": "22a6295d-2d89-4df4-aae3-64851b7768a0",
                     "label": {
-                        "en": "Winter Methods Align with Appendix A"
+                        "en": "Winter Methods Non Alignment Rationale"
                     },
-                    "node_id": "9fbf5a91-6b09-4f86-a864-97414f9c4fd2",
-                    "sortorder": 16,
+                    "node_id": "a4337378-9b7d-49cd-b526-fe3eec3358e5",
+                    "sortorder": 18,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -4189,8 +4208,18 @@
                     "edgeid": "610154e6-25de-4ed1-ab7d-4b5d581bbf37",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "176df390-a5b7-4068-93ce-479729ba838e",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "176df390-a5b7-4068-93ce-479729ba838e",
+                    "edgeid": "abb691a1-0236-4911-a294-83a3e568db30",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "9fbf5a91-6b09-4f86-a864-97414f9c4fd2",
+                    "rangenode_id": "a4337378-9b7d-49cd-b526-fe3eec3358e5",
                     "source_identifier_id": null
                 },
                 {
@@ -7756,6 +7785,38 @@
                 {
                     "alias": "winter_methods_align",
                     "config": {
+                        "en": "",
+                        "falseLabel": {
+                            "en": "No"
+                        },
+                        "i18n_properties": ["trueLabel", "falseLabel"],
+                        "trueLabel": {
+                            "en": "Yes"
+                        }
+                    },
+                    "datatype": "boolean",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Winter Methods Align with Appendix A",
+                    "nodegroup_id": "bb0582e8-f072-42f0-8bb6-c73c53ac485e",
+                    "nodeid": "176df390-a5b7-4068-93ce-479729ba838e",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "winter_methods_non_alignment",
+                    "config": {
                         "en": ""
                     },
                     "datatype": "string",
@@ -7769,12 +7830,12 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Winter Methods Align with Appendix A",
+                    "name": "Winter Methods Non Alignment Rationale",
                     "nodegroup_id": "bb0582e8-f072-42f0-8bb6-c73c53ac485e",
-                    "nodeid": "9fbf5a91-6b09-4f86-a864-97414f9c4fd2",
+                    "nodeid": "a4337378-9b7d-49cd-b526-fe3eec3358e5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 1,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
