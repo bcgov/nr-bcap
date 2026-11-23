@@ -8999,6 +8999,71 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Hca_Permit_Application_Assessment_Oversight_Responsibility_Aliased_Data:
+      type: object
+      properties:
+        cultural_area:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        responsible_person:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        responsibility_role:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+    Hca_Permit_Application_Assessment_Oversight_Responsibility_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Assessment_Oversight_Responsibility_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Hca_Permit_Application_Material_Collection_Aliased_Data:
       type: object
       properties:
@@ -9618,6 +9683,11 @@ components:
     Hca_Permit_Application_Personnel_Aliased_Data:
       type: object
       properties:
+        assessment_oversight_responsibility:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Assessment_Oversight_Responsibility_Tile'
+          nullable: true
         has_directing_archaeologist:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
@@ -9628,11 +9698,10 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Archaeologist Role
-        field_directors_table:
+        applicant_responsibility_details:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Field Directors and Delegated Archaeologists (Table)
         personnel_additional_comments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'

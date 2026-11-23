@@ -3236,6 +3236,39 @@ export type HcaPermitApplicationApplicationOverviewTile = {
     } | null;
 };
 
+export type HcaPermitApplicationAssessmentOversightResponsibilityAliasedData = {
+    /**
+     * Select an option
+     */
+    cultural_area?: ReferenceAliasedNodeData | null;
+    responsible_person?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    responsibility_role?: ReferenceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAssessmentOversightResponsibilityAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type HcaPermitApplicationMaterialCollectionAliasedData = {
     collection_approach?: StringAliasedNodeData | null;
     collection_additional_comments?: StringAliasedNodeData | null;
@@ -3431,9 +3464,10 @@ export type HcaPermitApplicationPermitScopeTile = {
 };
 
 export type HcaPermitApplicationPersonnelAliasedData = {
+    assessment_oversight_responsibility?: Array<HcaPermitApplicationAssessmentOversightResponsibilityTile> | null;
     has_directing_archaeologist?: BooleanAliasedNodeData | null;
     archaeologist_deliverables_role?: StringAliasedNodeData | null;
-    field_directors_table?: StringAliasedNodeData | null;
+    applicant_responsibility_details?: StringAliasedNodeData | null;
     personnel_additional_comments?: StringAliasedNodeData | null;
 };
 
@@ -11551,6 +11585,41 @@ export type HcaPermitApplicationApplicationOverviewTileWritable = {
     } | null;
 };
 
+export type HcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable =
+    {
+        /**
+         * Select an option
+         */
+        cultural_area?: ReferenceAliasedNodeDataWritable | null;
+        responsible_person?: ResourceInstanceAliasedNodeDataWritable | null;
+        /**
+         * Select an option
+         */
+        responsibility_role?: ReferenceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityTileWritable =
+    {
+        tileid?: string | null;
+        resourceinstance?: string | null;
+        nodegroup?: string | null;
+        parenttile?: string | null;
+        aliased_data?: HcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable;
+        sortorder?: number | null;
+        provisionaledits?: {
+            [key: string]: {
+                value?: {
+                    [key: string]: unknown;
+                };
+                status?: string;
+                action?: string;
+                reviewer?: number | null;
+                timestamp?: string | null;
+                reviewtimestamp?: string | null;
+            };
+        } | null;
+    };
+
 export type HcaPermitApplicationMaterialCollectionAliasedDataWritable = {
     collection_approach?: StringAliasedNodeDataWritable | null;
     collection_additional_comments?: StringAliasedNodeDataWritable | null;
@@ -11746,9 +11815,10 @@ export type HcaPermitApplicationPermitScopeTileWritable = {
 };
 
 export type HcaPermitApplicationPersonnelAliasedDataWritable = {
+    assessment_oversight_responsibility?: Array<HcaPermitApplicationAssessmentOversightResponsibilityTileWritable> | null;
     has_directing_archaeologist?: BooleanAliasedNodeDataWritable | null;
     archaeologist_deliverables_role?: StringAliasedNodeDataWritable | null;
-    field_directors_table?: StringAliasedNodeDataWritable | null;
+    applicant_responsibility_details?: StringAliasedNodeDataWritable | null;
     personnel_additional_comments?: StringAliasedNodeDataWritable | null;
 };
 

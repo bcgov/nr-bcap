@@ -248,6 +248,33 @@
                 },
                 {
                     "active": true,
+                    "cardid": "cc010001-0000-4000-8000-000000000001",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "name": {
+                        "en": "Assessment Oversight Responsibility"
+                    },
+                    "nodegroup_id": "aa010001-0000-4000-8000-000000000001",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true
+                },
+                {
+                    "active": true,
                     "cardid": "c60c3dc2-40ae-402f-84e0-d48b3292a009",
                     "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
                     "config": null,
@@ -2445,15 +2472,69 @@
                         "uneditable": false,
                         "width": "100%"
                     },
-                    "id": "9be37940-88d0-49a7-b366-19aeda67c078",
+                    "id": "dd010004-0000-4000-8000-000000000004",
                     "label": {
-                        "en": "Field Directors and Delegated Archaeologists (Table)"
+                        "en": "Applicant Responsibility Details"
                     },
-                    "node_id": "8d7483ab-a130-4db6-a815-586a12f035f9",
+                    "node_id": "aa010005-0000-4000-8000-000000000005",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "cc010001-0000-4000-8000-000000000001",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Cultural Area",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "dd010001-0000-4000-8000-000000000001",
+                    "label": {
+                        "en": "Cultural Area"
+                    },
+                    "node_id": "aa010002-0000-4000-8000-000000000002",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
+                },
+                {
+                    "card_id": "cc010001-0000-4000-8000-000000000001",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "label": ""
+                    },
+                    "id": "dd010002-0000-4000-8000-000000000002",
+                    "label": {
+                        "en": "Responsible Person"
+                    },
+                    "node_id": "aa010003-0000-4000-8000-000000000003",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
+                },
+                {
+                    "card_id": "cc010001-0000-4000-8000-000000000001",
+                    "config": {
+                        "i18n_properties": ["placeholder"],
+                        "label": "Responsibility Role",
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "dd010003-0000-4000-8000-000000000003",
+                    "label": {
+                        "en": "Responsibility Role"
+                    },
+                    "node_id": "aa010004-0000-4000-8000-000000000004",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
@@ -4225,11 +4306,41 @@
                 {
                     "description": null,
                     "domainnode_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
-                    "edgeid": "6127bb28-9fc1-49dc-8678-ec3e6e02f752",
+                    "edgeid": "bb010001-0000-4000-8000-000000000001",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "8d7483ab-a130-4db6-a815-586a12f035f9",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "rangenode_id": "aa010001-0000-4000-8000-000000000001",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "aa010001-0000-4000-8000-000000000001",
+                    "edgeid": "bb010002-0000-4000-8000-000000000002",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "aa010002-0000-4000-8000-000000000002",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "aa010001-0000-4000-8000-000000000001",
+                    "edgeid": "bb010003-0000-4000-8000-000000000003",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "rangenode_id": "aa010003-0000-4000-8000-000000000003",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "aa010001-0000-4000-8000-000000000001",
+                    "edgeid": "bb010004-0000-4000-8000-000000000004",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "aa010004-0000-4000-8000-000000000004",
                     "source_identifier_id": null
                 },
                 {
@@ -4560,6 +4671,16 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "98cfcde7-0f40-415a-b4f3-6394203c6026",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "054f6f85-8704-4b78-ae5c-4890cbf9a811",
+                    "edgeid": "bb010005-0000-4000-8000-000000000005",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "aa010005-0000-4000-8000-000000000005",
                     "source_identifier_id": null
                 },
                 {
@@ -5259,6 +5380,13 @@
                     "legacygroupid": null,
                     "nodegroupid": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
                     "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "n",
+                    "grouping_node_id": "aa010001-0000-4000-8000-000000000001",
+                    "legacygroupid": null,
+                    "nodegroupid": "aa010001-0000-4000-8000-000000000001",
+                    "parentnodegroup_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435"
                 },
                 {
                     "cardinality": "1",
@@ -7418,26 +7546,105 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "field_directors_table",
+                    "alias": "assessment_oversight_responsibility",
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "semantic",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
-                    "hascustomalias": false,
+                    "hascustomalias": true,
+                    "is_collector": true,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Assessment Oversight Responsibility",
+                    "nodegroup_id": "aa010001-0000-4000-8000-000000000001",
+                    "nodeid": "aa010001-0000-4000-8000-000000000001",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "sortorder": 2,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "cultural_area",
+                    "config": {
+                        "controlledList": "ee010001-0000-4000-8000-000000000001",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": true,
                     "is_collector": false,
                     "is_immutable": false,
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Field Directors and Delegated Archaeologists (Table)",
-                    "nodegroup_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
-                    "nodeid": "8d7483ab-a130-4db6-a815-586a12f035f9",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "name": "Cultural Area",
+                    "nodegroup_id": "aa010001-0000-4000-8000-000000000001",
+                    "nodeid": "aa010002-0000-4000-8000-000000000002",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "responsible_person",
+                    "config": {
+                        "graphs": [{"graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89", "name": "Contributor"}],
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "resource-instance",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": true,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Responsible Person",
+                    "nodegroup_id": "aa010001-0000-4000-8000-000000000001",
+                    "nodeid": "aa010003-0000-4000-8000-000000000003",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P107_has_current_or_former_member",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "responsibility_role",
+                    "config": {
+                        "controlledList": "dea73106-ad02-561d-8075-4f68ba5318b9",
+                        "multiValue": false
+                    },
+                    "datatype": "reference",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": true,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Responsibility Role",
+                    "nodegroup_id": "aa010001-0000-4000-8000-000000000001",
+                    "nodeid": "aa010004-0000-4000-8000-000000000004",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7704,6 +7911,31 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "applicant_responsibility_details",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": true,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Applicant Responsibility Details",
+                    "nodegroup_id": "3adcb9e6-5bbd-49f1-afd2-dc807a0e6435",
+                    "nodeid": "aa010005-0000-4000-8000-000000000005",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

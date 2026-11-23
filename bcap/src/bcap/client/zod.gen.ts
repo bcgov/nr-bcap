@@ -755,6 +755,29 @@ export const zContributorAssociatedOrganizationTile = z.object({
     })).nullish()
 });
 
+export const zHcaPermitApplicationAssessmentOversightResponsibilityAliasedData = z.object({
+    cultural_area: zReferenceAliasedNodeData.nullish(),
+    responsible_person: zResourceInstanceAliasedNodeData.nullish(),
+    responsibility_role: zReferenceAliasedNodeData.nullish()
+});
+
+export const zHcaPermitApplicationAssessmentOversightResponsibilityTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zHcaPermitApplicationAssessmentOversightResponsibilityAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zHriaDiscontinuedDataArchaeologicalSiteAliasedData = z.object({
     archaeological_site: zResourceInstanceAliasedNodeData.nullable()
 });
@@ -2473,9 +2496,10 @@ export const zHcaPermitApplicationPermitScopeTile = z.object({
 });
 
 export const zHcaPermitApplicationPersonnelAliasedData = z.object({
+    assessment_oversight_responsibility: z.array(zHcaPermitApplicationAssessmentOversightResponsibilityTile).nullish(),
     has_directing_archaeologist: zBooleanAliasedNodeData.nullish(),
     archaeologist_deliverables_role: zStringAliasedNodeData.nullish(),
-    field_directors_table: zStringAliasedNodeData.nullish(),
+    applicant_responsibility_details: zStringAliasedNodeData.nullish(),
     personnel_additional_comments: zStringAliasedNodeData.nullish()
 });
 
@@ -6568,6 +6592,29 @@ export const zContributorAssociatedOrganizationTileWritable = z.object({
     })).nullish()
 });
 
+export const zHcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable = z.object({
+    cultural_area: zReferenceAliasedNodeDataWritable.nullish(),
+    responsible_person: zResourceInstanceAliasedNodeDataWritable.nullish(),
+    responsibility_role: zReferenceAliasedNodeDataWritable.nullish()
+});
+
+export const zHcaPermitApplicationAssessmentOversightResponsibilityTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zHcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zHriaDiscontinuedDataArchaeologicalSiteAliasedDataWritable = z.object({
     archaeological_site: zResourceInstanceAliasedNodeDataWritable.nullable()
 });
@@ -8210,9 +8257,10 @@ export const zHcaPermitApplicationPermitScopeTileWritable = z.object({
 });
 
 export const zHcaPermitApplicationPersonnelAliasedDataWritable = z.object({
+    assessment_oversight_responsibility: z.array(zHcaPermitApplicationAssessmentOversightResponsibilityTileWritable).nullish(),
     has_directing_archaeologist: zBooleanAliasedNodeDataWritable.nullish(),
     archaeologist_deliverables_role: zStringAliasedNodeDataWritable.nullish(),
-    field_directors_table: zStringAliasedNodeDataWritable.nullish(),
+    applicant_responsibility_details: zStringAliasedNodeDataWritable.nullish(),
     personnel_additional_comments: zStringAliasedNodeDataWritable.nullish()
 });
 
