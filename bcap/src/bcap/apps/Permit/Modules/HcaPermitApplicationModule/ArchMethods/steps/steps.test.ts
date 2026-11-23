@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 import { shallowMount, config } from '@vue/test-utils';
 
 import Step1 from './Step1_ResearchDesign.vue';
@@ -16,9 +17,10 @@ vi.mock('@/arches_vue_components/widgets/constants.ts', () => ({
     VIEW: 'view',
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { draftStepContainer } = vi.hoisted(() => ({
-    draftStepContainer: { typedDraftData: null as any },
+    draftStepContainer: {
+        typedDraftData: null as Ref<Record<string, unknown>> | null,
+    },
 }));
 
 // Assigned at module level after imports are resolved (vi.hoisted runs before
