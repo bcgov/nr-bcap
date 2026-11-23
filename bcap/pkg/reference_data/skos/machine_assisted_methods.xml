@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="http://localhost:82/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <skos:Concept rdf:about="http://localhost:82/3a9b0d2e-4c5f-4678-8f1b-cdef23456789">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678">
+        <dcterms:title>Machine-Assisted Methods</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Removal of non-archaeological overburden</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/3a9b0d2e-4c5f-4678-8f1b-cdef23456789</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/4ba0c1e3-5d6a-4789-8a2c-def034567890">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Hydrovac and/or dryvac</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/4ba0c1e3-5d6a-4789-8a2c-def034567890</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/5cb1d2f4-6e7b-4890-8b3d-ef0145678901">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Machine testing</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/5cb1d2f4-6e7b-4890-8b3d-ef0145678901</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/6dc2e3a5-7f8c-4901-8c4e-f01256789012">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Mechanical screening</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/6dc2e3a5-7f8c-4901-8c4e-f01256789012</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/7ed3f4b6-8a9d-4012-8d5f-012367890123">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Mechanical augers</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/7ed3f4b6-8a9d-4012-8d5f-012367890123</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/8fe4a5c7-9b0e-4123-8e6a-123478901234">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Archaeological monitoring</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/8fe4a5c7-9b0e-4123-8e6a-123478901234</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/90f5b6d8-ac1f-4234-8f7b-234589012345">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Geotechnical testing</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/90f5b6d8-ac1f-4234-8f7b-234589012345</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="http://localhost:82/a1f6c7e9-bd20-4345-8a8c-345690123456">
+    <skos:inScheme rdf:resource="http://localhost:82/2f8a9c1d-3b4e-4567-8e0a-bcde12345678"/>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <dcterms:identifier>http://localhost:82/plugins/controlled-list-manager/item/a1f6c7e9-bd20-4345-8a8c-345690123456</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

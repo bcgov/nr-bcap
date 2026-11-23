@@ -57,12 +57,19 @@ const props = withDefaults(
         // Open directly on the review step, hiding the submit button, so a
         // completed section can be browsed without re-submitting.
         viewOnly?: boolean;
+        // Optional async hook for multi-section workflows (e.g. HCA). Called
+        // in onMounted after initDraft resets the store but before
+        // isDataLoaded=true causes step components to mount, so the draft store
+        // is populated before any widget initialises its local state.
+        // Not called when resuming via ?draftId= (WorkflowStepper handles that).
+        beforeRender?: () => Promise<void>;
     }>(),
     {
         submitLabel: 'Create Filing',
         reviewComponent: Step99_Review,
         submit: undefined,
         viewOnly: false,
+        beforeRender: undefined,
     },
 );
 
@@ -287,6 +294,11 @@ onMounted(async () => {
                 loaded.parent_resource_id || draft.parentPermitId;
             resumeStep.value = stepNumberOf(loaded.current_step || '');
             lastStep = resumeStep.value;
+        } else if (props.beforeRender) {
+            // Multi-section workflows load their draft here so the store is
+            // populated before isDataLoaded=true causes step components to
+            // mount — preventing widgets from initialising with stale state.
+            await props.beforeRender();
         }
         // View-only mode opens directly on the review step so the user can
         // read their submitted answers without being able to re-submit.

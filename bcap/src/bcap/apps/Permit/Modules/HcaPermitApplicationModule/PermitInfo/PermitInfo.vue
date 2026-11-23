@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import WorkflowStepper from '@/bcap/apps/Permit/Modules/WorkflowStepper.vue';
 import { GraphSlug } from '@/bcap/apps/Permit/graphSlug.ts';
 import { useDraftStore } from '@/bcap/stores/draft.ts';
@@ -25,17 +24,20 @@ const draft = useDraftStore();
 const route = useRoute();
 const router = useRouter();
 
-// WorkflowStepper handles ?draftId= loading in its own onMounted. This runs
-// after that so a section draft is only created when no draft was resumed.
+// Called by WorkflowStepper before isDataLoaded=true, so the store is
+// populated before any step component mounts and initialises its local state.
+// WorkflowStepper only invokes this when ?draftId= is absent; that case is
+// handled by its own fetchDraft path.
+//
 // The draft_session_id groups all section drafts for a single HCA application.
 // requirementId is used as the stable session key so returning via Edit reloads
 // the same section drafts that were saved on first completion.
-onMounted(async () => {
-    if (route.query.draftId) return;
+const beforeRender = async () => {
     const isViewOnly = !!route.query.view;
     const requirementId = route.query.requirementId as string | undefined;
     const sessionId =
         (route.query.sessionId as string | undefined) ??
+        (route.query.permit as string | undefined) ??
         requirementId ??
         crypto.randomUUID();
     try {
@@ -72,7 +74,7 @@ onMounted(async () => {
     } catch {
         // The stepper's saveError banner will surface any subsequent save failure.
     }
-});
+};
 
 // Save the current section draft and mark the linked requirement Completed.
 // The full HCA Permit Application submission (creating the resource from all
@@ -95,5 +97,6 @@ const submit = async () => {
         submit-label="Save Section"
         :submit="submit"
         :view-only="!!route.query.view"
+        :before-render="beforeRender"
     />
 </template>

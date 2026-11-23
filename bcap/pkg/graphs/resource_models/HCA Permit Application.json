@@ -332,12 +332,7 @@
                 {
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": null,
                         "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
@@ -350,11 +345,11 @@
                     "label": {
                         "en": "Machine-Assisted Methods Selected"
                     },
-                    "node_id": "84963d60-7339-4d7e-86eb-2f45aed09cbb",
+                    "node_id": "5200d5ab-d717-41a9-a57a-6aceb37c313e",
                     "sortorder": 13,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
                     "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
@@ -4334,7 +4329,7 @@
                     "edgeid": "7a8e54a0-ed4a-4e91-8a14-2e362f15b701",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P33_used_specific_technique",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
                     "rangenode_id": "8c3db87b-ace7-4ed0-bc13-2e5808b99307",
                     "source_identifier_id": null
                 },
@@ -5064,8 +5059,8 @@
                     "edgeid": "e8712dca-004d-4351-b1fc-0155559a0d83",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "84963d60-7339-4d7e-86eb-2f45aed09cbb",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "5200d5ab-d717-41a9-a57a-6aceb37c313e",
                     "source_identifier_id": null
                 },
                 {
@@ -7270,9 +7265,10 @@
                 {
                     "alias": "machine_assisted_methods_description",
                     "config": {
-                        "en": ""
+                        "controlledList": "2f8a9c1d-3b4e-4567-8e0a-bcde12345678",
+                        "multiValue": true
                     },
-                    "datatype": "string",
+                    "datatype": "reference",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -7285,9 +7281,9 @@
                     "istopnode": false,
                     "name": "Machine Assisted Methods Selected",
                     "nodegroup_id": "bb0582e8-f072-42f0-8bb6-c73c53ac485e",
-                    "nodeid": "84963d60-7339-4d7e-86eb-2f45aed09cbb",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "nodeid": "5200d5ab-d717-41a9-a57a-6aceb37c313e",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7386,8 +7382,8 @@
                     "name": "Permit Scope",
                     "nodegroup_id": "8c3db87b-ace7-4ed0-bc13-2e5808b99307",
                     "nodeid": "8c3db87b-ace7-4ed0-bc13-2e5808b99307",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P16_used_specific_object",
                     "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7575,7 +7571,7 @@
                     "name": "Permit Scope Heritage Inspection (s. 12.2)",
                     "nodegroup_id": "91e75d68-61ef-4b04-b368-09fa8cec4581",
                     "nodeid": "91e75d68-61ef-4b04-b368-09fa8cec4581",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 0,
                     "source_identifier_id": null,
@@ -9036,7 +9032,7 @@
                     "name": "Permit Scope Alteration (s. 12.4)",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E29_Design_or_Procedure",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
                     "sortorder": 1,
                     "source_identifier_id": null,

@@ -1,6 +1,28 @@
 import arches from 'arches';
 import type { RouteNamesType } from '@/bcgov_arches_common/routes.ts';
 
+// Generates an external (submissions/) and internal (internal-permit-dashboard/)
+// route pair for the same component. The internal name is derived by capitalising
+// the first letter of the external name and prepending "internal".
+const dualRoute = (
+    slug: string,
+    name: string,
+    component: () => Promise<unknown>,
+) => [
+    {
+        path: arches.urls.plugin(`submissions/${slug}`),
+        name,
+        component,
+        meta: { shouldShowNavigation: true },
+    },
+    {
+        path: arches.urls.plugin(`internal-permit-dashboard/${slug}`),
+        name: `internal${name.charAt(0).toUpperCase()}${name.slice(1)}`,
+        component,
+        meta: { requiresInternal: true },
+    },
+];
+
 // No route declares that it needs a login: the profile endpoint the guard calls
 // returns 403 for anyone not signed in, so every route is authenticated whether
 // it asks or not. requiresInternal narrows a route to ministry staff on top.
@@ -23,24 +45,12 @@ const routes = [
             requiresInternal: true,
         },
     },
-    {
-        path: arches.urls.plugin('submissions/permit/:id'),
-        name: 'permitDetails',
-        component: () =>
+    ...dualRoute(
+        'permit/:id',
+        'permitDetails',
+        () =>
             import('@/bcap/apps/Permit/components/filing-summary/PermitDetails.vue'),
-        meta: {
-            shouldShowNavigation: true,
-        },
-    },
-    {
-        path: arches.urls.plugin('internal-permit-dashboard/permit/:id'),
-        name: 'internalPermitDetails',
-        component: () =>
-            import('@/bcap/apps/Permit/components/filing-summary/PermitDetails.vue'),
-        meta: {
-            requiresInternal: true,
-        },
-    },
+    ),
     {
         path: arches.urls.plugin('submissions/moduleReview'),
         name: 'moduleReview',
@@ -68,26 +78,18 @@ const routes = [
             shouldShowNavigation: true,
         },
     },
-    {
-        path: arches.urls.plugin('submissions/hcaPermitApplication'),
-        name: 'hcaPermitApplicationModule',
-        component: () =>
-            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/HcaPermitApplicationModule.vue'),
-        meta: {
-            shouldShowNavigation: true,
-        },
-    },
-    {
-        path: arches.urls.plugin(
-            'internal-permit-dashboard/hcaPermitApplication',
-        ),
-        name: 'internalHcaPermitApplicationModule',
-        component: () =>
-            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/HcaPermitApplicationModule.vue'),
-        meta: {
-            requiresInternal: true,
-        },
-    },
+    ...dualRoute(
+        'hcaPermitApplication/permitInfo',
+        'hcaPermitInfo',
+        () =>
+            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/PermitInfo/PermitInfo.vue'),
+    ),
+    ...dualRoute(
+        'hcaPermitApplication/methods',
+        'hcaPermitMethods',
+        () =>
+            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/Methods/ArchMethods.vue'),
+    ),
     {
         path: arches.urls.plugin('submissions/collectionModule'),
         name: 'collectionModule',
@@ -171,8 +173,10 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     moduleReview: string;
     alterationsModule: string;
     baseModule: string;
-    hcaPermitApplicationModule: string;
-    internalHcaPermitApplicationModule: string;
+    hcaPermitInfo: string;
+    internalHcaPermitInfo: string;
+    hcaPermitMethods: string;
+    internalHcaPermitMethods: string;
     collectionModule: string;
     inspectionModule: string;
     investigationModule: string;
@@ -191,8 +195,10 @@ const routeNames: ExternalPermitRouteNamesType = {
     moduleReview: 'moduleReview',
     alterationsModule: 'alterationsModule',
     baseModule: 'baseModule',
-    hcaPermitApplicationModule: 'hcaPermitApplicationModule',
-    internalHcaPermitApplicationModule: 'internalHcaPermitApplicationModule',
+    hcaPermitInfo: 'hcaPermitInfo',
+    internalHcaPermitInfo: 'internalHcaPermitInfo',
+    hcaPermitMethods: 'hcaPermitMethods',
+    internalHcaPermitMethods: 'internalHcaPermitMethods',
     collectionModule: 'collectionModule',
     inspectionModule: 'inspectionModule',
     investigationModule: 'investigationModule',

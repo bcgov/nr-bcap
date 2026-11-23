@@ -443,40 +443,28 @@ class ProcessRequirementService:
         return dict(requirements)
 
     def _clone_module(self, permit_type, host=None):
-        """Clone the module's child requirements, linking each to its submission
-        resource (the host or a fresh one). The grouping parent template is not
-        cloned into working documents, keeping the list flat on the service request.
-        The module and requirement ids are stamped later by the save hook.
+        """Clone the module's child requirements. The grouping parent template is
+        not cloned into working documents, keeping the list flat on the service
+        request. The module and requirement ids are stamped later by the save hook.
 
-        Requirements with the same non-own graph_slug share a single resource
-        instance (e.g. three permit_application requirements share one resource).
-        The graph_slug for each requirement is read from the template resource so
-        the JSON spec is not the runtime source of truth for that value."""
+        Own-submission requirements (graph_slug == module_graph) are linked to
+        the caller-supplied host. All other requirements (cross-graph workflows
+        and Direct Resource Entry) have their host created on demand: DRE via
+        get_or_create_submission_resource when staff first open them, and
+        multi-section workflows (e.g. HCA Permit Info) when the full application
+        is submitted."""
         parent_spec = load(permit_type)
         graph = module_graph(permit_type)
         templates = self.builder.templates_by_id()
         requirements = []
         hosted = []
         self_hosted = None
-        # Pre-create one shared host per non-own graph_slug for workflow
-        # requirements only. Direct Resource Entry requirements (graph_slug set
-        # but no workflow_slug) have their resource created on demand when staff
-        # first open them, so no blank resource is pre-created here.
-        shared_hosts = {}
-        for child in parent_spec["requirements"]:
-            if not child.get("workflow_slug"):
-                continue
-            graph_slug = _template_graph_slug(templates.get(child["id"]))
-            if graph_slug and graph_slug != graph and graph_slug not in shared_hosts:
-                shared_hosts[graph_slug] = self.builder.make_resource(graph_slug)
         for child in parent_spec["requirements"]:
             graph_slug = _template_graph_slug(templates.get(child["id"]))
             submission = None
             own_submission = graph_slug == graph
             if own_submission:
                 submission = host
-            elif graph_slug and child.get("workflow_slug"):
-                submission = shared_hosts[graph_slug]
             requirement = self.builder.clone_requirement(
                 templates[child["id"]].pk, submission=submission
             )

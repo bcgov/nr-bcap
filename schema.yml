@@ -9186,7 +9186,7 @@ components:
           nullable: true
         machine_assisted_methods_description:
           allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
           nullable: true
           title: Machine-Assisted Methods Selected
         machine_assisted_approach:

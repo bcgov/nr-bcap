@@ -116,13 +116,12 @@ const moreItems = computed(() => [
         // Open the linked submission resource when one exists, otherwise fall
         // back to the requirement itself. Never auto-create here — creation is
         // the job of the dedicated Create button.
-        url: arches.urls.resource_editor(
+        url: `${arches.urls.resource_editor}${
             hasSubmission(props.requirement.type)
                 ? props.requirement.hostResourceId ||
-                      props.requirement.resourceId
-                : props.requirement.resourceId,
-        ),
-
+                  props.requirement.resourceId
+                : props.requirement.resourceId
+        }`,
         target: '_blank',
     },
     ...(isChecklist(props.requirement.type)

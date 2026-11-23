@@ -3288,7 +3288,7 @@ export type HcaPermitApplicationMethodologyAliasedData = {
     confirms_subsurface_testing_aligns?: BooleanAliasedNodeData | null;
     subsurface_testing_non_alignment?: StringAliasedNodeData | null;
     has_machine_assisted_methods?: BooleanAliasedNodeData | null;
-    machine_assisted_methods_description?: StringAliasedNodeData | null;
+    machine_assisted_methods_description?: ReferenceAliasedNodeData | null;
     machine_assisted_approach?: StringAliasedNodeData | null;
     has_winter_methods?: BooleanAliasedNodeData | null;
     winter_methods_align?: StringAliasedNodeData | null;
@@ -11602,7 +11602,7 @@ export type HcaPermitApplicationMethodologyAliasedDataWritable = {
     confirms_subsurface_testing_aligns?: BooleanAliasedNodeDataWritable | null;
     subsurface_testing_non_alignment?: StringAliasedNodeDataWritable | null;
     has_machine_assisted_methods?: BooleanAliasedNodeDataWritable | null;
-    machine_assisted_methods_description?: StringAliasedNodeDataWritable | null;
+    machine_assisted_methods_description?: ReferenceAliasedNodeDataWritable | null;
     machine_assisted_approach?: StringAliasedNodeDataWritable | null;
     has_winter_methods?: BooleanAliasedNodeDataWritable | null;
     winter_methods_align?: StringAliasedNodeDataWritable | null;
