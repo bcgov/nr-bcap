@@ -281,6 +281,41 @@ python3 manage.py clear_dashboard_data
 
 These are temporary developer aids and will be removed in a future release.
 
+## Reloading Permit Resource Models
+
+After editing a resource model JSON in `pkg/graphs/` (via the Arches graph
+designer or direct file edits), the running database needs to be updated to
+match. Run inside the `bcap` container:
+
+```bash
+python3 manage.py reload_permit_models
+```
+
+This reimports all permit resource models and branches from the checked-in JSON
+files, reloads the SKOS controlled lists, re-seeds the process-requirement
+templates, and re-indexes affected resources in Elasticsearch.
+
+If a node was removed from the JSON or its datatype changed, existing tile data
+is incompatible and must be cleared first:
+
+```bash
+python3 manage.py reload_permit_models --delete-tiles
+```
+
+After a successful reload, regenerate the OpenAPI spec and Python node-alias
+files so generated code stays in sync with the new graph structure:
+
+```bash
+python3 manage.py regenerate_api
+python3 manage.py regen_python_aliases
+```
+
+Commit the updated graph JSON (node UUIDs may have been auto-rotated by the
+command), `schema.yml`, generated views, Zod client, and alias files together.
+
+> See [arches-zod-validation README](../arches-zod-validation/README.md) for a
+> detailed explanation of the full API generation pipeline.
+
 ## Running Backend Unit Tests
 
 ```
@@ -289,6 +324,67 @@ python3 manage.py test tests --pattern="*.py" --settings="tests.test_settings" -
 
 - `--keepdb` reuses the existing test database between runs to save time
 - To run a specific test module or class, replace `tests` with the dotted path (e.g. `tests.views.test_api`)
+
+### Graph Validation Tests
+
+The graph config tests validate the checked-in JSON files in `pkg/graphs/`
+against common mis-configurations (absolute URLs, wrong app prefixes, wrong
+controlled-list-manager hosts) without requiring any database access:
+
+```bash
+python3 manage.py test tests.test_graph_config --settings="tests.test_settings"
+```
+
+Run these after editing any resource model JSON.
+
+To validate data integrity of the live database (graph structure, node
+configuration, tile data consistency), use the Arches `validate` command:
+
+```bash
+python3 manage.py validate
+```
+
+Violations can be auto-remediated where a fix is available:
+
+```bash
+python3 manage.py validate --fix-all
+```
+
+Use `--export-dir` to export any modified graphs back to JSON after fixing:
+
+```bash
+python3 manage.py validate --fix-all --export-dir pkg/graphs/resource_models
+```
+
+## Running Frontend Tests
+
+Run all four checks inside the `bcap` container. All must pass before merging.
+Prettier auto-fixes formatting in-place; ESLint and TypeScript errors must be
+zero.
+
+1. **Prettier** (auto-formats):
+
+   ```bash
+   npm run prettier:fix:all
+   ```
+
+2. **ESLint** (lint — zero errors required):
+
+   ```bash
+   npm run eslint:check
+   ```
+
+3. **TypeScript** (no type errors):
+
+   ```bash
+   npm run ts:check
+   ```
+
+4. **Vitest** (unit tests):
+
+   ```bash
+   npm run vitest
+   ```
 
 ## Notes
 - RabbitMQ is not being used
