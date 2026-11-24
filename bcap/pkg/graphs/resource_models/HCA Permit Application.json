@@ -7599,7 +7599,12 @@
                 {
                     "alias": "responsible_person",
                     "config": {
-                        "graphs": [{"graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89", "name": "Contributor"}],
+                        "graphs": [
+                            {
+                                "graphid": "605b0bbc-8661-4cf2-b340-df743a8c5f89",
+                                "name": "Contributor"
+                            }
+                        ],
                         "searchDsl": "",
                         "searchString": ""
                     },

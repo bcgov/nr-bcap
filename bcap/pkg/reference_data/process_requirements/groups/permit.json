@@ -47,8 +47,8 @@
             "satisfied": false,
             "process_status": "Required",
             "sub_requirements": [],
-            "workflow_slug": "submissions/baseModule",
-            "graph_slug": "permit_application"
+            "workflow_slug": "submissions/hcaPermitApplication/personnel",
+            "graph_slug": "hca_permit_application"
         },
         {
             "id": "REQ-PERMIT-METHODS-005",
