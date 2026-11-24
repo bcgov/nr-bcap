@@ -9064,6 +9064,62 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Aliased_Data:
+      type: object
+      properties:
+        hip_archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Archaeological Site
+    Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Hca_Permit_Application_Material_Collection_Aliased_Data:
       type: object
       properties:
@@ -9464,26 +9520,16 @@ components:
     Hca_Permit_Application_Permit_Scope_Hip_Aliased_Data:
       type: object
       properties:
-        hip_project_type:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
+        hip_recorded_archaeological_sites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Tile'
           nullable: true
-          title: Project Type
         hip_goals_and_objectives:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Goals and Objectives
-        hip_is_map_application:
-          allOf:
-          - $ref: '#/components/schemas/BooleanAliasedNodeData'
-          nullable: true
-          title: Is Multi-Assessment Permit (MAP)
-        hip_map_scope:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: MAP Scope Description
         hip_assessment_area_size_ha:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9549,31 +9595,11 @@ components:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Has Other Studies
-        hip_archaeological_sites_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Archaeological Sites Subject to Assessment (Table)
-        hip_previous_studies:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Previous Studies (Table)
-        hip_previously_recorded_sites:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Previously Recorded Sites (Table)
         hip_has_related_alterations:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Alterations to Recorded Sites Proposed
-        hip_alteration_type_description:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Alteration Type Description
         hip_fn_file_numbers:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
@@ -9584,6 +9610,29 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Additional Discussion
+        hip_project_type_ref:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Project Type
+          description: Select an option
+        hip_application_area_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Application Area Type
+          description: Select an option
+        hip_was_hip_aoa_permitted:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Was AOA Permitted Under a Previous HIP
+        hip_alteration_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Alteration Type
+          description: Select an option
     Hca_Permit_Application_Permit_Scope_Hip_Tile:
       type: object
       properties:

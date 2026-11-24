@@ -3269,6 +3269,31 @@ export type HcaPermitApplicationAssessmentOversightResponsibilityTile = {
     } | null;
 };
 
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedData = {
+    hip_archaeological_site?: ResourceInstanceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type HcaPermitApplicationMaterialCollectionAliasedData = {
     collection_approach?: StringAliasedNodeData | null;
     collection_additional_comments?: StringAliasedNodeData | null;
@@ -3395,10 +3420,8 @@ export type HcaPermitApplicationPermitScopeAlterationTile = {
 };
 
 export type HcaPermitApplicationPermitScopeHipAliasedData = {
-    hip_project_type?: StringAliasedNodeData | null;
+    hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTile> | null;
     hip_goals_and_objectives?: StringAliasedNodeData | null;
-    hip_is_map_application?: BooleanAliasedNodeData | null;
-    hip_map_scope?: StringAliasedNodeData | null;
     hip_assessment_area_size_ha?: StringAliasedNodeData | null;
     hip_development_selection?: StringAliasedNodeData | null;
     hip_addresses_chance_finds?: BooleanAliasedNodeData | null;
@@ -3412,13 +3435,22 @@ export type HcaPermitApplicationPermitScopeHipAliasedData = {
     hip_has_desk_based_assessment?: BooleanAliasedNodeData | null;
     hip_has_field_studies?: BooleanAliasedNodeData | null;
     hip_has_other_studies?: BooleanAliasedNodeData | null;
-    hip_archaeological_sites_description?: StringAliasedNodeData | null;
-    hip_previous_studies?: StringAliasedNodeData | null;
-    hip_previously_recorded_sites?: StringAliasedNodeData | null;
     hip_has_related_alterations?: BooleanAliasedNodeData | null;
-    hip_alteration_type_description?: StringAliasedNodeData | null;
     hip_fn_file_numbers?: StringAliasedNodeData | null;
     hip_additional_discussion?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_project_type_ref?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_application_area_type?: ReferenceAliasedNodeData | null;
+    hip_was_hip_aoa_permitted?: BooleanAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_alteration_type?: ReferenceAliasedNodeData | null;
 };
 
 export type HcaPermitApplicationPermitScopeHipTile = {
@@ -11620,6 +11652,32 @@ export type HcaPermitApplicationAssessmentOversightResponsibilityTileWritable =
         } | null;
     };
 
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedDataWritable =
+    {
+        hip_archaeological_site?: ResourceInstanceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type HcaPermitApplicationMaterialCollectionAliasedDataWritable = {
     collection_approach?: StringAliasedNodeDataWritable | null;
     collection_additional_comments?: StringAliasedNodeDataWritable | null;
@@ -11746,10 +11804,8 @@ export type HcaPermitApplicationPermitScopeAlterationTileWritable = {
 };
 
 export type HcaPermitApplicationPermitScopeHipAliasedDataWritable = {
-    hip_project_type?: StringAliasedNodeDataWritable | null;
+    hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable> | null;
     hip_goals_and_objectives?: StringAliasedNodeDataWritable | null;
-    hip_is_map_application?: BooleanAliasedNodeDataWritable | null;
-    hip_map_scope?: StringAliasedNodeDataWritable | null;
     hip_assessment_area_size_ha?: StringAliasedNodeDataWritable | null;
     hip_development_selection?: StringAliasedNodeDataWritable | null;
     hip_addresses_chance_finds?: BooleanAliasedNodeDataWritable | null;
@@ -11763,13 +11819,22 @@ export type HcaPermitApplicationPermitScopeHipAliasedDataWritable = {
     hip_has_desk_based_assessment?: BooleanAliasedNodeDataWritable | null;
     hip_has_field_studies?: BooleanAliasedNodeDataWritable | null;
     hip_has_other_studies?: BooleanAliasedNodeDataWritable | null;
-    hip_archaeological_sites_description?: StringAliasedNodeDataWritable | null;
-    hip_previous_studies?: StringAliasedNodeDataWritable | null;
-    hip_previously_recorded_sites?: StringAliasedNodeDataWritable | null;
     hip_has_related_alterations?: BooleanAliasedNodeDataWritable | null;
-    hip_alteration_type_description?: StringAliasedNodeDataWritable | null;
     hip_fn_file_numbers?: StringAliasedNodeDataWritable | null;
     hip_additional_discussion?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_project_type_ref?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_application_area_type?: ReferenceAliasedNodeDataWritable | null;
+    hip_was_hip_aoa_permitted?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_alteration_type?: ReferenceAliasedNodeDataWritable | null;
 };
 
 export type HcaPermitApplicationPermitScopeHipTileWritable = {
