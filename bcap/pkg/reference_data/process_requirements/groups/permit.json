@@ -12,7 +12,7 @@
     "sub_requirements": [],
     "requirements": [
         {
-            "id": "REQ-PERMIT-TEMPLATE-002",
+            "id": "REQ-PERMIT-TEMPLATE-001",
             "name": "Permit Info",
             "type": "Workflow",
             "internal": false,
@@ -25,8 +25,21 @@
             "graph_slug": "hca_permit_application"
         },
         {
+            "id": "REQ-HIP-SCOPE-002",
+            "name": "Heritage Inspection Permit Scope",
+            "type": "Workflow",
+            "internal": false,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/hcaPermitApplication/permitScopeHip",
+            "graph_slug": "hca_permit_application"
+        },
+        {
             "id": "REQ-PERMIT-TEMPLATE-003",
-            "name": "Permit Scope",
+            "name": "Alteration Permit Scope",
             "type": "Workflow",
             "internal": false,
             "due": null,

@@ -414,9 +414,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -443,9 +441,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -472,9 +468,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Other Permit Term",
                         "maxLength": null,
                         "placeholder": {
@@ -496,9 +490,7 @@
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Sector",
                         "placeholder": {
                             "en": "Select an option"
@@ -523,9 +515,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -547,9 +537,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -573,9 +561,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -597,9 +583,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -623,9 +607,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -652,9 +634,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -676,9 +656,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -702,9 +680,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -731,9 +707,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Concurrent Permit Number(s)",
                         "maxLength": null,
                         "placeholder": {
@@ -761,9 +735,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -790,9 +762,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -814,9 +784,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -840,9 +808,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -869,9 +835,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -898,9 +862,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -922,9 +884,7 @@
                     "card_id": "4c4fc672-d5e2-4e1e-bb03-6f54b8375680",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -943,9 +903,7 @@
                     "card_id": "d7fe75ef-3ffd-4c05-a2f4-e011862567f8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -969,9 +927,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -998,9 +954,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1022,9 +976,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1048,9 +1000,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Proponent Name",
                         "maxLength": null,
                         "placeholder": {
@@ -1073,9 +1023,7 @@
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Is Replacement Permit",
                         "placeholder": {
                             "en": ""
@@ -1100,9 +1048,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1129,9 +1075,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1153,9 +1097,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1179,9 +1121,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1208,9 +1148,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1232,9 +1170,7 @@
                     "card_id": "d7fe75ef-3ffd-4c05-a2f4-e011862567f8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1274,9 +1210,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1303,9 +1237,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Existing Permit Number",
                         "maxLength": null,
                         "placeholder": {
@@ -1333,9 +1265,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1362,9 +1292,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1391,9 +1319,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Proponent Company",
                         "maxLength": null,
                         "placeholder": {
@@ -1416,9 +1342,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1442,9 +1366,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1471,9 +1393,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1500,9 +1420,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1529,9 +1447,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1558,9 +1474,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1582,9 +1496,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1608,9 +1520,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1632,9 +1542,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1658,9 +1566,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1687,9 +1593,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1716,9 +1620,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1740,9 +1642,7 @@
                     "card_id": "6b0ab9a4-853a-4186-a05c-95a9c4836a15",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1766,9 +1666,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1795,9 +1693,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1839,9 +1735,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Proponent Email",
                         "maxLength": null,
                         "placeholder": {
@@ -1869,9 +1763,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1898,9 +1790,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1922,9 +1812,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1948,9 +1836,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -1972,9 +1858,7 @@
                     "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -1998,9 +1882,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2022,9 +1904,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2048,9 +1928,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2077,9 +1955,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2106,9 +1982,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2130,9 +2004,7 @@
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Is this permit related to any known concurrent HCA permits or pending applications? ",
                         "placeholder": {
                             "en": ""
@@ -2157,9 +2029,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2186,9 +2056,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2215,9 +2083,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2244,9 +2110,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2273,9 +2137,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2297,9 +2159,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2323,9 +2183,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2352,9 +2210,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2381,9 +2237,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2410,9 +2264,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2439,9 +2291,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2468,9 +2318,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2492,9 +2340,7 @@
                     "card_id": "4c4fc672-d5e2-4e1e-bb03-6f54b8375680",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2518,9 +2364,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2547,9 +2391,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2570,9 +2412,7 @@
                 {
                     "card_id": "cc010001-0000-4000-8000-000000000001",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Cultural Area",
                         "placeholder": {
                             "en": "Select an option"
@@ -2607,9 +2447,7 @@
                 {
                     "card_id": "cc010001-0000-4000-8000-000000000001",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Responsibility Role",
                         "placeholder": {
                             "en": "Select an option"
@@ -2629,9 +2467,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2655,9 +2491,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2695,9 +2529,7 @@
                     "card_id": "d7fe75ef-3ffd-4c05-a2f4-e011862567f8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2716,9 +2548,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2742,9 +2572,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2766,9 +2594,7 @@
                     "card_id": "4c4fc672-d5e2-4e1e-bb03-6f54b8375680",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2787,9 +2613,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2813,9 +2637,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2842,9 +2664,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2866,9 +2686,7 @@
                     "card_id": "81e377e9-6a6a-41dc-89af-6e0d20976955",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2887,9 +2705,7 @@
                     "card_id": "d7fe75ef-3ffd-4c05-a2f4-e011862567f8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2913,9 +2729,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -2937,9 +2751,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -2963,9 +2775,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Proponent Address",
                         "maxLength": null,
                         "placeholder": {
@@ -2988,9 +2798,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3014,9 +2822,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3038,9 +2844,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3064,9 +2868,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Proponent Phone",
                         "maxLength": null,
                         "placeholder": {
@@ -3089,9 +2891,7 @@
                     "card_id": "4c4fc672-d5e2-4e1e-bb03-6f54b8375680",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3110,9 +2910,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3136,9 +2934,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3165,9 +2961,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3189,9 +2983,7 @@
                     "card_id": "b6abc801-68ba-491a-9fc5-e7718c8102a4",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3215,9 +3007,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3244,9 +3034,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3268,9 +3056,7 @@
                     "card_id": "d7fe75ef-3ffd-4c05-a2f4-e011862567f8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3288,9 +3074,7 @@
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Final deliverables due date",
                         "placeholder": {
                             "en": "Select an option"
@@ -3315,9 +3099,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3344,9 +3126,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3367,9 +3147,7 @@
                 {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Permit Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3394,9 +3172,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3418,9 +3194,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3444,9 +3218,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3473,9 +3245,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3502,9 +3272,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3531,9 +3299,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3555,9 +3321,7 @@
                     "card_id": "60aa35c4-8134-4508-84cd-998c663e5400",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3576,9 +3340,7 @@
                     "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3597,9 +3359,7 @@
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3623,9 +3383,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3652,9 +3410,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3681,9 +3437,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3710,9 +3464,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3739,9 +3491,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3768,9 +3518,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Description",
                         "maxLength": null,
                         "placeholder": {
@@ -3793,9 +3541,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3819,9 +3565,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3848,9 +3592,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3877,9 +3619,7 @@
                                 "value": ""
                             }
                         },
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "maxLength": null,
                         "placeholder": {
                             "en": ""
@@ -3900,9 +3640,7 @@
                 {
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Project Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3921,9 +3659,7 @@
                 {
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Application Area Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -3943,9 +3679,7 @@
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
                         "defaultValue": null,
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -3963,9 +3697,7 @@
                 {
                     "card_id": "32a22bcb-e04e-4ae2-bf53-3a5d3ed89a6b",
                     "config": {
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "label": "Alteration Type",
                         "placeholder": {
                             "en": "Select an option"
@@ -4001,9 +3733,7 @@
                     "card_id": "ec020001-0000-4000-8000-000000000001",
                     "config": {
                         "en": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -4022,9 +3752,7 @@
                     "card_id": "ec020001-0000-4000-8000-000000000001",
                     "config": {
                         "en": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -4043,9 +3771,7 @@
                     "card_id": "ec020001-0000-4000-8000-000000000001",
                     "config": {
                         "en": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -4064,9 +3790,7 @@
                     "card_id": "ec020001-0000-4000-8000-000000000001",
                     "config": {
                         "en": "",
-                        "i18n_properties": [
-                            "placeholder"
-                        ],
+                        "i18n_properties": ["placeholder"],
                         "placeholder": {
                             "en": ""
                         }
@@ -5860,10 +5584,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -5920,10 +5641,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -5955,10 +5673,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6065,10 +5780,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6100,10 +5812,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6135,10 +5844,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6170,10 +5876,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6330,10 +6033,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6415,10 +6115,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6557,10 +6254,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6742,10 +6436,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6777,10 +6468,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6937,10 +6625,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -6997,10 +6682,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7107,10 +6789,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7267,10 +6946,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7427,10 +7103,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7461,10 +7134,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7521,10 +7191,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7556,10 +7223,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7591,10 +7255,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -7700,10 +7361,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8020,10 +7678,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8080,10 +7735,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8391,10 +8043,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8551,10 +8200,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8736,10 +8382,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8796,10 +8439,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8881,10 +8521,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -8966,10 +8603,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9051,10 +8685,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9287,10 +8918,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9322,10 +8950,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9357,10 +8982,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9467,10 +9089,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9552,10 +9171,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9587,10 +9203,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9747,10 +9360,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9782,10 +9392,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9817,10 +9424,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -9877,10 +9481,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }
@@ -10215,10 +9816,7 @@
                         "falseLabel": {
                             "en": "No"
                         },
-                        "i18n_properties": [
-                            "trueLabel",
-                            "falseLabel"
-                        ],
+                        "i18n_properties": ["trueLabel", "falseLabel"],
                         "trueLabel": {
                             "en": "Yes"
                         }

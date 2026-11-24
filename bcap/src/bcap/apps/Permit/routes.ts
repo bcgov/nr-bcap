@@ -96,6 +96,12 @@ const routes = [
         () =>
             import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/SiteOversight/SiteOversight.vue'),
     ),
+    ...dualRoute(
+        'hcaPermitApplication/permitScopeHip',
+        'hcaPermitScopeHip',
+        () =>
+            import('@/bcap/apps/Permit/Modules/HcaPermitApplicationModule/PermitScopeHip/PermitScopeHip.vue'),
+    ),
     {
         path: arches.urls.plugin('submissions/collectionModule'),
         name: 'collectionModule',
@@ -185,6 +191,8 @@ type ExternalPermitRouteNamesType = RouteNamesType & {
     internalHcaPermitMethods: string;
     hcaPermitPersonnel: string;
     internalHcaPermitPersonnel: string;
+    hcaPermitScopeHip: string;
+    internalHcaPermitScopeHip: string;
     collectionModule: string;
     inspectionModule: string;
     investigationModule: string;
@@ -209,6 +217,8 @@ const routeNames: ExternalPermitRouteNamesType = {
     internalHcaPermitMethods: 'internalHcaPermitMethods',
     hcaPermitPersonnel: 'hcaPermitPersonnel',
     internalHcaPermitPersonnel: 'internalHcaPermitPersonnel',
+    hcaPermitScopeHip: 'hcaPermitScopeHip',
+    internalHcaPermitScopeHip: 'internalHcaPermitScopeHip',
     collectionModule: 'collectionModule',
     inspectionModule: 'inspectionModule',
     investigationModule: 'investigationModule',
