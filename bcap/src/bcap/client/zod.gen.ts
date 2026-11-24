@@ -2342,6 +2342,30 @@ export const zHcaPermitApplicationApplicationOverviewTile = z.object({
     })).nullish()
 });
 
+export const zHcaPermitApplicationHipPreviousStudiesAliasedData = z.object({
+    hip_study_title: zStringAliasedNodeData.nullish(),
+    hip_study_proximity_m: zStringAliasedNodeData.nullish(),
+    hip_study_year: zStringAliasedNodeData.nullish(),
+    hip_study_comments: zStringAliasedNodeData.nullish()
+});
+
+export const zHcaPermitApplicationHipPreviousStudiesTile = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zHcaPermitApplicationHipPreviousStudiesAliasedData.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zHcaPermitApplicationMaterialCollectionAliasedData = z.object({
     collection_approach: zStringAliasedNodeData.nullish(),
     collection_additional_comments: zStringAliasedNodeData.nullish(),
@@ -2451,6 +2475,7 @@ export const zHcaPermitApplicationPermitScopeAlterationTile = z.object({
 });
 
 export const zHcaPermitApplicationPermitScopeHipAliasedData = z.object({
+    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTile).nullish(),
     hip_recorded_archaeological_sites: z.array(zHcaPermitApplicationHipRecordedArchaeologicalSitesTile).nullish(),
     hip_goals_and_objectives: zStringAliasedNodeData.nullish(),
     hip_assessment_area_size_ha: zStringAliasedNodeData.nullish(),
@@ -8122,6 +8147,30 @@ export const zHcaPermitApplicationApplicationOverviewTileWritable = z.object({
     })).nullish()
 });
 
+export const zHcaPermitApplicationHipPreviousStudiesAliasedDataWritable = z.object({
+    hip_study_title: zStringAliasedNodeDataWritable.nullish(),
+    hip_study_proximity_m: zStringAliasedNodeDataWritable.nullish(),
+    hip_study_year: zStringAliasedNodeDataWritable.nullish(),
+    hip_study_comments: zStringAliasedNodeDataWritable.nullish()
+});
+
+export const zHcaPermitApplicationHipPreviousStudiesTileWritable = z.object({
+    tileid: z.uuid().nullish(),
+    resourceinstance: z.uuid().nullish(),
+    nodegroup: z.uuid().nullish(),
+    parenttile: z.uuid().nullish(),
+    aliased_data: zHcaPermitApplicationHipPreviousStudiesAliasedDataWritable.optional(),
+    sortorder: z.int().gte(-2147483648).lte(2147483647).nullish(),
+    provisionaledits: z.record(z.string(), z.object({
+        value: z.record(z.string(), z.unknown()).optional(),
+        status: z.string().optional(),
+        action: z.string().optional(),
+        reviewer: z.int().nullish(),
+        timestamp: z.string().nullish(),
+        reviewtimestamp: z.string().nullish()
+    })).nullish()
+});
+
 export const zHcaPermitApplicationMaterialCollectionAliasedDataWritable = z.object({
     collection_approach: zStringAliasedNodeDataWritable.nullish(),
     collection_additional_comments: zStringAliasedNodeDataWritable.nullish(),
@@ -8231,6 +8280,7 @@ export const zHcaPermitApplicationPermitScopeAlterationTileWritable = z.object({
 });
 
 export const zHcaPermitApplicationPermitScopeHipAliasedDataWritable = z.object({
+    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTileWritable).nullish(),
     hip_recorded_archaeological_sites: z.array(zHcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable).nullish(),
     hip_goals_and_objectives: zStringAliasedNodeDataWritable.nullish(),
     hip_assessment_area_size_ha: zStringAliasedNodeDataWritable.nullish(),

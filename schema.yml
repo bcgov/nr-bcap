@@ -9064,6 +9064,77 @@ components:
               reviewtimestamp:
                 type: string
                 nullable: true
+    Hca_Permit_Application_Hip_Previous_Studies_Aliased_Data:
+      type: object
+      properties:
+        hip_study_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Title of Study
+        hip_study_proximity_m:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Proximity to Proposed Assessment Area (m)
+        hip_study_year:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Year of Assessment
+        hip_study_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Comments Relevant to this Study
+    Hca_Permit_Application_Hip_Previous_Studies_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Aliased_Data:
       type: object
       properties:
@@ -9520,6 +9591,11 @@ components:
     Hca_Permit_Application_Permit_Scope_Hip_Aliased_Data:
       type: object
       properties:
+        hip_previous_studies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Tile'
+          nullable: true
         hip_recorded_archaeological_sites:
           type: array
           items:
