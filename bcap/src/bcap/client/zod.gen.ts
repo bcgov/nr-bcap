@@ -2475,9 +2475,9 @@ export const zHcaPermitApplicationPermitScopeAlterationTile = z.object({
 });
 
 export const zHcaPermitApplicationPermitScopeHipAliasedData = z.object({
-    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTile).nullish(),
     hip_recorded_archaeological_sites: z.array(zHcaPermitApplicationHipRecordedArchaeologicalSitesTile).nullish(),
     hip_goals_and_objectives: zStringAliasedNodeData.nullish(),
+    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTile).nullish(),
     hip_assessment_area_size_ha: zStringAliasedNodeData.nullish(),
     hip_development_selection: zStringAliasedNodeData.nullish(),
     hip_addresses_chance_finds: zBooleanAliasedNodeData.nullish(),
@@ -8280,9 +8280,9 @@ export const zHcaPermitApplicationPermitScopeAlterationTileWritable = z.object({
 });
 
 export const zHcaPermitApplicationPermitScopeHipAliasedDataWritable = z.object({
-    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTileWritable).nullish(),
     hip_recorded_archaeological_sites: z.array(zHcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable).nullish(),
     hip_goals_and_objectives: zStringAliasedNodeDataWritable.nullish(),
+    hip_previous_studies: z.array(zHcaPermitApplicationHipPreviousStudiesTileWritable).nullish(),
     hip_assessment_area_size_ha: zStringAliasedNodeDataWritable.nullish(),
     hip_development_selection: zStringAliasedNodeDataWritable.nullish(),
     hip_addresses_chance_finds: zBooleanAliasedNodeDataWritable.nullish(),

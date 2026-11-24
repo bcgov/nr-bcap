@@ -9591,11 +9591,6 @@ components:
     Hca_Permit_Application_Permit_Scope_Hip_Aliased_Data:
       type: object
       properties:
-        hip_previous_studies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Tile'
-          nullable: true
         hip_recorded_archaeological_sites:
           type: array
           items:
@@ -9606,6 +9601,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           title: Goals and Objectives
+        hip_previous_studies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Tile'
+          nullable: true
         hip_assessment_area_size_ha:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'

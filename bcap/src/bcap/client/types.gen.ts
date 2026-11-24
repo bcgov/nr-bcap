@@ -3448,9 +3448,9 @@ export type HcaPermitApplicationPermitScopeAlterationTile = {
 };
 
 export type HcaPermitApplicationPermitScopeHipAliasedData = {
-    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTile> | null;
     hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTile> | null;
     hip_goals_and_objectives?: StringAliasedNodeData | null;
+    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTile> | null;
     hip_assessment_area_size_ha?: StringAliasedNodeData | null;
     hip_development_selection?: StringAliasedNodeData | null;
     hip_addresses_chance_finds?: BooleanAliasedNodeData | null;
@@ -11861,9 +11861,9 @@ export type HcaPermitApplicationPermitScopeAlterationTileWritable = {
 };
 
 export type HcaPermitApplicationPermitScopeHipAliasedDataWritable = {
-    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTileWritable> | null;
     hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable> | null;
     hip_goals_and_objectives?: StringAliasedNodeDataWritable | null;
+    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTileWritable> | null;
     hip_assessment_area_size_ha?: StringAliasedNodeDataWritable | null;
     hip_development_selection?: StringAliasedNodeDataWritable | null;
     hip_addresses_chance_finds?: BooleanAliasedNodeDataWritable | null;

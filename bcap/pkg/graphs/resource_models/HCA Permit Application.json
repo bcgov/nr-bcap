@@ -404,7 +404,7 @@
                         "en": "Previous Studies"
                     },
                     "nodegroup_id": "e2010001-0000-4000-8000-000000000001",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 }
@@ -10290,7 +10290,7 @@
                     "nodeid": "e1010001-0000-4000-8000-000000000001",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P106_is_composed_of",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
