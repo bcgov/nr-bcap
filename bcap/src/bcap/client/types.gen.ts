@@ -3495,7 +3495,7 @@ export type HcaPermitApplicationPermitScopeHipAliasedData = {
     hip_has_field_studies?: BooleanAliasedNodeData | null;
     hip_has_other_studies?: BooleanAliasedNodeData | null;
     hip_has_related_alterations?: BooleanAliasedNodeData | null;
-    hip_fn_file_numbers?: StringAliasedNodeData | null;
+    hip_first_nation_file_numbers?: StringAliasedNodeData | null;
     hip_additional_discussion?: StringAliasedNodeData | null;
     /**
      * Select an option
@@ -11980,7 +11980,7 @@ export type HcaPermitApplicationPermitScopeHipAliasedDataWritable = {
     hip_has_field_studies?: BooleanAliasedNodeDataWritable | null;
     hip_has_other_studies?: BooleanAliasedNodeDataWritable | null;
     hip_has_related_alterations?: BooleanAliasedNodeDataWritable | null;
-    hip_fn_file_numbers?: StringAliasedNodeDataWritable | null;
+    hip_first_nation_file_numbers?: StringAliasedNodeDataWritable | null;
     hip_additional_discussion?: StringAliasedNodeDataWritable | null;
     /**
      * Select an option

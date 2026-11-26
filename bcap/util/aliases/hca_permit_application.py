@@ -71,7 +71,7 @@ class HCAPermitApplicationAliases(AbstractAliases):
     HIP_CHANCE_FINDS_DETAILS = "hip_chance_finds_details"
     HIP_CONFIRMS_OBJECTIVES_ALIGN = "hip_confirms_objectives_align"
     HIP_DEVELOPMENT_SELECTION = "hip_development_selection"
-    HIP_FN_FILE_NUMBERS = "hip_fn_file_numbers"
+    HIP_FIRST_NATION_FILE_NUMBERS = "hip_first_nation_file_numbers"
     HIP_GOALS_AND_OBJECTIVES = "hip_goals_and_objectives"
     HIP_HAS_AOA = "hip_has_aoa"
     HIP_HAS_DESK_BASED_ASSESSMENT = "hip_has_desk_based_assessment"

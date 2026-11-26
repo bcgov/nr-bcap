@@ -9730,7 +9730,7 @@ components:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
           title: Alterations to Recorded Sites Proposed
-        hip_fn_file_numbers:
+        hip_first_nation_file_numbers:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
