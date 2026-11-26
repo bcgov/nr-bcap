@@ -3113,6 +3113,35 @@ export type HcaPermitApplication = {
     readonly principaluser: number | null;
 };
 
+export type HcaPermitApplicationAffectedArchaeologicalSiteAliasedData = {
+    /**
+     * Enter text
+     */
+    anticipated_impacts?: StringAliasedNodeData | null;
+    affected_archaeological_site: ResourceInstanceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAffectedArchaeologicalSiteAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type HcaPermitApplicationAncestralRemainsAliasedData = {
     confirms_ancestral_remains_protocol?: BooleanAliasedNodeData | null;
     ancestral_remains_non_alignment?: StringAliasedNodeData | null;
@@ -3410,20 +3439,21 @@ export type HcaPermitApplicationPermitScopeAliasedData = {
 };
 
 export type HcaPermitApplicationPermitScopeAlterationAliasedData = {
-    alt_project_location?: StringAliasedNodeData | null;
-    alt_project_description?: StringAliasedNodeData | null;
-    alt_alteration_timing?: StringAliasedNodeData | null;
-    alt_sector?: StringAliasedNodeData | null;
-    alt_archaeological_sites?: StringAliasedNodeData | null;
-    alt_related_assessments?: StringAliasedNodeData | null;
-    alt_previous_assessment_discussion?: StringAliasedNodeData | null;
-    alt_impact_management_approach?: StringAliasedNodeData | null;
-    alt_stockpile_plan_required?: BooleanAliasedNodeData | null;
-    alt_stockpile_plan_description?: StringAliasedNodeData | null;
-    alt_has_related_permits?: BooleanAliasedNodeData | null;
-    alt_related_permits_description?: StringAliasedNodeData | null;
-    alt_fn_file_numbers?: StringAliasedNodeData | null;
-    alt_additional_discussion?: StringAliasedNodeData | null;
+    project_location?: StringAliasedNodeData | null;
+    related_assessment?: Array<HcaPermitApplicationRelatedAssessmentTile> | null;
+    affected_archaeological_site?: Array<HcaPermitApplicationAffectedArchaeologicalSiteTile> | null;
+    alteration_project_description?: StringAliasedNodeData | null;
+    alteration_timing?: StringAliasedNodeData | null;
+    previous_assessment_discussion?: StringAliasedNodeData | null;
+    impact_management_approach?: StringAliasedNodeData | null;
+    stockpile_plan_required?: BooleanAliasedNodeData | null;
+    stockpile_plan_approach?: StringAliasedNodeData | null;
+    impact_management_additional_comments?: StringAliasedNodeData | null;
+    has_related_permits?: BooleanAliasedNodeData | null;
+    related_permits_description?: StringAliasedNodeData | null;
+    first_nation_file_numbers?: StringAliasedNodeData | null;
+    related_permits_additional_comments?: StringAliasedNodeData | null;
+    additional_discussion?: StringAliasedNodeData | null;
 };
 
 export type HcaPermitApplicationPermitScopeAlterationTile = {
@@ -3570,6 +3600,47 @@ export type HcaPermitApplicationReferencesCertificationTile = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationReferencesCertificationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentAliasedData = {
+    /**
+     * Select an option
+     */
+    study_type: ReferenceAliasedNodeDataRequired | null;
+    /**
+     * Enter text
+     */
+    proposed_alteration_proximity?: StringAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    assessment_year?: DateAliasedNodeData | null;
+    hca_permit?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    assessment_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRelatedAssessmentAliasedData;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {
@@ -11523,6 +11594,36 @@ export type HcaPermitApplicationWritable = {
     graph?: string | null;
 };
 
+export type HcaPermitApplicationAffectedArchaeologicalSiteAliasedDataWritable =
+    {
+        /**
+         * Enter text
+         */
+        anticipated_impacts?: StringAliasedNodeDataWritable | null;
+        affected_archaeological_site: ResourceInstanceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAffectedArchaeologicalSiteAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
 export type HcaPermitApplicationAncestralRemainsAliasedDataWritable = {
     confirms_ancestral_remains_protocol?: BooleanAliasedNodeDataWritable | null;
     ancestral_remains_non_alignment?: StringAliasedNodeDataWritable | null;
@@ -11823,20 +11924,21 @@ export type HcaPermitApplicationPermitScopeAliasedDataWritable = {
 };
 
 export type HcaPermitApplicationPermitScopeAlterationAliasedDataWritable = {
-    alt_project_location?: StringAliasedNodeDataWritable | null;
-    alt_project_description?: StringAliasedNodeDataWritable | null;
-    alt_alteration_timing?: StringAliasedNodeDataWritable | null;
-    alt_sector?: StringAliasedNodeDataWritable | null;
-    alt_archaeological_sites?: StringAliasedNodeDataWritable | null;
-    alt_related_assessments?: StringAliasedNodeDataWritable | null;
-    alt_previous_assessment_discussion?: StringAliasedNodeDataWritable | null;
-    alt_impact_management_approach?: StringAliasedNodeDataWritable | null;
-    alt_stockpile_plan_required?: BooleanAliasedNodeDataWritable | null;
-    alt_stockpile_plan_description?: StringAliasedNodeDataWritable | null;
-    alt_has_related_permits?: BooleanAliasedNodeDataWritable | null;
-    alt_related_permits_description?: StringAliasedNodeDataWritable | null;
-    alt_fn_file_numbers?: StringAliasedNodeDataWritable | null;
-    alt_additional_discussion?: StringAliasedNodeDataWritable | null;
+    project_location?: StringAliasedNodeDataWritable | null;
+    related_assessment?: Array<HcaPermitApplicationRelatedAssessmentTileWritable> | null;
+    affected_archaeological_site?: Array<HcaPermitApplicationAffectedArchaeologicalSiteTileWritable> | null;
+    alteration_project_description?: StringAliasedNodeDataWritable | null;
+    alteration_timing?: StringAliasedNodeDataWritable | null;
+    previous_assessment_discussion?: StringAliasedNodeDataWritable | null;
+    impact_management_approach?: StringAliasedNodeDataWritable | null;
+    stockpile_plan_required?: BooleanAliasedNodeDataWritable | null;
+    stockpile_plan_approach?: StringAliasedNodeDataWritable | null;
+    impact_management_additional_comments?: StringAliasedNodeDataWritable | null;
+    has_related_permits?: BooleanAliasedNodeDataWritable | null;
+    related_permits_description?: StringAliasedNodeDataWritable | null;
+    first_nation_file_numbers?: StringAliasedNodeDataWritable | null;
+    related_permits_additional_comments?: StringAliasedNodeDataWritable | null;
+    additional_discussion?: StringAliasedNodeDataWritable | null;
 };
 
 export type HcaPermitApplicationPermitScopeAlterationTileWritable = {
@@ -11983,6 +12085,47 @@ export type HcaPermitApplicationReferencesCertificationTileWritable = {
     nodegroup?: string | null;
     parenttile?: string | null;
     aliased_data?: HcaPermitApplicationReferencesCertificationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentAliasedDataWritable = {
+    /**
+     * Select an option
+     */
+    study_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    /**
+     * Enter text
+     */
+    proposed_alteration_proximity?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    assessment_year?: DateAliasedNodeDataWritable | null;
+    hca_permit?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    assessment_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRelatedAssessmentAliasedDataWritable;
     sortorder?: number | null;
     provisionaledits?: {
         [key: string]: {

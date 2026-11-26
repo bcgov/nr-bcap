@@ -487,33 +487,6 @@
                     "widget_id": "19e56148-82b8-47eb-b66e-f6243639a1a8"
                 },
                 {
-                    "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
-                    "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
-                        "i18n_properties": ["placeholder"],
-                        "maxLength": null,
-                        "placeholder": {
-                            "en": ""
-                        },
-                        "uneditable": false,
-                        "width": "100%"
-                    },
-                    "id": "07c4f222-c795-4a97-8137-90ebba63fcb7",
-                    "label": {
-                        "en": "Related Assessments (Table)"
-                    },
-                    "node_id": "b855944e-3a5d-45fa-8956-b801e0bcbbc5",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
-                },
-                {
                     "card_id": "20f6297b-8eab-40d0-8257-c74a40233dda",
                     "config": {
                         "defaultValue": {
@@ -775,7 +748,7 @@
                         "en": "Related Permits Description"
                     },
                     "node_id": "184c60fc-9be4-4a75-821c-2986cb92b2ff",
-                    "sortorder": 11,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1262,7 +1235,7 @@
                         "en": "Additional Discussion"
                     },
                     "node_id": "08bb6ced-b484-4858-b4e0-72693cc779f0",
-                    "sortorder": 13,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1332,13 +1305,13 @@
                     },
                     "id": "3e9ace3e-3e44-41db-9775-91d4e60e9998",
                     "label": {
-                        "en": "Anticipated Site Impacts"
+                        "en": "Anticipated Impacts"
                     },
                     "node_id": "780a31fb-a7c3-4716-b3ee-63b20ddc90d1",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "c60c3dc2-40ae-402f-84e0-d48b3292a009",
@@ -1461,10 +1434,10 @@
                     },
                     "id": "4b3f1897-8504-4803-99d4-3d8b5e669bb0",
                     "label": {
-                        "en": "How Previous Assessments Informed Project"
+                        "en": "Previous Assessment Discussion"
                     },
                     "node_id": "82a3866d-bb67-439a-b1a1-0faf49d07356",
-                    "sortorder": 6,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1762,10 +1735,37 @@
                     },
                     "id": "61b55cec-9ede-40d0-b59e-5b32e137d0cb",
                     "label": {
-                        "en": "Stockpile Plan Description"
+                        "en": "Stockpile Plan Approach"
                     },
                     "node_id": "14420e42-d130-42dd-ad49-24d82fe52f9d",
-                    "sortorder": 9,
+                    "sortorder": 6,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                },
+                {
+                    "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": ""
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "e1000001-0000-4000-8000-000000000003",
+                    "label": {
+                        "en": "Impact Management Additional Comments"
+                    },
+                    "node_id": "e1000001-0000-4000-8000-000000000001",
+                    "sortorder": 7,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -1869,7 +1869,7 @@
                             }
                         },
                         "i18n_properties": ["placeholder"],
-                        "label": "Propoased Alteration Proximity ",
+                        "label": "Proposed Alteration Proximity",
                         "maxLength": null,
                         "placeholder": {
                             "en": "Enter text"
@@ -1879,7 +1879,7 @@
                     },
                     "id": "6727c549-6ed0-4320-91e8-1c54d32b43fb",
                     "label": {
-                        "en": "Propoased Alteration Proximity "
+                        "en": "Proposed Alteration Proximity"
                     },
                     "node_id": "f084da91-9f0b-47dd-b770-c54f50e7fd8f",
                     "sortorder": 1,
@@ -2002,7 +2002,7 @@
                         "en": "Stockpile Plan Required"
                     },
                     "node_id": "644156f4-2fd2-414e-834d-6d5592fbb2b4",
-                    "sortorder": 8,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -2099,7 +2099,7 @@
                     },
                     "id": "7da65e91-4c75-4ad3-85ea-c13fad94dbd1",
                     "label": {
-                        "en": "Project Description"
+                        "en": "Alteration Project Description"
                     },
                     "node_id": "d53ff5aa-81cb-4f9b-9a00-2b366a8b42e0",
                     "sortorder": 1,
@@ -2411,10 +2411,37 @@
                         "en": "First Nation File Numbers"
                     },
                     "node_id": "cefde322-c1c4-4e5b-b0b5-f8bb7da3267c",
-                    "sortorder": 12,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "fed1fa65-fe65-47e8-b1b4-abbd3a12b1e8",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": ""
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "e1000002-0000-4000-8000-000000000003",
+                    "label": {
+                        "en": "Related Permits Additional Comments"
+                    },
+                    "node_id": "e1000002-0000-4000-8000-000000000001",
+                    "sortorder": 11,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000005"
                 },
                 {
                     "card_id": "81e377e9-6a6a-41dc-89af-6e0d20976955",
@@ -2778,14 +2805,14 @@
                     "config": {
                         "defaultResourceInstance": [],
                         "i18n_properties": ["placeholder"],
-                        "label": "Assessment Permit",
+                        "label": "HCA Permit",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "b2a2ecf2-f546-44df-ac79-6b215e3311ba",
                     "label": {
-                        "en": "Assessment Permit"
+                        "en": "HCA Permit"
                     },
                     "node_id": "48b57454-2b67-4a52-8efe-7a5e4115ea11",
                     "sortorder": 3,
@@ -3616,7 +3643,7 @@
                         "en": "Impact Management Approach"
                     },
                     "node_id": "68a3d30a-0f90-4346-9d81-957e465ce5f5",
-                    "sortorder": 7,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000005"
@@ -3705,10 +3732,10 @@
                     },
                     "id": "ec993a6d-e3d1-4540-95f6-7cdb2aa96ba5",
                     "label": {
-                        "en": "Has Related Concurrent HCA Permits"
+                        "en": "Has Related Permits"
                     },
                     "node_id": "7a532f20-7428-498c-95b0-78f8b775d53f",
-                    "sortorder": 10,
+                    "sortorder": 8,
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
@@ -3799,7 +3826,7 @@
                     },
                     "id": "f5ad50bc-a82a-4356-b420-baa7cf80c10d",
                     "label": {
-                        "en": "Timing of Planned Alterations"
+                        "en": "Alteration Timing"
                     },
                     "node_id": "62811b07-ffed-459e-8b3e-d1ce733b7a03",
                     "sortorder": 2,
@@ -4213,6 +4240,26 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "62811b07-ffed-459e-8b3e-d1ce733b7a03",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
+                    "edgeid": "e1000001-0000-4000-8000-000000000002",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "e1000001-0000-4000-8000-000000000001",
+                    "source_identifier_id": null
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
+                    "edgeid": "e1000002-0000-4000-8000-000000000002",
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "rangenode_id": "e1000002-0000-4000-8000-000000000001",
                     "source_identifier_id": null
                 },
                 {
@@ -4711,7 +4758,7 @@
                     "edgeid": "8bfb9b19-c4e9-40da-9592-8da936f7bb6b",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "780a31fb-a7c3-4716-b3ee-63b20ddc90d1",
                     "source_identifier_id": null
                 },
@@ -5267,16 +5314,6 @@
                 },
                 {
                     "description": null,
-                    "domainnode_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
-                    "edgeid": "db5ecbca-1140-45b9-91e4-421c804e7e97",
-                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
-                    "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "rangenode_id": "b855944e-3a5d-45fa-8956-b801e0bcbbc5",
-                    "source_identifier_id": null
-                },
-                {
-                    "description": null,
                     "domainnode_id": "867a5275-79b7-473f-b43e-d8dc425c21b2",
                     "edgeid": "dc61d27f-595a-4ffa-9831-556c3b4f10ad",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
@@ -5511,7 +5548,7 @@
                     "edgeid": "f1ae91e9-c8e6-44ed-843c-2f6c1e7ca033",
                     "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                     "name": null,
-                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "rangenode_id": "f084da91-9f0b-47dd-b770-c54f50e7fd8f",
                     "source_identifier_id": null
                 },
@@ -6040,7 +6077,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_additional_discussion",
+                    "alias": "additional_discussion",
                     "config": {
                         "en": ""
                     },
@@ -6060,7 +6097,7 @@
                     "nodeid": "08bb6ced-b484-4858-b4e0-72693cc779f0",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 6,
+                    "sortorder": 12,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6236,7 +6273,7 @@
                     "name": "Assessment Year",
                     "nodegroup_id": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "nodeid": "12361e94-3461-4f2f-afa2-bbe2981df714",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E50_Date",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
                     "sortorder": 3,
                     "source_identifier_id": null,
@@ -6293,7 +6330,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_stockpile_plan_description",
+                    "alias": "stockpile_plan_approach",
                     "config": {
                         "en": ""
                     },
@@ -6308,12 +6345,62 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Stockpile Plan Description",
+                    "name": "Stockpile Plan Approach",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "14420e42-d130-42dd-ad49-24d82fe52f9d",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "impact_management_additional_comments",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Impact Management Additional Comments",
+                    "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
+                    "nodeid": "e1000001-0000-4000-8000-000000000001",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 8,
+                    "source_identifier_id": null,
+                    "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "related_permits_additional_comments",
+                    "config": {
+                        "en": ""
+                    },
+                    "datatype": "string",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "is_immutable": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "Related Permits Additional Comments",
+                    "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
+                    "nodeid": "e1000002-0000-4000-8000-000000000001",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
+                    "sortorder": 11,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -6375,7 +6462,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_related_permits_description",
+                    "alias": "related_permits_description",
                     "config": {
                         "en": ""
                     },
@@ -6638,7 +6725,7 @@
                     "nodegroup_id": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "nodeid": "27b49d45-2dc2-4505-969a-684a6d3fa4db",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.ics.forth.gr/isl/CRMdig/L47_has_comment",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7130,7 +7217,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "assessment_permit",
+                    "alias": "hca_permit",
                     "config": {
                         "controlledList": null,
                         "graphs": [
@@ -7154,7 +7241,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Assessment Permit",
+                    "name": "HCA Permit",
                     "nodegroup_id": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "nodeid": "48b57454-2b67-4a52-8efe-7a5e4115ea11",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E72_Legal_Object",
@@ -7397,7 +7484,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_alteration_timing",
+                    "alias": "alteration_timing",
                     "config": {
                         "en": ""
                     },
@@ -7412,17 +7499,17 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Timing of Planned Alterations",
+                    "name": "Alteration Timing",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "62811b07-ffed-459e-8b3e-d1ce733b7a03",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 1,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_stockpile_plan_required",
+                    "alias": "stockpile_plan_required",
                     "config": {
                         "en": "",
                         "falseLabel": {
@@ -7522,12 +7609,12 @@
                     "nodeid": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 2,
+                    "sortorder": 4,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_impact_management_approach",
+                    "alias": "impact_management_approach",
                     "config": {
                         "en": ""
                     },
@@ -7547,7 +7634,7 @@
                     "nodeid": "68a3d30a-0f90-4346-9d81-957e465ce5f5",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 9,
+                    "sortorder": 6,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7722,7 +7809,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "anticipated_site_impacts",
+                    "alias": "anticipated_impacts",
                     "config": {},
                     "datatype": "string",
                     "description": null,
@@ -7735,11 +7822,11 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Anticipated Site Impacts",
+                    "name": "Anticipated Impacts",
                     "nodegroup_id": "97a4f8bc-1689-43db-afac-94ea55b0a2b2",
                     "nodeid": "780a31fb-a7c3-4716-b3ee-63b20ddc90d1",
-                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMinf/I4_Proposition_Set",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129i_is_subject_of",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -7777,7 +7864,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_has_related_permits",
+                    "alias": "has_related_permits",
                     "config": {
                         "en": "",
                         "falseLabel": {
@@ -7799,12 +7886,12 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Has Related Concurrent HCA Permits",
+                    "name": "Has Related Permits",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "7a532f20-7428-498c-95b0-78f8b775d53f",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
-                    "sortorder": 3,
+                    "sortorder": 9,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7915,7 +8002,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_previous_assessment_discussion",
+                    "alias": "previous_assessment_discussion",
                     "config": {
                         "en": ""
                     },
@@ -7930,12 +8017,12 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "How Previous Assessments Informed Project",
+                    "name": "Previous Assessment Discussion",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "82a3866d-bb67-439a-b1a1-0faf49d07356",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 10,
+                    "sortorder": 5,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -8286,9 +8373,9 @@
                     "name": "Affected Archaeological Site",
                     "nodegroup_id": "97a4f8bc-1689-43db-afac-94ea55b0a2b2",
                     "nodeid": "97a4f8bc-1689-43db-afac-94ea55b0a2b2",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E53_Place",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E27_Site",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
+                    "sortorder": 3,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -8784,31 +8871,6 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_related_assessments",
-                    "config": {
-                        "en": ""
-                    },
-                    "datatype": "string",
-                    "description": null,
-                    "exportable": false,
-                    "fieldname": null,
-                    "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
-                    "hascustomalias": false,
-                    "is_collector": false,
-                    "is_immutable": false,
-                    "isrequired": false,
-                    "issearchable": true,
-                    "istopnode": false,
-                    "name": "Related Assessments (Table)",
-                    "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
-                    "nodeid": "b855944e-3a5d-45fa-8956-b801e0bcbbc5",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 5,
-                    "source_identifier_id": null,
-                    "sourcebranchpublication_id": null
-                },
-                {
                     "alias": "methodology",
                     "config": {
                         "en": ""
@@ -9245,7 +9307,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_fn_file_numbers",
+                    "alias": "first_nation_file_numbers",
                     "config": {
                         "en": ""
                     },
@@ -9265,7 +9327,7 @@
                     "nodeid": "cefde322-c1c4-4e5b-b0b5-f8bb7da3267c",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 8,
+                    "sortorder": 10,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -9580,7 +9642,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_project_description",
+                    "alias": "alteration_project_description",
                     "config": {
                         "en": ""
                     },
@@ -9595,12 +9657,12 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Project Description",
+                    "name": "Alteration Project Description",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "d53ff5aa-81cb-4f9b-9a00-2b366a8b42e0",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 11,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -10169,7 +10231,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Permit Scope Alteration (s. 12.4)",
+                    "name": "Permit Scope Alteration",
                     "nodegroup_id": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "nodeid": "eba0e923-c7e8-4fce-bd59-9ad6323c9450",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
@@ -10229,7 +10291,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "propoased_alteration_proximity_",
+                    "alias": "proposed_alteration_proximity",
                     "config": {},
                     "datatype": "string",
                     "description": null,
@@ -10242,11 +10304,11 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "Propoased Alteration Proximity ",
+                    "name": "Proposed Alteration Proximity",
                     "nodegroup_id": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "nodeid": "f084da91-9f0b-47dd-b770-c54f50e7fd8f",
-                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E16_Measurement",
-                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P129_is_about",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
@@ -10430,7 +10492,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "alt_project_location",
+                    "alias": "project_location",
                     "config": {
                         "en": ""
                     },
@@ -10450,7 +10512,7 @@
                     "nodeid": "fba5cb0b-d730-44ee-8714-8498f06a6b19",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 4,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },

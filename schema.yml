@@ -8737,6 +8737,68 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    Hca_Permit_Application_Affected_Archaeological_Site_Aliased_Data:
+      type: object
+      properties:
+        anticipated_impacts:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        affected_archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+      required:
+      - affected_archaeological_site
+    Hca_Permit_Application_Affected_Archaeological_Site_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Affected_Archaeological_Site_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Hca_Permit_Application_Ancestral_Remains_Aliased_Data:
       type: object
       properties:
@@ -9470,76 +9532,68 @@ components:
     Hca_Permit_Application_Permit_Scope_Alteration_Aliased_Data:
       type: object
       properties:
-        alt_project_location:
+        project_location:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Project Location
-        alt_project_description:
+        related_assessment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Related_Assessment_Tile'
+          nullable: true
+        affected_archaeological_site:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Affected_Archaeological_Site_Tile'
+          nullable: true
+        alteration_project_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Project Description
-        alt_alteration_timing:
+        alteration_timing:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Timing of Planned Alterations
-        alt_sector:
+        previous_assessment_discussion:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Sector
-        alt_archaeological_sites:
+        impact_management_approach:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Archaeological Sites to be Affected (Table)
-        alt_related_assessments:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Related Assessments (Table)
-        alt_previous_assessment_discussion:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: How Previous Assessments Informed Project
-        alt_impact_management_approach:
-          allOf:
-          - $ref: '#/components/schemas/StringAliasedNodeData'
-          nullable: true
-          title: Impact Management Approach
-        alt_stockpile_plan_required:
+        stockpile_plan_required:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          title: Stockpile Plan Required
-        alt_stockpile_plan_description:
+        stockpile_plan_approach:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Stockpile Plan Description
-        alt_has_related_permits:
+        impact_management_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        has_related_permits:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-          title: Has Related Concurrent HCA Permits
-        alt_related_permits_description:
+        related_permits_description:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Related Permits Description
-        alt_fn_file_numbers:
+        first_nation_file_numbers:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: First Nation File Numbers
-        alt_additional_discussion:
+        related_permits_additional_comments:
           allOf:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
-          title: Additional Discussion
+        additional_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
     Hca_Permit_Application_Permit_Scope_Alteration_Tile:
       type: object
       properties:
@@ -9940,6 +9994,83 @@ components:
           nullable: true
         aliased_data:
           $ref: '#/components/schemas/Hca_Permit_Application_References_Certification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Related_Assessment_Aliased_Data:
+      type: object
+      properties:
+        study_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
+        proposed_alteration_proximity:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        assessment_year:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        hca_permit:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        assessment_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - study_type
+    Hca_Permit_Application_Related_Assessment_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Related_Assessment_Aliased_Data'
         sortorder:
           type: integer
           maximum: 2147483647
