@@ -26,7 +26,7 @@
                         "en": "Affected Archaeological Site"
                     },
                     "nodegroup_id": "97a4f8bc-1689-43db-afac-94ea55b0a2b2",
-                    "sortorder": null,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -350,7 +350,7 @@
                         "en": "Related Assessment"
                     },
                     "nodegroup_id": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
-                    "sortorder": null,
+                    "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true
                 },
@@ -1312,6 +1312,33 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000006"
+                },
+                {
+                    "card_id": "081ac122-fc37-4627-bfac-69d00025c11a",
+                    "config": {
+                        "defaultValue": {
+                            "en": {
+                                "direction": "ltr",
+                                "value": ""
+                            }
+                        },
+                        "i18n_properties": ["placeholder"],
+                        "maxLength": null,
+                        "placeholder": {
+                            "en": "Enter text"
+                        },
+                        "uneditable": false,
+                        "width": "100%"
+                    },
+                    "id": "3e9ace3e-3e44-41db-9775-91d4e60e9998",
+                    "label": {
+                        "en": "Anticipated Site Impacts"
+                    },
+                    "node_id": "780a31fb-a7c3-4716-b3ee-63b20ddc90d1",
+                    "sortorder": 0,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000001"
                 },
                 {
                     "card_id": "c60c3dc2-40ae-402f-84e0-d48b3292a009",
@@ -2812,6 +2839,25 @@
                     "source_identifier_id": null,
                     "visible": true,
                     "widget_id": "10000000-0000-0000-0000-000000000001"
+                },
+                {
+                    "card_id": "081ac122-fc37-4627-bfac-69d00025c11a",
+                    "config": {
+                        "defaultResourceInstance": [],
+                        "i18n_properties": ["placeholder"],
+                        "placeholder": {
+                            "en": ""
+                        }
+                    },
+                    "id": "b86dfbe4-3369-4c16-9f04-007c6dc476a3",
+                    "label": {
+                        "en": "Affected Archaeological Site"
+                    },
+                    "node_id": "97a4f8bc-1689-43db-afac-94ea55b0a2b2",
+                    "sortorder": 1,
+                    "source_identifier_id": null,
+                    "visible": true,
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "4c6e9e1b-e6df-4e5b-a395-5e067c59c22e",
@@ -7371,7 +7417,7 @@
                     "nodeid": "62811b07-ffed-459e-8b3e-d1ce733b7a03",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E62_String",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P3_has_note",
-                    "sortorder": 0,
+                    "sortorder": 1,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -7476,7 +7522,7 @@
                     "nodeid": "67c970e1-e98b-4dca-8fa7-8edc90dda612",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E73_Information_Object",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P67_refers_to",
-                    "sortorder": 0,
+                    "sortorder": 2,
                     "source_identifier_id": null,
                     "sourcebranchpublication_id": null
                 },
@@ -10489,9 +10535,9 @@
             "publication": {
                 "graph_id": "690c69c7-ccdd-444c-be88-286d72c0fc7b",
                 "most_recent_edit_id": null,
-                "notes": "Upates to align with 12.4 mock up",
-                "publicationid": "20e037b0-f264-497b-a6d0-5ae5f54bc40e",
-                "published_time": "2026-11-26T12:23:12.240"
+                "notes": "Fixed widget sortorders",
+                "publicationid": "a7f3574d-fcef-464e-8d2e-7cd72988c74a",
+                "published_time": "2026-11-26T12:28:36.428"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -10590,11 +10636,5 @@
             "user_permissions": {},
             "version": null
         }
-    ],
-    "metadata": {
-        "db": "PostgreSQL 16.3 (Debian 16.3-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit",
-        "git hash": "6b53222f86 2026-11-12 20:52:44 -0700",
-        "os": "Linux",
-        "os version": "7.0.14-linuxkit"
-    }
+    ]
 }
