@@ -1,28 +1,44 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Form } from '@primevue/forms';
 import MultiSelect from 'primevue/multiselect';
 import GenericWidget from '@/arches_vue_components/generics/GenericWidget/GenericWidget.vue';
 import { EDIT } from '@/arches_vue_components/widgets/constants.ts';
 import FieldSet from 'primevue/fieldset';
 import { useDraftStep } from '@/bcap/composables/useDraftStep.ts';
+import { useReferenceSelectOptionsStore } from '@/arches_controlled_lists/stores/useReferenceSelectOptionsStore.ts';
 import type { HcaPermitApplicationResourceAliasedData } from '@/bcap/client/types.gen.ts';
 import type { AliasedNodeData } from '@/arches_vue_components/types.ts';
+import type { ReferenceSelectTreeNode } from '@/arches_controlled_lists/datatypes/reference-select/types.ts';
 
-const CULTURAL_AREAS = [
-    {
-        uri: 'https://localhost/bcap/ee010002-0000-4000-8000-000000000002',
-        label: 'Northwest Coast',
-    },
-    {
-        uri: 'https://localhost/bcap/ee010003-0000-4000-8000-000000000003',
-        label: 'Interior Plateau',
-    },
-    {
-        uri: 'https://localhost/bcap/ee010004-0000-4000-8000-000000000004',
-        label: 'Sub-Arctic / Boreal Forest',
-    },
-];
+const SITE_VISIT_FIELD_DIRECTOR_LABEL = 'Site Visit - Field Director';
+
+interface SelectOption {
+    uri: string;
+    label: string;
+}
+
+function flattenOptions(nodes: ReferenceSelectTreeNode[]): SelectOption[] {
+    return nodes.flatMap((node) => [
+        { uri: node.data.uri, label: node.label },
+        ...flattenOptions(node.children ?? []),
+    ]);
+}
+
+function findOption(
+    nodes: ReferenceSelectTreeNode[],
+    label: string,
+): ReferenceSelectTreeNode | null {
+    for (const node of nodes) {
+        if (node.label === label) return node;
+        const found = findOption(node.children ?? [], label);
+        if (found) return found;
+    }
+    return null;
+}
+
+const culturalAreaOptions = ref<SelectOption[]>([]);
+const siteVisitFieldDirectorOption = ref<ReferenceSelectTreeNode | null>(null);
 
 const emit = defineEmits(['update:step-is-valid']);
 
@@ -33,49 +49,125 @@ const { draftData, typedDraftData, isValid, updateValue } =
         emit,
     );
 
-const tiles = computed(
+onMounted(async () => {
+    const store = useReferenceSelectOptionsStore();
+    const [areaNodes, roleNodes] = await Promise.all([
+        store.fetchWidgetOptions('hca_permit_application', 'cultural_area'),
+        store.fetchWidgetOptions(
+            'hca_permit_application',
+            'responsibility_role',
+        ),
+    ]);
+    culturalAreaOptions.value = flattenOptions(areaNodes);
+    siteVisitFieldDirectorOption.value = findOption(
+        roleNodes,
+        SITE_VISIT_FIELD_DIRECTOR_LABEL,
+    );
+});
+
+const allTiles = computed(
     () =>
         typedDraftData.value?.personnel?.aliased_data
             ?.assessment_oversight_responsibility ?? [],
 );
 
+const culturalAreaTiles = computed(() =>
+    allTiles.value.filter(
+        (t) => !!t.aliased_data?.cultural_area?.node_value?.[0]?.uri,
+    ),
+);
+
+const delegatedTiles = computed(() =>
+    allTiles.value.filter(
+        (t) => !t.aliased_data?.cultural_area?.node_value?.[0]?.uri,
+    ),
+);
+
 const selectedAreaUris = computed(() =>
-    tiles.value
+    culturalAreaTiles.value
         .map((t) => t.aliased_data?.cultural_area?.node_value?.[0]?.uri)
         .filter((uri): uri is string => !!uri),
 );
 
 function areaLabel(uri: string): string {
-    return CULTURAL_AREAS.find((a) => a.uri === uri)?.label ?? uri;
+    return culturalAreaOptions.value.find((a) => a.uri === uri)?.label ?? uri;
 }
 
 function onSelectionChange(newUris: string[]) {
-    const currentTiles = tiles.value;
+    const currentAll = allTiles.value;
 
-    const newTiles = newUris.map((uri) => {
-        const existing = currentTiles.find(
+    const newCulturalAreaTiles = newUris.map((uri) => {
+        const existing = currentAll.find(
             (t) => t.aliased_data?.cultural_area?.node_value?.[0]?.uri === uri,
         );
         if (existing) return existing;
 
-        const area = CULTURAL_AREAS.find((a) => a.uri === uri)!;
+        const area = culturalAreaOptions.value.find((a) => a.uri === uri);
+        const roleOption = siteVisitFieldDirectorOption.value;
         return {
             aliased_data: {
                 cultural_area: {
                     node_value: [
                         {
                             uri,
-                            labels: [{ value: area.label, language_id: 'en' }],
+                            labels: area
+                                ? [{ value: area.label, language_id: 'en' }]
+                                : [],
                         },
                     ],
-                    display_value: area.label,
+                    display_value: area?.label ?? uri,
                 },
+                ...(roleOption && {
+                    responsibility_role: {
+                        node_value: roleOption.data.list_item_values
+                            .filter((v) => v.valuetype_id === 'prefLabel')
+                            .map((v) => ({
+                                uri: roleOption.data.uri,
+                                labels: [
+                                    {
+                                        value: v.value,
+                                        language_id: v.language_id,
+                                    },
+                                ],
+                            })),
+                        display_value: roleOption.label,
+                    },
+                }),
             },
         };
     });
 
+    const currentDelegated = currentAll.filter(
+        (t) => !t.aliased_data?.cultural_area?.node_value?.[0]?.uri,
+    );
+
     updateValue(
-        newTiles as unknown as AliasedNodeData,
+        [
+            ...newCulturalAreaTiles,
+            ...currentDelegated,
+        ] as unknown as AliasedNodeData,
+        'assessment_oversight_responsibility',
+        'personnel',
+    );
+}
+
+function addDelegatedRow() {
+    updateValue(
+        [...allTiles.value, { aliased_data: {} }] as unknown as AliasedNodeData,
+        'assessment_oversight_responsibility',
+        'personnel',
+    );
+}
+
+function removeDelegatedRow(delegatedIndex: number) {
+    const absoluteIndex = culturalAreaTiles.value.length + delegatedIndex;
+    const all = allTiles.value;
+    const updated = [
+        ...all.slice(0, absoluteIndex),
+        ...all.slice(absoluteIndex + 1),
+    ];
+    updateValue(
+        updated as unknown as AliasedNodeData,
         'assessment_oversight_responsibility',
         'personnel',
     );
@@ -90,10 +182,10 @@ defineExpose({ isValid });
         :validate-on-value-update="true"
         :validate-on-mount="false"
     >
-        <FieldSet legend="Assessment Oversight by Cultural Area">
+        <FieldSet legend="Site Visit - Field Director">
             <MultiSelect
                 :model-value="selectedAreaUris"
-                :options="CULTURAL_AREAS"
+                :options="culturalAreaOptions"
                 option-label="label"
                 option-value="uri"
                 placeholder="Select cultural areas"
@@ -101,7 +193,7 @@ defineExpose({ isValid });
                 @update:model-value="onSelectionChange"
             />
             <div
-                v-for="(tile, index) in tiles"
+                v-for="(tile, index) in culturalAreaTiles"
                 :key="
                     tile.aliased_data?.cultural_area?.node_value?.[0]?.uri ??
                     index
@@ -131,24 +223,47 @@ defineExpose({ isValid });
                             ])
                         "
                     />
-                    <GenericWidget
-                        :mode="EDIT"
-                        :aliased-node-data="
-                            draftData?.personnel?.aliased_data
-                                ?.assessment_oversight_responsibility?.[index]
-                                ?.aliased_data?.responsibility_role
-                        "
-                        graph-slug="hca_permit_application"
-                        node-alias="responsibility_role"
-                        @update:aliased-node-data="
-                            updateValue($event, 'responsibility_role', [
-                                'personnel',
-                                `assessment_oversight_responsibility[${index}]`,
-                            ])
-                        "
-                    />
                 </FieldSet>
             </div>
+        </FieldSet>
+
+        <FieldSet legend="Delegated Archaeologist">
+            <div
+                v-for="(_, delegatedIndex) in delegatedTiles"
+                :key="delegatedIndex"
+            >
+                <GenericWidget
+                    :mode="EDIT"
+                    :aliased-node-data="
+                        draftData?.personnel?.aliased_data
+                            ?.assessment_oversight_responsibility?.[
+                            culturalAreaTiles.length + delegatedIndex
+                        ]?.aliased_data?.responsible_person
+                    "
+                    graph-slug="hca_permit_application"
+                    node-alias="responsible_person"
+                    @update:aliased-node-data="
+                        updateValue($event, 'responsible_person', [
+                            'personnel',
+                            `assessment_oversight_responsibility[${culturalAreaTiles.length + delegatedIndex}]`,
+                        ])
+                    "
+                />
+                <button
+                    type="button"
+                    class="bc-remove-row"
+                    @click="removeDelegatedRow(delegatedIndex)"
+                >
+                    Remove
+                </button>
+            </div>
+            <button
+                type="button"
+                class="bc-add-row"
+                @click="addDelegatedRow"
+            >
+                Add Delegated Archaeologist
+            </button>
         </FieldSet>
     </Form>
 </template>

@@ -24,6 +24,15 @@ const { draftStepContainer } = vi.hoisted(() => ({
 // imports, so ref() cannot be called inside it).
 draftStepContainer.typedDraftData = ref<Record<string, unknown>>({});
 
+vi.mock(
+    '@/arches_controlled_lists/stores/useReferenceSelectOptionsStore.ts',
+    () => ({
+        useReferenceSelectOptionsStore: () => ({
+            fetchWidgetOptions: vi.fn(() => Promise.resolve([])),
+        }),
+    }),
+);
+
 vi.mock('@/bcap/composables/useDraftStep.ts', () => ({
     useDraftStep: () => ({
         draftData: ref({}),
@@ -149,7 +158,7 @@ describe('SiteOversight steps', () => {
     });
 
     describe('Step3 OversightTable conditionals', () => {
-        it('shows responsible_person and responsibility_role widgets for each tile', () => {
+        it('shows one responsible_person widget per cultural area tile', () => {
             draftStepContainer.typedDraftData.value = {
                 personnel: {
                     aliased_data: {
@@ -172,10 +181,13 @@ describe('SiteOversight steps', () => {
             const wrapper = shallowMount(Step3, globalMountOptions);
             const aliases = widgetAliases(wrapper);
             expect(aliases).toContain('responsible_person');
-            expect(aliases).toContain('responsibility_role');
+            expect(aliases).not.toContain('responsibility_role');
+            expect(
+                aliases.filter((a) => a === 'responsible_person'),
+            ).toHaveLength(1);
         });
 
-        it('shows two widgets per tile when multiple tiles are present', () => {
+        it('shows one widget per cultural area tile when multiple tiles are present', () => {
             draftStepContainer.typedDraftData.value = {
                 personnel: {
                     aliased_data: {
@@ -207,10 +219,9 @@ describe('SiteOversight steps', () => {
                 },
             };
             const wrapper = shallowMount(Step3, globalMountOptions);
-            const allWidgets = wrapper.findAllComponents({
-                name: 'GenericWidget',
-            });
-            expect(allWidgets).toHaveLength(4);
+            expect(
+                wrapper.findAllComponents({ name: 'GenericWidget' }),
+            ).toHaveLength(2);
         });
 
         it('shows no oversight widgets when no tiles are present', () => {
@@ -225,6 +236,54 @@ describe('SiteOversight steps', () => {
             const aliases = widgetAliases(wrapper);
             expect(aliases).not.toContain('responsible_person');
             expect(aliases).not.toContain('responsibility_role');
+        });
+
+        it('shows responsible_person for delegated tiles (no cultural_area)', () => {
+            draftStepContainer.typedDraftData.value = {
+                personnel: {
+                    aliased_data: {
+                        assessment_oversight_responsibility: [
+                            { aliased_data: {} },
+                            { aliased_data: {} },
+                        ],
+                    },
+                },
+            };
+            const wrapper = shallowMount(Step3, globalMountOptions);
+            expect(
+                wrapper
+                    .findAllComponents({ name: 'GenericWidget' })
+                    .filter(
+                        (w) => w.props('nodeAlias') === 'responsible_person',
+                    ),
+            ).toHaveLength(2);
+        });
+
+        it('separates cultural area and delegated tiles', () => {
+            draftStepContainer.typedDraftData.value = {
+                personnel: {
+                    aliased_data: {
+                        assessment_oversight_responsibility: [
+                            {
+                                aliased_data: {
+                                    cultural_area: {
+                                        node_value: [
+                                            {
+                                                uri: 'https://localhost/bcap/ee010002-0000-4000-8000-000000000002',
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                            { aliased_data: {} },
+                        ],
+                    },
+                },
+            };
+            const wrapper = shallowMount(Step3, globalMountOptions);
+            expect(
+                wrapper.findAllComponents({ name: 'GenericWidget' }),
+            ).toHaveLength(2);
         });
     });
 });
