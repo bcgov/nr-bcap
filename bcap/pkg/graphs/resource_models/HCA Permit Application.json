@@ -9359,7 +9359,7 @@
                 {
                     "alias": "hip_project_type_ref",
                     "config": {
-                        "controlledList": "ef000001-0000-4000-8000-000000000001",
+                        "controlledList": "c2776bea-5fdc-4cee-8d12-ef8389af506a",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -9385,7 +9385,7 @@
                 {
                     "alias": "hip_application_area_type",
                     "config": {
-                        "controlledList": "ea000001-0000-4000-8000-000000000001",
+                        "controlledList": "5711af75-7549-4561-b746-39e2ed3e4ca3",
                         "multiValue": false
                     },
                     "datatype": "reference",
@@ -9568,7 +9568,7 @@
                 {
                     "alias": "hip_alteration_type",
                     "config": {
-                        "controlledList": "eb000001-0000-4000-8000-000000000001",
+                        "controlledList": "60fba983-f895-442c-b169-e3429bfff3e5",
                         "multiValue": true
                     },
                     "datatype": "reference",
