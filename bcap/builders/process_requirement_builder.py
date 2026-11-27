@@ -6,7 +6,6 @@ linking a Document Submission requirement to a submission resource. The service
 layer decides what to link where; the seed builders inherit these."""
 
 from functools import cached_property
-from urllib.parse import urlparse
 
 from django.db import transaction
 from django.utils import timezone
@@ -27,7 +26,6 @@ from bcap.builders.resource_builder import ResourceBuilder
 from bcap.util.controlled_list import reference_value
 from bcap.util.graph import node_id, nodegroup_id, nodes_for
 from bcap.util.i18n import localized_string
-from bcap.util.links import app_url
 
 
 class ProcessRequirementBuilder(ResourceBuilder):
@@ -58,17 +56,10 @@ class ProcessRequirementBuilder(ResourceBuilder):
             aliases.PROCESS_REQUIREMENT_TYPE,
             label=spec.get("type", "Checklist"),
         )
-        # TODO: Clean url up stuff later
-        if spec.get("url"):
-            url = app_url(spec["url"])
-            # The url datatype rejects hosts without a dot, so use the loopback IP
-            # in dev. TODO: drop once a public (dotted) origin is configured.
-            if "." not in urlparse(url).netloc:
-                url = url.replace("localhost", "127.0.0.1")
-            template_data.workflow_url = {
-                "url": url,
-                "url_label": spec["resource"].replace("_", " ").title(),
-            }
+        if spec.get("workflow_slug"):
+            template_data.workflow_slug = spec["workflow_slug"]
+        if spec.get("graph_slug"):
+            template_data.graph_slug = spec["graph_slug"]
         self.append_blank_tile_for_group(
             requirement,
             groups.REQUIREMENT_EXECUTION_DURATION,
@@ -80,6 +71,11 @@ class ProcessRequirementBuilder(ResourceBuilder):
             {
                 aliases.REQUIREMENT_STATUS: spec.get("satisfied", False),
                 aliases.ASSESSMENT_NOTES: self.localized(spec.get("notes", "")),
+                aliases.PROCESS_STATUS: reference_value(
+                    GraphSlugs.PROCESS_REQUIREMENT,
+                    aliases.PROCESS_STATUS,
+                    label=spec.get("process_status", "Required"),
+                ),
             },
         )
         # Drop requirement_data's auto-created blank row and add the real items.
@@ -148,20 +144,25 @@ class ProcessRequirementBuilder(ResourceBuilder):
             Tile.objects.get(pk=tile.tileid).delete()
         return requirement
 
-    def set_requirement_status(self, requirement_id, satisfied):
-        """Set a requirement's assessment status (satisfied yes/no), creating the
-        assessment tile if it has none. A partial save, so only the assessment
-        nodegroup is touched."""
+    def set_requirement_status(self, requirement_id, process_status):
+        """Set a requirement's process status (reference), creating the assessment
+        tile if it has none. A partial save, so only the assessment nodegroup is
+        touched."""
         requirement = self._get_requirement_by_id(requirement_id)
         assessment = requirement.aliased_data.sub_requirement_assessment_n1
+        status_value = reference_value(
+            GraphSlugs.PROCESS_REQUIREMENT,
+            aliases.PROCESS_STATUS,
+            label=process_status,
+        )
         if assessment is None:
-            assessment = self.append_blank_tile_for_group(
+            self.append_blank_tile_for_group(
                 requirement,
                 groups.SUB_REQUIREMENT_ASSESSMENT_N1,
-                {aliases.REQUIREMENT_STATUS: satisfied},
+                {aliases.PROCESS_STATUS: status_value},
             )
         else:
-            assessment.aliased_data.requirement_status = satisfied
+            assessment.aliased_data.process_status = status_value
         requirement.save(**self._save_as, partial=True, index=False)
         return requirement
 
@@ -322,7 +323,11 @@ class ProcessRequirementBuilder(ResourceBuilder):
         if id_only:
             nodes = nodes_for(
                 GraphSlugs.PROCESS_REQUIREMENT,
-                [aliases.REQUIREMENT_IDENTIFICATION, aliases.IS_TEMPLATE_REQUIREMENT],
+                [
+                    aliases.REQUIREMENT_IDENTIFICATION,
+                    aliases.IS_TEMPLATE_REQUIREMENT,
+                    aliases.GRAPH_SLUG,
+                ],
             )
         return ResourceTileTree.get_tiles(GraphSlugs.PROCESS_REQUIREMENT, nodes=nodes)
 

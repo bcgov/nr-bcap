@@ -768,6 +768,68 @@ paths:
               schema:
                 $ref: '#/components/schemas/HcaPermit'
           description: ''
+  /bcap/api/hca_permit_application:
+    get:
+      operationId: api_hca_permit_application_list
+      description: |-
+        Collection endpoint for the requesting user's HCA Permit Application resources.
+
+        Owner-scoped: only the resources the user created. Declared verbs:
+        GET (from generated/generate.json); the ListAPIView base
+        class serves the collection subset (GET/POST), narrowed to the declared
+        verbs by http_method_names.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - 'External: hca_permit_application'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedHcaPermitApplicationList'
+          description: ''
+  /bcap/api/hca_permit_application/{id}/:
+    get:
+      operationId: api_hca_permit_application_retrieve
+      description: |-
+        Detail endpoint for a single HCA Permit Application resource and its nested tiles.
+
+        Owner-scoped: requesting one created by another user returns 404. Declared
+        verbs: GET (from generated/generate.json); the
+        RetrieveAPIView base class serves the detail subset
+        (GET/PUT/PATCH/DELETE), narrowed to the declared verbs by http_method_names.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: hca_permit_application'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HcaPermitApplication'
+          description: ''
   /bcap/api/hria_discontinued_data:
     get:
       operationId: api_hria_discontinued_data_list
@@ -2042,9 +2104,8 @@ paths:
       operationId: api_workflow_draft_list_all
       description: |-
         GET the drafts the user can see, across graphs. Each carries its own
-        graph_slug, so the dashboard lists them all in one round trip. Narrow to one
-        permit's drafts with ?parent=<resourceinstanceid>: staff see every user's, so
-        an unfiltered call hands back every draft blob in the system.
+        graph_slug, so the dashboard lists them all in one round trip. Narrow with
+        ?parent=<resourceinstanceid>, ?session_id=<uuid>, or ?section=<slug>.
       parameters:
       - in: query
         name: parent
@@ -2052,6 +2113,18 @@ paths:
           type: string
           format: uuid
         description: Only drafts started from this resource.
+      - in: query
+        name: section
+        schema:
+          type: string
+          minLength: 1
+        description: Only drafts for this workflow section.
+      - in: query
+        name: session_id
+        schema:
+          type: string
+          minLength: 1
+        description: Only drafts belonging to this session.
       tags:
       - 'External: workflow_draft'
       security:
@@ -2068,13 +2141,37 @@ paths:
   /bcap/api/workflow_draft/{graph_slug}:
     get:
       operationId: api_workflow_draft_list
-      description: GET the current user's drafts for a graph; POST a new draft.
+      description: |-
+        GET the current user's drafts for a graph; POST a new draft.
+
+        Narrow the GET with ?parent=, ?session_id=, or ?section=. POST accepts
+        section and draft_session_id to create a section-scoped draft within a
+        multi-section workflow. Only one draft per (session_id, section) is allowed;
+        a 409 is returned if one already exists.
       parameters:
       - in: path
         name: graph_slug
         schema:
           type: string
         required: true
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+        description: Only drafts started from this resource.
+      - in: query
+        name: section
+        schema:
+          type: string
+          minLength: 1
+        description: Only drafts for this workflow section.
+      - in: query
+        name: session_id
+        schema:
+          type: string
+          minLength: 1
+        description: Only drafts belonging to this session.
       tags:
       - 'External: workflow_draft'
       security:
@@ -2090,7 +2187,13 @@ paths:
           description: ''
     post:
       operationId: api_workflow_draft_create
-      description: GET the current user's drafts for a graph; POST a new draft.
+      description: |-
+        GET the current user's drafts for a graph; POST a new draft.
+
+        Narrow the GET with ?parent=, ?session_id=, or ?section=. POST accepts
+        section and draft_session_id to create a section-scoped draft within a
+        multi-section workflow. Only one draft per (session_id, section) is allowed;
+        a 409 is returned if one already exists.
       parameters:
       - in: path
         name: graph_slug
@@ -2218,6 +2321,37 @@ paths:
       responses:
         '204':
           description: No response body
+  /bcap/api/workflow_session/{graph_slug}/{session_id}:
+    get:
+      operationId: api_workflow_session_get
+      description: |-
+        GET all section drafts for a workflow session. The session groups the
+        drafts being built toward one target resource, keyed by session_id. The
+        frontend compares drafts[].section against the workflow's expected sections
+        to determine which are in-progress and which haven't been started yet.
+      parameters:
+      - in: path
+        name: graph_slug
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: session_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - 'External: workflow_draft'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowSession'
+          description: ''
 components:
   schemas:
     AddRequirement:
@@ -8182,8 +8316,7 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version, parent resource and owning
-        organization stamped on create.
+        user is on and optional metadata stamped on create.
       properties:
         data:
           oneOf:
@@ -8201,6 +8334,14 @@ components:
           type: string
           description: Organization to file the draft under, so colleagues can pick
             it up. Must be one the user belongs to.
+        section:
+          type: string
+          description: Sub-workflow section this draft covers (e.g. 'permit_info').
+            Immutable after create.
+        draft_session_id:
+          type: string
+          description: UUID grouping all section drafts for the same target resource.
+            Immutable after create.
         frontend_version:
           type: string
         parent_resource_id:
@@ -8236,6 +8377,10 @@ components:
         graph_publication_id:
           type: string
         frontend_version:
+          type: string
+        section:
+          type: string
+        draft_session_id:
           type: string
         parent_resource_id:
           type: string
@@ -8528,6 +8673,1724 @@ components:
       - name
       - principaluser
       - resource_instance_lifecycle_state
+    HcaPermitApplication:
+      type: object
+      properties:
+        resourceinstanceid:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Resource_Aliased_Data'
+        graph_has_different_publication:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          nullable: true
+        descriptors:
+          type: object
+          readOnly: true
+          nullable: true
+          properties:
+            en:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                map_popup:
+                  type: string
+        legacyid:
+          type: string
+          readOnly: true
+          nullable: true
+        createdtime:
+          type: string
+          format: date-time
+          readOnly: true
+        graph:
+          type: string
+          format: uuid
+          nullable: true
+        graph_publication:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        resource_instance_lifecycle_state:
+          type: string
+          format: uuid
+          readOnly: true
+        principaluser:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - createdtime
+      - descriptors
+      - graph_has_different_publication
+      - graph_publication
+      - legacyid
+      - name
+      - principaluser
+      - resource_instance_lifecycle_state
+    Hca_Permit_Application_Affected_Archaeological_Site_Aliased_Data:
+      type: object
+      properties:
+        anticipated_impacts:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        affected_archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+      required:
+      - affected_archaeological_site
+    Hca_Permit_Application_Affected_Archaeological_Site_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Affected_Archaeological_Site_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Ancestral_Remains_Aliased_Data:
+      type: object
+      properties:
+        confirms_ancestral_remains_protocol:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Protocol Aligns with Appendix A
+        ancestral_remains_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Non Alignment Rationale
+        ancestral_remains_management_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Management Approach
+        ancestral_remains_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Comments
+    Hca_Permit_Application_Ancestral_Remains_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Ancestral_Remains_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Application_Contacts_Aliased_Data:
+      type: object
+      properties:
+        archaeologist:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        is_first_permit_application:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: 'This is the archaeologist''s first permit issued under the HCA,
+            or the applicant has been informed they are subject to first-time permit
+            holder conditions.  '
+        proponent_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_company:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_address:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_phone:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        proponent_email:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - is_first_permit_application
+    Hca_Permit_Application_Application_Contacts_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Application_Contacts_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Application_Overview_Aliased_Data:
+      type: object
+      properties:
+        permit_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        standard_permit_term:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Permit for a 3-year term (from issuance)
+        other_permit_term:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Please describe the permet term being requested
+        is_replacement_permit:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        existing_permit_number:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        has_concurrent_permits:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: 'Is this permit related to any known concurrent HCA permits or pending
+            applications? '
+        concurrent_permit_numbers:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Concurrent Permit Number(s)
+        deliverables_due_date_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Final deliverables due date
+          description: Select an option
+        sector:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        project_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Describe the proponent's proposed project, associated archaeological
+            work, location and timeline (start date and duration)
+    Hca_Permit_Application_Application_Overview_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Application_Overview_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Assessment_Oversight_Responsibility_Aliased_Data:
+      type: object
+      properties:
+        cultural_area:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+        responsible_person:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        responsibility_role:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
+    Hca_Permit_Application_Assessment_Oversight_Responsibility_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Assessment_Oversight_Responsibility_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Hip_Previous_Studies_Aliased_Data:
+      type: object
+      properties:
+        hip_study_title:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Title of Study
+        hip_study_proximity_m:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Proximity to Proposed Assessment Area (m)
+        hip_study_year:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Year of Assessment
+        hip_study_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Comments Relevant to this Study
+    Hca_Permit_Application_Hip_Previous_Studies_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Aliased_Data:
+      type: object
+      properties:
+        hip_archaeological_site:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+          title: Archaeological Site
+    Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Material_Collection_Aliased_Data:
+      type: object
+      properties:
+        collection_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        collection_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        sampled_material_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        confirms_sampling_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Sampling Strategies Align with Appendix A
+        sampling_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Sampling Non Alignment Rationale
+        confirms_material_analysis_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Collected Material Analysis Aligns
+        material_analysis_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Material Analysis Non Alignment Rationale
+        confirms_sample_analysis_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Collected Sample Analysis Aligns
+        sample_analysis_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Sample Analysis Non Alignment Rationale
+        confirms_significance_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Significance Evaluation Aligns
+        significance_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Significance Non Alignment Rationale
+        confirms_impacts_assessment_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Impacts Assessment Aligns
+        impacts_assessment_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Impacts Assessment Non Alignment Rationale
+        collection_additional_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Discussion
+    Hca_Permit_Application_Material_Collection_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Material_Collection_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Methodology_Aliased_Data:
+      type: object
+      properties:
+        confirms_methods_align:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Methods Align with Appendix A
+        methods_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Methods Non Alignment Rationale
+        research_design:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Research Design and Methods
+        confirms_pre_field_research_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Pre-Field Research Aligns with Appendix A
+        pre_field_research_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Pre-Field Research Non Alignment Rationale
+        confirms_survey_coverage_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Survey Coverage Aligns with Appendix A
+        survey_coverage_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Survey Coverage Non Alignment Rationale
+        confirms_arch_potential_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Archaeological Potential Assessment Aligns
+        arch_potential_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Archaeological Potential Non Alignment Rationale
+        arch_bearing_sediment_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Archaeological Bearing Sediment Approach
+        confirms_subsurface_testing_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Subsurface Testing Aligns with Appendix A
+        subsurface_testing_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Subsurface Testing Non Alignment Rationale
+        has_machine_assisted_methods:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        machine_assisted_methods_description:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Machine-Assisted Methods Selected
+        machine_assisted_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Machine-Assisted Approach Details
+        has_winter_methods:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        winter_methods_align:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Winter Methods Align with Appendix A
+        winter_methods_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        winter_methods_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Winter Methods Non Alignment Rationale
+        other_field_methods:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Hca_Permit_Application_Methodology_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Methodology_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Permit_Scope_Aliased_Data:
+      type: object
+      properties:
+        permit_scope_hip:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Hip_Tile'
+          nullable: true
+        permit_scope_alteration:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Alteration_Tile'
+          nullable: true
+    Hca_Permit_Application_Permit_Scope_Alteration_Aliased_Data:
+      type: object
+      properties:
+        project_location:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        related_assessment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Related_Assessment_Tile'
+          nullable: true
+        affected_archaeological_site:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Affected_Archaeological_Site_Tile'
+          nullable: true
+        alteration_project_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        alteration_timing:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        previous_assessment_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        impact_management_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        stockpile_plan_required:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        stockpile_plan_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        impact_management_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        has_related_permits:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        related_permits_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        first_nation_file_numbers:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        related_permits_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+    Hca_Permit_Application_Permit_Scope_Alteration_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Alteration_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Permit_Scope_Hip_Aliased_Data:
+      type: object
+      properties:
+        hip_recorded_archaeological_sites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Recorded_Archaeological_Sites_Tile'
+          nullable: true
+        hip_goals_and_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Goals and Objectives
+        hip_previous_studies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Hip_Previous_Studies_Tile'
+          nullable: true
+        hip_assessment_area_size_ha:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Assessment Area Size (ha)
+        hip_development_selection:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Development Selection Approach
+        hip_addresses_chance_finds:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Addresses Chance Finds (Appendix A, s.1.A)
+        hip_chance_finds_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Chance Finds Details
+        hip_confirms_objectives_align:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Objectives Align with Appendix A
+        hip_objectives_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Objectives Non Alignment Rationale
+        hip_other_objectives:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Other Objectives
+        hip_has_aoa:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Has Archaeological Overview Assessment
+        hip_has_predictive_model:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Has GIS Predictive Model
+        hip_predictive_model_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Predictive Model Name
+        hip_has_desk_based_assessment:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Has Desk-Based Assessment
+        hip_has_field_studies:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Has Field Studies
+        hip_has_other_studies:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Has Other Studies
+        hip_has_related_alterations:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Alterations to Recorded Sites Proposed
+        hip_first_nation_file_numbers:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: First Nation File Numbers
+        hip_additional_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Discussion
+        hip_project_type_ref:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Project Type
+          description: Select an option
+        hip_application_area_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Application Area Type
+          description: Select an option
+        hip_was_hip_aoa_permitted:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Was AOA Permitted Under a Previous HIP
+        hip_alteration_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          title: Alteration Type
+          description: Select an option
+    Hca_Permit_Application_Permit_Scope_Hip_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Hip_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Permit_Scope_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Personnel_Aliased_Data:
+      type: object
+      properties:
+        assessment_oversight_responsibility:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hca_Permit_Application_Assessment_Oversight_Responsibility_Tile'
+          nullable: true
+        has_directing_archaeologist:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Archaeologist Submitting Deliverables
+        archaeologist_deliverables_role:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Archaeologist Role
+        applicant_responsibility_details:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        personnel_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Comments
+    Hca_Permit_Application_Personnel_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Personnel_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_References_Certification_Aliased_Data:
+      type: object
+      properties:
+        references_cited:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        follows_schedule_of_deliverables:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        schedule_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Schedule Non Alignment Description
+        archaeologist_certification_date:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        archaeologist_certification_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Permit Applicant Name
+        proponent_certification_date:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        proponent_certification_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Proponent Name
+        proponent_certification_affiliation:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Proponent Affiliation
+    Hca_Permit_Application_References_Certification_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_References_Certification_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Related_Assessment_Aliased_Data:
+      type: object
+      properties:
+        study_type:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeDataRequired'
+          nullable: true
+          description: Select an option
+        proposed_alteration_proximity:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+        assessment_year:
+          allOf:
+          - $ref: '#/components/schemas/DateAliasedNodeData'
+          nullable: true
+          description: Enter date
+        hca_permit:
+          allOf:
+          - $ref: '#/components/schemas/ResourceInstanceAliasedNodeData'
+          nullable: true
+        assessment_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          description: Enter text
+      required:
+      - study_type
+    Hca_Permit_Application_Related_Assessment_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Related_Assessment_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Repository_Curation_Aliased_Data:
+      type: object
+      properties:
+        repository_contacted:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        repository_written_confirmation:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Repository Written Confirmation Received
+        repository_contact_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        repository_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        repository_address:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        repository_phone:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        repository_email:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Repository Email or Fax
+        has_multiple_repositories:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        additional_repository_rationale:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_repository_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_repository_contact_name:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_repository_address:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_repository_phone:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        additional_repository_email:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Repository Email or Fax
+        confirms_repository_materials_align:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Repository Materials Align with Appendix A
+        repository_materials_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Repository Materials Non Alignment Rationale
+        repository_additional_comments:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Comments
+    Hca_Permit_Application_Repository_Curation_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Repository_Curation_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
+    Hca_Permit_Application_Resource_Aliased_Data:
+      type: object
+      properties:
+        application_overview:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Application_Overview_Tile'
+          nullable: true
+        application_contacts:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Application_Contacts_Tile'
+          nullable: true
+        permit_scope:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Permit_Scope_Tile'
+          nullable: true
+        personnel:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Personnel_Tile'
+          nullable: true
+        methodology:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Methodology_Tile'
+          nullable: true
+        site_recording:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Site_Recording_Tile'
+          nullable: true
+        material_collection:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Material_Collection_Tile'
+          nullable: true
+        ancestral_remains:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Ancestral_Remains_Tile'
+          nullable: true
+        repository_curation:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_Repository_Curation_Tile'
+          nullable: true
+        references_certification:
+          allOf:
+          - $ref: '#/components/schemas/Hca_Permit_Application_References_Certification_Tile'
+          nullable: true
+    Hca_Permit_Application_Site_Recording_Aliased_Data:
+      type: object
+      properties:
+        confirms_site_recording_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Site Recording Aligns with Appendix A
+        site_recording_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Site Recording Non Alignment Rationale
+        excavation_description:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Excavation Scope and Approach
+        confirms_excavation_aligns:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Excavation Approach Aligns
+        excavation_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Excavation Non Alignment Rationale
+        has_cmt_survey:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        cmt_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: CMT Non Alignment Rationale
+        is_rock_art_compliant:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+          title: Rock Art Recording Compliant
+        rock_art_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Rock Art Non Alignment Rationale
+        has_wet_sites:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        wet_sites_non_alignment:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Wet Sites Non Alignment Rationale
+        has_historical_sites:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        historical_sites_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        has_site_flagging:
+          allOf:
+          - $ref: '#/components/schemas/BooleanAliasedNodeData'
+          nullable: true
+        site_flagging_approach:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+        site_recording_additional_discussion:
+          allOf:
+          - $ref: '#/components/schemas/StringAliasedNodeData'
+          nullable: true
+          title: Additional Discussion
+    Hca_Permit_Application_Site_Recording_Tile:
+      type: object
+      properties:
+        tileid:
+          type: string
+          format: uuid
+          nullable: true
+        resourceinstance:
+          type: string
+          format: uuid
+          nullable: true
+        nodegroup:
+          type: string
+          format: uuid
+          nullable: true
+        parenttile:
+          type: string
+          format: uuid
+          nullable: true
+        aliased_data:
+          $ref: '#/components/schemas/Hca_Permit_Application_Site_Recording_Aliased_Data'
+        sortorder:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        provisionaledits:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: object
+            properties:
+              value:
+                type: object
+                additionalProperties: true
+              status:
+                type: string
+              action:
+                type: string
+              reviewer:
+                type: integer
+                nullable: true
+              timestamp:
+                type: string
+                nullable: true
+              reviewtimestamp:
+                type: string
+                nullable: true
     Hca_Permit_Permit_Identification_Aliased_Data:
       type: object
       properties:
@@ -12527,6 +14390,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DocumentSubmission'
+    PaginatedHcaPermitApplicationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/HcaPermitApplication'
     PaginatedHcaPermitList:
       type: object
       required:
@@ -12854,8 +14740,7 @@ components:
       type: object
       description: |-
         Request body for create/update: the whole draft blob, plus the step the
-        user is on and an optional frontend version, parent resource and owning
-        organization stamped on create.
+        user is on and optional metadata stamped on create.
       properties:
         data:
           oneOf:
@@ -12873,6 +14758,14 @@ components:
           type: string
           description: Organization to file the draft under, so colleagues can pick
             it up. Must be one the user belongs to.
+        section:
+          type: string
+          description: Sub-workflow section this draft covers (e.g. 'permit_info').
+            Immutable after create.
+        draft_session_id:
+          type: string
+          description: UUID grouping all section drafts for the same target resource.
+            Immutable after create.
         frontend_version:
           type: string
         parent_resource_id:
@@ -13017,8 +14910,8 @@ components:
       type: object
       description: 'The status PATCH body: whether the requirement is satisfied.'
       properties:
-        satisfied:
-          type: boolean
+        process_status:
+          type: string
     PermitApplication:
       type: object
       properties:
@@ -14312,16 +16205,22 @@ components:
           allOf:
           - $ref: '#/components/schemas/BooleanAliasedNodeData'
           nullable: true
-        workflow_url:
+        workflow_slug:
           allOf:
-          - $ref: '#/components/schemas/UrlAliasedNodeData'
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
           nullable: true
+          description: Enter text
         default_target_processing_time:
           allOf:
           - $ref: '#/components/schemas/NumberAliasedNodeData'
           nullable: true
           title: Default Target Processing Time (days)
           description: Enter number
+        graph_slug:
+          allOf:
+          - $ref: '#/components/schemas/NonLocalizedStringAliasedNodeData'
+          nullable: true
+          description: Enter graph slug
       required:
       - is_internal_requirement
       - is_template_requirement
@@ -14599,6 +16498,11 @@ components:
           - $ref: '#/components/schemas/StringAliasedNodeData'
           nullable: true
           description: Enter text
+        process_status:
+          allOf:
+          - $ref: '#/components/schemas/ReferenceAliasedNodeData'
+          nullable: true
+          description: Select an option
     Process_Requirement_Sub_Requirement_Assessment_N1_Tile:
       type: object
       properties:
@@ -18968,6 +20872,24 @@ components:
       required:
       - geometry
       - layer
+    WorkflowSession:
+      type: object
+      description: 'Response for a session progress query: all section drafts for
+        one session.'
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        graph_slug:
+          type: string
+        drafts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DraftRecord'
+      required:
+      - drafts
+      - graph_slug
+      - session_id
   securitySchemes:
     cookieAuth:
       type: apiKey

@@ -1,5 +1,5 @@
 """The dedicated staff action routes for process requirements and modules:
-- PATCH /process_requirement/<id>/status marks a requirement satisfied.
+- PATCH /process_requirement/<id>/status sets a requirement's process status.
 - PATCH /permit_application/<id>/module/<tileid> flips a module's completion,
   touching only the completion nodes so the module's order/name/id are kept.
 Both are editor-only."""
@@ -47,15 +47,28 @@ def _make_requirement(satisfied):
 
 
 def _requirement_status(requirement_id):
-    """The stored requirement_status on the assessment tile, or None if unset."""
+    """The stored process_status prefLabel on the assessment tile, or None if unset.
+
+    The reference datatype stores a list of objects with an embedded ``labels``
+    list; we read the English prefLabel directly from the tile data rather than
+    doing a secondary DB lookup.
+    """
     ngid = node_id(
         GraphSlugs.PROCESS_REQUIREMENT, prq_groups.SUB_REQUIREMENT_ASSESSMENT_N1
     )
-    nodeid = node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.REQUIREMENT_STATUS)
+    nodeid = node_id(GraphSlugs.PROCESS_REQUIREMENT, prq.PROCESS_STATUS)
     tile = TileModel.objects.filter(
         resourceinstance_id=requirement_id, nodegroup_id=ngid
     ).first()
-    return None if tile is None else tile.data.get(nodeid)
+    if tile is None:
+        return None
+    items = tile.data.get(nodeid) or []
+    if not items:
+        return None
+    for label in items[0].get("labels", []):
+        if label.get("valuetype_id") == "prefLabel":
+            return label.get("value")
+    return None
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")
@@ -80,27 +93,29 @@ class RequirementStatusRouteTests(AuthTestHelper, TestCase):
             content_type="application/json",
         )
 
-    def test_patch_marks_satisfied(self):
-        resp = self._patch({"satisfied": True})
+    def test_patch_sets_completed(self):
+        resp = self._patch({"process_status": "Completed"})
         self.assertEqual(resp.status_code, 204)
-        self.assertIs(_requirement_status(self.requirement_id), True)
+        self.assertEqual(_requirement_status(self.requirement_id), "Completed")
 
-    def test_patch_marks_unsatisfied(self):
-        self._patch({"satisfied": True})
-        resp = self._patch({"satisfied": False})
+    def test_patch_sets_in_progress(self):
+        self._patch({"process_status": "Completed"})
+        resp = self._patch({"process_status": "In Progress"})
         self.assertEqual(resp.status_code, 204)
-        self.assertIs(_requirement_status(self.requirement_id), False)
+        self.assertEqual(_requirement_status(self.requirement_id), "In Progress")
 
     def test_unknown_requirement_returns_404(self):
         url = reverse("requirement_status", kwargs={"requirement_id": UNKNOWN_ID})
-        self.assertEqual(self._patch({"satisfied": True}, url=url).status_code, 404)
+        self.assertEqual(
+            self._patch({"process_status": "Completed"}, url=url).status_code, 404
+        )
 
     def test_missing_body_is_a_400(self):
         self.assertEqual(self._patch({}).status_code, 400)
 
     def test_requires_resource_editor(self):
         self.idir_login_simulate(self.user)  # not a Resource Editor
-        self.assertEqual(self._patch({"satisfied": True}).status_code, 403)
+        self.assertEqual(self._patch({"process_status": "Completed"}).status_code, 403)
 
 
 @override_settings(ROOT_URLCONF="tests.test_urls")

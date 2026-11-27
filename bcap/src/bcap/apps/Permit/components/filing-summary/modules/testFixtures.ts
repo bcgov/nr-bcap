@@ -5,7 +5,7 @@ export const requirementDetail = (opts: {
     id: string;
     name?: string;
     type?: string;
-    satisfied?: boolean;
+    processStatus?: string;
     internal?: boolean;
     host?: string;
     hostGraph?: string;
@@ -25,8 +25,8 @@ export const requirementDetail = (opts: {
                         is_internal_requirement: {
                             node_value: opts.internal ?? false,
                         },
-                        workflow_url: opts.workflowUrl
-                            ? { node_value: { url: opts.workflowUrl } }
+                        workflow_slug: opts.workflowUrl
+                            ? { node_value: opts.workflowUrl }
                             : null,
                     },
                 },
@@ -34,7 +34,7 @@ export const requirementDetail = (opts: {
         },
         sub_requirement_assessment_n1: {
             aliased_data: {
-                requirement_status: { node_value: opts.satisfied ?? false },
+                process_status: { display_value: opts.processStatus ?? '' },
             },
         },
         requirement_data: {

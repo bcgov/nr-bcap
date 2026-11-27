@@ -4,7 +4,6 @@ describe('Permit routes', () => {
     it('defines a route for each Permit screen', () => {
         const byName = Object.fromEntries(routes.map((r) => [r.name, r]));
 
-        expect(routes).toHaveLength(15);
         expect(Object.keys(byName).sort()).toEqual([
             'Checklist',
             'EditChecklist',
@@ -12,8 +11,18 @@ describe('Permit routes', () => {
             'baseModule',
             'collectionModule',
             'documentSubmission',
+            'hcaPermitInfo',
+            'hcaPermitMethods',
+            'hcaPermitPersonnel',
+            'hcaPermitScopeAlteration',
+            'hcaPermitScopeHip',
             'inspectionModule',
             'internal-root',
+            'internalHcaPermitInfo',
+            'internalHcaPermitMethods',
+            'internalHcaPermitPersonnel',
+            'internalHcaPermitScopeAlteration',
+            'internalHcaPermitScopeHip',
             'internalPermitDetails',
             'investigationModule',
             'methodsModule',
@@ -68,6 +77,11 @@ describe('Permit routes', () => {
             'Checklist',
             'EditChecklist',
             'internal-root',
+            'internalHcaPermitInfo',
+            'internalHcaPermitMethods',
+            'internalHcaPermitPersonnel',
+            'internalHcaPermitScopeAlteration',
+            'internalHcaPermitScopeHip',
             'internalPermitDetails',
         ]);
         expect(byName['root'].meta?.requiresInternal).toBeUndefined();

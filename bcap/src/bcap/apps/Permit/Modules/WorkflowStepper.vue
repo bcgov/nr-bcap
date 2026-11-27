@@ -54,11 +54,22 @@ const props = withDefaults(
         // The Review/Submitted step body. Defaults to the generic summary of
         // every filled node; the base permit passes a curated version.
         reviewComponent?: Component;
+        // Open directly on the review step, hiding the submit button, so a
+        // completed section can be browsed without re-submitting.
+        viewOnly?: boolean;
+        // Optional async hook for multi-section workflows (e.g. HCA). Called
+        // in onMounted after initDraft resets the store but before
+        // isDataLoaded=true causes step components to mount, so the draft store
+        // is populated before any widget initialises its local state.
+        // Not called when resuming via ?draftId= (WorkflowStepper handles that).
+        beforeRender?: () => Promise<void>;
     }>(),
     {
         submitLabel: 'Create Filing',
         reviewComponent: Step99_Review,
         submit: undefined,
+        viewOnly: false,
+        beforeRender: undefined,
     },
 );
 
@@ -81,7 +92,12 @@ const router = useRouter();
 const draft = useDraftStore();
 // The permit this filing was started from. From the URL when starting fresh, or
 // the loaded draft's parent_resource_id when resuming.
-draft.initDraft(props.graphSlug, (route.query.permitId as string) ?? null);
+// Module-filing links pass the parent as ?permit=; direct-to-workflow links use
+// ?permitId=. Accept both so section-only workflows (HCA) get the back link.
+draft.initDraft(
+    props.graphSlug,
+    (route.query.permitId as string) ?? (route.query.permit as string) ?? null,
+);
 
 const state = reactive({
     submitted: false,
@@ -112,6 +128,17 @@ const permitBackLink = computed(() => {
     const id =
         draft.parentPermitId ?? state.finalizedResourceData?.resourceinstanceid;
     return id ? { name: routeNames.permitDetails, params: { id } } : null;
+});
+
+// In view-only mode the user arrives from either the internal or external
+// dashboard. Use the route guard flag to send them back to the right one.
+const viewOnlyBackLink = computed(() => {
+    const id = draft.parentPermitId;
+    if (!id) return null;
+    const name = route.meta.requiresInternal
+        ? routeNames.internalPermitDetails
+        : routeNames.permitDetails;
+    return { name, params: { id } };
 });
 
 const finalizedDataForReview = computed<ArchesDraftData | null>(() => {
@@ -228,6 +255,12 @@ const showPrevious = computed(
     () => !(currentStep.value === totalSteps.value || currentStep.value === 1),
 );
 
+// In viewOnly mode, hide the Next/Submit button once the user reaches the
+// review step — they can still navigate backwards through the form steps.
+const showNextButton = computed(
+    () => !props.viewOnly || currentStep.value < reviewStepNumber.value,
+);
+
 const headingFor = (step: WorkflowStep) => step.heading ?? step.label;
 
 // The last step only follows a submission, so a draft is never left on it.
@@ -261,6 +294,17 @@ onMounted(async () => {
                 loaded.parent_resource_id || draft.parentPermitId;
             resumeStep.value = stepNumberOf(loaded.current_step || '');
             lastStep = resumeStep.value;
+        } else if (props.beforeRender) {
+            // Multi-section workflows load their draft here so the store is
+            // populated before isDataLoaded=true causes step components to
+            // mount — preventing widgets from initialising with stale state.
+            await props.beforeRender();
+        }
+        // View-only mode opens directly on the review step so the user can
+        // read their submitted answers without being able to re-submit.
+        if (props.viewOnly) {
+            resumeStep.value = reviewStepNumber.value;
+            lastStep = reviewStepNumber.value;
         }
         state.isDataLoaded = true;
     } catch (error) {
@@ -292,8 +336,21 @@ onMounted(async () => {
             class="submission-error"
         />
 
+        <!-- View-only: render just the review content, no stepper chrome. -->
+        <div v-else-if="viewOnly">
+            <RouterLink
+                v-if="viewOnlyBackLink"
+                :to="viewOnlyBackLink"
+                class="back-to-permit"
+            >
+                <i class="fa-solid fa-chevron-left"></i>
+                Back to Filing Summary
+            </RouterLink>
+            <component :is="reviewComponent" />
+        </div>
+
         <Stepper
-            v-if="state.isDataLoaded && !state.loadError"
+            v-if="state.isDataLoaded && !state.loadError && !viewOnly"
             ref="myStepper"
             :state="stepperState"
             :props="stepperProps"
@@ -356,6 +413,7 @@ onMounted(async () => {
                                 :step-number="currentStep"
                                 :is-valid="currentStepIsValid"
                                 :show-previous="false"
+                                :show-next="showNextButton"
                                 :next-label="nextLabel"
                                 @next-click="activateNextStep"
                                 @previous-click="activatePreviousStep"
@@ -441,6 +499,7 @@ onMounted(async () => {
                                 :step-number="currentStep"
                                 :is-valid="currentStepIsValid"
                                 :show-previous="showPrevious"
+                                :show-next="showNextButton"
                                 :next-label="nextLabel"
                                 @next-click="activateNextStep"
                                 @previous-click="activatePreviousStep"

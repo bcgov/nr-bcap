@@ -53,6 +53,13 @@ from .hca_permit import (
     HcaPermitView,
 )
 
+from .hca_permit_application import (
+    HcaPermitApplicationSerializer,
+    HcaPermitApplicationViewMixin,
+    HcaPermitApplicationListView,
+    HcaPermitApplicationView,
+)
+
 from .hria_discontinued_data import (
     HriaDiscontinuedDataSerializer,
     HriaDiscontinuedDataViewMixin,
@@ -155,6 +162,10 @@ __all__ = [
     "DocumentSubmissionViewMixin",
     "DocumentView",
     "DocumentViewMixin",
+    "HcaPermitApplicationListView",
+    "HcaPermitApplicationSerializer",
+    "HcaPermitApplicationView",
+    "HcaPermitApplicationViewMixin",
     "HcaPermitListView",
     "HcaPermitSerializer",
     "HcaPermitView",

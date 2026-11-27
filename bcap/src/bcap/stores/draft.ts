@@ -111,8 +111,13 @@ export const useDraftStore = defineStore('draft', () => {
                         state.graphSlug,
                         state.parentPermitId ?? undefined,
                     );
-                    state.draftId = draft.id;
-                    return draft.id;
+                    // Only claim this as the active draft if loadDraft hasn't
+                    // already set one (e.g. a section draft loaded concurrently
+                    // while this regular-draft creation was in flight).
+                    if (!state.draftId) {
+                        state.draftId = draft.id;
+                    }
+                    return state.draftId!;
                 } catch (error) {
                     // Clear the memo so the next edit retries instead of
                     // replaying this rejection forever.

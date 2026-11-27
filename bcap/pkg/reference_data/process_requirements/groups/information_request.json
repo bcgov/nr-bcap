@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -14,11 +15,12 @@
             "name": "Submit Information Request",
             "type": "Workflow",
             "internal": false,
-            "resource": "information_request",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "graph_slug": "information_request"
         }
     ]
 }

@@ -8,125 +8,135 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
             "id": "REQ-PERMIT-TEMPLATE-001",
-            "name": "Initial Submission",
-            "type": "Workflow",
-            "internal": false,
-            "resource": "bcap_service_request",
-            "url": "plugins/submissions/baseModule",
-            "due": null,
-            "notes": "",
-            "satisfied": false,
-            "sub_requirements": []
-        },
-        {
-            "id": "REQ-PERMIT-TEMPLATE-002",
             "name": "Permit Info",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/hcaPermitApplication/permitInfo",
+            "graph_slug": "hca_permit_application"
+        },
+        {
+            "id": "REQ-HIP-SCOPE-002",
+            "name": "Heritage Inspection Permit Scope",
+            "type": "Workflow",
+            "internal": false,
+            "due": null,
+            "notes": "",
+            "satisfied": false,
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/hcaPermitApplication/permitScopeHip",
+            "graph_slug": "hca_permit_application"
         },
         {
             "id": "REQ-PERMIT-TEMPLATE-003",
-            "name": "Permit Scope",
+            "name": "Alteration Permit Scope",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/baseModule",
+            "graph_slug": "permit_application"
         },
         {
             "id": "REQ-PERMIT-TEMPLATE-004",
             "name": "Personnel",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/hcaPermitApplication/personnel",
+            "graph_slug": "hca_permit_application"
         },
         {
             "id": "REQ-PERMIT-METHODS-005",
             "name": "Methods",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/hcaPermitApplication/methods",
+            "graph_slug": "hca_permit_application"
         },
         {
             "id": "REQ-RECORDING-006",
             "name": "Site Recording & Evaluation",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/baseModule",
+            "graph_slug": "permit_application"
         },
         {
             "id": "REQ-REMAINS-007",
             "name": "Ancestral Remains",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/baseModule",
+            "graph_slug": "permit_application"
         },
         {
             "id": "REQ-REMAINS-008",
             "name": "Repository & Curation",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/baseModule",
+            "graph_slug": "permit_application"
         },
         {
             "id": "REQ-CERTIFICATION-010",
             "name": "References & Certification",
             "type": "Workflow",
             "internal": false,
-            "resource": "permit_application",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "workflow_slug": "submissions/baseModule",
+            "graph_slug": "permit_application"
         },
         {
             "id": "REQ-2026-001",
             "name": "Recommend Referral",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": "2026-01-02",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Recommendation",
@@ -254,17 +264,18 @@
                     "sort_order": 21,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-2026-002",
             "name": "Recommend Decision",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": "2026-02-15",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Recommendation",
@@ -374,17 +385,18 @@
                     "sort_order": 18,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-2026-003",
             "name": "Decision Summary",
             "type": "Checklist",
             "internal": true,
-            "resource": null,
             "due": "2026-03-30",
             "notes": "",
             "satisfied": false,
+            "process_status": "Future",
             "sub_requirements": [
                 {
                     "name": "Decision rendered",
@@ -458,31 +470,32 @@
                     "sort_order": 12,
                     "sub_satisfied": false
                 }
-            ]
+            ],
+            "graph_slug": null
         },
         {
             "id": "REQ-FN-CONSULT-001",
             "name": "Formal Consultation",
-            "type": "Workflow",
-            "internal": false,
-            "resource": "project_engagement",
-            "url": "plugins/submissions/baseModule",
+            "type": "Direct Resource Entry",
+            "internal": true,
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Future",
+            "sub_requirements": [],
+            "graph_slug": "project_engagement"
         },
         {
             "id": "REQ-PERM-0001",
             "name": "Issue Permit",
-            "type": "Workflow",
+            "type": "Direct Resource Entry",
             "internal": true,
-            "resource": "hca_permit",
-            "url": "plugins/submissions/baseModule",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Future",
+            "sub_requirements": [],
+            "graph_slug": "hca_permit"
         }
     ]
 }

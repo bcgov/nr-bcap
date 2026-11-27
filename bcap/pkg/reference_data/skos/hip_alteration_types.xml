@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/1b208382-bd7d-4d9b-9ad8-27687d362e3c">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/60fba983-f895-442c-b169-e3429bfff3e5">
+        <dcterms:title>HIP Alteration Types</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Alterations under this application (HIP)</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/1b208382-bd7d-4d9b-9ad8-27687d362e3c</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/3e207b13-cbf4-4ae6-bc1e-5c675bef7785">
+    <skos:inScheme rdf:resource="https://localhost/bcap/60fba983-f895-442c-b169-e3429bfff3e5"/>
+    <skos:prefLabel xml:lang="en">Alterations under a concurrent SAP (s. 12.4)</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/3e207b13-cbf4-4ae6-bc1e-5c675bef7785</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/f0344dc9-3576-4b76-8dc9-588311f34d1c">
+    <skos:inScheme rdf:resource="https://localhost/bcap/60fba983-f895-442c-b169-e3429bfff3e5"/>
+    <skos:prefLabel xml:lang="en">Alterations proposed but not at this stage</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/f0344dc9-3576-4b76-8dc9-588311f34d1c</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

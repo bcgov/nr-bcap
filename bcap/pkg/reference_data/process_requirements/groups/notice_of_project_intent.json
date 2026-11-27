@@ -7,6 +7,7 @@
     "due": null,
     "notes": "",
     "satisfied": false,
+    "process_status": "In Progress",
     "sub_requirements": [],
     "requirements": [
         {
@@ -14,11 +15,12 @@
             "name": "Submit Notice of Project Intent",
             "type": "Workflow",
             "internal": false,
-            "resource": "notice_of_project_intent",
             "due": null,
             "notes": "",
             "satisfied": false,
-            "sub_requirements": []
+            "process_status": "Required",
+            "sub_requirements": [],
+            "graph_slug": "notice_of_project_intent"
         }
     ]
 }

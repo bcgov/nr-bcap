@@ -11,6 +11,7 @@ from bcap.management.commands.reload_permit_models import (
     EXCLUDED_RESOURCE_MODELS,
     Command,
     _read_graph_meta,
+    _read_json_nodes,
 )
 
 _MODULE = "bcap.management.commands.reload_permit_models"
@@ -28,6 +29,13 @@ def _make_graph_json(graphid, slug):
 
 def _cmd():
     return Command(stdout=StringIO(), stderr=StringIO())
+
+
+def _make_graph_json_with_nodes(graphid, slug, nodes):
+    """Graph JSON payload that includes a nodes list."""
+    return json.dumps(
+        {"graph": [{"graphid": str(graphid), "slug": slug, "nodes": nodes}]}
+    )
 
 
 def _write_graph(directory, filename, slug):
@@ -170,6 +178,7 @@ class TestHandleRouting(SimpleTestCase):
             patch.object(cmd, "reload_requirement_templates") as mr,
             patch.object(cmd, "delete_permit_data") as md,
             patch.object(cmd, "reindex_resources") as mi,
+            patch.object(cmd, "_check_graph_structural_changes"),
             patch(f"{_MODULE}.cache") as mc,
         ):
             cmd.handle(**options)
@@ -252,6 +261,7 @@ class TestPrepareGraphsForImport(SimpleTestCase):
         mock_dangling_qs = MagicMock()
         mock_dangling_qs.exists.return_value = dangling_count > 0
         mock_dangling_qs.update.return_value = dangling_count
+        mock_dangling_qs.delete.return_value = (0, {})
 
         with (
             patch(f"{_MODULE}.arches_models") as mock_models,
@@ -334,6 +344,7 @@ class TestPrepareGraphsForImport(SimpleTestCase):
             mock_graph.get_draft_graph.return_value = None
             mock_dangling_qs = MagicMock()
             mock_dangling_qs.exists.return_value = False
+            mock_dangling_qs.delete.return_value = (0, {})
             with (
                 patch(f"{_MODULE}.arches_models") as mock_models,
                 patch(f"{_MODULE}.Graph") as MockGraph,
@@ -658,3 +669,282 @@ class TestReloadRequirementTemplates(SimpleTestCase):
         ):
             cmd.reload_requirement_templates()  # Must not raise.
         MockResource.objects.get.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# _read_json_nodes
+# ---------------------------------------------------------------------------
+
+
+class TestReadJsonNodes(SimpleTestCase):
+    def test_returns_nodeid_to_datatype_map(self):
+        gid = str(uuid.uuid4())
+        nid1, nid2 = str(uuid.uuid4()), str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(
+                _make_graph_json_with_nodes(
+                    gid,
+                    "my_model",
+                    [
+                        {"nodeid": nid1, "datatype": "string"},
+                        {"nodeid": nid2, "datatype": "number"},
+                    ],
+                )
+            )
+            result = _read_json_nodes(str(path))
+        self.assertEqual(result, {nid1: "string", nid2: "number"})
+
+    def test_returns_empty_dict_when_no_nodes_key(self):
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(_make_graph_json(gid, "empty_model"))
+            result = _read_json_nodes(str(path))
+        self.assertEqual(result, {})
+
+    def test_reads_first_graph_entry_only(self):
+        gid1, gid2 = str(uuid.uuid4()), str(uuid.uuid4())
+        nid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "graph": [
+                            {
+                                "graphid": gid1,
+                                "slug": "first",
+                                "nodes": [{"nodeid": nid, "datatype": "string"}],
+                            },
+                            {"graphid": gid2, "slug": "second", "nodes": []},
+                        ]
+                    }
+                )
+            )
+            result = _read_json_nodes(str(path))
+        self.assertEqual(result, {nid: "string"})
+
+
+# ---------------------------------------------------------------------------
+# _check_graph_structural_changes
+# ---------------------------------------------------------------------------
+
+
+class TestCheckGraphStructuralChanges(SimpleTestCase):
+    """_check_graph_structural_changes detects removed nodes and datatype changes."""
+
+    def _check(self, json_nodes, db_nodes):
+        """
+        Run the check with one resource-model path.
+        json_nodes: {nodeid: datatype} written into the JSON file
+        db_nodes:   list of (nodeid, datatype) returned by the DB mock
+        """
+        cmd = _cmd()
+        gid = str(uuid.uuid4())
+        nodes_list = [
+            {"nodeid": nid, "datatype": dt, "alias": f"alias_{i}"}
+            for i, (nid, dt) in enumerate(json_nodes.items())
+        ]
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(_make_graph_json_with_nodes(gid, "test_model", nodes_list))
+            with (
+                patch.object(cmd, "_graph_paths", return_value=[]),
+                patch.object(cmd, "_permit_model_paths", return_value=[str(path)]),
+                patch(f"{_MODULE}.arches_models") as mock_models,
+            ):
+                mock_models.Node.objects.filter.return_value.values_list.return_value = (
+                    db_nodes
+                )
+                cmd._check_graph_structural_changes()
+
+    def test_passes_when_all_nodes_match(self):
+        nid = str(uuid.uuid4())
+        self._check({nid: "string"}, [(nid, "string")])  # Must not raise.
+
+    def test_passes_when_db_has_no_nodes(self):
+        self._check({}, [])  # Must not raise.
+
+    def test_passes_when_new_nodes_added_to_json(self):
+        """Nodes present only in JSON (additions) are not flagged."""
+        nid_new = str(uuid.uuid4())
+        nid_existing = str(uuid.uuid4())
+        self._check(
+            {nid_new: "string", nid_existing: "number"},
+            [(nid_existing, "number")],
+        )  # Must not raise.
+
+    def test_raises_on_removed_node(self):
+        nid = str(uuid.uuid4())
+        with self.assertRaises(SystemExit):
+            self._check({}, [(nid, "string")])
+
+    def test_raises_on_datatype_change(self):
+        nid = str(uuid.uuid4())
+        with self.assertRaises(SystemExit):
+            self._check({nid: "non-localized-string"}, [(nid, "string")])
+
+    def test_error_message_names_the_slug(self):
+        nid = str(uuid.uuid4())
+        with self.assertRaises(SystemExit) as ctx:
+            self._check({}, [(nid, "string")])
+        self.assertIn("test_model", str(ctx.exception))
+
+    def test_error_message_names_the_node(self):
+        nid = str(uuid.uuid4())
+        with self.assertRaises(SystemExit) as ctx:
+            self._check({}, [(nid, "string")])
+        self.assertIn(nid, str(ctx.exception))
+
+
+# ---------------------------------------------------------------------------
+# _rotate_datatype_changed_uuids
+# ---------------------------------------------------------------------------
+
+
+class TestRotateDataTypeChangedUuids(SimpleTestCase):
+    """_rotate_datatype_changed_uuids auto-rotates node UUIDs on datatype change."""
+
+    def _run_rotate(self, path, db_nodes):
+        cmd = _cmd()
+        with patch(f"{_MODULE}.arches_models") as mock_models:
+            mock_models.Node.objects.filter.return_value.values_list.return_value = (
+                db_nodes
+            )
+            cmd._rotate_datatype_changed_uuids([str(path)])
+        return cmd
+
+    def test_no_op_when_datatypes_match(self):
+        nid = str(uuid.uuid4())
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            original = _make_graph_json_with_nodes(
+                gid, "test", [{"nodeid": nid, "datatype": "string", "alias": "my_node"}]
+            )
+            path.write_text(original)
+            self._run_rotate(path, [(nid, "string")])
+            self.assertEqual(path.read_text(), original)
+
+    def test_no_op_for_new_graph(self):
+        """A graph absent from the DB (no DB nodes) has nothing to rotate."""
+        nid = str(uuid.uuid4())
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            original = _make_graph_json_with_nodes(
+                gid, "test", [{"nodeid": nid, "datatype": "string", "alias": "my_node"}]
+            )
+            path.write_text(original)
+            self._run_rotate(path, [])
+            self.assertEqual(path.read_text(), original)
+
+    def test_rotates_uuid_in_file_on_datatype_change(self):
+        nid = str(uuid.uuid4())
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(
+                _make_graph_json_with_nodes(
+                    gid,
+                    "test",
+                    [
+                        {
+                            "nodeid": nid,
+                            "datatype": "non-localized-string",
+                            "alias": "my_node",
+                        }
+                    ],
+                )
+            )
+            self._run_rotate(
+                path, [(nid, "string")]
+            )  # DB has "string", JSON has "non-localized-string"
+            self.assertNotIn(nid, path.read_text())
+
+    def test_new_uuid_is_valid_uuid4(self):
+        nid = str(uuid.uuid4())
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(
+                _make_graph_json_with_nodes(
+                    gid,
+                    "test",
+                    [
+                        {
+                            "nodeid": nid,
+                            "datatype": "non-localized-string",
+                            "alias": "my_node",
+                        }
+                    ],
+                )
+            )
+            self._run_rotate(path, [(nid, "string")])
+            updated = json.loads(path.read_text())
+            new_nid = updated["graph"][0]["nodes"][0]["nodeid"]
+            # Must be a valid UUID and different from the original.
+            uuid.UUID(new_nid)
+            self.assertNotEqual(new_nid, nid)
+
+    def test_reports_rotation_in_stdout(self):
+        out = StringIO()
+        cmd = Command(stdout=out, stderr=StringIO(), no_color=True)
+        nid = str(uuid.uuid4())
+        gid = str(uuid.uuid4())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "model.json"
+            path.write_text(
+                _make_graph_json_with_nodes(
+                    gid,
+                    "test",
+                    [
+                        {
+                            "nodeid": nid,
+                            "datatype": "non-localized-string",
+                            "alias": "my_node",
+                        }
+                    ],
+                )
+            )
+            with patch(f"{_MODULE}.arches_models") as mock_models:
+                mock_models.Node.objects.filter.return_value.values_list.return_value = [
+                    (nid, "string")
+                ]
+                cmd._rotate_datatype_changed_uuids([str(path)])
+        output = out.getvalue()
+        self.assertIn("my_node", output)
+        self.assertIn("rotated", output)
+
+
+# ---------------------------------------------------------------------------
+# reload_graphs — call order
+# ---------------------------------------------------------------------------
+
+
+class TestReloadGraphs(SimpleTestCase):
+    def test_rotate_called_before_prepare(self):
+        """_rotate_datatype_changed_uuids must run before _prepare_graphs_for_import."""
+        cmd = _cmd()
+        call_order = []
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path, _ = _write_graph(tmpdir, "model.json", "test_model")
+            with (
+                patch.object(cmd, "_graph_paths", return_value=[path]),
+                patch.object(cmd, "_permit_model_paths", return_value=[path]),
+                patch(f"{_MODULE}.PackagesCommand"),
+                patch.object(
+                    cmd,
+                    "_rotate_datatype_changed_uuids",
+                    side_effect=lambda p: call_order.append("rotate"),
+                ),
+                patch.object(
+                    cmd,
+                    "_prepare_graphs_for_import",
+                    side_effect=lambda p: call_order.append("prepare"),
+                ),
+                patch.object(cmd, "_publish_and_sync_resources"),
+            ):
+                cmd.reload_graphs()
+        self.assertEqual(call_order, ["rotate", "prepare"])

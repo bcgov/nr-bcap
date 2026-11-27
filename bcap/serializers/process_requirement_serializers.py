@@ -17,7 +17,7 @@ class ReorderRequirements:
 
 @dataclass
 class RequirementStatus:
-    satisfied: bool
+    process_status: str
 
 
 @dataclass

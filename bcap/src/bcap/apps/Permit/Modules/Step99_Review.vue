@@ -35,7 +35,35 @@ const walk = (
     if (!nodes) return;
     for (const [alias, node] of Object.entries(nodes)) {
         if (!node) continue;
-        if (node.aliased_data) {
+        if (Array.isArray(node)) {
+            // 1:m tile array — render each tile's leaf nodes as a table row.
+            const tiles = (
+                node as unknown as {
+                    aliased_data?: Record<string, DraftNode | null>;
+                }[]
+            ).filter(Boolean);
+            if (!tiles.length) continue;
+            const firstData = tiles[0]?.aliased_data;
+            if (!firstData) continue;
+            const columns = Object.keys(firstData).map((col) => ({
+                field: col,
+                header: humanize(col),
+            }));
+            const rows = tiles.map((tile) => {
+                const row: Record<string, unknown> = {};
+                for (const { field } of columns) {
+                    row[field] =
+                        tile.aliased_data?.[field]?.display_value ?? '';
+                }
+                return row;
+            });
+            fields.push({
+                label: humanize(alias),
+                type: 'table',
+                columns,
+                rows,
+            });
+        } else if (node.aliased_data) {
             walk(node.aliased_data, fields);
         } else {
             fields.push({

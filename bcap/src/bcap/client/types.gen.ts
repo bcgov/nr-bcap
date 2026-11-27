@@ -2863,8 +2863,7 @@ export type DocumentSubmissionSubmissionPhotographsTile = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version, parent resource and owning
- * organization stamped on create.
+ * user is on and optional metadata stamped on create.
  */
 export type DraftPayload = {
     data:
@@ -2881,6 +2880,14 @@ export type DraftPayload = {
      * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
      */
     organization_id?: string;
+    /**
+     * Sub-workflow section this draft covers (e.g. 'permit_info'). Immutable after create.
+     */
+    section?: string;
+    /**
+     * UUID grouping all section drafts for the same target resource. Immutable after create.
+     */
+    draft_session_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -2908,6 +2915,8 @@ export type DraftRecord = {
     graph_slug: string;
     graph_publication_id: string;
     frontend_version: string;
+    section?: string;
+    draft_session_id?: string;
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
@@ -3082,6 +3091,663 @@ export type HcaPermit = {
     readonly graph_publication: string | null;
     readonly resource_instance_lifecycle_state: string;
     readonly principaluser: number | null;
+};
+
+export type HcaPermitApplication = {
+    resourceinstanceid?: string | null;
+    aliased_data?: HcaPermitApplicationResourceAliasedData;
+    readonly graph_has_different_publication: boolean;
+    readonly name: string | null;
+    readonly descriptors: {
+        en?: {
+            name?: string;
+            description?: string;
+            map_popup?: string;
+        };
+    } | null;
+    readonly legacyid: string | null;
+    readonly createdtime: string;
+    graph?: string | null;
+    readonly graph_publication: string | null;
+    readonly resource_instance_lifecycle_state: string;
+    readonly principaluser: number | null;
+};
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteAliasedData = {
+    /**
+     * Enter text
+     */
+    anticipated_impacts?: StringAliasedNodeData | null;
+    affected_archaeological_site: ResourceInstanceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAffectedArchaeologicalSiteAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationAncestralRemainsAliasedData = {
+    confirms_ancestral_remains_protocol?: BooleanAliasedNodeData | null;
+    ancestral_remains_non_alignment?: StringAliasedNodeData | null;
+    ancestral_remains_management_approach?: StringAliasedNodeData | null;
+    ancestral_remains_additional_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationAncestralRemainsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAncestralRemainsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationApplicationContactsAliasedData = {
+    archaeologist?: ResourceInstanceAliasedNodeData | null;
+    is_first_permit_application: BooleanAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_name?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_company?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_address?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_phone?: StringAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    proponent_email?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationApplicationContactsTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationApplicationContactsAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationApplicationOverviewAliasedData = {
+    /**
+     * Select an option
+     */
+    permit_type?: ReferenceAliasedNodeData | null;
+    standard_permit_term?: BooleanAliasedNodeData | null;
+    /**
+     * Please describe the permet term being requested
+     */
+    other_permit_term?: StringAliasedNodeData | null;
+    is_replacement_permit?: BooleanAliasedNodeData | null;
+    existing_permit_number?: StringAliasedNodeData | null;
+    has_concurrent_permits?: BooleanAliasedNodeData | null;
+    concurrent_permit_numbers?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    deliverables_due_date_type?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    sector?: ReferenceAliasedNodeData | null;
+    /**
+     * Describe the proponent's proposed project, associated archaeological work, location and timeline (start date and duration)
+     */
+    project_description?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationApplicationOverviewTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationApplicationOverviewAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityAliasedData = {
+    /**
+     * Select an option
+     */
+    cultural_area?: ReferenceAliasedNodeData | null;
+    responsible_person?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    responsibility_role?: ReferenceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAssessmentOversightResponsibilityAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationHipPreviousStudiesAliasedData = {
+    hip_study_title?: StringAliasedNodeData | null;
+    hip_study_proximity_m?: StringAliasedNodeData | null;
+    hip_study_year?: StringAliasedNodeData | null;
+    hip_study_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationHipPreviousStudiesTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipPreviousStudiesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedData = {
+    hip_archaeological_site?: ResourceInstanceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationMaterialCollectionAliasedData = {
+    collection_approach?: StringAliasedNodeData | null;
+    collection_additional_comments?: StringAliasedNodeData | null;
+    sampled_material_approach?: StringAliasedNodeData | null;
+    confirms_sampling_aligns?: BooleanAliasedNodeData | null;
+    sampling_non_alignment?: StringAliasedNodeData | null;
+    confirms_material_analysis_aligns?: BooleanAliasedNodeData | null;
+    material_analysis_non_alignment?: StringAliasedNodeData | null;
+    confirms_sample_analysis_aligns?: BooleanAliasedNodeData | null;
+    sample_analysis_non_alignment?: StringAliasedNodeData | null;
+    confirms_significance_aligns?: BooleanAliasedNodeData | null;
+    significance_non_alignment?: StringAliasedNodeData | null;
+    confirms_impacts_assessment_aligns?: BooleanAliasedNodeData | null;
+    impacts_assessment_non_alignment?: StringAliasedNodeData | null;
+    collection_additional_discussion?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationMaterialCollectionTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationMaterialCollectionAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationMethodologyAliasedData = {
+    confirms_methods_align?: BooleanAliasedNodeData | null;
+    methods_non_alignment?: StringAliasedNodeData | null;
+    research_design?: StringAliasedNodeData | null;
+    confirms_pre_field_research_aligns?: BooleanAliasedNodeData | null;
+    pre_field_research_non_alignment?: StringAliasedNodeData | null;
+    confirms_survey_coverage_aligns?: BooleanAliasedNodeData | null;
+    survey_coverage_non_alignment?: StringAliasedNodeData | null;
+    confirms_arch_potential_aligns?: BooleanAliasedNodeData | null;
+    arch_potential_non_alignment?: StringAliasedNodeData | null;
+    arch_bearing_sediment_approach?: StringAliasedNodeData | null;
+    confirms_subsurface_testing_aligns?: BooleanAliasedNodeData | null;
+    subsurface_testing_non_alignment?: StringAliasedNodeData | null;
+    has_machine_assisted_methods?: BooleanAliasedNodeData | null;
+    machine_assisted_methods_description?: ReferenceAliasedNodeData | null;
+    machine_assisted_approach?: StringAliasedNodeData | null;
+    has_winter_methods?: BooleanAliasedNodeData | null;
+    winter_methods_align?: BooleanAliasedNodeData | null;
+    winter_methods_description?: StringAliasedNodeData | null;
+    winter_methods_non_alignment?: StringAliasedNodeData | null;
+    other_field_methods?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationMethodologyTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationMethodologyAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeAliasedData = {
+    permit_scope_hip?: HcaPermitApplicationPermitScopeHipTile | null;
+    permit_scope_alteration?: HcaPermitApplicationPermitScopeAlterationTile | null;
+};
+
+export type HcaPermitApplicationPermitScopeAlterationAliasedData = {
+    project_location?: StringAliasedNodeData | null;
+    related_assessment?: Array<HcaPermitApplicationRelatedAssessmentTile> | null;
+    affected_archaeological_site?: Array<HcaPermitApplicationAffectedArchaeologicalSiteTile> | null;
+    alteration_project_description?: StringAliasedNodeData | null;
+    alteration_timing?: StringAliasedNodeData | null;
+    previous_assessment_discussion?: StringAliasedNodeData | null;
+    impact_management_approach?: StringAliasedNodeData | null;
+    stockpile_plan_required?: BooleanAliasedNodeData | null;
+    stockpile_plan_approach?: StringAliasedNodeData | null;
+    impact_management_additional_comments?: StringAliasedNodeData | null;
+    has_related_permits?: BooleanAliasedNodeData | null;
+    related_permits_description?: StringAliasedNodeData | null;
+    first_nation_file_numbers?: StringAliasedNodeData | null;
+    related_permits_additional_comments?: StringAliasedNodeData | null;
+    additional_discussion?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationPermitScopeAlterationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeAlterationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeHipAliasedData = {
+    hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTile> | null;
+    hip_goals_and_objectives?: StringAliasedNodeData | null;
+    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTile> | null;
+    hip_assessment_area_size_ha?: StringAliasedNodeData | null;
+    hip_development_selection?: StringAliasedNodeData | null;
+    hip_addresses_chance_finds?: BooleanAliasedNodeData | null;
+    hip_chance_finds_details?: StringAliasedNodeData | null;
+    hip_confirms_objectives_align?: BooleanAliasedNodeData | null;
+    hip_objectives_non_alignment?: StringAliasedNodeData | null;
+    hip_other_objectives?: StringAliasedNodeData | null;
+    hip_has_aoa?: BooleanAliasedNodeData | null;
+    hip_has_predictive_model?: BooleanAliasedNodeData | null;
+    hip_predictive_model_name?: StringAliasedNodeData | null;
+    hip_has_desk_based_assessment?: BooleanAliasedNodeData | null;
+    hip_has_field_studies?: BooleanAliasedNodeData | null;
+    hip_has_other_studies?: BooleanAliasedNodeData | null;
+    hip_has_related_alterations?: BooleanAliasedNodeData | null;
+    hip_first_nation_file_numbers?: StringAliasedNodeData | null;
+    hip_additional_discussion?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_project_type_ref?: ReferenceAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_application_area_type?: ReferenceAliasedNodeData | null;
+    hip_was_hip_aoa_permitted?: BooleanAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    hip_alteration_type?: ReferenceAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationPermitScopeHipTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeHipAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPersonnelAliasedData = {
+    assessment_oversight_responsibility?: Array<HcaPermitApplicationAssessmentOversightResponsibilityTile> | null;
+    has_directing_archaeologist?: BooleanAliasedNodeData | null;
+    archaeologist_deliverables_role?: StringAliasedNodeData | null;
+    applicant_responsibility_details?: StringAliasedNodeData | null;
+    personnel_additional_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationPersonnelTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPersonnelAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationReferencesCertificationAliasedData = {
+    references_cited?: StringAliasedNodeData | null;
+    follows_schedule_of_deliverables?: BooleanAliasedNodeData | null;
+    schedule_non_alignment?: StringAliasedNodeData | null;
+    archaeologist_certification_date?: StringAliasedNodeData | null;
+    archaeologist_certification_name?: StringAliasedNodeData | null;
+    proponent_certification_date?: StringAliasedNodeData | null;
+    proponent_certification_name?: StringAliasedNodeData | null;
+    proponent_certification_affiliation?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationReferencesCertificationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationReferencesCertificationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentAliasedData = {
+    /**
+     * Select an option
+     */
+    study_type: ReferenceAliasedNodeDataRequired | null;
+    /**
+     * Enter text
+     */
+    proposed_alteration_proximity?: StringAliasedNodeData | null;
+    /**
+     * Enter date
+     */
+    assessment_year?: DateAliasedNodeData | null;
+    hca_permit?: ResourceInstanceAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    assessment_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRelatedAssessmentAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRepositoryCurationAliasedData = {
+    repository_contacted?: BooleanAliasedNodeData | null;
+    repository_written_confirmation?: BooleanAliasedNodeData | null;
+    repository_contact_name?: StringAliasedNodeData | null;
+    repository_name?: StringAliasedNodeData | null;
+    repository_address?: StringAliasedNodeData | null;
+    repository_phone?: StringAliasedNodeData | null;
+    repository_email?: StringAliasedNodeData | null;
+    has_multiple_repositories?: BooleanAliasedNodeData | null;
+    additional_repository_rationale?: StringAliasedNodeData | null;
+    additional_repository_name?: StringAliasedNodeData | null;
+    additional_repository_contact_name?: StringAliasedNodeData | null;
+    additional_repository_address?: StringAliasedNodeData | null;
+    additional_repository_phone?: StringAliasedNodeData | null;
+    additional_repository_email?: StringAliasedNodeData | null;
+    confirms_repository_materials_align?: BooleanAliasedNodeData | null;
+    repository_materials_non_alignment?: StringAliasedNodeData | null;
+    repository_additional_comments?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationRepositoryCurationTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRepositoryCurationAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationResourceAliasedData = {
+    application_overview?: HcaPermitApplicationApplicationOverviewTile | null;
+    application_contacts?: HcaPermitApplicationApplicationContactsTile | null;
+    permit_scope?: HcaPermitApplicationPermitScopeTile | null;
+    personnel?: HcaPermitApplicationPersonnelTile | null;
+    methodology?: HcaPermitApplicationMethodologyTile | null;
+    site_recording?: HcaPermitApplicationSiteRecordingTile | null;
+    material_collection?: HcaPermitApplicationMaterialCollectionTile | null;
+    ancestral_remains?: HcaPermitApplicationAncestralRemainsTile | null;
+    repository_curation?: HcaPermitApplicationRepositoryCurationTile | null;
+    references_certification?: HcaPermitApplicationReferencesCertificationTile | null;
+};
+
+export type HcaPermitApplicationSiteRecordingAliasedData = {
+    confirms_site_recording_aligns?: BooleanAliasedNodeData | null;
+    site_recording_non_alignment?: StringAliasedNodeData | null;
+    excavation_description?: StringAliasedNodeData | null;
+    confirms_excavation_aligns?: BooleanAliasedNodeData | null;
+    excavation_non_alignment?: StringAliasedNodeData | null;
+    has_cmt_survey?: BooleanAliasedNodeData | null;
+    cmt_non_alignment?: StringAliasedNodeData | null;
+    is_rock_art_compliant?: BooleanAliasedNodeData | null;
+    rock_art_non_alignment?: StringAliasedNodeData | null;
+    has_wet_sites?: BooleanAliasedNodeData | null;
+    wet_sites_non_alignment?: StringAliasedNodeData | null;
+    has_historical_sites?: BooleanAliasedNodeData | null;
+    historical_sites_approach?: StringAliasedNodeData | null;
+    has_site_flagging?: BooleanAliasedNodeData | null;
+    site_flagging_approach?: StringAliasedNodeData | null;
+    site_recording_additional_discussion?: StringAliasedNodeData | null;
+};
+
+export type HcaPermitApplicationSiteRecordingTile = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationSiteRecordingAliasedData;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type HcaPermitPermitIdentificationAliasedData = {
@@ -5098,6 +5764,13 @@ export type PaginatedDocumentSubmissionList = {
     results: Array<DocumentSubmission>;
 };
 
+export type PaginatedHcaPermitApplicationList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<HcaPermitApplication>;
+};
+
 export type PaginatedHcaPermitList = {
     count: number;
     next?: string | null;
@@ -5215,8 +5888,7 @@ export type PatchedChecklistPatch = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version, parent resource and owning
- * organization stamped on create.
+ * user is on and optional metadata stamped on create.
  */
 export type PatchedDraftPayload = {
     data?:
@@ -5233,6 +5905,14 @@ export type PatchedDraftPayload = {
      * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
      */
     organization_id?: string;
+    /**
+     * Sub-workflow section this draft covers (e.g. 'permit_info'). Immutable after create.
+     */
+    section?: string;
+    /**
+     * UUID grouping all section drafts for the same target resource. Immutable after create.
+     */
+    draft_session_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -5303,7 +5983,7 @@ export type PatchedRequirementAssignee = {
  * The status PATCH body: whether the requirement is satisfied.
  */
 export type PatchedRequirementStatus = {
-    satisfied?: boolean;
+    process_status?: string;
 };
 
 export type PermitApplication = {
@@ -5891,11 +6571,18 @@ export type ProcessRequirementIsTemplateRequirementAliasedData = {
      */
     sort_order?: NumberAliasedNodeDataMin0 | null;
     is_internal_requirement: BooleanAliasedNodeData | null;
-    workflow_url?: UrlAliasedNodeData | null;
+    /**
+     * Enter text
+     */
+    workflow_slug?: NonLocalizedStringAliasedNodeData | null;
     /**
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeData | null;
+    /**
+     * Enter graph slug
+     */
+    graph_slug?: NonLocalizedStringAliasedNodeData | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTile = {
@@ -6027,6 +6714,10 @@ export type ProcessRequirementSubRequirementAssessmentN1AliasedData = {
      * Enter text
      */
     assessment_notes?: StringAliasedNodeData | null;
+    /**
+     * Select an option
+     */
+    process_status?: ReferenceAliasedNodeData | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1Tile = {
@@ -8089,6 +8780,15 @@ export type WfsIntersectRequest = {
      * Geometry property name on the WFS layer (default: 'geometry').
      */
     geometry_property?: string;
+};
+
+/**
+ * Response for a session progress query: all section drafts for one session.
+ */
+export type WorkflowSession = {
+    session_id: string;
+    graph_slug: string;
+    drafts: Array<DraftRecord>;
 };
 
 export type AlterationWritable = {
@@ -10784,8 +11484,7 @@ export type DocumentSubmissionSubmissionPhotographsTileWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version, parent resource and owning
- * organization stamped on create.
+ * user is on and optional metadata stamped on create.
  */
 export type DraftPayloadWritable = {
     data:
@@ -10802,6 +11501,14 @@ export type DraftPayloadWritable = {
      * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
      */
     organization_id?: string;
+    /**
+     * Sub-workflow section this draft covers (e.g. 'permit_info'). Immutable after create.
+     */
+    section?: string;
+    /**
+     * UUID grouping all section drafts for the same target resource. Immutable after create.
+     */
+    draft_session_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -10825,6 +11532,8 @@ export type DraftRecordWritable = {
     graph_slug: string;
     graph_publication_id: string;
     frontend_version: string;
+    section?: string;
+    draft_session_id?: string;
     parent_resource_id?: string;
     current_step?: string;
     created?: string | null;
@@ -10877,6 +11586,653 @@ export type HcaPermitWritable = {
     resourceinstanceid?: string | null;
     aliased_data?: HcaPermitResourceAliasedDataWritable;
     graph?: string | null;
+};
+
+export type HcaPermitApplicationWritable = {
+    resourceinstanceid?: string | null;
+    aliased_data?: HcaPermitApplicationResourceAliasedDataWritable;
+    graph?: string | null;
+};
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteAliasedDataWritable =
+    {
+        /**
+         * Enter text
+         */
+        anticipated_impacts?: StringAliasedNodeDataWritable | null;
+        affected_archaeological_site: ResourceInstanceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationAffectedArchaeologicalSiteTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAffectedArchaeologicalSiteAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationAncestralRemainsAliasedDataWritable = {
+    confirms_ancestral_remains_protocol?: BooleanAliasedNodeDataWritable | null;
+    ancestral_remains_non_alignment?: StringAliasedNodeDataWritable | null;
+    ancestral_remains_management_approach?: StringAliasedNodeDataWritable | null;
+    ancestral_remains_additional_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationAncestralRemainsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationAncestralRemainsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationApplicationContactsAliasedDataWritable = {
+    archaeologist?: ResourceInstanceAliasedNodeDataWritable | null;
+    is_first_permit_application: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_name?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_company?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_address?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_phone?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    proponent_email?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationApplicationContactsTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationApplicationContactsAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationApplicationOverviewAliasedDataWritable = {
+    /**
+     * Select an option
+     */
+    permit_type?: ReferenceAliasedNodeDataWritable | null;
+    standard_permit_term?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Please describe the permet term being requested
+     */
+    other_permit_term?: StringAliasedNodeDataWritable | null;
+    is_replacement_permit?: BooleanAliasedNodeDataWritable | null;
+    existing_permit_number?: StringAliasedNodeDataWritable | null;
+    has_concurrent_permits?: BooleanAliasedNodeDataWritable | null;
+    concurrent_permit_numbers?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    deliverables_due_date_type?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    sector?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Describe the proponent's proposed project, associated archaeological work, location and timeline (start date and duration)
+     */
+    project_description?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationApplicationOverviewTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationApplicationOverviewAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable =
+    {
+        /**
+         * Select an option
+         */
+        cultural_area?: ReferenceAliasedNodeDataWritable | null;
+        responsible_person?: ResourceInstanceAliasedNodeDataWritable | null;
+        /**
+         * Select an option
+         */
+        responsibility_role?: ReferenceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationAssessmentOversightResponsibilityTileWritable =
+    {
+        tileid?: string | null;
+        resourceinstance?: string | null;
+        nodegroup?: string | null;
+        parenttile?: string | null;
+        aliased_data?: HcaPermitApplicationAssessmentOversightResponsibilityAliasedDataWritable;
+        sortorder?: number | null;
+        provisionaledits?: {
+            [key: string]: {
+                value?: {
+                    [key: string]: unknown;
+                };
+                status?: string;
+                action?: string;
+                reviewer?: number | null;
+                timestamp?: string | null;
+                reviewtimestamp?: string | null;
+            };
+        } | null;
+    };
+
+export type HcaPermitApplicationHipPreviousStudiesAliasedDataWritable = {
+    hip_study_title?: StringAliasedNodeDataWritable | null;
+    hip_study_proximity_m?: StringAliasedNodeDataWritable | null;
+    hip_study_year?: StringAliasedNodeDataWritable | null;
+    hip_study_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationHipPreviousStudiesTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipPreviousStudiesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedDataWritable =
+    {
+        hip_archaeological_site?: ResourceInstanceAliasedNodeDataWritable | null;
+    };
+
+export type HcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationHipRecordedArchaeologicalSitesAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationMaterialCollectionAliasedDataWritable = {
+    collection_approach?: StringAliasedNodeDataWritable | null;
+    collection_additional_comments?: StringAliasedNodeDataWritable | null;
+    sampled_material_approach?: StringAliasedNodeDataWritable | null;
+    confirms_sampling_aligns?: BooleanAliasedNodeDataWritable | null;
+    sampling_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_material_analysis_aligns?: BooleanAliasedNodeDataWritable | null;
+    material_analysis_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_sample_analysis_aligns?: BooleanAliasedNodeDataWritable | null;
+    sample_analysis_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_significance_aligns?: BooleanAliasedNodeDataWritable | null;
+    significance_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_impacts_assessment_aligns?: BooleanAliasedNodeDataWritable | null;
+    impacts_assessment_non_alignment?: StringAliasedNodeDataWritable | null;
+    collection_additional_discussion?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationMaterialCollectionTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationMaterialCollectionAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationMethodologyAliasedDataWritable = {
+    confirms_methods_align?: BooleanAliasedNodeDataWritable | null;
+    methods_non_alignment?: StringAliasedNodeDataWritable | null;
+    research_design?: StringAliasedNodeDataWritable | null;
+    confirms_pre_field_research_aligns?: BooleanAliasedNodeDataWritable | null;
+    pre_field_research_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_survey_coverage_aligns?: BooleanAliasedNodeDataWritable | null;
+    survey_coverage_non_alignment?: StringAliasedNodeDataWritable | null;
+    confirms_arch_potential_aligns?: BooleanAliasedNodeDataWritable | null;
+    arch_potential_non_alignment?: StringAliasedNodeDataWritable | null;
+    arch_bearing_sediment_approach?: StringAliasedNodeDataWritable | null;
+    confirms_subsurface_testing_aligns?: BooleanAliasedNodeDataWritable | null;
+    subsurface_testing_non_alignment?: StringAliasedNodeDataWritable | null;
+    has_machine_assisted_methods?: BooleanAliasedNodeDataWritable | null;
+    machine_assisted_methods_description?: ReferenceAliasedNodeDataWritable | null;
+    machine_assisted_approach?: StringAliasedNodeDataWritable | null;
+    has_winter_methods?: BooleanAliasedNodeDataWritable | null;
+    winter_methods_align?: BooleanAliasedNodeDataWritable | null;
+    winter_methods_description?: StringAliasedNodeDataWritable | null;
+    winter_methods_non_alignment?: StringAliasedNodeDataWritable | null;
+    other_field_methods?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationMethodologyTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationMethodologyAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeAliasedDataWritable = {
+    permit_scope_hip?: HcaPermitApplicationPermitScopeHipTileWritable | null;
+    permit_scope_alteration?: HcaPermitApplicationPermitScopeAlterationTileWritable | null;
+};
+
+export type HcaPermitApplicationPermitScopeAlterationAliasedDataWritable = {
+    project_location?: StringAliasedNodeDataWritable | null;
+    related_assessment?: Array<HcaPermitApplicationRelatedAssessmentTileWritable> | null;
+    affected_archaeological_site?: Array<HcaPermitApplicationAffectedArchaeologicalSiteTileWritable> | null;
+    alteration_project_description?: StringAliasedNodeDataWritable | null;
+    alteration_timing?: StringAliasedNodeDataWritable | null;
+    previous_assessment_discussion?: StringAliasedNodeDataWritable | null;
+    impact_management_approach?: StringAliasedNodeDataWritable | null;
+    stockpile_plan_required?: BooleanAliasedNodeDataWritable | null;
+    stockpile_plan_approach?: StringAliasedNodeDataWritable | null;
+    impact_management_additional_comments?: StringAliasedNodeDataWritable | null;
+    has_related_permits?: BooleanAliasedNodeDataWritable | null;
+    related_permits_description?: StringAliasedNodeDataWritable | null;
+    first_nation_file_numbers?: StringAliasedNodeDataWritable | null;
+    related_permits_additional_comments?: StringAliasedNodeDataWritable | null;
+    additional_discussion?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationPermitScopeAlterationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeAlterationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeHipAliasedDataWritable = {
+    hip_recorded_archaeological_sites?: Array<HcaPermitApplicationHipRecordedArchaeologicalSitesTileWritable> | null;
+    hip_goals_and_objectives?: StringAliasedNodeDataWritable | null;
+    hip_previous_studies?: Array<HcaPermitApplicationHipPreviousStudiesTileWritable> | null;
+    hip_assessment_area_size_ha?: StringAliasedNodeDataWritable | null;
+    hip_development_selection?: StringAliasedNodeDataWritable | null;
+    hip_addresses_chance_finds?: BooleanAliasedNodeDataWritable | null;
+    hip_chance_finds_details?: StringAliasedNodeDataWritable | null;
+    hip_confirms_objectives_align?: BooleanAliasedNodeDataWritable | null;
+    hip_objectives_non_alignment?: StringAliasedNodeDataWritable | null;
+    hip_other_objectives?: StringAliasedNodeDataWritable | null;
+    hip_has_aoa?: BooleanAliasedNodeDataWritable | null;
+    hip_has_predictive_model?: BooleanAliasedNodeDataWritable | null;
+    hip_predictive_model_name?: StringAliasedNodeDataWritable | null;
+    hip_has_desk_based_assessment?: BooleanAliasedNodeDataWritable | null;
+    hip_has_field_studies?: BooleanAliasedNodeDataWritable | null;
+    hip_has_other_studies?: BooleanAliasedNodeDataWritable | null;
+    hip_has_related_alterations?: BooleanAliasedNodeDataWritable | null;
+    hip_first_nation_file_numbers?: StringAliasedNodeDataWritable | null;
+    hip_additional_discussion?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_project_type_ref?: ReferenceAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_application_area_type?: ReferenceAliasedNodeDataWritable | null;
+    hip_was_hip_aoa_permitted?: BooleanAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    hip_alteration_type?: ReferenceAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationPermitScopeHipTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeHipAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPermitScopeTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPermitScopeAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationPersonnelAliasedDataWritable = {
+    assessment_oversight_responsibility?: Array<HcaPermitApplicationAssessmentOversightResponsibilityTileWritable> | null;
+    has_directing_archaeologist?: BooleanAliasedNodeDataWritable | null;
+    archaeologist_deliverables_role?: StringAliasedNodeDataWritable | null;
+    applicant_responsibility_details?: StringAliasedNodeDataWritable | null;
+    personnel_additional_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationPersonnelTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationPersonnelAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationReferencesCertificationAliasedDataWritable = {
+    references_cited?: StringAliasedNodeDataWritable | null;
+    follows_schedule_of_deliverables?: BooleanAliasedNodeDataWritable | null;
+    schedule_non_alignment?: StringAliasedNodeDataWritable | null;
+    archaeologist_certification_date?: StringAliasedNodeDataWritable | null;
+    archaeologist_certification_name?: StringAliasedNodeDataWritable | null;
+    proponent_certification_date?: StringAliasedNodeDataWritable | null;
+    proponent_certification_name?: StringAliasedNodeDataWritable | null;
+    proponent_certification_affiliation?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationReferencesCertificationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationReferencesCertificationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentAliasedDataWritable = {
+    /**
+     * Select an option
+     */
+    study_type: ReferenceAliasedNodeDataRequiredWritable | null;
+    /**
+     * Enter text
+     */
+    proposed_alteration_proximity?: StringAliasedNodeDataWritable | null;
+    /**
+     * Enter date
+     */
+    assessment_year?: DateAliasedNodeDataWritable | null;
+    hca_permit?: ResourceInstanceAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    assessment_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationRelatedAssessmentTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRelatedAssessmentAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationRepositoryCurationAliasedDataWritable = {
+    repository_contacted?: BooleanAliasedNodeDataWritable | null;
+    repository_written_confirmation?: BooleanAliasedNodeDataWritable | null;
+    repository_contact_name?: StringAliasedNodeDataWritable | null;
+    repository_name?: StringAliasedNodeDataWritable | null;
+    repository_address?: StringAliasedNodeDataWritable | null;
+    repository_phone?: StringAliasedNodeDataWritable | null;
+    repository_email?: StringAliasedNodeDataWritable | null;
+    has_multiple_repositories?: BooleanAliasedNodeDataWritable | null;
+    additional_repository_rationale?: StringAliasedNodeDataWritable | null;
+    additional_repository_name?: StringAliasedNodeDataWritable | null;
+    additional_repository_contact_name?: StringAliasedNodeDataWritable | null;
+    additional_repository_address?: StringAliasedNodeDataWritable | null;
+    additional_repository_phone?: StringAliasedNodeDataWritable | null;
+    additional_repository_email?: StringAliasedNodeDataWritable | null;
+    confirms_repository_materials_align?: BooleanAliasedNodeDataWritable | null;
+    repository_materials_non_alignment?: StringAliasedNodeDataWritable | null;
+    repository_additional_comments?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationRepositoryCurationTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationRepositoryCurationAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
+};
+
+export type HcaPermitApplicationResourceAliasedDataWritable = {
+    application_overview?: HcaPermitApplicationApplicationOverviewTileWritable | null;
+    application_contacts?: HcaPermitApplicationApplicationContactsTileWritable | null;
+    permit_scope?: HcaPermitApplicationPermitScopeTileWritable | null;
+    personnel?: HcaPermitApplicationPersonnelTileWritable | null;
+    methodology?: HcaPermitApplicationMethodologyTileWritable | null;
+    site_recording?: HcaPermitApplicationSiteRecordingTileWritable | null;
+    material_collection?: HcaPermitApplicationMaterialCollectionTileWritable | null;
+    ancestral_remains?: HcaPermitApplicationAncestralRemainsTileWritable | null;
+    repository_curation?: HcaPermitApplicationRepositoryCurationTileWritable | null;
+    references_certification?: HcaPermitApplicationReferencesCertificationTileWritable | null;
+};
+
+export type HcaPermitApplicationSiteRecordingAliasedDataWritable = {
+    confirms_site_recording_aligns?: BooleanAliasedNodeDataWritable | null;
+    site_recording_non_alignment?: StringAliasedNodeDataWritable | null;
+    excavation_description?: StringAliasedNodeDataWritable | null;
+    confirms_excavation_aligns?: BooleanAliasedNodeDataWritable | null;
+    excavation_non_alignment?: StringAliasedNodeDataWritable | null;
+    has_cmt_survey?: BooleanAliasedNodeDataWritable | null;
+    cmt_non_alignment?: StringAliasedNodeDataWritable | null;
+    is_rock_art_compliant?: BooleanAliasedNodeDataWritable | null;
+    rock_art_non_alignment?: StringAliasedNodeDataWritable | null;
+    has_wet_sites?: BooleanAliasedNodeDataWritable | null;
+    wet_sites_non_alignment?: StringAliasedNodeDataWritable | null;
+    has_historical_sites?: BooleanAliasedNodeDataWritable | null;
+    historical_sites_approach?: StringAliasedNodeDataWritable | null;
+    has_site_flagging?: BooleanAliasedNodeDataWritable | null;
+    site_flagging_approach?: StringAliasedNodeDataWritable | null;
+    site_recording_additional_discussion?: StringAliasedNodeDataWritable | null;
+};
+
+export type HcaPermitApplicationSiteRecordingTileWritable = {
+    tileid?: string | null;
+    resourceinstance?: string | null;
+    nodegroup?: string | null;
+    parenttile?: string | null;
+    aliased_data?: HcaPermitApplicationSiteRecordingAliasedDataWritable;
+    sortorder?: number | null;
+    provisionaledits?: {
+        [key: string]: {
+            value?: {
+                [key: string]: unknown;
+            };
+            status?: string;
+            action?: string;
+            reviewer?: number | null;
+            timestamp?: string | null;
+            reviewtimestamp?: string | null;
+        };
+    } | null;
 };
 
 export type HcaPermitPermitIdentificationAliasedDataWritable = {
@@ -12616,6 +13972,13 @@ export type PaginatedDocumentSubmissionListWritable = {
     results: Array<DocumentSubmissionWritable>;
 };
 
+export type PaginatedHcaPermitApplicationListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<HcaPermitApplicationWritable>;
+};
+
 export type PaginatedHcaPermitListWritable = {
     count: number;
     next?: string | null;
@@ -12709,8 +14072,7 @@ export type PaginatedThreadMessageListWritable = {
 
 /**
  * Request body for create/update: the whole draft blob, plus the step the
- * user is on and an optional frontend version, parent resource and owning
- * organization stamped on create.
+ * user is on and optional metadata stamped on create.
  */
 export type PatchedDraftPayloadWritable = {
     data?:
@@ -12727,6 +14089,14 @@ export type PatchedDraftPayloadWritable = {
      * Organization to file the draft under, so colleagues can pick it up. Must be one the user belongs to.
      */
     organization_id?: string;
+    /**
+     * Sub-workflow section this draft covers (e.g. 'permit_info'). Immutable after create.
+     */
+    section?: string;
+    /**
+     * UUID grouping all section drafts for the same target resource. Immutable after create.
+     */
+    draft_session_id?: string;
     frontend_version?: string;
     parent_resource_id?: string;
 };
@@ -13280,11 +14650,18 @@ export type ProcessRequirementIsTemplateRequirementAliasedDataWritable = {
      */
     sort_order?: NumberAliasedNodeDataMin0Writable | null;
     is_internal_requirement: BooleanAliasedNodeDataWritable | null;
-    workflow_url?: UrlAliasedNodeDataWritable | null;
+    /**
+     * Enter text
+     */
+    workflow_slug?: NonLocalizedStringAliasedNodeDataWritable | null;
     /**
      * Enter number
      */
     default_target_processing_time?: NumberAliasedNodeDataWritable | null;
+    /**
+     * Enter graph slug
+     */
+    graph_slug?: NonLocalizedStringAliasedNodeDataWritable | null;
 };
 
 export type ProcessRequirementIsTemplateRequirementTileWritable = {
@@ -13417,6 +14794,10 @@ export type ProcessRequirementSubRequirementAssessmentN1AliasedDataWritable = {
      * Enter text
      */
     assessment_notes?: StringAliasedNodeDataWritable | null;
+    /**
+     * Select an option
+     */
+    process_status?: ReferenceAliasedNodeDataWritable | null;
 };
 
 export type ProcessRequirementSubRequirementAssessmentN1TileWritable = {
@@ -15274,6 +16655,15 @@ export type UserResponseWritable = {
     is_superuser: boolean;
 };
 
+/**
+ * Response for a session progress query: all section drafts for one session.
+ */
+export type WorkflowSessionWritable = {
+    session_id: string;
+    graph_slug: string;
+    drafts: Array<DraftRecordWritable>;
+};
+
 export type ApiArchaeologicalSiteListData = {
     body?: never;
     path?: never;
@@ -15739,6 +17129,45 @@ export type ApiHcaPermitRetrieveResponses = {
 
 export type ApiHcaPermitRetrieveResponse =
     ApiHcaPermitRetrieveResponses[keyof ApiHcaPermitRetrieveResponses];
+
+export type ApiHcaPermitApplicationListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/bcap/api/hca_permit_application';
+};
+
+export type ApiHcaPermitApplicationListResponses = {
+    200: PaginatedHcaPermitApplicationList;
+};
+
+export type ApiHcaPermitApplicationListResponse =
+    ApiHcaPermitApplicationListResponses[keyof ApiHcaPermitApplicationListResponses];
+
+export type ApiHcaPermitApplicationRetrieveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bcap/api/hca_permit_application/{id}/';
+};
+
+export type ApiHcaPermitApplicationRetrieveResponses = {
+    200: HcaPermitApplication;
+};
+
+export type ApiHcaPermitApplicationRetrieveResponse =
+    ApiHcaPermitApplicationRetrieveResponses[keyof ApiHcaPermitApplicationRetrieveResponses];
 
 export type ApiHriaDiscontinuedDataListData = {
     body?: never;
@@ -16491,6 +17920,14 @@ export type ApiWorkflowDraftListAllData = {
          * Only drafts started from this resource.
          */
         parent?: string;
+        /**
+         * Only drafts for this workflow section.
+         */
+        section?: string;
+        /**
+         * Only drafts belonging to this session.
+         */
+        session_id?: string;
     };
     url: '/bcap/api/workflow_draft';
 };
@@ -16507,7 +17944,20 @@ export type ApiWorkflowDraftListData = {
     path: {
         graph_slug: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Only drafts started from this resource.
+         */
+        parent?: string;
+        /**
+         * Only drafts for this workflow section.
+         */
+        section?: string;
+        /**
+         * Only drafts belonging to this session.
+         */
+        session_id?: string;
+    };
     url: '/bcap/api/workflow_draft/{graph_slug}';
 };
 
@@ -16587,3 +18037,20 @@ export type ApiWorkflowDraftPartialUpdateResponses = {
 
 export type ApiWorkflowDraftPartialUpdateResponse =
     ApiWorkflowDraftPartialUpdateResponses[keyof ApiWorkflowDraftPartialUpdateResponses];
+
+export type ApiWorkflowSessionGetData = {
+    body?: never;
+    path: {
+        graph_slug: string;
+        session_id: string;
+    };
+    query?: never;
+    url: '/bcap/api/workflow_session/{graph_slug}/{session_id}';
+};
+
+export type ApiWorkflowSessionGetResponses = {
+    200: WorkflowSession;
+};
+
+export type ApiWorkflowSessionGetResponse =
+    ApiWorkflowSessionGetResponses[keyof ApiWorkflowSessionGetResponses];

@@ -437,9 +437,8 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
                 self.assertEqual(
                     len(module[aliases.PROCESS_REQUIREMENT]), len(cloned.requirements)
                 )
-                # The permit's own-submission requirement is held back for the
-                # caller to link once the permit itself is saved.
-                self.assertIsNotNone(cloned.self_hosted)
+                # The permit module has no own-submission child.
+                self.assertIsNone(cloned.self_hosted)
 
     # HTTP-level coverage for the module and checklist endpoints. The tests above
     # drive the service directly; these go through the DRF views and the request
@@ -659,26 +658,26 @@ class PermitApplicationTests(AuthTestHelper, TestCase):
         self.assertIsNone(read(SimpleNamespace()))
 
     def test_a_permit_id_of_none_leaves_the_module_unlinked(self):
-        # What a create response carrying no id leads to: the link is skipped
-        # rather than raising, so the requirement is silently left unhosted.
+        # The permit module has no own-submission child, so self_hosted is None
+        # and _link_permit_to_itself is a no-op regardless of the permit id.
         requirements = ProcessRequirementService()
         cloned = requirements._clone_module("permit")
-        self.assertIsNotNone(cloned.self_hosted)
+        self.assertIsNone(cloned.self_hosted)
 
+        # Neither should raise.
         PermitApplicationService()._link_permit_to_itself(cloned, None)
 
-        hosts = requirements.host_ids_by_requirement({str(cloned.self_hosted.pk)})
-        self.assertFalse(hosts.get(str(cloned.self_hosted.pk)))
-
     def test_a_failed_link_rolls_the_clones_back_after_the_save(self):
-        # The link runs after the permit is saved, so a failure there still
-        # deletes every clone; the permit itself is already committed.
+        # Any failure in the post-save steps still deletes every clone;
+        # the permit itself is already committed. The permit module has no
+        # self_hosted requirement so link_submission is never reached; we
+        # exercise the rollback by failing the index step instead.
         pk = self.draft_pk
         before = self._requirement_count()
 
         with mock.patch.object(
-            ProcessRequirementService,
-            "link_submission",
+            PermitApplicationService,
+            "_index_requirements",
             side_effect=RuntimeError("boom"),
         ):
             with self.assertRaises(RuntimeError):

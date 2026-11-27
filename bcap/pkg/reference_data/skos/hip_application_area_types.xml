@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/d7d05265-2e65-4a52-904f-be0f0f9ae429">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/5711af75-7549-4561-b746-39e2ed3e4ca3">
+        <dcterms:title>HIP Application Area Types</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Single Development Application</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/d7d05265-2e65-4a52-904f-be0f0f9ae429</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/87b578b4-5276-4885-b91a-54ea051416dd">
+    <skos:inScheme rdf:resource="https://localhost/bcap/5711af75-7549-4561-b746-39e2ed3e4ca3"/>
+    <skos:prefLabel xml:lang="en">MAP Application</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/87b578b4-5276-4885-b91a-54ea051416dd</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>

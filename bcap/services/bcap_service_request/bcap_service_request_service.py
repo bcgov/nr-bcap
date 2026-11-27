@@ -173,7 +173,9 @@ class BcapServiceRequestService:
         if cloned.self_hosted is None or service_request_id is None:
             return
         self._requirements.link_submission(cloned.self_hosted.pk, service_request_id)
-        self._requirements.builder.set_requirement_status(cloned.self_hosted.pk, True)
+        self._requirements.builder.set_requirement_status(
+            cloned.self_hosted.pk, "Completed"
+        )
 
     @staticmethod
     def _saved_id(response):

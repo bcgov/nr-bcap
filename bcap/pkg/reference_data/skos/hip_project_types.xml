@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:arches="https://localhost/bcap/"
+>
+  <skos:Concept rdf:about="https://localhost/bcap/5e9d6700-7709-42df-867a-35b2c42511e8">
+    <skos:inScheme>
+      <skos:ConceptScheme rdf:about="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a">
+        <dcterms:title>HIP Project Types</dcterms:title>
+      </skos:ConceptScheme>
+    </skos:inScheme>
+    <skos:prefLabel xml:lang="en">Heritage Inspection for resource management</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/5e9d6700-7709-42df-867a-35b2c42511e8</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/ef9322a3-3b83-4ba1-abc3-f88de088cdfe">
+    <skos:inScheme rdf:resource="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a"/>
+    <skos:prefLabel xml:lang="en">Response to natural disaster or climate change</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/ef9322a3-3b83-4ba1-abc3-f88de088cdfe</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/3c55bcea-827b-4c44-bf66-f521842c31bf">
+    <skos:inScheme rdf:resource="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a"/>
+    <skos:prefLabel xml:lang="en">Academic research</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/3c55bcea-827b-4c44-bf66-f521842c31bf</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/e471da48-8ac5-4ee5-b5d4-54ab68f79706">
+    <skos:inScheme rdf:resource="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a"/>
+    <skos:prefLabel xml:lang="en">Significant investigations within known sites</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/e471da48-8ac5-4ee5-b5d4-54ab68f79706</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/f8ee627d-fddb-42b1-9c5d-82ab827fdbd1">
+    <skos:inScheme rdf:resource="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a"/>
+    <skos:prefLabel xml:lang="en">Research at the request of a First Nation</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/f8ee627d-fddb-42b1-9c5d-82ab827fdbd1</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</arches:sortorder>
+  </skos:Concept>
+  <skos:Concept rdf:about="https://localhost/bcap/01e08a39-575c-4fe6-b0ab-023175ee1aa5">
+    <skos:inScheme rdf:resource="https://localhost/bcap/c2776bea-5fdc-4cee-8d12-ef8389af506a"/>
+    <skos:prefLabel xml:lang="en">Other</skos:prefLabel>
+    <dcterms:identifier>https://localhost/bcap/plugins/controlled-list-manager/item/01e08a39-575c-4fe6-b0ab-023175ee1aa5</dcterms:identifier>
+    <arches:sortorder rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</arches:sortorder>
+  </skos:Concept>
+</rdf:RDF>
